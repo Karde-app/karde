@@ -1,0 +1,112 @@
+{
+  "@@locale": "en",
+  "appTitle": "Karde",
+  "welcomeTitle": "Welcome to Karde",
+  "welcomeSubtitle": "Your secure, offline digital wallet",
+  "offlineBadge": "Offline & Encrypted",
+  "quickAccess": "Quick Access",
+  "seeAll": "See all",
+  "addACard": "Add a card",
+  "openVault": "Open Vault",
+  "vaultHealthExcellent": "Vault health: excellent",
+  "vaultHealthItems": "{count} items encrypted with AES-256-GCM",
+  "@vaultHealthItems": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "homeTab": "Home",
+  "vaultTab": "Vault",
+  "settingsTab": "Settings",
+  
+  "myVault": "My Vault",
+  "allFilter": "All",
+  "cardsFilter": "Cards",
+  "idsFilter": "IDs • Soon",
+  
+  "addNewCard": "Add New Card",
+  "identification": "IDENTIFICATION",
+  "issuerLabel": "ISSUER",
+  "issuerHint": "e.g. Bank Name or Provider",
+  "cardNetworkLabel": "Card Network",
+  "cardholderNameLabel": "CARDHOLDER NAME",
+  "cardholderNameHint": "Name on card",
+  
+  "cardDetails": "CARD DETAILS",
+  "cardNumberLabel": "CARD NUMBER",
+  "cardNumberHint": "0000 0000 0000 0000",
+  "expiryLabel": "EXPIRY",
+  "expiryHint": "MM/YY",
+  "cvvLabel": "CVV",
+  "cvvHint": "123",
+  
+  "extraInfo": "EXTRA INFO (OPTIONAL)",
+  "privateNotesLabel": "PRIVATE NOTES",
+  "privateNotesHint": "Bank phone numbers, PIN hints...",
+  
+  "saveItem": "Save Item",
+  "requiredField": "Required",
+  "invalidFormat": "Invalid format",
+  
+  "cardDetailsTitle": "Card Details",
+  "editDetails": "Edit details",
+  "deleteCard": "Delete card",
+  
+  "language": "Language",
+  "english": "English",
+  "french": "Français",
+  "arabic": "العربية",
+  "amharic": "አማርኛ",
+  
+  "setupLockTitle": "Secure Your Wallet",
+  "setupLockSubtitle": "How would you like to protect your secrets?",
+  "phoneLock": "Phone Lock",
+  "phoneLockDesc": "Use your device's Face ID, Touch ID, or passcode.",
+  "kardePin": "Karde PIN",
+  "kardePinDesc": "Create a dedicated PIN just for this app.",
+  "bothLocks": "Both",
+  "bothLocksDesc": "Phone lock to open app, Karde PIN to view secrets.",
+  "continueBtn": "Continue",
+  
+  "createPin": "Create PIN",
+  "enterPin": "Enter your new PIN",
+  "confirmPin": "Confirm PIN",
+  "reEnterPin": "Please re-enter your PIN",
+  "pinMismatch": "PINs do not match. Try again.",
+  
+  "enterKardePin": "Enter Karde PIN",
+  "unlockToReveal": "Unlock to reveal secrets",
+  
+  "recoverySetupTitle": "PIN Recovery",
+  "recoverySetupSubtitle": "How would you like to recover your PIN if you forget it?",
+  "biometricRecovery": "Phone Biometrics",
+  "biometricRecoveryDesc": "Use your device's fingerprint or Face ID to reset your PIN.",
+  "securityQuestions": "Security Questions",
+  "securityQuestionsDesc": "Answer 2 personal questions to reset your PIN.",
+  "noRecovery": "No Recovery",
+  "noRecoveryDesc": "Maximum security. Forgetting your PIN means permanent data loss.",
+  
+  "setupQuestionsTitle": "Set Security Questions",
+  "setupQuestionsSubtitle": "Choose 2 questions and answers",
+  "question1": "Question 1",
+  "question2": "Question 2",
+  "answer": "Answer",
+  "answerRequired": "Answer is required",
+  "finishSetup": "Finish Setup",
+  
+  "forgotPin": "Forgot PIN?",
+  "resetPinTitle": "Reset PIN",
+  "resetPinSubtitle": "Choose a recovery method",
+  "wipeDataBtn": "Wipe App Data (Danger)",
+  "wipeDataWarning": "This will permanently delete all your saved cards and reset the app. Are you sure?",
+  "cancel": "Cancel",
+  "wipe": "Wipe",
+  "verifyQuestionsTitle": "Answer Security Questions",
+  "verifyQuestionsSubtitle": "Answer both questions to reset your PIN",
+  "verifyBtn": "Verify",
+  "wrongAnswers": "One or both answers are incorrect.",
+  "resetPinSuccess": "Verification successful. You can now set a new PIN.",
+  "maxAttemptsReached": "Maximum attempts reached. You must reset your PIN."
+}

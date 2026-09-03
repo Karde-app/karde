@@ -1,0 +1,143 @@
+<svg width="1600" height="2050" viewBox="0 0 1600 2050" xmlns="http://www.w3.org/2000/svg">
+
+  <defs>
+    <linearGradient id="bgGrad" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#12151D"/>
+      <stop offset="100%" stop-color="#0A0C11"/>
+    </linearGradient>
+    <radialGradient id="glow1" cx="50%" cy="0%" r="75%">
+      <stop offset="0%" stop-color="#C9A961" stop-opacity="0.16"/>
+      <stop offset="100%" stop-color="#C9A961" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="glowTeal" cx="80%" cy="10%" r="60%">
+      <stop offset="0%" stop-color="#2BD1C4" stop-opacity="0.14"/>
+      <stop offset="100%" stop-color="#2BD1C4" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="goldGrad" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#E7D4A0"/>
+      <stop offset="55%" stop-color="#C9A961"/>
+      <stop offset="100%" stop-color="#9C7C41"/>
+    </linearGradient>
+    <linearGradient id="goldGradSoft" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#C9A961"/>
+      <stop offset="100%" stop-color="#9C7C41"/>
+    </linearGradient>
+    <linearGradient id="tealGrad" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#57E9DC"/>
+      <stop offset="100%" stop-color="#12746C"/>
+    </linearGradient>
+    <linearGradient id="cardOnyx" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#2A2F3B"/>
+      <stop offset="45%" stop-color="#181B23"/>
+      <stop offset="100%" stop-color="#0D0F14"/>
+    </linearGradient>
+    <linearGradient id="cardGold" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#3A3120"/>
+      <stop offset="50%" stop-color="#221D14"/>
+      <stop offset="100%" stop-color="#120F0A"/>
+    </linearGradient>
+    <linearGradient id="cardTeal" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#1B3B3A"/>
+      <stop offset="50%" stop-color="#141C22"/>
+      <stop offset="100%" stop-color="#0B0F12"/>
+    </linearGradient>
+    <linearGradient id="sheen" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#FFFFFF" stop-opacity="0.10"/>
+      <stop offset="35%" stop-color="#FFFFFF" stop-opacity="0"/>
+    </linearGradient>
+    <filter id="softShadow" x="-40%" y="-40%" width="180%" height="180%">
+      <feDropShadow dx="0" dy="10" stdDeviation="16" flood-color="#000000" flood-opacity="0.45"/>
+    </filter>
+    <filter id="tightShadow" x="-40%" y="-40%" width="180%" height="180%">
+      <feDropShadow dx="0" dy="4" stdDeviation="8" flood-color="#000000" flood-opacity="0.35"/>
+    </filter>
+    <filter id="glowFilter" x="-60%" y="-60%" width="220%" height="220%">
+      <feGaussianBlur stdDeviation="7"/>
+    </filter>
+  </defs>
+  <rect width="1600" height="2050" fill="url(#bgGrad)"/>
+  <rect width="1600" height="700" fill="url(#glow1)"/>
+  <text x="60" y="40" font-family="Inter, 'Segoe UI', sans-serif" font-size="15" letter-spacing="3" fill="#5C6472">KARDE — BRAND SHEET</text>
+  
+    <g transform="translate(80,120)">
+      <rect width="130" height="130" rx="30" fill="#12151D"/>
+      <g transform="translate(65,70)">
+        <circle r="46" fill="none" stroke="#2BD1C4" stroke-opacity="0.35" stroke-width="2"/>
+        <path d="M-18 -34 V34" stroke="url(#goldGrad)" stroke-width="11" stroke-linecap="round" transform="translate(0,3)"/>
+        <path d="M-18 2 L17 -34" stroke="url(#goldGrad)" stroke-width="11" stroke-linecap="round" transform="translate(0,3)"/>
+        <path d="M-18 2 L17 38" stroke="url(#goldGrad)" stroke-width="11" stroke-linecap="round" transform="translate(0,3)"/>
+        <circle cx="1" cy="5" r="6.5" fill="#12151D"/>
+      </g>
+      <text x="170" y="60" font-family="Outfit, 'Segoe UI', sans-serif" font-size="52" font-weight="600" fill="#F4F1EA">Karde</text>
+      <text x="172" y="90" font-family="Inter, 'Segoe UI', sans-serif" font-size="17" letter-spacing="3" fill="#9AA1B0">SECURE • OFFLINE • VAULT</text>
+    </g>
+  <text x="60" y="290" font-family="Inter, 'Segoe UI', sans-serif" font-size="15" letter-spacing="2" fill="#C9A961">LOGO CONCEPTS</text><g transform="translate(60,330)"><rect width="473.3333333333333" height="210" rx="24" fill="#161A23" stroke="#262B37"/><g transform="translate(90,105.0)"><circle r="52" fill="none" stroke="#2BD1C4" stroke-opacity="0.3" stroke-width="2"/>
+        <path d="M-20 -38 V38" stroke="url(#goldGrad)" stroke-width="12" stroke-linecap="round"/>
+        <path d="M-20 2 L19 -38" stroke="url(#goldGrad)" stroke-width="12" stroke-linecap="round"/>
+        <path d="M-20 2 L19 42" stroke="url(#goldGrad)" stroke-width="12" stroke-linecap="round"/>
+        <circle cx="1" cy="4" r="7" fill="#161A23"/></g><text x="190" y="60.0" font-family="Inter, 'Segoe UI', sans-serif" font-size="17" font-weight="600" fill="#F4F1EA">A — Vault Monogram</text><text x="190" y="89.0" font-family="Inter, 'Segoe UI', sans-serif" font-size="14" fill="#9AA1B0">The K's three strokes form a keyhole</text><text x="190" y="113.0" font-family="Inter, 'Segoe UI', sans-serif" font-size="14" fill="#9AA1B0">negative space, ringed like a vault door.</text><text x="190" y="157.0" font-family="Inter, 'Segoe UI', sans-serif" font-size="13" fill="#5C6472">Primary — app icon &amp; splash</text></g><g transform="translate(563.3333333333333,330)"><rect width="473.3333333333333" height="210" rx="24" fill="#161A23" stroke="#262B37"/><g transform="translate(90,105.0)"><path d="M-30 -30 h60 v20 a30 30 0 0 1 -60 0 z" fill="none" stroke="url(#goldGrad)" stroke-width="8" stroke-linejoin="round"/>
+        <path d="M-8 -6 l0 -18 a8 8 0 0 1 16 0 l0 18" fill="none" stroke="#2BD1C4" stroke-width="6" stroke-linecap="round"/></g><text x="190" y="60.0" font-family="Inter, 'Segoe UI', sans-serif" font-size="17" font-weight="600" fill="#F4F1EA">B — Shield &amp; Lock</text><text x="190" y="89.0" font-family="Inter, 'Segoe UI', sans-serif" font-size="14" fill="#9AA1B0">A rounded shield silhouette with an</text><text x="190" y="113.0" font-family="Inter, 'Segoe UI', sans-serif" font-size="14" fill="#9AA1B0">integrated padlock shackle in teal.</text><text x="190" y="157.0" font-family="Inter, 'Segoe UI', sans-serif" font-size="13" fill="#5C6472">Secondary — security badges</text></g><g transform="translate(1066.6666666666665,330)"><rect width="473.3333333333333" height="210" rx="24" fill="#161A23" stroke="#262B37"/><g transform="translate(90,105.0)"><rect x="-40" y="-26" width="66" height="42" rx="8" fill="none" stroke="url(#goldGrad)" stroke-width="4" transform="rotate(-8)"/>
+        <rect x="-25" y="-16" width="66" height="42" rx="8" fill="none" stroke="#2BD1C4" stroke-width="4" transform="rotate(6)"/></g><text x="190" y="60.0" font-family="Inter, 'Segoe UI', sans-serif" font-size="17" font-weight="600" fill="#F4F1EA">C — Stacked Cards</text><text x="190" y="89.0" font-family="Inter, 'Segoe UI', sans-serif" font-size="14" fill="#9AA1B0">Two overlapping card outlines, echoing</text><text x="190" y="113.0" font-family="Inter, 'Segoe UI', sans-serif" font-size="14" fill="#9AA1B0">the in-app stacked-card motif.</text><text x="190" y="157.0" font-family="Inter, 'Segoe UI', sans-serif" font-size="13" fill="#5C6472">Tertiary — marketing &amp; social</text></g>
+  <text x="60" y="630" font-family="Inter, 'Segoe UI', sans-serif" font-size="15" letter-spacing="2" fill="#C9A961">COLOR PALETTE</text>
+  <g transform="translate(60,670)">
+        <rect width="220" height="130" rx="20" fill="#0A0C11"/>
+        <rect width="220" height="130" rx="20" fill="none" stroke="rgba(255,255,255,0.12)"/>
+        <text x="0" y="162" font-family="Outfit, 'Segoe UI', sans-serif" font-size="19" font-weight="600" fill="#F4F1EA">Obsidian</text>
+        <text x="0" y="186" font-family="'Roboto Mono', 'Courier New', monospace" font-size="14" fill="#9AA1B0">#0A0C11</text>
+        <text x="0" y="208" font-family="Inter, 'Segoe UI', sans-serif" font-size="12.5" fill="#5C6472">App background</text>
+        </g><g transform="translate(320,670)">
+        <rect width="220" height="130" rx="20" fill="#161A23"/>
+        <rect width="220" height="130" rx="20" fill="none" stroke="rgba(255,255,255,0.12)"/>
+        <text x="0" y="162" font-family="Outfit, 'Segoe UI', sans-serif" font-size="19" font-weight="600" fill="#F4F1EA">Graphite</text>
+        <text x="0" y="186" font-family="'Roboto Mono', 'Courier New', monospace" font-size="14" fill="#9AA1B0">#161A23</text>
+        <text x="0" y="208" font-family="Inter, 'Segoe UI', sans-serif" font-size="12.5" fill="#5C6472">Surfaces / cards</text>
+        </g><g transform="translate(580,670)">
+        <rect width="220" height="130" rx="20" fill="#C9A961"/>
+        <rect width="220" height="130" rx="20" fill="none" stroke="rgba(255,255,255,0.12)"/>
+        <text x="0" y="162" font-family="Outfit, 'Segoe UI', sans-serif" font-size="19" font-weight="600" fill="#F4F1EA">Champagne Gold</text>
+        <text x="0" y="186" font-family="'Roboto Mono', 'Courier New', monospace" font-size="14" fill="#9AA1B0">#C9A961</text>
+        <text x="0" y="208" font-family="Inter, 'Segoe UI', sans-serif" font-size="12.5" fill="#5C6472">Primary accent, CTAs</text>
+        </g><g transform="translate(60,930)">
+        <rect width="220" height="130" rx="20" fill="#2BD1C4"/>
+        <rect width="220" height="130" rx="20" fill="none" stroke="rgba(255,255,255,0.12)"/>
+        <text x="0" y="162" font-family="Outfit, 'Segoe UI', sans-serif" font-size="19" font-weight="600" fill="#F4F1EA">Signal Teal</text>
+        <text x="0" y="186" font-family="'Roboto Mono', 'Courier New', monospace" font-size="14" fill="#9AA1B0">#2BD1C4</text>
+        <text x="0" y="208" font-family="Inter, 'Segoe UI', sans-serif" font-size="12.5" fill="#5C6472">Biometrics, success actions</text>
+        </g><g transform="translate(320,930)">
+        <rect width="220" height="130" rx="20" fill="#E5555C"/>
+        <rect width="220" height="130" rx="20" fill="none" stroke="rgba(255,255,255,0.12)"/>
+        <text x="0" y="162" font-family="Outfit, 'Segoe UI', sans-serif" font-size="19" font-weight="600" fill="#F4F1EA">Ember</text>
+        <text x="0" y="186" font-family="'Roboto Mono', 'Courier New', monospace" font-size="14" fill="#9AA1B0">#E5555C</text>
+        <text x="0" y="208" font-family="Inter, 'Segoe UI', sans-serif" font-size="12.5" fill="#5C6472">Destructive actions</text>
+        </g><g transform="translate(580,930)">
+        <rect width="220" height="130" rx="20" fill="#F4F1EA"/>
+        <rect width="220" height="130" rx="20" fill="none" stroke="rgba(255,255,255,0.12)"/>
+        <text x="0" y="162" font-family="Outfit, 'Segoe UI', sans-serif" font-size="19" font-weight="600" fill="#F4F1EA">Warm Ivory</text>
+        <text x="0" y="186" font-family="'Roboto Mono', 'Courier New', monospace" font-size="14" fill="#9AA1B0">#F4F1EA</text>
+        <text x="0" y="208" font-family="Inter, 'Segoe UI', sans-serif" font-size="12.5" fill="#5C6472">Primary text</text>
+        </g>
+  
+    <g transform="translate(60,1250)">
+      <text x="0" y="0" font-family="Inter, 'Segoe UI', sans-serif" font-size="15" letter-spacing="2" fill="#C9A961">TYPOGRAPHY</text>
+      <text x="0" y="66" font-family="Outfit, 'Segoe UI', sans-serif" font-size="52" font-weight="600" fill="#F4F1EA">Outfit — Display</text>
+      <text x="0" y="100" font-family="Inter, 'Segoe UI', sans-serif" font-size="16" fill="#9AA1B0">Headlines, balances, screen titles. Weights 500 / 600.</text>
+      <text x="0" y="172" font-family="Inter, 'Segoe UI', sans-serif" font-size="38" font-weight="500" fill="#F4F1EA">Inter — Interface &amp; body text</text>
+      <text x="0" y="204" font-family="Inter, 'Segoe UI', sans-serif" font-size="16" fill="#9AA1B0">Labels, buttons, descriptions, settings. Weights 400 / 500 / 600.</text>
+      <text x="0" y="278" font-family="'Roboto Mono', 'Courier New', monospace" font-size="32" fill="#F4F1EA">Roboto Mono — •••• •••• •••• 4471</text>
+      <text x="0" y="310" font-family="Inter, 'Segoe UI', sans-serif" font-size="16" fill="#9AA1B0">Card numbers, CVV, expiry, PIN digits — tabular figures for scanability.</text>
+    </g>
+  
+    <g transform="translate(60,1610)">
+      <text x="0" y="0" font-family="Inter, 'Segoe UI', sans-serif" font-size="15" letter-spacing="2" fill="#C9A961">DESIGN PRINCIPLES</text>
+      <text x="0" y="46" font-family="Outfit, 'Segoe UI', sans-serif" font-size="23" font-weight="600" fill="#F4F1EA">1. Vault, not app</text>
+      <text x="0" y="72" font-family="Inter, 'Segoe UI', sans-serif" font-size="15" fill="#9AA1B0">Depth, glass and low-key motion should read as a physical safe, never a generic fintech list.</text>
+      <text x="0" y="122" font-family="Outfit, 'Segoe UI', sans-serif" font-size="23" font-weight="600" fill="#F4F1EA">2. Gold means trust, teal means action</text>
+      <text x="0" y="148" font-family="Inter, 'Segoe UI', sans-serif" font-size="15" fill="#9AA1B0">Champagne gold marks security &amp; primary CTAs. Teal is reserved for biometrics and confirmations only.</text>
+      <text x="0" y="198" font-family="Outfit, 'Segoe UI', sans-serif" font-size="23" font-weight="600" fill="#F4F1EA">3. Sensitive by default, visible on demand</text>
+      <text x="0" y="224" font-family="Inter, 'Segoe UI', sans-serif" font-size="15" fill="#9AA1B0">Card numbers and CVV are always masked first. The eye icon is the only way to reveal them, and auto-hides.</text>
+      <text x="0" y="274" font-family="Outfit, 'Segoe UI', sans-serif" font-size="23" font-weight="600" fill="#F4F1EA">4. Quiet chrome, one accent moment</text>
+      <text x="0" y="300" font-family="Inter, 'Segoe UI', sans-serif" font-size="15" fill="#9AA1B0">Every screen earns one gold or teal highlight — never both competing, never decorative gradients everywhere.</text>
+    </g>
+  <line x1="60" y1="1970" x2="1540" y2="1970" stroke="#262B37"/>
+  <text x="60" y="2004" font-family="Inter, 'Segoe UI', sans-serif" font-size="13" fill="#5C6472">Karde Brand Guide v1.0 — 100% offline, zero-knowledge digital vault</text>
+</svg>

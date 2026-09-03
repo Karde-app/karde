@@ -1,0 +1,99 @@
+<svg width="430" height="900" viewBox="0 0 430 900" xmlns="http://www.w3.org/2000/svg">
+
+  <defs>
+    <linearGradient id="bgGrad" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#12151D"/>
+      <stop offset="100%" stop-color="#0A0C11"/>
+    </linearGradient>
+    <radialGradient id="glow1" cx="50%" cy="0%" r="75%">
+      <stop offset="0%" stop-color="#C9A961" stop-opacity="0.16"/>
+      <stop offset="100%" stop-color="#C9A961" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="glowTeal" cx="80%" cy="10%" r="60%">
+      <stop offset="0%" stop-color="#2BD1C4" stop-opacity="0.14"/>
+      <stop offset="100%" stop-color="#2BD1C4" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="goldGrad" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#E7D4A0"/>
+      <stop offset="55%" stop-color="#C9A961"/>
+      <stop offset="100%" stop-color="#9C7C41"/>
+    </linearGradient>
+    <linearGradient id="goldGradSoft" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#C9A961"/>
+      <stop offset="100%" stop-color="#9C7C41"/>
+    </linearGradient>
+    <linearGradient id="tealGrad" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#57E9DC"/>
+      <stop offset="100%" stop-color="#12746C"/>
+    </linearGradient>
+    <linearGradient id="cardOnyx" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#2A2F3B"/>
+      <stop offset="45%" stop-color="#181B23"/>
+      <stop offset="100%" stop-color="#0D0F14"/>
+    </linearGradient>
+    <linearGradient id="cardGold" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#3A3120"/>
+      <stop offset="50%" stop-color="#221D14"/>
+      <stop offset="100%" stop-color="#120F0A"/>
+    </linearGradient>
+    <linearGradient id="cardTeal" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#1B3B3A"/>
+      <stop offset="50%" stop-color="#141C22"/>
+      <stop offset="100%" stop-color="#0B0F12"/>
+    </linearGradient>
+    <linearGradient id="sheen" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#FFFFFF" stop-opacity="0.10"/>
+      <stop offset="35%" stop-color="#FFFFFF" stop-opacity="0"/>
+    </linearGradient>
+    <filter id="softShadow" x="-40%" y="-40%" width="180%" height="180%">
+      <feDropShadow dx="0" dy="10" stdDeviation="16" flood-color="#000000" flood-opacity="0.45"/>
+    </filter>
+    <filter id="tightShadow" x="-40%" y="-40%" width="180%" height="180%">
+      <feDropShadow dx="0" dy="4" stdDeviation="8" flood-color="#000000" flood-opacity="0.35"/>
+    </filter>
+    <filter id="glowFilter" x="-60%" y="-60%" width="220%" height="220%">
+      <feGaussianBlur stdDeviation="7"/>
+    </filter>
+  </defs>
+  <rect width="430" height="900" fill="#05060A"/>
+  <rect x="6" y="6" width="418" height="888" rx="54" fill="#000000"/>
+  <rect x="6" y="6" width="418" height="888" rx="54" fill="none" stroke="#2A2E38" stroke-width="1.5"/>
+  <clipPath id="screenClip"><rect x="20.0" y="58" width="390" height="844" rx="40"/></clipPath>
+  <g clip-path="url(#screenClip)">
+    <g transform="translate(20.0,58)">
+
+    <rect width="390" height="844" fill="url(#bgGrad)"/>
+    <rect width="390" height="230" fill="url(#glow1)"/>
+    <rect width="390" height="230" fill="url(#glowTeal)"/>
+    <text x="32" y="38" font-family="Inter, 'Segoe UI', sans-serif" font-size="15" font-weight="600" fill="#F4F1EA">9:41</text>
+    <g transform="translate(324,26)" fill="#F4F1EA">
+      <rect x="0" y="6" width="3" height="6" rx="1"/>
+      <rect x="5" y="4" width="3" height="8" rx="1"/>
+      <rect x="10" y="2" width="3" height="10" rx="1"/>
+      <rect x="15" y="0" width="3" height="12" rx="1"/>
+      <path d="M28 1 a6 6 0 0 1 6 6 v0 a6 6 0 0 1 -6 6 a6 6 0 0 1 -6 -6 v0 a6 6 0 0 1 6 -6z" fill="none" stroke="#F4F1EA" stroke-width="1.4"/>
+      <rect x="24" y="4.4" width="8" height="5.2" rx="1.2" fill="#F4F1EA"/>
+    </g>
+    <text x="28" y="64" font-family="Outfit, 'Segoe UI', sans-serif" font-size="27" font-weight="600" fill="#F4F1EA">Vault</text>
+    <rect x="238" y="40" width="44" height="44" rx="14" fill="rgba(255,255,255,0.045)" stroke="rgba(255,255,255,0.10)" stroke-width="1"/><circle cx="256" cy="58" r="6" fill="none" stroke="#9AA1B0" stroke-width="1.7"/><line x1="260.5" y1="62.5" x2="266" y2="68" stroke="#9AA1B0" stroke-width="1.7" stroke-linecap="round"/><rect x="292" y="40" width="44" height="44" rx="14" fill="rgba(255,255,255,0.045)" stroke="rgba(255,255,255,0.10)" stroke-width="1"/><line x1="308" y1="52" x2="328" y2="52" stroke="#9AA1B0" stroke-width="1.6" stroke-linecap="round"/><line x1="308" y1="60" x2="324" y2="60" stroke="#9AA1B0" stroke-width="1.6" stroke-linecap="round"/><line x1="308" y1="68" x2="320" y2="68" stroke="#9AA1B0" stroke-width="1.6" stroke-linecap="round"/><rect x="28" y="106" width="334" height="42" rx="21" fill="rgba(255,255,255,0.04)"/><rect x="30" y="108" width="110.0" height="38" rx="19" fill="url(#goldGradSoft)"/><text x="83.66666666666666" y="133" text-anchor="middle" font-family="Inter, 'Segoe UI', sans-serif" font-size="13" font-weight="600" fill="#0A0C11">All</text><text x="194.99999999999997" y="133" text-anchor="middle" font-family="Inter, 'Segoe UI', sans-serif" font-size="13" font-weight="500" fill="#9AA1B0">Cards</text><text x="306.3333333333333" y="133" text-anchor="middle" font-family="Inter, 'Segoe UI', sans-serif" font-size="13" font-weight="500" fill="#5C6472">IDs · Soon</text><rect x="28" y="176" width="334" height="86" rx="20" fill="rgba(255,255,255,0.045)" stroke="rgba(255,255,255,0.10)" stroke-width="1"/><g transform="translate(44,190)"><g transform="translate(0,0)"><rect width="64" height="58" rx="12" fill="url(#cardGold)" filter="url(#tightShadow)"/><rect width="64" height="58" rx="12" fill="url(#sheen)"/><rect width="64" height="58" rx="12" fill="none" stroke="rgba(255,255,255,0.08)" stroke-width="1"/><text x="42" y="42" text-anchor="end" font-family="Inter, 'Segoe UI', sans-serif" font-size="12" font-weight="700" letter-spacing="1" fill="#F4F1EA" opacity="0.85"></text><text x="22" y="20" font-family="'Roboto Mono', 'Courier New', monospace" font-size="17" letter-spacing="2" fill="#F4F1EA">•••• </text></g><text x="32" y="34" text-anchor="middle" font-family="'Roboto Mono', 'Courier New', monospace" font-size="10" fill="#F4F1EA">••71</text></g><text x="128" y="208" font-family="Inter, 'Segoe UI', sans-serif" font-size="15" font-weight="600" fill="#F4F1EA">Daily Spending</text><text x="128" y="232" font-family="'Roboto Mono', 'Courier New', monospace" font-size="12.5" fill="#9AA1B0">•••• 4471 · Debit</text><rect x="264" y="188" width="106" height="20" rx="10" fill="rgba(255,255,255,0.05)"/><text x="362" y="202" text-anchor="end" font-family="Inter, 'Segoe UI', sans-serif" font-size="9.5" font-weight="700" letter-spacing="0.5" fill="#5C6472">MASTERCARD</text><path d="M344 233 l6 5 l-6 5" fill="none" stroke="#5C6472" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><rect x="28" y="276" width="334" height="86" rx="20" fill="rgba(255,255,255,0.045)" stroke="rgba(255,255,255,0.10)" stroke-width="1"/><g transform="translate(44,290)"><g transform="translate(0,0)"><rect width="64" height="58" rx="12" fill="url(#cardOnyx)" filter="url(#tightShadow)"/><rect width="64" height="58" rx="12" fill="url(#sheen)"/><rect width="64" height="58" rx="12" fill="none" stroke="rgba(255,255,255,0.08)" stroke-width="1"/><text x="42" y="42" text-anchor="end" font-family="Inter, 'Segoe UI', sans-serif" font-size="12" font-weight="700" letter-spacing="1" fill="#F4F1EA" opacity="0.85"></text><text x="22" y="20" font-family="'Roboto Mono', 'Courier New', monospace" font-size="17" letter-spacing="2" fill="#F4F1EA">•••• </text></g><text x="32" y="34" text-anchor="middle" font-family="'Roboto Mono', 'Courier New', monospace" font-size="10" fill="#F4F1EA">••91</text></g><text x="128" y="308" font-family="Inter, 'Segoe UI', sans-serif" font-size="15" font-weight="600" fill="#F4F1EA">Amex-free Travel</text><text x="128" y="332" font-family="'Roboto Mono', 'Courier New', monospace" font-size="12.5" fill="#9AA1B0">•••• 2291 · Credit</text><rect x="318" y="288" width="52" height="20" rx="10" fill="rgba(255,255,255,0.05)"/><text x="362" y="302" text-anchor="end" font-family="Inter, 'Segoe UI', sans-serif" font-size="9.5" font-weight="700" letter-spacing="0.5" fill="#5C6472">VISA</text><path d="M344 333 l6 5 l-6 5" fill="none" stroke="#5C6472" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><rect x="28" y="376" width="334" height="86" rx="20" fill="rgba(255,255,255,0.045)" stroke="rgba(255,255,255,0.10)" stroke-width="1"/><g transform="translate(44,390)"><g transform="translate(0,0)"><rect width="64" height="58" rx="12" fill="url(#cardTeal)" filter="url(#tightShadow)"/><rect width="64" height="58" rx="12" fill="url(#sheen)"/><rect width="64" height="58" rx="12" fill="none" stroke="rgba(255,255,255,0.08)" stroke-width="1"/><text x="42" y="42" text-anchor="end" font-family="Inter, 'Segoe UI', sans-serif" font-size="12" font-weight="700" letter-spacing="1" fill="#F4F1EA" opacity="0.85"></text><text x="22" y="20" font-family="'Roboto Mono', 'Courier New', monospace" font-size="17" letter-spacing="2" fill="#F4F1EA">•••• </text></g><text x="32" y="34" text-anchor="middle" font-family="'Roboto Mono', 'Courier New', monospace" font-size="10" fill="#F4F1EA">••05</text></g><text x="128" y="408" font-family="Inter, 'Segoe UI', sans-serif" font-size="15" font-weight="600" fill="#F4F1EA">Business Expenses</text><text x="128" y="432" font-family="'Roboto Mono', 'Courier New', monospace" font-size="12.5" fill="#9AA1B0">•••• 1005 · Credit</text><rect x="318" y="388" width="52" height="20" rx="10" fill="rgba(255,255,255,0.05)"/><text x="362" y="402" text-anchor="end" font-family="Inter, 'Segoe UI', sans-serif" font-size="9.5" font-weight="700" letter-spacing="0.5" fill="#5C6472">AMEX</text><path d="M344 433 l6 5 l-6 5" fill="none" stroke="#5C6472" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><rect x="28" y="476" width="334" height="86" rx="20" fill="rgba(255,255,255,0.045)" stroke="rgba(255,255,255,0.10)" stroke-width="1"/><g transform="translate(44,490)"><g transform="translate(0,0)"><rect width="64" height="58" rx="12" fill="url(#cardOnyx)" filter="url(#tightShadow)"/><rect width="64" height="58" rx="12" fill="url(#sheen)"/><rect width="64" height="58" rx="12" fill="none" stroke="rgba(255,255,255,0.08)" stroke-width="1"/><text x="42" y="42" text-anchor="end" font-family="Inter, 'Segoe UI', sans-serif" font-size="12" font-weight="700" letter-spacing="1" fill="#F4F1EA" opacity="0.85"></text><text x="22" y="20" font-family="'Roboto Mono', 'Courier New', monospace" font-size="17" letter-spacing="2" fill="#F4F1EA">•••• </text></g><text x="32" y="34" text-anchor="middle" font-family="'Roboto Mono', 'Courier New', monospace" font-size="10" fill="#F4F1EA">••83</text></g><text x="128" y="508" font-family="Inter, 'Segoe UI', sans-serif" font-size="15" font-weight="600" fill="#F4F1EA">Backup Card</text><text x="128" y="532" font-family="'Roboto Mono', 'Courier New', monospace" font-size="12.5" fill="#9AA1B0">•••• 7783 · Debit</text><rect x="318" y="488" width="52" height="20" rx="10" fill="rgba(255,255,255,0.05)"/><text x="362" y="502" text-anchor="end" font-family="Inter, 'Segoe UI', sans-serif" font-size="9.5" font-weight="700" letter-spacing="0.5" fill="#5C6472">VISA</text><path d="M344 533 l6 5 l-6 5" fill="none" stroke="#5C6472" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><circle cx="338" cy="692" r="30" fill="url(#goldGrad)" filter="url(#tightShadow)"/><g transform="translate(338,692) scale(1.1)" stroke="#0A0C11" stroke-width="2.4" stroke-linecap="round"><line x1="0" y1="-7" x2="0" y2="7"/><line x1="-7" y1="0" x2="7" y2="0"/></g>
+    <g transform="translate(0,748)">
+      <rect x="0" y="0" width="390" height="96" fill="#0A0C11"/>
+      <rect x="0" y="0" width="390" height="1" fill="#262B37"/>
+      
+        <g><g transform="translate(65.0,29) scale(1.0)" fill="none" stroke="#5C6472" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M3 11.5L12 4l9 7.5"/><path d="M5.5 10v9a1 1 0 0 0 1 1H10v-5.5a2 2 0 0 1 4 0V20h3.5a1 1 0 0 0 1-1v-9"/></g>
+        <text x="65.0" y="58" text-anchor="middle" font-family="Inter, 'Segoe UI', sans-serif" font-size="11" font-weight="500" fill="#5C6472">Home</text></g>
+        <g><rect x="169.0" y="14" width="52" height="30" rx="15" fill="rgba(201,169,97,0.14)"/><g transform="translate(195.0,29) scale(1.0)" fill="none" stroke="#C9A961" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">
+    <rect x="3" y="3.5" width="18" height="17" rx="2.5"/><circle cx="12" cy="12" r="3.6"/><path d="M12 8.4v0M8.6 12h0M15.4 12h0M12 15.6v0"/></g>
+        <text x="195.0" y="58" text-anchor="middle" font-family="Inter, 'Segoe UI', sans-serif" font-size="11" font-weight="600" fill="#C9A961">Vault</text></g>
+        <g><g transform="translate(325.0,29) scale(1.0)" fill="none" stroke="#5C6472" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">
+    <circle cx="12" cy="12" r="3.2"/>
+    <path d="M19.4 13.5a1.7 1.7 0 0 0 .3 1.9l.1.1a2 2 0 1 1-2.9 2.9l-.1-.1a1.7 1.7 0 0 0-1.9-.3 1.7 1.7 0 0 0-1 1.6V20a2 2 0 1 1-4 0v-.2a1.7 1.7 0 0 0-1.1-1.6 1.7 1.7 0 0 0-1.9.3l-.1.1a2 2 0 1 1-2.9-2.9l.1-.1a1.7 1.7 0 0 0 .3-1.9 1.7 1.7 0 0 0-1.6-1H4a2 2 0 1 1 0-4h.2a1.7 1.7 0 0 0 1.6-1.1 1.7 1.7 0 0 0-.3-1.9l-.1-.1a2 2 0 1 1 2.9-2.9l.1.1a1.7 1.7 0 0 0 1.9.3H10a1.7 1.7 0 0 0 1-1.6V4a2 2 0 1 1 4 0v.2a1.7 1.7 0 0 0 1 1.6 1.7 1.7 0 0 0 1.9-.3l.1-.1a2 2 0 1 1 2.9 2.9l-.1.1a1.7 1.7 0 0 0-.3 1.9V10a1.7 1.7 0 0 0 1.6 1H20a2 2 0 1 1 0 4h-.2a1.7 1.7 0 0 0-1.6 1z"/></g>
+        <text x="325.0" y="58" text-anchor="middle" font-family="Inter, 'Segoe UI', sans-serif" font-size="11" font-weight="500" fill="#5C6472">Settings</text></g>
+    </g>
+    </g>
+  </g>
+  <rect x="20.0" y="58" width="390" height="844" rx="40" fill="none" stroke="#333844" stroke-width="2"/>
+  <rect x="155.0" y="20" width="120" height="30" rx="15" fill="#000"/>
+  <text x="215.0" y="884" text-anchor="middle" font-family="Inter, 'Segoe UI', sans-serif" font-size="12" fill="#5C6472">Vault — Items List</text>
+</svg>
