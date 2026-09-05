@@ -577,5 +577,5 @@
   "privacySection7Title": "7. Keep Your Screen Lock",
   "privacySection7Body": "Karde's encryption key lives in your phone's security chip and is tied to your screen lock. If you remove or reset your phone's PIN, pattern, password or fingerprint, that key is destroyed and your saved items can no longer be opened — by anyone, including us. An encrypted backup is the only thing that survives it, so make one before changing how your phone unlocks.",
   "privacySection8Title": "8. Contact",
-  "privacySection8Body": "Questions about this policy, or anything unclear: support@getgubae.com. The full policy is published at getgubae.com/privacy."
+  "privacySection8Body": "Questions about this policy, or anything unclear: support@getgubae.com."
 }

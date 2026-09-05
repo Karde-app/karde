@@ -427,5 +427,5 @@
   "privacySection7Title": "7. Conservez votre verrouillage d'écran",
   "privacySection7Body": "La clé de chiffrement de Karde réside dans la puce de sécurité de votre téléphone et dépend de votre verrouillage d'écran. Si vous supprimez ou réinitialisez le code, le schéma, le mot de passe ou l'empreinte de votre téléphone, cette clé est détruite et vos éléments enregistrés ne peuvent plus être ouverts — par personne, nous y compris. Une sauvegarde chiffrée est la seule chose qui y survive : créez-en une avant de modifier la façon dont votre téléphone se déverrouille.",
   "privacySection8Title": "8. Nous contacter",
-  "privacySection8Body": "Questions sur cette politique, ou tout point qui vous semble flou : support@getgubae.com. La politique complète est publiée sur getgubae.com/privacy."
+  "privacySection8Body": "Questions sur cette politique, ou tout point qui vous semble flou : support@getgubae.com."
 }

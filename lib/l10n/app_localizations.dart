@@ -2665,7 +2665,7 @@ abstract class AppLocalizations {
   /// No description provided for @privacySection8Body.
   ///
   /// In en, this message translates to:
-  /// **'Questions about this policy, or anything unclear: support@getgubae.com. The full policy is published at getgubae.com/privacy.'**
+  /// **'Questions about this policy, or anything unclear: support@getgubae.com.'**
   String get privacySection8Body;
 }
 

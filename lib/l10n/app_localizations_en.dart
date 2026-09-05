@@ -1461,5 +1461,5 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get privacySection8Body =>
-      'Questions about this policy, or anything unclear: support@getgubae.com. The full policy is published at getgubae.com/privacy.';
+      'Questions about this policy, or anything unclear: support@getgubae.com.';
 }
