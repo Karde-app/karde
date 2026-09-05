@@ -74,8 +74,8 @@
   
   "recoverySetupTitle": "የፒን ማግኛ",
   "recoverySetupSubtitle": "ፒንዎን ቢረሱ እንዴት ማግኘት ይፈልጋሉ?",
-  "biometricRecovery": "የስልክ ባዮሜትሪክስ",
-  "biometricRecoveryDesc": "ፒንዎን ዳግም ለማስጀመር የጣት አሻራዎን ወይም የፊት መታወቂያ ይጠቀሙ።",
+  "biometricRecovery": "የስልክ መቆለፊያ",
+  "biometricRecoveryDesc": "ስልክዎን የሚከፍቱበትን መንገድ — የጣት አሻራ፣ ፊት፣ ንድፍ፣ ፒን ወይም የይለፍ ቃል — ተጠቅመው የካርዴ ፒንዎን ዳግም ያስጀምሩ።",
   "securityQuestions": "የደህንነት ጥያቄዎች",
   "securityQuestionsDesc": "ፒንዎን ዳግም ለማስጀመር 2 ጥያቄዎችን ይመልሱ።",
   "noRecovery": "ምንም ማግኛ የለም",

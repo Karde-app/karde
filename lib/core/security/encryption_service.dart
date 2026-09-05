@@ -77,6 +77,29 @@ class EncryptionService {
     }
   }
 
+  /// Whether the fingerprints or faces on this phone changed since Karde last
+  /// looked.
+  ///
+  /// Purely informational, and deliberately so. Enrolling a finger needs the
+  /// phone's own screen lock, so it is something the owner agreed to — and the
+  /// vault key already accepts that same screen lock, so a new fingerprint grants
+  /// an attacker nothing they could not already do. Karde therefore reports the
+  /// change rather than reacting to it. Nothing is locked, and no stored record
+  /// is touched.
+  ///
+  /// Raises no authentication prompt, and returns false on the first ever call,
+  /// which only establishes the baseline.
+  ///
+  /// Fails closed in the quiet direction: any error reports "nothing changed",
+  /// because a diagnostic must never invent an alarm.
+  Future<bool> biometricsChanged() async {
+    try {
+      return await _channel.invokeMethod<bool>('biometricsChanged') ?? false;
+    } on PlatformException {
+      return false;
+    }
+  }
+
   Future<String> encrypt(String plaintext) {
     return SystemInteractionGuard.run(() async {
       try {

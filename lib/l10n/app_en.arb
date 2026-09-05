@@ -81,8 +81,8 @@
   
   "recoverySetupTitle": "PIN Recovery",
   "recoverySetupSubtitle": "How would you like to recover your PIN if you forget it?",
-  "biometricRecovery": "Phone Biometrics",
-  "biometricRecoveryDesc": "Use your device's fingerprint or Face ID to reset your PIN.",
+  "biometricRecovery": "Phone Lock",
+  "biometricRecoveryDesc": "Use however you unlock your phone — fingerprint, face, pattern, PIN or password — to reset your Karde PIN.",
   "securityQuestions": "Security Questions",
   "securityQuestionsDesc": "Answer 2 personal questions to reset your PIN.",
   "noRecovery": "No Recovery",

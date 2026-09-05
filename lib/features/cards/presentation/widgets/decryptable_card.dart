@@ -17,7 +17,23 @@ class DecryptableCard extends ConsumerStatefulWidget {
   final VirtualCard card;
   final bool disableNavigation;
 
-  const DecryptableCard({super.key, required this.card, this.disableNavigation = false});
+  /// Handed the secrets this widget has just decrypted.
+  ///
+  /// The eye already pays for a full decrypt — notes and photo included, since
+  /// Phase 7a moved them into the same payload — so the detail screen can fill
+  /// its own sections from that one authentication instead of asking again.
+  final void Function(CardSecrets secrets)? onRevealed;
+
+  /// Fired when the card re-masks, so the screen re-locks in step with it.
+  final VoidCallback? onHidden;
+
+  const DecryptableCard({
+    super.key,
+    required this.card,
+    this.disableNavigation = false,
+    this.onRevealed,
+    this.onHidden,
+  });
 
   @override
   ConsumerState<DecryptableCard> createState() => _DecryptableCardState();
@@ -92,6 +108,7 @@ class _DecryptableCardState extends ConsumerState<DecryptableCard> with WidgetsB
 
   void _hideDetails() {
     if (!_isDecrypted) return;
+    widget.onHidden?.call();
     setState(() {
       _isDecrypted = false;
       _cardNumber = null;
@@ -132,6 +149,7 @@ class _DecryptableCardState extends ConsumerState<DecryptableCard> with WidgetsB
         });
         _windowSecurity.enableSecureMode();
         _startHideTimer();
+        widget.onRevealed?.call(secrets);
       }
     } on VaultAuthCancelled {
       // FIX 4-2: user dismissed the prompt. Stay masked, say nothing.

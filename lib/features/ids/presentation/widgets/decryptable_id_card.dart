@@ -19,10 +19,22 @@ class DecryptableIdCard extends ConsumerStatefulWidget {
   final VirtualId idDoc;
   final bool disableNavigation;
 
+  /// Handed the fields this widget has just decrypted.
+  ///
+  /// The eye already pays for a full decrypt, so the detail screen can fill its
+  /// "Additional Details" section from that same authentication rather than
+  /// raising a second prompt of its own.
+  final void Function(Map<String, String> fields)? onRevealed;
+
+  /// Fired when the document re-masks, so the screen re-locks in step with it.
+  final VoidCallback? onHidden;
+
   const DecryptableIdCard({
-    super.key, 
-    required this.idDoc, 
+    super.key,
+    required this.idDoc,
     this.disableNavigation = false,
+    this.onRevealed,
+    this.onHidden,
   });
 
   @override
@@ -98,6 +110,7 @@ class _DecryptableIdCardState extends ConsumerState<DecryptableIdCard> with Widg
 
   void _hideDetails() {
     if (!_showingSecrets) return;
+    widget.onHidden?.call();
     setState(() {
       _isDecrypted = false;
       _decryptedData = null;
@@ -144,6 +157,7 @@ class _DecryptableIdCardState extends ConsumerState<DecryptableIdCard> with Widg
         });
         _windowSecurity.enableSecureMode();
         _startHideTimer();
+        widget.onRevealed?.call(data);
       }
     } on VaultAuthCancelled {
       // FIX 4-2: user dismissed the prompt. Stay masked, say nothing.

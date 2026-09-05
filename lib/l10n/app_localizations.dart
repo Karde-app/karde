@@ -483,13 +483,13 @@ abstract class AppLocalizations {
   /// No description provided for @biometricRecovery.
   ///
   /// In en, this message translates to:
-  /// **'Phone Biometrics'**
+  /// **'Phone Lock'**
   String get biometricRecovery;
 
   /// No description provided for @biometricRecoveryDesc.
   ///
   /// In en, this message translates to:
-  /// **'Use your device\'s fingerprint or Face ID to reset your PIN.'**
+  /// **'Use however you unlock your phone — fingerprint, face, pattern, PIN or password — to reset your Karde PIN.'**
   String get biometricRecoveryDesc;
 
   /// No description provided for @securityQuestions.

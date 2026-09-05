@@ -32,6 +32,10 @@ void resetAllVaultState(WidgetRef ref) {
   ref.invalidate(cardsProvider);
   ref.invalidate(idsProvider);
   ref.invalidate(vaultHealthProvider);
+  // Caches a SharedPreferences flag in memory, so it has the same defect as the
+  // settings notifiers below: without this an erased vault could still be
+  // showing a fingerprint-change notice belonging to the previous owner.
+  ref.invalidate(biometricChangeNoticeProvider);
 
   // Everything seeded from SharedPreferences at construction time.
   ref.invalidate(themeModeProvider);

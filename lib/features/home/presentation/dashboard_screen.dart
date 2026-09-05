@@ -241,6 +241,74 @@ class DashboardScreen extends ConsumerWidget {
               
               const Spacer(),
               
+              // Fingerprint-change notice. Informational only: it never blocks
+              // anything and nothing in the vault is touched. See
+              // BiometricChangeNotice for why this is a message rather than a lock.
+              ref.watch(biometricChangeNoticeProvider).maybeWhen(
+                    data: (show) => show
+                        ? Padding(
+                            padding: const EdgeInsets.only(bottom: 12),
+                            child: Container(
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 16, vertical: 12),
+                              decoration: BoxDecoration(
+                                color: theme.colorScheme.surface,
+                                borderRadius: BorderRadius.circular(16),
+                                border: Border.all(
+                                  color: Colors.orange.withValues(alpha: 0.5),
+                                ),
+                              ),
+                              child: Row(
+                                children: [
+                                  const Icon(Icons.fingerprint,
+                                      color: Colors.orange, size: 28),
+                                  const SizedBox(width: 16),
+                                  Expanded(
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        const Text(
+                                          'Phone unlock changed',
+                                          style: TextStyle(
+                                            color: Colors.orange,
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 16,
+                                          ),
+                                        ),
+                                        const SizedBox(height: 4),
+                                        Text(
+                                          'A fingerprint or face was added or removed on this phone. If that was you, nothing is wrong.',
+                                          style: theme.textTheme.bodyMedium
+                                              ?.copyWith(fontSize: 13),
+                                        ),
+                                        const SizedBox(height: 6),
+                                        GestureDetector(
+                                          onTap: () => ref
+                                              .read(biometricChangeNoticeProvider
+                                                  .notifier)
+                                              .acknowledge(),
+                                          child: Text(
+                                            'Got it',
+                                            style: TextStyle(
+                                              color:
+                                                  KardeColors.champagneGold,
+                                              fontWeight: FontWeight.bold,
+                                              fontSize: 13.5,
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          )
+                        : const SizedBox.shrink(),
+                    orElse: () => const SizedBox.shrink(),
+                  ),
+
               // Vault Health Banner
               vaultHealthAsync.when(
                 data: (status) {

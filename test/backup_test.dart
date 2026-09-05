@@ -34,6 +34,9 @@ class FakeVault implements EncryptionService {
   Future<bool> willPromptEveryUse() async => true;
 
   @override
+  Future<bool> biometricsChanged() async => false;
+
+  @override
   Future<String> encrypt(String plaintext) async {
     encryptCalls++;
     if (encryptCalls == failEncryptOnCall) throw const VaultAuthCancelled();

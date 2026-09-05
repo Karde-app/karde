@@ -27,16 +27,23 @@ class _IdDetailsScreenState extends ConsumerState<IdDetailsScreen> {
   final _encryptionService = EncryptionService();
   
   Map<String, String>? _extraDetails;
-  bool _isLoading = true;
+  bool _isLoading = false;
+  bool _isUnlocked = false;
   String? _error;
 
   @override
   void initState() {
     super.initState();
-    _loadExtraDetails();
+    // FIX (parity with card_details_screen): the extra details are NOT decrypted
+    // on open any more. Every use of the vault key costs an OS auth prompt, so
+    // merely opening an ID must not silently trigger one — and it must not put
+    // the holder's details on screen before they asked for them. The card side
+    // had this removed under audit fix 2-1; the ID side was missed.
+    _isLoading = false;
   }
 
-  Future<void> _loadExtraDetails() async {
+  Future<void> _unlock() async {
+    setState(() => _isLoading = true);
     try {
       final payload = await ref.read(idRepositoryProvider).payloadFor(widget.idDoc);
       final decryptedJsonString = await _encryptionService.decrypt(payload);
@@ -64,13 +71,19 @@ class _IdDetailsScreenState extends ConsumerState<IdDetailsScreen> {
       if (mounted) {
         setState(() {
           _extraDetails = data;
+          _isUnlocked = true;
           _isLoading = false;
         });
       }
+    } on VaultAuthCancelled {
+      // Dismissing the prompt is a deliberate user action, not a failure. Leave
+      // the section locked and say nothing, exactly as the card screen does.
+      if (mounted) setState(() => _isLoading = false);
     } catch (e) {
       if (mounted) {
         setState(() {
-          _error = 'Decryption failed. Data might be corrupted.';
+          _error = 'Could not open this document. Try again.';
+          _isUnlocked = true;
           _isLoading = false;
         });
       }
@@ -153,24 +166,53 @@ class _IdDetailsScreenState extends ConsumerState<IdDetailsScreen> {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             // The Card Preview
-            DecryptableIdCard(idDoc: widget.idDoc, disableNavigation: true),
+            // Same single authentication serves both: the eye decrypts the whole
+            // payload, so the Additional Details section below opens with it
+            // instead of raising a second prompt, and re-locks when it re-masks.
+            DecryptableIdCard(
+              idDoc: widget.idDoc,
+              disableNavigation: true,
+              onRevealed: (fields) {
+                if (!mounted) return;
+                final cardFields = {
+                  IdFieldType.fullName.name,
+                  IdFieldType.dateOfBirth.name,
+                  IdFieldType.issueDate.name,
+                  IdFieldType.expiryDate.name,
+                  IdFieldType.documentNumber.name,
+                };
+                final extra = <String, String>{};
+                fields.forEach((key, value) {
+                  if (!cardFields.contains(key) && value.trim().isNotEmpty) {
+                    extra[key] = value;
+                  }
+                });
+                setState(() {
+                  _extraDetails = extra;
+                  _isUnlocked = true;
+                  _isLoading = false;
+                  _error = null;
+                });
+              },
+              onHidden: () {
+                if (!mounted) return;
+                setState(() {
+                  _extraDetails = null;
+                  _isUnlocked = false;
+                });
+              },
+            ),
             const SizedBox(height: 32),
             
             // Security Status
             _buildSecurityBadge(loc),
             const SizedBox(height: 24),
             
-            // Extra Details Section
-            if (_isLoading)
-               const Center(child: CircularProgressIndicator())
-            else if (_error != null)
-               Center(child: Text(_error!, style: const TextStyle(color: KardeColors.ember)))
-            else if (_extraDetails != null && _extraDetails!.isNotEmpty) ...[
-              _buildSectionTitle('Additional Details'),
-              const SizedBox(height: 8),
-              _buildExtraDetailsBox(loc),
-              const SizedBox(height: 24),
-            ],
+            // Extra Details Section. Locked until asked for — see initState.
+            _buildSectionTitle('Additional Details'),
+            const SizedBox(height: 8),
+            _buildExtraDetails(loc),
+            const SizedBox(height: 24),
             
             // Metadata Section
             _buildSectionTitle(loc.cardDetails), // "Details"
@@ -269,6 +311,113 @@ class _IdDetailsScreenState extends ConsumerState<IdDetailsScreen> {
       ),
     );
   }
+  /// The gate in front of the document's details.
+  ///
+  /// Mirrors `card_details_screen._buildNotesBox`. Opening an ID used to decrypt
+  /// immediately, which cost an authentication prompt just to look at the screen
+  /// and put the holder's details on show before they had asked. One prompt still
+  /// opens everything, because it is all one ciphertext.
+  Widget _buildExtraDetails(AppLocalizations loc) {
+    if (_isLoading) {
+      return Container(
+        height: 100,
+        decoration: BoxDecoration(
+          color: Colors.grey.withValues(alpha: 0.05),
+          borderRadius: BorderRadius.circular(12),
+        ),
+        child: const Center(child: CircularProgressIndicator()),
+      );
+    }
+
+    if (!_isUnlocked) {
+      final theme = Theme.of(context);
+      return InkWell(
+        onTap: _unlock,
+        borderRadius: BorderRadius.circular(16),
+        child: Container(
+          width: double.infinity,
+          padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 20),
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              colors: [
+                KardeColors.champagneGold.withValues(alpha: 0.10),
+                KardeColors.champagneGold.withValues(alpha: 0.02),
+              ],
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+            ),
+            borderRadius: BorderRadius.circular(16),
+            border: Border.all(
+              color: KardeColors.champagneGold.withValues(alpha: 0.30),
+            ),
+          ),
+          child: Row(
+            children: [
+              Container(
+                width: 42,
+                height: 42,
+                decoration: BoxDecoration(
+                  color: KardeColors.champagneGold.withValues(alpha: 0.15),
+                  shape: BoxShape.circle,
+                ),
+                child: const Icon(Icons.lock_outline,
+                    size: 20, color: KardeColors.champagneGold),
+              ),
+              const SizedBox(width: 14),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Document details',
+                      style: TextStyle(
+                        fontFamily: 'Outfit',
+                        fontSize: 15.5,
+                        fontWeight: FontWeight.w600,
+                        color: theme.colorScheme.onSurface,
+                      ),
+                    ),
+                    const SizedBox(height: 3),
+                    Text(
+                      'Tap to unlock',
+                      style: TextStyle(
+                        fontFamily: 'Inter',
+                        fontSize: 12.5,
+                        color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              Icon(Icons.fingerprint,
+                  size: 22,
+                  color: KardeColors.champagneGold.withValues(alpha: 0.8)),
+            ],
+          ),
+        ),
+      );
+    }
+
+    if (_error != null) {
+      return Center(
+        child: Text(_error!, style: const TextStyle(color: KardeColors.ember)),
+      );
+    }
+
+    if (_extraDetails == null || _extraDetails!.isEmpty) {
+      return Text(
+        'This document has no extra details.',
+        style: TextStyle(
+          fontFamily: 'Inter',
+          fontSize: 13,
+          color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6),
+        ),
+      );
+    }
+
+    return _buildExtraDetailsBox(loc);
+  }
+
 
   Widget _buildExtraDetailsBox(AppLocalizations loc) {
     return Container(

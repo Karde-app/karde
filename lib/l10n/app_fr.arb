@@ -74,8 +74,8 @@
   
   "recoverySetupTitle": "Récupération du code PIN",
   "recoverySetupSubtitle": "Comment souhaitez-vous récupérer votre code PIN si vous l'oubliez ?",
-  "biometricRecovery": "Biométrie du téléphone",
-  "biometricRecoveryDesc": "Utilisez votre empreinte digitale ou Face ID pour réinitialiser votre code PIN.",
+  "biometricRecovery": "Verrouillage du téléphone",
+  "biometricRecoveryDesc": "Utilisez la méthode qui déverrouille votre téléphone — empreinte digitale, visage, schéma, code PIN ou mot de passe — pour réinitialiser votre code PIN Karde.",
   "securityQuestions": "Questions de sécurité",
   "securityQuestionsDesc": "Répondez à 2 questions pour réinitialiser votre code PIN.",
   "noRecovery": "Aucune récupération",

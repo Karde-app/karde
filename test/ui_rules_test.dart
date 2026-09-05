@@ -250,4 +250,55 @@ void main() {
       await v6.close();
     });
   });
+
+  group("Onboarding must not leave routes underneath the app", () {
+    // Regression guard for a bug the user hit on the device: editing a card and
+    // saving dropped them onto the language picker, vault apparently gone.
+    //
+    // Nothing was lost. Onboarding handed off to MainScaffold with
+    // pushReplacement, which swaps only the TOP route — so the language,
+    // lock-setup and PIN screens stayed on the stack underneath MainScaffold for
+    // the entire life of the install. Any stray pop then surfaced one of them,
+    // and the bottom of that stack is "Welcome to Karde".
+    //
+    // Every onboarding handoff must therefore clear the stack. Asserted against
+    // the source because the failure is a navigator-stack property that no
+    // widget test of a single screen would notice.
+    const onboardingFiles = [
+      "lib/features/onboarding/presentation/recovery_setup_screen.dart",
+      "lib/features/onboarding/presentation/security_questions_setup_screen.dart",
+      "lib/features/onboarding/presentation/pin_setup_screen.dart",
+      "lib/features/onboarding/presentation/lock_setup_screen.dart",
+    ];
+
+    for (final path in onboardingFiles) {
+      test("$path enters MainScaffold with pushAndRemoveUntil", () {
+        final source = File(path).readAsStringSync();
+        final marker = "const MainScaffold()";
+
+        for (var i = source.indexOf(marker);
+            i != -1;
+            i = source.indexOf(marker, i + 1)) {
+          final start = i - 260 < 0 ? 0 : i - 260;
+          final preceding = source.substring(start, i);
+          final call = preceding.lastIndexOf("Navigator.");
+          if (call == -1) continue;
+          final navigation = preceding.substring(call);
+
+          expect(
+            navigation.contains("pushReplacement"),
+            isFalse,
+            reason:
+                "$path reaches MainScaffold via pushReplacement, which leaves "
+                "the onboarding screens on the stack underneath it.",
+          );
+          expect(
+            navigation.contains("pushAndRemoveUntil"),
+            isTrue,
+            reason: "$path must clear the stack when entering MainScaffold.",
+          );
+        }
+      });
+    }
+  });
 }

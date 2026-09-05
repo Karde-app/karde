@@ -191,6 +191,10 @@ class RealisticIdCard extends StatelessWidget {
                         ),
                       ),
                     ),
+                    // Reserve the corner the reveal button occupies (top:14 right:14,
+                    // a 32px circle). Without this the spaceBetween row pushes its last
+                    // element under the button and the label is half hidden.
+                    const SizedBox(width: 44),
                   ],
                 ),
                 
@@ -381,6 +385,10 @@ class RealisticIdCard extends StatelessWidget {
                         ),
                       ),
                     ),
+                    // Reserve the corner the reveal button occupies (top:14 right:14,
+                    // a 32px circle). Without this the spaceBetween row pushes its last
+                    // element under the button and the label is half hidden.
+                    const SizedBox(width: 44),
                   ],
                 ),
                 
@@ -620,6 +628,10 @@ class RealisticIdCard extends StatelessWidget {
                       ],
                     ),
                     
+                    // Reserve the corner the reveal button occupies (top:14 right:14,
+                    // a 32px circle). Without this the spaceBetween row pushes its last
+                    // element under the button and the label is half hidden.
+                    const SizedBox(width: 44),
                   ],
                 ),
                 
@@ -799,6 +811,10 @@ class RealisticIdCard extends StatelessWidget {
                         ),
                       ),
                     ),
+                    // Reserve the corner the reveal button occupies (top:14 right:14,
+                    // a 32px circle). Without this the spaceBetween row pushes its last
+                    // element under the button and the label is half hidden.
+                    const SizedBox(width: 44),
                   ],
                 ),
                 
@@ -965,6 +981,10 @@ class RealisticIdCard extends StatelessWidget {
                         ),
                       ),
                     ),
+                    // Reserve the corner the reveal button occupies (top:14 right:14,
+                    // a 32px circle). Without this the spaceBetween row pushes its last
+                    // element under the button and the label is half hidden.
+                    const SizedBox(width: 44),
                   ],
                 ),
                 

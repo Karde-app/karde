@@ -148,7 +148,32 @@ class _CardDetailsScreenState extends ConsumerState<CardDetailsScreen> {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             // The Card itself (Starts masked, can be revealed)
-            DecryptableCard(card: widget.card, disableNavigation: true),
+            // The eye on the card decrypts the whole payload anyway, so it also
+            // fills the notes and photo below rather than making the user
+            // authenticate a second time for the same ciphertext. Re-masking the
+            // card re-locks them too, so one auto-hide clears the whole screen.
+            DecryptableCard(
+              card: widget.card,
+              disableNavigation: true,
+              onRevealed: (secrets) {
+                if (!mounted) return;
+                setState(() {
+                  _notes = secrets.notes;
+                  _photo =
+                      secrets.hasImage ? base64Decode(secrets.image!) : null;
+                  _isUnlocked = true;
+                  _isLoadingNotes = false;
+                });
+              },
+              onHidden: () {
+                if (!mounted) return;
+                setState(() {
+                  _notes = null;
+                  _photo = null;
+                  _isUnlocked = false;
+                });
+              },
+            ),
             const SizedBox(height: 32),
             
             // Security Status

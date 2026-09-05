@@ -200,11 +200,11 @@ class AppLocalizationsAm extends AppLocalizations {
   String get recoverySetupSubtitle => 'ፒንዎን ቢረሱ እንዴት ማግኘት ይፈልጋሉ?';
 
   @override
-  String get biometricRecovery => 'የስልክ ባዮሜትሪክስ';
+  String get biometricRecovery => 'የስልክ መቆለፊያ';
 
   @override
   String get biometricRecoveryDesc =>
-      'ፒንዎን ዳግም ለማስጀመር የጣት አሻራዎን ወይም የፊት መታወቂያ ይጠቀሙ።';
+      'ስልክዎን የሚከፍቱበትን መንገድ — የጣት አሻራ፣ ፊት፣ ንድፍ፣ ፒን ወይም የይለፍ ቃል — ተጠቅመው የካርዴ ፒንዎን ዳግም ያስጀምሩ።';
 
   @override
   String get securityQuestions => 'የደህንነት ጥያቄዎች';

@@ -60,6 +60,12 @@ class SettingsRepository {
   static const _biometricUnlockKey = 'biometric_unlock';
   
   static const _recoveryPreferenceKey = 'recovery_preference'; // 'biometrics', 'questions', 'none'
+
+  /// Set when the biometric canary reports an enrolment change, cleared when the
+  /// user acknowledges the notice. Persisted because the canary reports a given
+  /// change exactly once — it replants itself immediately — so without this the
+  /// notice would vanish on the next app start whether or not it was ever read.
+  static const _biometricNoticeKey = 'biometric_change_pending';
   static const _securityQuestion1Key = 'security_question_1';
   static const _securityAnswer1Key = 'security_answer_1';
   static const _securityQuestion2Key = 'security_question_2';
@@ -105,6 +111,14 @@ class SettingsRepository {
   // First Launch
   bool getIsFirstLaunch() {
     return _prefs.getBool(_firstLaunchKey) ?? true;
+  }
+
+  bool getBiometricChangePending() {
+    return _prefs.getBool(_biometricNoticeKey) ?? false;
+  }
+
+  Future<void> setBiometricChangePending(bool pending) async {
+    await _prefs.setBool(_biometricNoticeKey, pending);
   }
 
   Future<void> setIsFirstLaunch(bool isFirstLaunch) async {

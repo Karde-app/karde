@@ -4,6 +4,7 @@ import android.content.Intent
 import android.os.Build
 import android.os.Handler
 import android.os.Looper
+import android.util.Log
 import android.security.keystore.KeyGenParameterSpec
 import android.security.keystore.KeyPermanentlyInvalidatedException
 import android.security.keystore.KeyProperties
@@ -35,6 +36,9 @@ class MainActivity : FlutterFragmentActivity() {
     // authentication, so it is deliberately abandoned rather than migrated —
     // any data encrypted under it is intentionally unrecoverable.
     private val KEY_ALIAS = "ibank_master_key_v3"
+
+    /** Holds nothing. Exists only so its death reports a biometric enrolment change. */
+    private val CANARY_ALIAS = "karde_biometric_canary_v1"
     private val ANDROID_KEYSTORE = "AndroidKeyStore"
     private val TRANSFORMATION = "AES/GCM/NoPadding"
 
@@ -62,6 +66,7 @@ class MainActivity : FlutterFragmentActivity() {
                     }
                     "canUseVaultKey" -> result.success(canUseVaultKey())
                     "willPromptEveryUse" -> result.success(willPromptEveryUse())
+                    "biometricsChanged" -> result.success(biometricsChanged())
                     else -> result.notImplemented()
                 }
             }
@@ -197,6 +202,93 @@ class MainActivity : FlutterFragmentActivity() {
      */
     private fun willPromptEveryUse(): Boolean =
         Build.VERSION.SDK_INT >= Build.VERSION_CODES.R && canUseVaultKey()
+
+    /**
+     * Reports whether the fingerprints or faces enrolled on this device have
+     * changed since Karde last looked.
+     *
+     * This is a *canary*, not a lock. It is a second Keystore key that holds
+     * nothing, exists only to be invalidated, and is completely separate from the
+     * vault key — so detecting a change never puts a single stored record at risk.
+     *
+     * Why a canary rather than setInvalidatedByBiometricEnrollment on the vault key
+     * itself: that flag destroys the key, and with it every card and ID, the moment
+     * a finger is enrolled. Enrolling a finger requires the device's own screen
+     * lock, so it is an act the owner consented to — and in any case Karde's vault
+     * key already accepts DEVICE_CREDENTIAL, so anyone who knows the screen lock can
+     * open the vault without touching biometrics at all. Wiping the vault would cost
+     * the user everything and buy almost nothing. Telling them is the honest trade.
+     *
+     * Costs no authentication prompt. Cipher.init() raises
+     * KeyPermanentlyInvalidatedException immediately when the key is dead; a prompt
+     * appears only when an authorised cipher is actually used, which never happens
+     * here.
+     *
+     * Returns false on the very first run, which merely plants the canary.
+     */
+    private fun biometricsChanged(): Boolean {
+        // Below API 24 the flag does not exist; nothing to report.
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.N) return false
+        return try {
+            val store = KeyStore.getInstance("AndroidKeyStore").apply { load(null) }
+            val existing = store.getKey(CANARY_ALIAS, null) as? SecretKey
+            if (existing == null) {
+                createCanaryKey()
+                return false
+            }
+            val cipher = Cipher.getInstance(
+                "${KeyProperties.KEY_ALGORITHM_AES}/${KeyProperties.BLOCK_MODE_GCM}/${KeyProperties.ENCRYPTION_PADDING_NONE}"
+            )
+            cipher.init(Cipher.ENCRYPT_MODE, existing)
+            false
+        } catch (e: KeyPermanentlyInvalidatedException) {
+            // Enrolment changed. Replant so the next change is caught too.
+            Log.i("Karde", "Biometric enrolment changed; canary replanted")
+            try {
+                KeyStore.getInstance("AndroidKeyStore").apply { load(null) }
+                    .deleteEntry(CANARY_ALIAS)
+                createCanaryKey()
+            } catch (inner: Exception) {
+                Log.w("Karde", "Could not replant biometric canary", inner)
+            }
+            true
+        } catch (e: Exception) {
+            // Never let a diagnostic break the app. Say "nothing changed" and log.
+            Log.w("Karde", "Biometric canary check failed", e)
+            false
+        }
+    }
+
+    /** Plants the canary: an empty key that dies when enrolment changes. */
+    private fun createCanaryKey() {
+        if (!canUseVaultKey()) return
+        val generator = KeyGenerator.getInstance(
+            KeyProperties.KEY_ALGORITHM_AES, "AndroidKeyStore"
+        )
+        val builder = KeyGenParameterSpec.Builder(
+            CANARY_ALIAS,
+            KeyProperties.PURPOSE_ENCRYPT or KeyProperties.PURPOSE_DECRYPT
+        )
+            .setBlockModes(KeyProperties.BLOCK_MODE_GCM)
+            .setEncryptionPaddings(KeyProperties.ENCRYPTION_PADDING_NONE)
+            .setKeySize(256)
+            // Required: setInvalidatedByBiometricEnrollment only takes effect
+            // alongside setUserAuthenticationRequired(true).
+            .setUserAuthenticationRequired(true)
+            .setInvalidatedByBiometricEnrollment(true)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            builder.setUserAuthenticationParameters(
+                0,
+                KeyProperties.AUTH_BIOMETRIC_STRONG
+            )
+        } else {
+            @Suppress("DEPRECATION")
+            builder.setUserAuthenticationValidityDurationSeconds(10)
+        }
+        generator.init(builder.build())
+        generator.generateKey()
+    }
+
 
     private fun getSecretKey(): SecretKey {
         val keyStore = KeyStore.getInstance(ANDROID_KEYSTORE)

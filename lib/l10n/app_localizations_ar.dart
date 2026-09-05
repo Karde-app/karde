@@ -202,11 +202,11 @@ class AppLocalizationsAr extends AppLocalizations {
       'كيف تود استعادة رقم التعريف الشخصي إذا نسيته؟';
 
   @override
-  String get biometricRecovery => 'بصمة الهاتف';
+  String get biometricRecovery => 'قفل الهاتف';
 
   @override
   String get biometricRecoveryDesc =>
-      'استخدم بصمة الإصبع أو الوجه لإعادة تعيين رقم التعريف.';
+      'استخدم الطريقة التي تفتح بها هاتفك — بصمة الإصبع أو الوجه أو النمط أو رمز PIN أو كلمة المرور — لإعادة تعيين رمز Karde الخاص بك.';
 
   @override
   String get securityQuestions => 'أسئلة الأمان';

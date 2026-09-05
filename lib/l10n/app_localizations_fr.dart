@@ -203,11 +203,11 @@ class AppLocalizationsFr extends AppLocalizations {
       'Comment souhaitez-vous récupérer votre code PIN si vous l\'oubliez ?';
 
   @override
-  String get biometricRecovery => 'Biométrie du téléphone';
+  String get biometricRecovery => 'Verrouillage du téléphone';
 
   @override
   String get biometricRecoveryDesc =>
-      'Utilisez votre empreinte digitale ou Face ID pour réinitialiser votre code PIN.';
+      'Utilisez la méthode qui déverrouille votre téléphone — empreinte digitale, visage, schéma, code PIN ou mot de passe — pour réinitialiser votre code PIN Karde.';
 
   @override
   String get securityQuestions => 'Questions de sécurité';
