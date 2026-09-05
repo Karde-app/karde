@@ -157,7 +157,7 @@ abstract class AppLocalizations {
   /// No description provided for @vaultHealthItems.
   ///
   /// In en, this message translates to:
-  /// **'{count} items encrypted with AES-256-GCM'**
+  /// **'{count, plural, =1{1 item encrypted with AES-256-GCM} other{{count} items encrypted with AES-256-GCM}}'**
   String vaultHealthItems(int count);
 
   /// No description provided for @homeTab.
@@ -2169,6 +2169,228 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Already used above'**
   String get alreadyUsedAbove;
+
+  /// No description provided for @notesDecryptError.
+  ///
+  /// In en, this message translates to:
+  /// **'Error decrypting notes.'**
+  String get notesDecryptError;
+
+  /// No description provided for @deleteCardTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete this card?'**
+  String get deleteCardTitle;
+
+  /// No description provided for @deleteCardMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'This cannot be undone. The card data will be permanently deleted from the encrypted vault.'**
+  String get deleteCardMessage;
+
+  /// No description provided for @deletePermanently.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete Permanently'**
+  String get deletePermanently;
+
+  /// No description provided for @privateNotesAndPhoto.
+  ///
+  /// In en, this message translates to:
+  /// **'PRIVATE NOTES & PHOTO'**
+  String get privateNotesAndPhoto;
+
+  /// No description provided for @cardMetadata.
+  ///
+  /// In en, this message translates to:
+  /// **'CARD METADATA'**
+  String get cardMetadata;
+
+  /// No description provided for @notesAndPhoto.
+  ///
+  /// In en, this message translates to:
+  /// **'Notes and photo'**
+  String get notesAndPhoto;
+
+  /// No description provided for @privateNotesTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Private notes'**
+  String get privateNotesTitle;
+
+  /// No description provided for @tapToUnlock.
+  ///
+  /// In en, this message translates to:
+  /// **'Tap to unlock'**
+  String get tapToUnlock;
+
+  /// No description provided for @photoCouldNotBeDisplayed.
+  ///
+  /// In en, this message translates to:
+  /// **'This photo could not be displayed.'**
+  String get photoCouldNotBeDisplayed;
+
+  /// No description provided for @addedOn.
+  ///
+  /// In en, this message translates to:
+  /// **'Added On'**
+  String get addedOn;
+
+  /// No description provided for @lastUpdated.
+  ///
+  /// In en, this message translates to:
+  /// **'Last Updated'**
+  String get lastUpdated;
+
+  /// No description provided for @idOpenFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not open this document. Try again.'**
+  String get idOpenFailed;
+
+  /// No description provided for @deleteIdTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete this ID?'**
+  String get deleteIdTitle;
+
+  /// No description provided for @deleteIdMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'This cannot be undone. The ID data will be permanently deleted from the encrypted vault.'**
+  String get deleteIdMessage;
+
+  /// No description provided for @additionalDetails.
+  ///
+  /// In en, this message translates to:
+  /// **'ADDITIONAL DETAILS'**
+  String get additionalDetails;
+
+  /// No description provided for @detailsSection.
+  ///
+  /// In en, this message translates to:
+  /// **'DETAILS'**
+  String get detailsSection;
+
+  /// No description provided for @deleteId.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete ID'**
+  String get deleteId;
+
+  /// No description provided for @documentDetails.
+  ///
+  /// In en, this message translates to:
+  /// **'Document details'**
+  String get documentDetails;
+
+  /// No description provided for @noExtraDetails.
+  ///
+  /// In en, this message translates to:
+  /// **'This document has no extra details.'**
+  String get noExtraDetails;
+
+  /// No description provided for @dashboardLoadError.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not load your items.'**
+  String get dashboardLoadError;
+
+  /// No description provided for @biometricChangeTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Phone unlock changed'**
+  String get biometricChangeTitle;
+
+  /// No description provided for @biometricChangeMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'A fingerprint or face was added or removed on this phone. If that was you, nothing is wrong.'**
+  String get biometricChangeMessage;
+
+  /// No description provided for @gotIt.
+  ///
+  /// In en, this message translates to:
+  /// **'Got it'**
+  String get gotIt;
+
+  /// No description provided for @securityWarning.
+  ///
+  /// In en, this message translates to:
+  /// **'Security Warning'**
+  String get securityWarning;
+
+  /// No description provided for @securityRisk.
+  ///
+  /// In en, this message translates to:
+  /// **'Security Risk'**
+  String get securityRisk;
+
+  /// No description provided for @noBiometricsEnrolled.
+  ///
+  /// In en, this message translates to:
+  /// **'No biometrics enrolled. {details}'**
+  String noBiometricsEnrolled(String details);
+
+  /// No description provided for @missingSecureLockScreen.
+  ///
+  /// In en, this message translates to:
+  /// **'Device is missing secure lock screen. {details}'**
+  String missingSecureLockScreen(String details);
+
+  /// No description provided for @authReasonRevealCard.
+  ///
+  /// In en, this message translates to:
+  /// **'Please authenticate to reveal sensitive card information.'**
+  String get authReasonRevealCard;
+
+  /// No description provided for @authReasonOpenKarde.
+  ///
+  /// In en, this message translates to:
+  /// **'Please authenticate to open Karde.'**
+  String get authReasonOpenKarde;
+
+  /// No description provided for @authRequiredTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Authentication Required'**
+  String get authRequiredTitle;
+
+  /// No description provided for @useKardePin.
+  ///
+  /// In en, this message translates to:
+  /// **'Use Karde PIN'**
+  String get useKardePin;
+
+  /// No description provided for @biometricsNotEnrolled.
+  ///
+  /// In en, this message translates to:
+  /// **'Biometrics not supported or not enrolled on this device.'**
+  String get biometricsNotEnrolled;
+
+  /// No description provided for @biometricAuthFailedUsePin.
+  ///
+  /// In en, this message translates to:
+  /// **'Biometric authentication failed. Please use PIN.'**
+  String get biometricAuthFailedUsePin;
+
+  /// No description provided for @resetPinBiometricReason.
+  ///
+  /// In en, this message translates to:
+  /// **'Scan your fingerprint (or face) to reset your PIN'**
+  String get resetPinBiometricReason;
+
+  /// No description provided for @verificationNotCompleted.
+  ///
+  /// In en, this message translates to:
+  /// **'Verification was not completed. Try again, or use another recovery option below.'**
+  String get verificationNotCompleted;
+
+  /// No description provided for @biometricVerificationUnavailable.
+  ///
+  /// In en, this message translates to:
+  /// **'Biometric verification is unavailable right now. Use another recovery option below.'**
+  String get biometricVerificationUnavailable;
 }
 
 class _AppLocalizationsDelegate

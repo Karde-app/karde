@@ -38,7 +38,13 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String vaultHealthItems(int count) {
-    return '$count éléments chiffrés avec AES-256-GCM';
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count éléments chiffrés avec AES-256-GCM',
+      one: '1 élément chiffré avec AES-256-GCM',
+    );
+    return '$_temp0';
   }
 
   @override
@@ -1180,4 +1186,131 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get alreadyUsedAbove => 'Déjà utilisée ci-dessus';
+
+  @override
+  String get notesDecryptError => 'Erreur lors du déchiffrement des notes.';
+
+  @override
+  String get deleteCardTitle => 'Supprimer cette carte ?';
+
+  @override
+  String get deleteCardMessage =>
+      'Cette action est irréversible. Les données de la carte seront définitivement supprimées du coffre chiffré.';
+
+  @override
+  String get deletePermanently => 'Supprimer définitivement';
+
+  @override
+  String get privateNotesAndPhoto => 'NOTES PRIVÉES ET PHOTO';
+
+  @override
+  String get cardMetadata => 'INFORMATIONS DE LA CARTE';
+
+  @override
+  String get notesAndPhoto => 'Notes et photo';
+
+  @override
+  String get privateNotesTitle => 'Notes privées';
+
+  @override
+  String get tapToUnlock => 'Touchez pour déverrouiller';
+
+  @override
+  String get photoCouldNotBeDisplayed =>
+      'Cette photo n\'a pas pu être affichée.';
+
+  @override
+  String get addedOn => 'Ajouté le';
+
+  @override
+  String get lastUpdated => 'Dernière mise à jour';
+
+  @override
+  String get idOpenFailed => 'Impossible d\'ouvrir ce document. Réessayez.';
+
+  @override
+  String get deleteIdTitle => 'Supprimer ce document ?';
+
+  @override
+  String get deleteIdMessage =>
+      'Cette action est irréversible. Les données du document seront définitivement supprimées du coffre chiffré.';
+
+  @override
+  String get additionalDetails => 'DÉTAILS SUPPLÉMENTAIRES';
+
+  @override
+  String get detailsSection => 'DÉTAILS';
+
+  @override
+  String get deleteId => 'Supprimer';
+
+  @override
+  String get documentDetails => 'Détails du document';
+
+  @override
+  String get noExtraDetails =>
+      'Ce document ne comporte aucun détail supplémentaire.';
+
+  @override
+  String get dashboardLoadError => 'Impossible de charger vos éléments.';
+
+  @override
+  String get biometricChangeTitle => 'Le déverrouillage du téléphone a changé';
+
+  @override
+  String get biometricChangeMessage =>
+      'Une empreinte digitale ou un visage a été ajouté ou supprimé sur ce téléphone. Si c\'était vous, il n\'y a aucun problème.';
+
+  @override
+  String get gotIt => 'J\'ai compris';
+
+  @override
+  String get securityWarning => 'Avertissement de sécurité';
+
+  @override
+  String get securityRisk => 'Risque de sécurité';
+
+  @override
+  String noBiometricsEnrolled(String details) {
+    return 'Aucune donnée biométrique enregistrée. $details';
+  }
+
+  @override
+  String missingSecureLockScreen(String details) {
+    return 'L\'appareil n\'a pas de verrouillage d\'écran sécurisé. $details';
+  }
+
+  @override
+  String get authReasonRevealCard =>
+      'Veuillez vous authentifier pour afficher les informations sensibles de la carte.';
+
+  @override
+  String get authReasonOpenKarde =>
+      'Veuillez vous authentifier pour ouvrir Karde.';
+
+  @override
+  String get authRequiredTitle => 'Authentification requise';
+
+  @override
+  String get useKardePin => 'Utiliser le code Karde';
+
+  @override
+  String get biometricsNotEnrolled =>
+      'La biométrie n\'est pas prise en charge ou n\'est pas configurée sur cet appareil.';
+
+  @override
+  String get biometricAuthFailedUsePin =>
+      'L\'authentification biométrique a échoué. Veuillez utiliser votre code.';
+
+  @override
+  String get resetPinBiometricReason =>
+      'Scannez votre empreinte (ou votre visage) pour réinitialiser votre code';
+
+  @override
+  String get verificationNotCompleted =>
+      'La vérification n\'a pas abouti. Réessayez, ou utilisez une autre option de récupération ci-dessous.';
+
+  @override
+  String get biometricVerificationUnavailable =>
+      'La vérification biométrique est indisponible pour le moment. Utilisez une autre option de récupération ci-dessous.';
 }

@@ -9,7 +9,7 @@
   "addACard": "Add a card",
   "openVault": "Open Vault",
   "vaultHealthExcellent": "Vault health: excellent",
-  "vaultHealthItems": "{count} items encrypted with AES-256-GCM",
+  "vaultHealthItems": "{count, plural, =1{1 item encrypted with AES-256-GCM} other{{count} items encrypted with AES-256-GCM}}",
   "@vaultHealthItems": {
     "placeholders": {
       "count": {
@@ -459,5 +459,56 @@
   "chooseAQuestion": "Choose a question",
   "securityAnswersHashNoteChanging": "Your current answers cannot be shown. They are stored as one-way hashes, so Karde cannot read them back — only replace them. Saving overwrites both.",
   "securityAnswersHashNoteNew": "Answers are stored as one-way hashes, so nobody — including Karde — can read them back. Capitalisation and spacing do not matter.",
-  "alreadyUsedAbove": "Already used above"
+  "alreadyUsedAbove": "Already used above",
+  "notesDecryptError": "Error decrypting notes.",
+  "deleteCardTitle": "Delete this card?",
+  "deleteCardMessage": "This cannot be undone. The card data will be permanently deleted from the encrypted vault.",
+  "deletePermanently": "Delete Permanently",
+  "privateNotesAndPhoto": "PRIVATE NOTES & PHOTO",
+  "cardMetadata": "CARD METADATA",
+  "notesAndPhoto": "Notes and photo",
+  "privateNotesTitle": "Private notes",
+  "tapToUnlock": "Tap to unlock",
+  "photoCouldNotBeDisplayed": "This photo could not be displayed.",
+  "addedOn": "Added On",
+  "lastUpdated": "Last Updated",
+  "idOpenFailed": "Could not open this document. Try again.",
+  "deleteIdTitle": "Delete this ID?",
+  "deleteIdMessage": "This cannot be undone. The ID data will be permanently deleted from the encrypted vault.",
+  "additionalDetails": "ADDITIONAL DETAILS",
+  "detailsSection": "DETAILS",
+  "deleteId": "Delete ID",
+  "documentDetails": "Document details",
+  "noExtraDetails": "This document has no extra details.",
+  "dashboardLoadError": "Could not load your items.",
+  "biometricChangeTitle": "Phone unlock changed",
+  "biometricChangeMessage": "A fingerprint or face was added or removed on this phone. If that was you, nothing is wrong.",
+  "gotIt": "Got it",
+  "securityWarning": "Security Warning",
+  "securityRisk": "Security Risk",
+  "noBiometricsEnrolled": "No biometrics enrolled. {details}",
+  "@noBiometricsEnrolled": {
+    "placeholders": {
+      "details": {
+        "type": "String"
+      }
+    }
+  },
+  "missingSecureLockScreen": "Device is missing secure lock screen. {details}",
+  "@missingSecureLockScreen": {
+    "placeholders": {
+      "details": {
+        "type": "String"
+      }
+    }
+  },
+  "authReasonRevealCard": "Please authenticate to reveal sensitive card information.",
+  "authReasonOpenKarde": "Please authenticate to open Karde.",
+  "authRequiredTitle": "Authentication Required",
+  "useKardePin": "Use Karde PIN",
+  "biometricsNotEnrolled": "Biometrics not supported or not enrolled on this device.",
+  "biometricAuthFailedUsePin": "Biometric authentication failed. Please use PIN.",
+  "resetPinBiometricReason": "Scan your fingerprint (or face) to reset your PIN",
+  "verificationNotCompleted": "Verification was not completed. Try again, or use another recovery option below.",
+  "biometricVerificationUnavailable": "Biometric verification is unavailable right now. Use another recovery option below."
 }

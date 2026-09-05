@@ -37,7 +37,17 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String vaultHealthItems(int count) {
-    return '$count عناصر مشفرة باستخدام AES-256-GCM';
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count عنصر مشفّر باستخدام AES-256-GCM',
+      many: '$count عنصراً مشفّراً باستخدام AES-256-GCM',
+      few: '$count عناصر مشفّرة باستخدام AES-256-GCM',
+      two: 'عنصران مشفّران باستخدام AES-256-GCM',
+      one: 'عنصر واحد مشفّر باستخدام AES-256-GCM',
+      zero: '$count عنصر مشفّر باستخدام AES-256-GCM',
+    );
+    return '$_temp0';
   }
 
   @override
@@ -1170,4 +1180,128 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get alreadyUsedAbove => 'مستخدم بالفعل أعلاه';
+
+  @override
+  String get notesDecryptError => 'خطأ أثناء فك تشفير الملاحظات.';
+
+  @override
+  String get deleteCardTitle => 'حذف هذه البطاقة؟';
+
+  @override
+  String get deleteCardMessage =>
+      'لا يمكن التراجع عن هذا. ستُحذف بيانات البطاقة نهائياً من الخزنة المشفّرة.';
+
+  @override
+  String get deletePermanently => 'حذف نهائي';
+
+  @override
+  String get privateNotesAndPhoto => 'ملاحظات خاصة وصورة';
+
+  @override
+  String get cardMetadata => 'بيانات البطاقة';
+
+  @override
+  String get notesAndPhoto => 'الملاحظات والصورة';
+
+  @override
+  String get privateNotesTitle => 'ملاحظات خاصة';
+
+  @override
+  String get tapToUnlock => 'اضغط لفتح القفل';
+
+  @override
+  String get photoCouldNotBeDisplayed => 'تعذّر عرض هذه الصورة.';
+
+  @override
+  String get addedOn => 'أُضيف في';
+
+  @override
+  String get lastUpdated => 'آخر تحديث';
+
+  @override
+  String get idOpenFailed => 'تعذّر فتح هذا المستند. حاول مرة أخرى.';
+
+  @override
+  String get deleteIdTitle => 'حذف هذه الهوية؟';
+
+  @override
+  String get deleteIdMessage =>
+      'لا يمكن التراجع عن هذا. ستُحذف بيانات الهوية نهائياً من الخزنة المشفّرة.';
+
+  @override
+  String get additionalDetails => 'تفاصيل إضافية';
+
+  @override
+  String get detailsSection => 'التفاصيل';
+
+  @override
+  String get deleteId => 'حذف الهوية';
+
+  @override
+  String get documentDetails => 'تفاصيل المستند';
+
+  @override
+  String get noExtraDetails => 'لا يحتوي هذا المستند على تفاصيل إضافية.';
+
+  @override
+  String get dashboardLoadError => 'تعذّر تحميل عناصرك.';
+
+  @override
+  String get biometricChangeTitle => 'تغيّرت طريقة فتح الهاتف';
+
+  @override
+  String get biometricChangeMessage =>
+      'تمت إضافة أو إزالة بصمة أو وجه على هذا الهاتف. إذا كنت أنت من فعل ذلك، فلا يوجد أي خطأ.';
+
+  @override
+  String get gotIt => 'حسناً';
+
+  @override
+  String get securityWarning => 'تحذير أمني';
+
+  @override
+  String get securityRisk => 'خطر أمني';
+
+  @override
+  String noBiometricsEnrolled(String details) {
+    return 'لم يتم تسجيل أي بيانات حيوية. $details';
+  }
+
+  @override
+  String missingSecureLockScreen(String details) {
+    return 'لا يحتوي الجهاز على قفل شاشة آمن. $details';
+  }
+
+  @override
+  String get authReasonRevealCard =>
+      'يرجى التحقق من هويتك لعرض بيانات البطاقة الحساسة.';
+
+  @override
+  String get authReasonOpenKarde => 'يرجى التحقق من هويتك لفتح Karde.';
+
+  @override
+  String get authRequiredTitle => 'مطلوب التحقق من الهوية';
+
+  @override
+  String get useKardePin => 'استخدم رمز Karde';
+
+  @override
+  String get biometricsNotEnrolled =>
+      'القياسات الحيوية غير مدعومة أو غير مسجّلة على هذا الجهاز.';
+
+  @override
+  String get biometricAuthFailedUsePin =>
+      'فشل التحقق بالقياسات الحيوية. يرجى استخدام الرمز السري.';
+
+  @override
+  String get resetPinBiometricReason =>
+      'امسح بصمتك (أو وجهك) لإعادة تعيين رمزك السري';
+
+  @override
+  String get verificationNotCompleted =>
+      'لم يكتمل التحقق. حاول مرة أخرى، أو استخدم خيار استعادة آخر أدناه.';
+
+  @override
+  String get biometricVerificationUnavailable =>
+      'التحقق بالقياسات الحيوية غير متاح حالياً. استخدم خيار استعادة آخر أدناه.';
 }

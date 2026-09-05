@@ -63,7 +63,7 @@ class DashboardScreen extends ConsumerWidget {
             children: [
               // Header
               Text(
-                'Welcome to Karde', 
+                loc.welcomeTitle,
                 style: theme.textTheme.headlineMedium?.copyWith(
                   fontWeight: FontWeight.w700,
                   color: theme.colorScheme.onSurface,
@@ -71,7 +71,7 @@ class DashboardScreen extends ConsumerWidget {
               ),
               const SizedBox(height: 4),
               Text(
-                'Your secure, offline digital wallet', 
+                loc.welcomeSubtitle,
                 style: theme.textTheme.bodyMedium?.copyWith(
                   color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
                 )
@@ -101,7 +101,7 @@ class DashboardScreen extends ConsumerWidget {
                     ),
                     const SizedBox(width: 8),
                     Text(
-                      'Offline & Encrypted',
+                      loc.offlineBadge,
                       style: theme.textTheme.labelMedium?.copyWith(
                         color: KardeColors.signalTeal,
                         fontWeight: FontWeight.bold,
@@ -117,7 +117,7 @@ class DashboardScreen extends ConsumerWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
-                    'Quick Access',
+                    loc.quickAccess,
                     style: theme.textTheme.titleMedium?.copyWith(
                       fontWeight: FontWeight.bold,
                       color: theme.colorScheme.onSurface.withValues(alpha: 0.8),
@@ -128,7 +128,7 @@ class DashboardScreen extends ConsumerWidget {
                       Navigator.push(context, MaterialPageRoute(builder: (context) => const VaultScreen()));
                     },
                     child: Text(
-                      'See all', 
+                      loc.seeAll,
                       style: theme.textTheme.labelLarge?.copyWith(
                         color: KardeColors.champagneGold,
                         fontWeight: FontWeight.bold,
@@ -150,7 +150,7 @@ class DashboardScreen extends ConsumerWidget {
                   }
                   
                   if (hasError) {
-                    return const SizedBox(height: 220, child: Center(child: Text('Error loading data')));
+                    return SizedBox(height: 220, child: Center(child: Text(loc.dashboardLoadError)));
                   }
 
                   final cards = cardsAsync.valueOrNull ?? [];
@@ -268,9 +268,9 @@ class DashboardScreen extends ConsumerWidget {
                                       crossAxisAlignment:
                                           CrossAxisAlignment.start,
                                       children: [
-                                        const Text(
-                                          'Phone unlock changed',
-                                          style: TextStyle(
+                                        Text(
+                                          loc.biometricChangeTitle,
+                                          style: const TextStyle(
                                             color: Colors.orange,
                                             fontWeight: FontWeight.bold,
                                             fontSize: 16,
@@ -278,7 +278,7 @@ class DashboardScreen extends ConsumerWidget {
                                         ),
                                         const SizedBox(height: 4),
                                         Text(
-                                          'A fingerprint or face was added or removed on this phone. If that was you, nothing is wrong.',
+                                          loc.biometricChangeMessage,
                                           style: theme.textTheme.bodyMedium
                                               ?.copyWith(fontSize: 13),
                                         ),
@@ -289,7 +289,7 @@ class DashboardScreen extends ConsumerWidget {
                                                   .notifier)
                                               .acknowledge(),
                                           child: Text(
-                                            'Got it',
+                                            loc.gotIt,
                                             style: TextStyle(
                                               color:
                                                   KardeColors.champagneGold,
@@ -328,16 +328,16 @@ class DashboardScreen extends ConsumerWidget {
                       trailingIconColor = KardeColors.signalTeal;
                       break;
                     case VaultHealthStatus.warning:
-                      title = "Security Warning";
+                      title = loc.securityWarning;
                       mainIcon = Icons.warning_amber_rounded;
                       mainIconColor = Colors.orange;
-                      subtitle = "No biometrics enrolled. $subtitle";
+                      subtitle = loc.noBiometricsEnrolled(subtitle);
                       break;
                     case VaultHealthStatus.atRisk:
-                      title = "Security Risk";
+                      title = loc.securityRisk;
                       mainIcon = Icons.gpp_bad_outlined;
                       mainIconColor = Colors.red;
-                      subtitle = "Device is missing secure lock screen. $subtitle";
+                      subtitle = loc.missingSecureLockScreen(subtitle);
                       break;
                   }
 

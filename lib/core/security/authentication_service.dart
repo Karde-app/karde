@@ -3,6 +3,7 @@ import '../widgets/karde_feedback.dart';
 import 'package:local_auth/local_auth.dart';
 import 'package:local_auth_android/local_auth_android.dart';
 import 'package:local_auth_darwin/local_auth_darwin.dart';
+import '../../l10n/app_localizations.dart';
 import '../storage/settings_repository.dart';
 import 'encryption_service.dart';
 import 'pin_verification_screen.dart';
@@ -32,6 +33,7 @@ class AuthenticationService {
     SettingsRepository settings, {
     bool cryptoWillPrompt = false,
   }) async {
+    final loc = AppLocalizations.of(context)!;
     final requirePinLock = settings.getRequirePinLock();
     final biometricUnlock = settings.getBiometricUnlock();
 
@@ -62,14 +64,14 @@ class AuthenticationService {
 
         if (canAuthenticate) {
           final authResult = await _auth.authenticate(
-            localizedReason: 'Please authenticate to reveal sensitive card information.',
-            authMessages: const <AuthMessages>[
+            localizedReason: loc.authReasonRevealCard,
+            authMessages: <AuthMessages>[
               AndroidAuthMessages(
-                signInTitle: 'Authentication Required',
-                cancelButton: 'Cancel',
+                signInTitle: loc.authRequiredTitle,
+                cancelButton: loc.cancel,
               ),
               IOSAuthMessages(
-                cancelButton: 'Cancel',
+                cancelButton: loc.cancel,
               ),
             ],
             biometricOnly: false,
@@ -77,12 +79,12 @@ class AuthenticationService {
           if (authResult) return true;
         } else {
           if (context.mounted) {
-            KardeFeedback.error(context, 'Biometrics not supported or not enrolled on this device.');
+            KardeFeedback.error(context, loc.biometricsNotEnrolled);
           }
         }
       } catch (e) {
         if (context.mounted) {
-          KardeFeedback.error(context, 'Biometric authentication failed. Please use PIN.');
+          KardeFeedback.error(context, loc.biometricAuthFailedUsePin);
         }
       }
     }
@@ -121,6 +123,7 @@ class AuthenticationService {
   }
 
   Future<bool> authenticateAppStartup(BuildContext context, SettingsRepository settings) async {
+    final loc = AppLocalizations.of(context)!;
     final requirePinLock = settings.getRequirePinLock();
     final biometricUnlock = settings.getBiometricUnlock();
 
@@ -132,14 +135,14 @@ class AuthenticationService {
 
         if (canAuthenticate) {
           final phoneAuthResult = await _auth.authenticate(
-            localizedReason: 'Please authenticate to open Karde.',
-            authMessages: const <AuthMessages>[
+            localizedReason: loc.authReasonOpenKarde,
+            authMessages: <AuthMessages>[
               AndroidAuthMessages(
-                signInTitle: 'Authentication Required',
-                cancelButton: 'Use Karde PIN',
+                signInTitle: loc.authRequiredTitle,
+                cancelButton: loc.useKardePin,
               ),
               IOSAuthMessages(
-                cancelButton: 'Use Karde PIN',
+                cancelButton: loc.useKardePin,
               ),
             ],
             biometricOnly: false,
@@ -147,12 +150,12 @@ class AuthenticationService {
           if (phoneAuthResult) return true;
         } else {
           if (context.mounted) {
-            KardeFeedback.error(context, 'Biometrics not supported or not enrolled on this device.');
+            KardeFeedback.error(context, loc.biometricsNotEnrolled);
           }
         }
       } catch (e) {
         if (context.mounted) {
-          KardeFeedback.error(context, 'Biometric authentication failed. Please use PIN.');
+          KardeFeedback.error(context, loc.biometricAuthFailedUsePin);
         }
       }
     }

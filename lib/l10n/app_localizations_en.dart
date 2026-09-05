@@ -37,7 +37,13 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String vaultHealthItems(int count) {
-    return '$count items encrypted with AES-256-GCM';
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count items encrypted with AES-256-GCM',
+      one: '1 item encrypted with AES-256-GCM',
+    );
+    return '$_temp0';
   }
 
   @override
@@ -1162,4 +1168,128 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get alreadyUsedAbove => 'Already used above';
+
+  @override
+  String get notesDecryptError => 'Error decrypting notes.';
+
+  @override
+  String get deleteCardTitle => 'Delete this card?';
+
+  @override
+  String get deleteCardMessage =>
+      'This cannot be undone. The card data will be permanently deleted from the encrypted vault.';
+
+  @override
+  String get deletePermanently => 'Delete Permanently';
+
+  @override
+  String get privateNotesAndPhoto => 'PRIVATE NOTES & PHOTO';
+
+  @override
+  String get cardMetadata => 'CARD METADATA';
+
+  @override
+  String get notesAndPhoto => 'Notes and photo';
+
+  @override
+  String get privateNotesTitle => 'Private notes';
+
+  @override
+  String get tapToUnlock => 'Tap to unlock';
+
+  @override
+  String get photoCouldNotBeDisplayed => 'This photo could not be displayed.';
+
+  @override
+  String get addedOn => 'Added On';
+
+  @override
+  String get lastUpdated => 'Last Updated';
+
+  @override
+  String get idOpenFailed => 'Could not open this document. Try again.';
+
+  @override
+  String get deleteIdTitle => 'Delete this ID?';
+
+  @override
+  String get deleteIdMessage =>
+      'This cannot be undone. The ID data will be permanently deleted from the encrypted vault.';
+
+  @override
+  String get additionalDetails => 'ADDITIONAL DETAILS';
+
+  @override
+  String get detailsSection => 'DETAILS';
+
+  @override
+  String get deleteId => 'Delete ID';
+
+  @override
+  String get documentDetails => 'Document details';
+
+  @override
+  String get noExtraDetails => 'This document has no extra details.';
+
+  @override
+  String get dashboardLoadError => 'Could not load your items.';
+
+  @override
+  String get biometricChangeTitle => 'Phone unlock changed';
+
+  @override
+  String get biometricChangeMessage =>
+      'A fingerprint or face was added or removed on this phone. If that was you, nothing is wrong.';
+
+  @override
+  String get gotIt => 'Got it';
+
+  @override
+  String get securityWarning => 'Security Warning';
+
+  @override
+  String get securityRisk => 'Security Risk';
+
+  @override
+  String noBiometricsEnrolled(String details) {
+    return 'No biometrics enrolled. $details';
+  }
+
+  @override
+  String missingSecureLockScreen(String details) {
+    return 'Device is missing secure lock screen. $details';
+  }
+
+  @override
+  String get authReasonRevealCard =>
+      'Please authenticate to reveal sensitive card information.';
+
+  @override
+  String get authReasonOpenKarde => 'Please authenticate to open Karde.';
+
+  @override
+  String get authRequiredTitle => 'Authentication Required';
+
+  @override
+  String get useKardePin => 'Use Karde PIN';
+
+  @override
+  String get biometricsNotEnrolled =>
+      'Biometrics not supported or not enrolled on this device.';
+
+  @override
+  String get biometricAuthFailedUsePin =>
+      'Biometric authentication failed. Please use PIN.';
+
+  @override
+  String get resetPinBiometricReason =>
+      'Scan your fingerprint (or face) to reset your PIN';
+
+  @override
+  String get verificationNotCompleted =>
+      'Verification was not completed. Try again, or use another recovery option below.';
+
+  @override
+  String get biometricVerificationUnavailable =>
+      'Biometric verification is unavailable right now. Use another recovery option below.';
 }

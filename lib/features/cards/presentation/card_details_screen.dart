@@ -75,7 +75,7 @@ class _CardDetailsScreenState extends ConsumerState<CardDetailsScreen> {
     } catch (e) {
       if (mounted) {
         setState(() {
-          _notes = "Error decrypting notes.";
+          _notes = AppLocalizations.of(context)!.notesDecryptError;
           _isUnlocked = true;
           _isLoadingNotes = false;
         });
@@ -112,10 +112,9 @@ class _CardDetailsScreenState extends ConsumerState<CardDetailsScreen> {
     // FIX 5-1: shared confirmation dialog.
     final confirm = await KardeConfirmDialog.show(
       context,
-      title: 'Delete this card?',
-      message: 'This cannot be undone. The card data will be permanently '
-          'deleted from the encrypted vault.',
-      confirmLabel: 'Delete Permanently',
+      title: AppLocalizations.of(context)!.deleteCardTitle,
+      message: AppLocalizations.of(context)!.deleteCardMessage,
+      confirmLabel: AppLocalizations.of(context)!.deletePermanently,
     );
 
     if (confirm && mounted && widget.card.id != null) {
@@ -185,7 +184,7 @@ class _CardDetailsScreenState extends ConsumerState<CardDetailsScreen> {
             // surprising the user with a picture.
             _buildSectionTitle(
               widget.card.hasPhoto
-                  ? '${loc.privateNotesLabel} & PHOTO'
+                  ? loc.privateNotesAndPhoto
                   : loc.privateNotesLabel,
             ),
             const SizedBox(height: 8),
@@ -196,14 +195,14 @@ class _CardDetailsScreenState extends ConsumerState<CardDetailsScreen> {
             // this section simply does not exist until then. A card without one
             // is never given an empty row to wonder about.
             if (_photo != null) ...[
-              _buildSectionTitle('CARD PHOTO'),
+              _buildSectionTitle(loc.cardPhotoLabel),
               const SizedBox(height: 8),
               _buildPhotoBox(),
               const SizedBox(height: 24),
             ],
             
             // Metadata Section
-            _buildSectionTitle(loc.cardDetails), // Using cardDetails as fallback for "Card Metadata"
+            _buildSectionTitle(loc.cardMetadata),
             const SizedBox(height: 8),
             _buildMetadataBox(),
             
@@ -356,7 +355,7 @@ class _CardDetailsScreenState extends ConsumerState<CardDetailsScreen> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      hasPhoto ? 'Notes and photo' : 'Private notes',
+                      hasPhoto ? loc.notesAndPhoto : loc.privateNotesTitle,
                       style: TextStyle(
                         fontFamily: 'Outfit',
                         fontSize: 15.5,
@@ -366,7 +365,7 @@ class _CardDetailsScreenState extends ConsumerState<CardDetailsScreen> {
                     ),
                     const SizedBox(height: 3),
                     Text(
-                      'Tap to unlock',
+                      loc.tapToUnlock,
                       style: TextStyle(
                         fontFamily: 'Inter',
                         fontSize: 12.5,
@@ -427,6 +426,7 @@ class _CardDetailsScreenState extends ConsumerState<CardDetailsScreen> {
   /// nothing — it came out of the same decrypt as the notes.
   Widget _buildPhotoBox() {
     final theme = Theme.of(context);
+    final loc = AppLocalizations.of(context)!;
 
     return InkWell(
       onTap: _openPhoto,
@@ -443,7 +443,7 @@ class _CardDetailsScreenState extends ConsumerState<CardDetailsScreen> {
             alignment: Alignment.center,
             color: theme.colorScheme.onSurface.withValues(alpha: 0.04),
             child: Text(
-              'This photo could not be displayed.',
+              loc.photoCouldNotBeDisplayed,
               style: theme.textTheme.bodyMedium?.copyWith(fontSize: 13),
             ),
           ),
@@ -453,7 +453,11 @@ class _CardDetailsScreenState extends ConsumerState<CardDetailsScreen> {
   }
 
   Widget _buildMetadataBox() {
-    final dateFormat = DateFormat('MMM dd, yyyy - hh:mm a');
+    final loc = AppLocalizations.of(context)!;
+    // Locale-aware rather than a fixed pattern: 'MMM' spells the month out,
+    // and a hard-coded pattern would have spelled it in English whatever the
+    // app language was.
+    final dateFormat = DateFormat.yMMMd(loc.localeName).add_jm();
     
     return Container(
       padding: const EdgeInsets.all(16),
@@ -463,12 +467,12 @@ class _CardDetailsScreenState extends ConsumerState<CardDetailsScreen> {
       ),
       child: Column(
         children: [
-          _buildMetaRow(Icons.calendar_today, 'Added On', dateFormat.format(widget.card.createdAt)),
+          _buildMetaRow(Icons.calendar_today, loc.addedOn, dateFormat.format(widget.card.createdAt)),
           const Padding(
             padding: EdgeInsets.symmetric(vertical: 8.0),
             child: Divider(height: 1),
           ),
-          _buildMetaRow(Icons.update, 'Last Updated', dateFormat.format(widget.card.updatedAt)),
+          _buildMetaRow(Icons.update, loc.lastUpdated, dateFormat.format(widget.card.updatedAt)),
         ],
       ),
     );

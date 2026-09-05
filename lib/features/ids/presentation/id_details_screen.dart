@@ -82,7 +82,7 @@ class _IdDetailsScreenState extends ConsumerState<IdDetailsScreen> {
     } catch (e) {
       if (mounted) {
         setState(() {
-          _error = 'Could not open this document. Try again.';
+          _error = AppLocalizations.of(context)!.idOpenFailed;
           _isUnlocked = true;
           _isLoading = false;
         });
@@ -109,10 +109,9 @@ class _IdDetailsScreenState extends ConsumerState<IdDetailsScreen> {
     // FIX 5-1: shared confirmation dialog.
     final confirm = await KardeConfirmDialog.show(
       context,
-      title: 'Delete this ID?',
-      message: 'This cannot be undone. The ID data will be permanently deleted '
-          'from the encrypted vault.',
-      confirmLabel: 'Delete Permanently',
+      title: AppLocalizations.of(context)!.deleteIdTitle,
+      message: AppLocalizations.of(context)!.deleteIdMessage,
+      confirmLabel: AppLocalizations.of(context)!.deletePermanently,
     );
 
     if (confirm && mounted && widget.idDoc.id != null) {
@@ -209,13 +208,13 @@ class _IdDetailsScreenState extends ConsumerState<IdDetailsScreen> {
             const SizedBox(height: 24),
             
             // Extra Details Section. Locked until asked for — see initState.
-            _buildSectionTitle('Additional Details'),
+            _buildSectionTitle(loc.additionalDetails),
             const SizedBox(height: 8),
             _buildExtraDetails(loc),
             const SizedBox(height: 24),
             
             // Metadata Section
-            _buildSectionTitle(loc.cardDetails), // "Details"
+            _buildSectionTitle(loc.detailsSection),
             const SizedBox(height: 8),
             _buildMetadataBox(),
             
@@ -244,7 +243,7 @@ class _IdDetailsScreenState extends ConsumerState<IdDetailsScreen> {
                 child: ElevatedButton.icon(
                   onPressed: _confirmDelete,
                   icon: const Icon(Icons.delete_outline, size: 20),
-                  label: const Text('Delete ID'),
+                  label: Text(loc.deleteId),
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.red.shade50,
                     foregroundColor: Colors.red.shade700,
@@ -369,7 +368,7 @@ class _IdDetailsScreenState extends ConsumerState<IdDetailsScreen> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'Document details',
+                      loc.documentDetails,
                       style: TextStyle(
                         fontFamily: 'Outfit',
                         fontSize: 15.5,
@@ -379,7 +378,7 @@ class _IdDetailsScreenState extends ConsumerState<IdDetailsScreen> {
                     ),
                     const SizedBox(height: 3),
                     Text(
-                      'Tap to unlock',
+                      loc.tapToUnlock,
                       style: TextStyle(
                         fontFamily: 'Inter',
                         fontSize: 12.5,
@@ -406,7 +405,7 @@ class _IdDetailsScreenState extends ConsumerState<IdDetailsScreen> {
 
     if (_extraDetails == null || _extraDetails!.isEmpty) {
       return Text(
-        'This document has no extra details.',
+        loc.noExtraDetails,
         style: TextStyle(
           fontFamily: 'Inter',
           fontSize: 13,
@@ -452,7 +451,9 @@ class _IdDetailsScreenState extends ConsumerState<IdDetailsScreen> {
   }
 
   Widget _buildMetadataBox() {
-    final dateFormat = DateFormat('MMM dd, yyyy - hh:mm a');
+    final loc = AppLocalizations.of(context)!;
+    // Locale-aware rather than a fixed pattern, as on the card screen.
+    final dateFormat = DateFormat.yMMMd(loc.localeName).add_jm();
     
     return Container(
       padding: const EdgeInsets.all(16),
@@ -462,12 +463,12 @@ class _IdDetailsScreenState extends ConsumerState<IdDetailsScreen> {
       ),
       child: Column(
         children: [
-          _buildMetaRow(Icons.calendar_today, 'Added On', dateFormat.format(widget.idDoc.createdAt)),
+          _buildMetaRow(Icons.calendar_today, loc.addedOn, dateFormat.format(widget.idDoc.createdAt)),
           const Padding(
             padding: EdgeInsets.symmetric(vertical: 8.0),
             child: Divider(height: 1),
           ),
-          _buildMetaRow(Icons.update, 'Last Updated', dateFormat.format(widget.idDoc.updatedAt)),
+          _buildMetaRow(Icons.update, loc.lastUpdated, dateFormat.format(widget.idDoc.updatedAt)),
         ],
       ),
     );

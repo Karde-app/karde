@@ -44,7 +44,7 @@ class _ForgotPinScreenState extends ConsumerState<ForgotPinScreen> {
   Future<void> _useBiometrics() async {
     try {
       final authenticated = await _auth.authenticate(
-        localizedReason: 'Scan your fingerprint (or face) to reset your PIN',
+        localizedReason: AppLocalizations.of(context)!.resetPinBiometricReason,
         biometricOnly: true,
       );
 
@@ -68,8 +68,7 @@ class _ForgotPinScreenState extends ConsumerState<ForgotPinScreen> {
         // happened at all and the user was left staring at an unchanged screen
         // with no idea whether it had failed or simply not registered.
         setState(() {
-          _errorMessage = 'Verification was not completed. Try again, or use '
-              'another recovery option below.';
+          _errorMessage = AppLocalizations.of(context)!.verificationNotCompleted;
         });
       }
     } catch (e) {
@@ -78,8 +77,7 @@ class _ForgotPinScreenState extends ConsumerState<ForgotPinScreen> {
       // stuck on this screen with no feedback and no suggested way forward.
       if (mounted) {
         setState(() {
-          _errorMessage = 'Biometric verification is unavailable right now. '
-              'Use another recovery option below.';
+          _errorMessage = AppLocalizations.of(context)!.biometricVerificationUnavailable;
         });
       }
     }
