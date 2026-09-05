@@ -2,7 +2,7 @@
   "@@locale": "en",
   "appTitle": "Karde",
   "welcomeTitle": "Welcome to Karde",
-  "welcomeSubtitle": "Your secure, offline digital wallet",
+  "welcomeSubtitle": "Your secure, offline vault",
   "offlineBadge": "Offline & Encrypted",
   "quickAccess": "Quick Access",
   "seeAll": "See all",
@@ -51,7 +51,7 @@
   "english": "English",
   "french": "Français",
   "arabic": "العربية",
-  "setupLockTitle": "Secure Your Wallet",
+  "setupLockTitle": "Secure Your Vault",
   "setupLockSubtitle": "How would you like to protect your secrets?",
   "phoneLock": "Phone Lock",
   "phoneLockDesc": "Use your device's Face ID, Touch ID, or passcode.",
@@ -395,7 +395,7 @@
   "settingsDangerZone": "DANGER ZONE",
   "settingsEraseVault": "Erase vault",
   "settingsEraseVaultDesc": "Permanently delete every card, ID, photo and setting",
-  "aboutDialogBody": "{name} v{version}\n\nAn offline wallet for the cards and documents you would rather not carry.\n\nEverything you save is encrypted on this phone and unlocked with your fingerprint. Karde has no account and no internet access, so nothing you store can leave your device — not to us, not to anyone.\n\nBecause nothing is kept anywhere else, an encrypted backup is the only way to move your vault to a new phone.",
+  "aboutDialogBody": "{name} v{version}\n\nAn offline vault for the cards and documents you would rather not carry.\n\nEverything you save is encrypted on this phone and unlocked with your fingerprint. Karde has no account and no internet access, so nothing you store can leave your device — not to us, not to anyone.\n\nBecause nothing is kept anywhere else, an encrypted backup is the only way to move your vault to a new phone.",
   "@aboutDialogBody": {
     "placeholders": {
       "name": {
@@ -406,7 +406,6 @@
       }
     }
   },
-  "zeroKnowledge": "Zero-Knowledge",
   "eraseEverythingTitle": "Erase everything?",
   "eraseEverythingMessage": "Every card, ID document and photo will be permanently deleted, along with your PIN and settings. This cannot be undone, and Karde keeps no copy anywhere.",
   "backUpFirst": "Back up first",

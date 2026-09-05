@@ -115,7 +115,7 @@ abstract class AppLocalizations {
   /// No description provided for @welcomeSubtitle.
   ///
   /// In en, this message translates to:
-  /// **'Your secure, offline digital wallet'**
+  /// **'Your secure, offline vault'**
   String get welcomeSubtitle;
 
   /// No description provided for @offlineBadge.
@@ -367,7 +367,7 @@ abstract class AppLocalizations {
   /// No description provided for @setupLockTitle.
   ///
   /// In en, this message translates to:
-  /// **'Secure Your Wallet'**
+  /// **'Secure Your Vault'**
   String get setupLockTitle;
 
   /// No description provided for @setupLockSubtitle.
@@ -1927,14 +1927,8 @@ abstract class AppLocalizations {
   /// No description provided for @aboutDialogBody.
   ///
   /// In en, this message translates to:
-  /// **'{name} v{version}\n\nAn offline wallet for the cards and documents you would rather not carry.\n\nEverything you save is encrypted on this phone and unlocked with your fingerprint. Karde has no account and no internet access, so nothing you store can leave your device — not to us, not to anyone.\n\nBecause nothing is kept anywhere else, an encrypted backup is the only way to move your vault to a new phone.'**
+  /// **'{name} v{version}\n\nAn offline vault for the cards and documents you would rather not carry.\n\nEverything you save is encrypted on this phone and unlocked with your fingerprint. Karde has no account and no internet access, so nothing you store can leave your device — not to us, not to anyone.\n\nBecause nothing is kept anywhere else, an encrypted backup is the only way to move your vault to a new phone.'**
   String aboutDialogBody(String name, String version);
-
-  /// No description provided for @zeroKnowledge.
-  ///
-  /// In en, this message translates to:
-  /// **'Zero-Knowledge'**
-  String get zeroKnowledge;
 
   /// No description provided for @eraseEverythingTitle.
   ///

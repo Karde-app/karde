@@ -15,8 +15,7 @@ class AppLocalizationsFr extends AppLocalizations {
   String get welcomeTitle => 'Bienvenue sur Karde';
 
   @override
-  String get welcomeSubtitle =>
-      'Votre portefeuille numérique sécurisé hors ligne';
+  String get welcomeSubtitle => 'Votre coffre sécurisé, hors ligne';
 
   @override
   String get offlineBadge => 'Hors ligne & Chiffré';
@@ -150,7 +149,7 @@ class AppLocalizationsFr extends AppLocalizations {
   String get arabic => 'العربية';
 
   @override
-  String get setupLockTitle => 'Sécurisez';
+  String get setupLockTitle => 'Sécurisez votre coffre';
 
   @override
   String get setupLockSubtitle =>
@@ -1044,11 +1043,8 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String aboutDialogBody(String name, String version) {
-    return '$name v$version\n\nUn portefeuille hors ligne pour les cartes et documents que vous préférez ne pas transporter.\n\nTout ce que vous enregistrez est chiffré sur ce téléphone et déverrouillé par votre empreinte. Karde n\'a ni compte ni accès à Internet : rien de ce que vous y mettez ne peut quitter votre appareil — ni vers nous, ni vers qui que ce soit.\n\nComme rien n\'est conservé ailleurs, une sauvegarde chiffrée est le seul moyen de transférer votre coffre vers un nouveau téléphone.';
+    return '$name v$version\n\nUn coffre hors ligne pour les cartes et documents que vous préférez ne pas transporter.\n\nTout ce que vous enregistrez est chiffré sur ce téléphone et déverrouillé par votre empreinte. Karde n\'a ni compte ni accès à Internet : rien de ce que vous y mettez ne peut quitter votre appareil — ni vers nous, ni vers qui que ce soit.\n\nComme rien n\'est conservé ailleurs, une sauvegarde chiffrée est le seul moyen de transférer votre coffre vers un nouveau téléphone.';
   }
-
-  @override
-  String get zeroKnowledge => 'Zero-Knowledge';
 
   @override
   String get eraseEverythingTitle => 'Tout effacer ?';

@@ -15,7 +15,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get welcomeTitle => 'مرحباً بك في كاردي';
 
   @override
-  String get welcomeSubtitle => 'محفظتك الرقمية الآمنة وغير المتصلة';
+  String get welcomeSubtitle => 'خزنتك الآمنة، دون اتصال بالإنترنت';
 
   @override
   String get offlineBadge => 'غير متصل ومشفر';
@@ -153,7 +153,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get arabic => 'العربية';
 
   @override
-  String get setupLockTitle => 'تأمين محفظتك';
+  String get setupLockTitle => 'أمّن خزنتك';
 
   @override
   String get setupLockSubtitle => 'كيف تود حماية أسرارك؟';
@@ -1045,11 +1045,8 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String aboutDialogBody(String name, String version) {
-    return '$name v$version\n\nمحفظة تعمل دون اتصال بالإنترنت، للبطاقات والمستندات التي تفضّل ألا تحملها معك.\n\nكل ما تحفظه مشفّر على هذا الهاتف ويُفتح ببصمتك. لا يملك Karde حساباً ولا وصولاً إلى الإنترنت، لذا لا يمكن لأي شيء تخزّنه أن يغادر جهازك — لا إلينا ولا إلى أي جهة أخرى.\n\nولأنه لا يُحفظ شيء في أي مكان آخر، فإن النسخة الاحتياطية المشفّرة هي الطريقة الوحيدة لنقل خزنتك إلى هاتف جديد.';
+    return '$name v$version\n\nخزنة تعمل دون اتصال بالإنترنت، للبطاقات والمستندات التي تفضّل ألا تحملها معك.\n\nكل ما تحفظه مشفّر على هذا الهاتف ويُفتح ببصمتك. لا يملك Karde حساباً ولا وصولاً إلى الإنترنت، لذا لا يمكن لأي شيء تخزّنه أن يغادر جهازك — لا إلينا ولا إلى أي جهة أخرى.\n\nولأنه لا يُحفظ شيء في أي مكان آخر، فإن النسخة الاحتياطية المشفّرة هي الطريقة الوحيدة لنقل خزنتك إلى هاتف جديد.';
   }
-
-  @override
-  String get zeroKnowledge => 'بدون أي معرفة ببياناتك';
 
   @override
   String get eraseEverythingTitle => 'محو كل شيء؟';

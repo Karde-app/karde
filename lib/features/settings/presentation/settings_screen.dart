@@ -259,7 +259,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
           const SizedBox(height: 40),
           Center(
             child: Text(
-              '${AppInfo.nameWithVersion} · ${loc.offlineBadge} · ${loc.zeroKnowledge}',
+              '${AppInfo.nameWithVersion} · ${loc.offlineBadge}',
               style: TextStyle(
                 fontFamily: 'Inter',
                 fontSize: 12,

@@ -15,7 +15,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get welcomeTitle => 'Welcome to Karde';
 
   @override
-  String get welcomeSubtitle => 'Your secure, offline digital wallet';
+  String get welcomeSubtitle => 'Your secure, offline vault';
 
   @override
   String get offlineBadge => 'Offline & Encrypted';
@@ -149,7 +149,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get arabic => 'العربية';
 
   @override
-  String get setupLockTitle => 'Secure Your Wallet';
+  String get setupLockTitle => 'Secure Your Vault';
 
   @override
   String get setupLockSubtitle => 'How would you like to protect your secrets?';
@@ -1031,11 +1031,8 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String aboutDialogBody(String name, String version) {
-    return '$name v$version\n\nAn offline wallet for the cards and documents you would rather not carry.\n\nEverything you save is encrypted on this phone and unlocked with your fingerprint. Karde has no account and no internet access, so nothing you store can leave your device — not to us, not to anyone.\n\nBecause nothing is kept anywhere else, an encrypted backup is the only way to move your vault to a new phone.';
+    return '$name v$version\n\nAn offline vault for the cards and documents you would rather not carry.\n\nEverything you save is encrypted on this phone and unlocked with your fingerprint. Karde has no account and no internet access, so nothing you store can leave your device — not to us, not to anyone.\n\nBecause nothing is kept anywhere else, an encrypted backup is the only way to move your vault to a new phone.';
   }
-
-  @override
-  String get zeroKnowledge => 'Zero-Knowledge';
 
   @override
   String get eraseEverythingTitle => 'Erase everything?';
