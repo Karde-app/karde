@@ -1,10 +1,17 @@
 package com.karde.app
 
-import android.os.Bundle
+import android.content.Intent
+import android.os.Build
+import android.os.Handler
+import android.os.Looper
 import android.security.keystore.KeyGenParameterSpec
+import android.security.keystore.KeyPermanentlyInvalidatedException
 import android.security.keystore.KeyProperties
 import android.util.Base64
 import android.view.WindowManager
+import androidx.biometric.BiometricManager
+import androidx.biometric.BiometricPrompt
+import androidx.core.content.ContextCompat
 import io.flutter.embedding.android.FlutterFragmentActivity
 import io.flutter.embedding.engine.FlutterEngine
 import io.flutter.plugin.common.MethodChannel
@@ -14,108 +21,369 @@ import javax.crypto.KeyGenerator
 import javax.crypto.SecretKey
 import javax.crypto.spec.GCMParameterSpec
 
-class MainActivity: FlutterFragmentActivity() {
+class MainActivity : FlutterFragmentActivity() {
     private val ENCRYPTION_CHANNEL = "com.ibank.security/encryption"
     private val WINDOW_CHANNEL = "com.ibank.security/window"
-    private val KEY_ALIAS = "ibank_master_key"
+    private val BACKUP_CHANNEL = "com.ibank.security/backup"
+    private val FILES_CHANNEL = "com.ibank.security/files"
+    private val IMAGES_CHANNEL = "com.ibank.security/images"
+
+    private val fileTransfer by lazy { FileTransfer(this) }
+    private val imageCapture by lazy { ImageCapture(this) }
+
+    // FIX 2-1: new alias. The previous key (v2) was created without per-use
+    // authentication, so it is deliberately abandoned rather than migrated —
+    // any data encrypted under it is intentionally unrecoverable.
+    private val KEY_ALIAS = "ibank_master_key_v3"
     private val ANDROID_KEYSTORE = "AndroidKeyStore"
     private val TRANSFORMATION = "AES/GCM/NoPadding"
 
     override fun configureFlutterEngine(flutterEngine: FlutterEngine) {
         super.configureFlutterEngine(flutterEngine)
-        
-        MethodChannel(flutterEngine.dartExecutor.binaryMessenger, ENCRYPTION_CHANNEL).setMethodCallHandler { call, result ->
-            when (call.method) {
-                "encrypt" -> {
-                    val data = call.argument<String>("data")
-                    if (data != null) {
-                        try {
-                            val encrypted = encryptData(data)
-                            result.success(encrypted)
-                        } catch (e: Exception) {
-                            result.error("ENCRYPTION_ERROR", e.message, null)
-                        }
-                    } else {
-                        result.error("INVALID_ARGUMENT", "Data is null", null)
-                    }
-                }
-                "decrypt" -> {
-                    val data = call.argument<String>("data")
-                    if (data != null) {
-                        try {
-                            val decrypted = decryptData(data)
-                            result.success(decrypted)
-                        } catch (e: Exception) {
-                            result.error("DECRYPTION_ERROR", e.message, null)
-                        }
-                    } else {
-                        result.error("INVALID_ARGUMENT", "Data is null", null)
-                    }
-                }
-                else -> result.notImplemented()
-            }
-        }
 
-        MethodChannel(flutterEngine.dartExecutor.binaryMessenger, WINDOW_CHANNEL).setMethodCallHandler { call, result ->
-            when (call.method) {
-                "secure" -> {
-                    window.addFlags(WindowManager.LayoutParams.FLAG_SECURE)
-                    result.success(null)
+        MethodChannel(flutterEngine.dartExecutor.binaryMessenger, ENCRYPTION_CHANNEL)
+            .setMethodCallHandler { call, result ->
+                when (call.method) {
+                    "encrypt" -> {
+                        val data = call.argument<String>("data")
+                        if (data == null) {
+                            result.error("INVALID_ARGUMENT", "Data is null", null)
+                        } else {
+                            encryptData(data, result)
+                        }
+                    }
+                    "decrypt" -> {
+                        val data = call.argument<String>("data")
+                        if (data == null) {
+                            result.error("INVALID_ARGUMENT", "Data is null", null)
+                        } else {
+                            decryptData(data, result)
+                        }
+                    }
+                    "canUseVaultKey" -> result.success(canUseVaultKey())
+                    "willPromptEveryUse" -> result.success(willPromptEveryUse())
+                    else -> result.notImplemented()
                 }
-                "unsecure" -> {
-                    window.clearFlags(WindowManager.LayoutParams.FLAG_SECURE)
-                    result.success(null)
-                }
-                else -> result.notImplemented()
             }
-        }
+
+        MethodChannel(flutterEngine.dartExecutor.binaryMessenger, IMAGES_CHANNEL)
+            .setMethodCallHandler { call, result ->
+                when (call.method) {
+                    "pickImage" -> imageCapture.pick(result)
+                    "captureImage" -> imageCapture.capture(result)
+                    else -> result.notImplemented()
+                }
+            }
+
+        MethodChannel(flutterEngine.dartExecutor.binaryMessenger, WINDOW_CHANNEL)
+            .setMethodCallHandler { call, result ->
+                when (call.method) {
+                    "secure" -> {
+                        window.addFlags(WindowManager.LayoutParams.FLAG_SECURE)
+                        result.success(null)
+                    }
+                    "unsecure" -> {
+                        window.clearFlags(WindowManager.LayoutParams.FLAG_SECURE)
+                        result.success(null)
+                    }
+                    else -> result.notImplemented()
+                }
+            }
+
+        MethodChannel(flutterEngine.dartExecutor.binaryMessenger, BACKUP_CHANNEL)
+            .setMethodCallHandler { call, result ->
+                val passphrase = call.argument<String>("passphrase")
+                val data = call.argument<String>("data")
+                when (call.method) {
+                    "encryptBundle" -> {
+                        if (data == null || passphrase == null) {
+                            result.error("INVALID_ARGUMENT", "Missing data or passphrase", null)
+                        } else {
+                            runBundleCrypto(result) { BackupCrypto.encrypt(data, passphrase) }
+                        }
+                    }
+                    "decryptBundle" -> {
+                        if (data == null || passphrase == null) {
+                            result.error("INVALID_ARGUMENT", "Missing data or passphrase", null)
+                        } else {
+                            runBundleCrypto(result) { BackupCrypto.decrypt(data, passphrase) }
+                        }
+                    }
+                    else -> result.notImplemented()
+                }
+            }
+
+        MethodChannel(flutterEngine.dartExecutor.binaryMessenger, FILES_CHANNEL)
+            .setMethodCallHandler { call, result ->
+                when (call.method) {
+                    "saveFile" -> {
+                        val name = call.argument<String>("suggestedName")
+                        val content = call.argument<String>("content")
+                        if (name == null || content == null) {
+                            result.error("INVALID_ARGUMENT", "Missing name or content", null)
+                        } else {
+                            fileTransfer.save(name, content, result)
+                        }
+                    }
+                    "openFile" -> fileTransfer.open(result)
+                    else -> result.notImplemented()
+                }
+            }
     }
+
+    /**
+     * The backup KDF runs 600,000 HMAC rounds, which is far too long for the main
+     * thread. [MethodChannel.Result] must still be completed on it, so the outcome
+     * is posted back once the work finishes.
+     */
+    private fun runBundleCrypto(result: MethodChannel.Result, work: () -> String) {
+        val main = Handler(Looper.getMainLooper())
+        Thread {
+            try {
+                val value = work()
+                main.post { result.success(value) }
+            } catch (e: BackupCrypto.BadPassphraseException) {
+                main.post { result.error("BAD_PASSPHRASE", e.message, null) }
+            } catch (e: BackupCrypto.MalformedBackupException) {
+                main.post { result.error("MALFORMED_BACKUP", e.message, null) }
+            } catch (e: Exception) {
+                main.post { result.error("BUNDLE_CRYPTO_ERROR", e.message, null) }
+            }
+        }.start()
+    }
+
+    /**
+     * The Storage Access Framework answers through the activity result path. Plugins
+     * such as local_auth rely on it too, so the superclass must always see the call.
+     */
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        if (fileTransfer.onActivityResult(requestCode, resultCode, data)) return
+        if (imageCapture.onActivityResult(requestCode, resultCode, data)) return
+        super.onActivityResult(requestCode, resultCode, data)
+    }
+
+    /**
+     * Reports whether this device can actually hold an auth-gated vault key.
+     *
+     * The key requires a secure lock screen. Without one, key generation throws
+     * IllegalStateException at save time — after the user has already typed in a
+     * whole card. Dart calls this up front so it can warn instead.
+     */
+    private fun canUseVaultKey(): Boolean {
+        val authenticators = BiometricManager.Authenticators.BIOMETRIC_STRONG or
+            BiometricManager.Authenticators.DEVICE_CREDENTIAL
+        return BiometricManager.from(this).canAuthenticate(authenticators) ==
+            BiometricManager.BIOMETRIC_SUCCESS
+    }
+
+    /**
+     * Whether using the vault key is guaranteed to raise an OS prompt on EVERY
+     * single operation.
+     *
+     * True only from API 30, where the key is built with
+     * setUserAuthenticationParameters(0, ...) — timeout zero meaning per-use
+     * authentication. On API 24-29 the only mechanism available is the deprecated
+     * setUserAuthenticationValidityDurationSeconds(10), which authorises the key
+     * for a ten-second window: a second decrypt inside that window succeeds with
+     * no prompt at all.
+     *
+     * Dart uses this to decide whether it may safely skip its own PIN gate. It
+     * must not: skipping the app PIN because "the Keystore will prompt anyway"
+     * would, on those older devices, reveal secrets with no authentication
+     * whatsoever whenever the window happened to still be open.
+     *
+     * Also false when there is no secure lock screen, because then the key cannot
+     * be used at all and no prompt will ever appear.
+     */
+    private fun willPromptEveryUse(): Boolean =
+        Build.VERSION.SDK_INT >= Build.VERSION_CODES.R && canUseVaultKey()
 
     private fun getSecretKey(): SecretKey {
         val keyStore = KeyStore.getInstance(ANDROID_KEYSTORE)
         keyStore.load(null)
 
-        if (!keyStore.containsAlias(KEY_ALIAS)) {
-            val keyGenerator = KeyGenerator.getInstance(KeyProperties.KEY_ALGORITHM_AES, ANDROID_KEYSTORE)
-            val keyGenParameterSpec = KeyGenParameterSpec.Builder(
-                KEY_ALIAS,
-                KeyProperties.PURPOSE_ENCRYPT or KeyProperties.PURPOSE_DECRYPT
+        (keyStore.getKey(KEY_ALIAS, null) as? SecretKey)?.let { return it }
+
+        val keyGenerator =
+            KeyGenerator.getInstance(KeyProperties.KEY_ALGORITHM_AES, ANDROID_KEYSTORE)
+        val builder = KeyGenParameterSpec.Builder(
+            KEY_ALIAS,
+            KeyProperties.PURPOSE_ENCRYPT or KeyProperties.PURPOSE_DECRYPT
+        )
+            .setBlockModes(KeyProperties.BLOCK_MODE_GCM)
+            .setEncryptionPaddings(KeyProperties.ENCRYPTION_PADDING_NONE)
+            .setKeySize(256)
+            .setUserAuthenticationRequired(true)
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            // Timeout 0 == authentication required for EVERY use of the key, which is
+            // what makes the gating hardware-enforced rather than cosmetic. Only the
+            // CryptoObject handed back by BiometricPrompt can drive the cipher.
+            builder.setUserAuthenticationParameters(
+                0,
+                KeyProperties.AUTH_BIOMETRIC_STRONG or KeyProperties.AUTH_DEVICE_CREDENTIAL
             )
-                .setBlockModes(KeyProperties.BLOCK_MODE_GCM)
-                .setEncryptionPaddings(KeyProperties.ENCRYPTION_PADDING_NONE)
-                .setKeySize(256)
-                .build()
-            keyGenerator.init(keyGenParameterSpec)
-            return keyGenerator.generateKey()
+        } else {
+            // API 24-29 has no per-use option; the deprecated time-window API is the
+            // only mechanism available. 10s is short enough to bound exposure while
+            // still covering a single authorised operation.
+            @Suppress("DEPRECATION")
+            builder.setUserAuthenticationValidityDurationSeconds(10)
         }
 
-        return keyStore.getKey(KEY_ALIAS, null) as SecretKey
+        // NOTE: setInvalidatedByBiometricEnrollment(true) is deliberately NOT set.
+        // It would destroy the key — and therefore the entire vault, permanently —
+        // as soon as the user enrols a new fingerprint. Karde currently has no
+        // export/backup path, so that would be silent, unrecoverable data loss.
+        // Revisit once encrypted export exists.
+
+        keyGenerator.init(builder.build())
+        return keyGenerator.generateKey()
     }
 
-    private fun encryptData(data: String): String {
-        val cipher = Cipher.getInstance(TRANSFORMATION)
-        cipher.init(Cipher.ENCRYPT_MODE, getSecretKey())
-        val iv = cipher.iv
-        val encryptedData = cipher.doFinal(data.toByteArray(Charsets.UTF_8))
-        
-        val ivString = Base64.encodeToString(iv, Base64.NO_WRAP)
-        val dataString = Base64.encodeToString(encryptedData, Base64.NO_WRAP)
-        
-        return "$ivString:$dataString"
+    /**
+     * Runs [cipher] through a BiometricPrompt-authorised CryptoObject and hands the
+     * authorised cipher to [onAuthorised] on the main thread.
+     */
+    private fun withAuthorisedCipher(
+        cipher: Cipher,
+        result: MethodChannel.Result,
+        onAuthorised: (Cipher) -> Unit
+    ) {
+        val executor = ContextCompat.getMainExecutor(this)
+        val prompt = BiometricPrompt(
+            this,
+            executor,
+            object : BiometricPrompt.AuthenticationCallback() {
+                override fun onAuthenticationSucceeded(
+                    authResult: BiometricPrompt.AuthenticationResult
+                ) {
+                    val authorised = authResult.cryptoObject?.cipher
+                    if (authorised == null) {
+                        result.error("AUTH_ERROR", "No authorised cipher returned", null)
+                        return
+                    }
+                    try {
+                        onAuthorised(authorised)
+                    } catch (e: Exception) {
+                        result.error("CRYPTO_ERROR", e.message, null)
+                    }
+                }
+
+                override fun onAuthenticationError(code: Int, message: CharSequence) {
+                    // Distinguish a deliberate cancel from a real failure so Dart can
+                    // stay silent on cancel instead of showing a scary error.
+                    val cancelled = code == BiometricPrompt.ERROR_USER_CANCELED ||
+                        code == BiometricPrompt.ERROR_NEGATIVE_BUTTON ||
+                        code == BiometricPrompt.ERROR_CANCELED
+                    result.error(
+                        if (cancelled) "AUTH_CANCELLED" else "AUTH_ERROR",
+                        message.toString(),
+                        null
+                    )
+                }
+            }
+        )
+
+        val info = BiometricPrompt.PromptInfo.Builder()
+            .setTitle("Unlock Karde Vault")
+            .setSubtitle("Authenticate to access your encrypted data")
+            .setAllowedAuthenticators(
+                BiometricManager.Authenticators.BIOMETRIC_STRONG or
+                    BiometricManager.Authenticators.DEVICE_CREDENTIAL
+            )
+            .build()
+
+        // If authenticate() itself throws, no callback ever fires and the Dart
+        // future would hang forever — leaving the UI stuck on a spinner. Always
+        // complete the result.
+        try {
+            prompt.authenticate(info, BiometricPrompt.CryptoObject(cipher))
+        } catch (e: Exception) {
+            result.error("AUTH_ERROR", e.message ?: "Could not start authentication", null)
+        }
     }
 
-    private fun decryptData(data: String): String {
+    /**
+     * Prepares a cipher on the vault key, or completes [result] with the failure
+     * and returns null.
+     *
+     * Every entry point into the vault has to distinguish the same three cases —
+     * the key was invalidated, the device has no lock screen, or something else
+     * went wrong — and Dart maps each to its own exception type so the UI can say
+     * something useful. Doing that in one place keeps the four callers from
+     * drifting apart.
+     *
+     * [iv] is null for encryption, where the cipher generates its own.
+     */
+    private fun initVaultCipher(
+        mode: Int,
+        iv: ByteArray?,
+        result: MethodChannel.Result,
+        errorCode: String
+    ): Cipher? {
+        return try {
+            val cipher = Cipher.getInstance(TRANSFORMATION)
+            if (iv == null) {
+                cipher.init(mode, getSecretKey())
+            } else {
+                cipher.init(mode, getSecretKey(), GCMParameterSpec(128, iv))
+            }
+            cipher
+        } catch (e: KeyPermanentlyInvalidatedException) {
+            handleInvalidatedKey(result)
+            null
+        } catch (e: IllegalStateException) {
+            result.error("NO_SECURE_LOCK_SCREEN", e.message, null)
+            null
+        } catch (e: Exception) {
+            result.error(errorCode, e.message, null)
+            null
+        }
+    }
+
+    private fun encryptData(data: String, result: MethodChannel.Result) {
+        val cipher = initVaultCipher(Cipher.ENCRYPT_MODE, null, result, "ENCRYPTION_ERROR")
+            ?: return
+
+        val iv = Base64.encodeToString(cipher.iv, Base64.NO_WRAP)
+        withAuthorisedCipher(cipher, result) { authorised ->
+            val encrypted = authorised.doFinal(data.toByteArray(Charsets.UTF_8))
+            result.success("$iv:${Base64.encodeToString(encrypted, Base64.NO_WRAP)}")
+        }
+    }
+
+    private fun decryptData(data: String, result: MethodChannel.Result) {
         val parts = data.split(":")
-        if (parts.size != 2) throw IllegalArgumentException("Invalid encrypted data format")
-        
+        if (parts.size != 2) {
+            result.error("DECRYPTION_ERROR", "Invalid encrypted data format", null)
+            return
+        }
+
         val iv = Base64.decode(parts[0], Base64.NO_WRAP)
-        val encryptedData = Base64.decode(parts[1], Base64.NO_WRAP)
-        
-        val cipher = Cipher.getInstance(TRANSFORMATION)
-        val spec = GCMParameterSpec(128, iv)
-        cipher.init(Cipher.DECRYPT_MODE, getSecretKey(), spec)
-        
-        val decryptedData = cipher.doFinal(encryptedData)
-        return String(decryptedData, Charsets.UTF_8)
+        val payload = Base64.decode(parts[1], Base64.NO_WRAP)
+
+        val cipher = initVaultCipher(Cipher.DECRYPT_MODE, iv, result, "DECRYPTION_ERROR")
+            ?: return
+
+        withAuthorisedCipher(cipher, result) { authorised ->
+            result.success(String(authorised.doFinal(payload), Charsets.UTF_8))
+        }
+    }
+
+
+    /**
+     * The key is gone for good (lock screen removed, or biometrics reset). Drop the
+     * alias so a fresh key is minted next time, and tell Dart the vault is orphaned.
+     */
+    private fun handleInvalidatedKey(result: MethodChannel.Result) {
+        try {
+            val keyStore = KeyStore.getInstance(ANDROID_KEYSTORE)
+            keyStore.load(null)
+            keyStore.deleteEntry(KEY_ALIAS)
+        } catch (_: Exception) {
+            // Nothing useful to do; the error below is what matters to the caller.
+        }
+        result.error("KEY_INVALIDATED", "Vault key is no longer valid", null)
     }
 }

@@ -3,6 +3,7 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import '../l10n/app_localizations.dart';
 import '../features/home/presentation/main_scaffold.dart';
 import '../features/onboarding/presentation/language_screen.dart';
+import '../core/security/window_security_service.dart';
 import '../theme/theme.dart';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -37,6 +38,16 @@ class IBankApp extends ConsumerWidget {
       ],
       home: isFirstLaunch ? const LanguageSelectionScreen() : const MainScaffold(),
       debugShowCheckedModeBanner: false,
+      // Loudly mark builds where FLAG_SECURE has been disabled for development,
+      // so a capture-enabled APK can never be mistaken for a shippable one.
+      builder: WindowSecurityService.screenshotsAllowed
+          ? (context, child) => Banner(
+              message: 'SCREENSHOTS ON',
+              location: BannerLocation.topEnd,
+              color: const Color(0xFFD32F2F),
+              child: child ?? const SizedBox.shrink(),
+            )
+          : null,
     );
   }
 }

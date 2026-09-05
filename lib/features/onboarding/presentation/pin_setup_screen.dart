@@ -1,14 +1,18 @@
+import 'dart:convert';
+import 'package:crypto/crypto.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../../core/storage/settings_repository.dart';
+import '../../../core/security/secret_hasher.dart';
 import '../../../theme/theme.dart';
 import '../../home/presentation/main_scaffold.dart';
 import 'recovery_setup_screen.dart';
 
 class PinSetupScreen extends ConsumerStatefulWidget {
   final bool isResettingPin;
-  const PinSetupScreen({super.key, this.isResettingPin = false});
+  final bool isChangingPin;
+  const PinSetupScreen({super.key, this.isResettingPin = false, this.isChangingPin = false});
 
   @override
   ConsumerState<PinSetupScreen> createState() => _PinSetupScreenState();
@@ -51,12 +55,102 @@ class _PinSetupScreenState extends ConsumerState<PinSetupScreen> {
 
   Future<void> _validatePin() async {
     if (_pin == _confirmPin) {
-      // PINs match, save and finish onboarding
+      // PINs match — hash and save
       final settings = ref.read(settingsRepositoryProvider);
-      await settings.setHashedPin(_pin); // Secure storage encrypts this automatically
+      // FIX 2-2: salted PBKDF2 instead of a bare unsalted SHA-256 digest.
+      await settings.setHashedPin(SecretHasher.hash(_pin));
 
       if (!mounted) return;
-      if (widget.isResettingPin) {
+      if (widget.isChangingPin) {
+        if (!mounted) return;
+        showDialog(
+          context: context,
+          barrierDismissible: false,
+          builder: (context) => Dialog(
+            backgroundColor: Colors.transparent,
+            elevation: 0,
+            child: Container(
+              padding: const EdgeInsets.all(32),
+              decoration: BoxDecoration(
+                color: Theme.of(context).brightness == Brightness.dark 
+                    ? KardeColors.graphite 
+                    : KardeColors.lightSurface,
+                borderRadius: BorderRadius.circular(28),
+                border: Border.all(
+                  color: KardeColors.champagneGold.withOpacity(0.3),
+                  width: 1,
+                ),
+                boxShadow: [
+                  BoxShadow(
+                    color: KardeColors.champagneGold.withOpacity(0.1),
+                    blurRadius: 24,
+                    spreadRadius: 4,
+                  ),
+                ],
+              ),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Container(
+                    padding: const EdgeInsets.all(16),
+                    decoration: BoxDecoration(
+                      color: KardeColors.signalTeal.withOpacity(0.1),
+                      shape: BoxShape.circle,
+                    ),
+                    child: const Icon(Icons.check_circle, color: KardeColors.signalTeal, size: 48),
+                  ),
+                  const SizedBox(height: 24),
+                  Text(
+                    AppLocalizations.of(context)!.pinChangedSuccess,
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      fontFamily: 'Outfit',
+                      fontSize: 22,
+                      fontWeight: FontWeight.bold,
+                      color: Theme.of(context).colorScheme.onSurface,
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    'Your secure vault has been updated with the new PIN.',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      fontFamily: 'Inter',
+                      fontSize: 14,
+                      color: Theme.of(context).textTheme.bodyMedium?.color,
+                    ),
+                  ),
+                  const SizedBox(height: 32),
+                  SizedBox(
+                    width: double.infinity,
+                    child: ElevatedButton(
+                      onPressed: () {
+                        Navigator.pop(context); // close dialog
+                        Navigator.pop(context); // close PinSetupScreen
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: KardeColors.champagneGold,
+                        foregroundColor: KardeColors.obsidian,
+                        padding: const EdgeInsets.symmetric(vertical: 16),
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                        elevation: 0,
+                      ),
+                      child: Text(
+                        AppLocalizations.of(context)!.done,
+                        style: const TextStyle(
+                          fontFamily: 'Inter',
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        );
+      } else if (widget.isResettingPin) {
         Navigator.pushAndRemoveUntil(
           context,
           MaterialPageRoute(builder: (_) => const MainScaffold()),
@@ -83,7 +177,7 @@ class _PinSetupScreenState extends ConsumerState<PinSetupScreen> {
   Widget build(BuildContext context) {
     final loc = AppLocalizations.of(context)!;
     final currentPin = _isConfirming ? _confirmPin : _pin;
-    final title = _isConfirming ? loc.confirmPin : loc.createPin;
+    final title = _isConfirming ? loc.confirmPin : ((widget.isResettingPin || widget.isChangingPin) ? loc.createKardePin : loc.createPin);
     final subtitle = _isConfirming ? loc.reEnterPin : loc.enterPin;
 
     return Scaffold(

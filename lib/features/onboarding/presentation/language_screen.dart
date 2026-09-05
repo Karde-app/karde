@@ -107,7 +107,10 @@ class LanguageSelectionScreen extends ConsumerWidget {
                 width: double.infinity,
                 child: ElevatedButton(
                   onPressed: () {
-                    Navigator.pushReplacement(
+                    // push, not pushReplacement: the lock screen needs something
+                    // to go back to, so a user who picked the wrong language can
+                    // return and change it.
+                    Navigator.push(
                       context,
                       MaterialPageRoute(builder: (_) => const LockSetupScreen()),
                     );

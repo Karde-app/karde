@@ -2,8 +2,77 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../domain/virtual_card.dart';
 import '../data/card_repository.dart';
+import '../../ids/domain/virtual_id.dart';
+import '../../ids/data/id_repository.dart';
+import '../../ids/presentation/id_details_screen.dart';
+import '../../ids/presentation/widgets/decryptable_id_card.dart';
 import 'widgets/decryptable_card.dart';
 import 'add_card_screen.dart';
+import '../../ids/presentation/add_id_screen.dart';
+import '../../../l10n/app_localizations.dart';
+import '../../../theme/theme.dart';
+
+enum VaultItemType { card, id }
+
+class VaultItem {
+  final VaultItemType type;
+  final dynamic item;
+  final int id;
+  final String nickname;
+  final String subtitle;
+  final DateTime createdAt;
+  final bool isPinnedToTop;
+  final bool isPinnedToHomescreen;
+
+  VaultItem({
+    required this.type,
+    required this.item,
+    required this.id,
+    required this.nickname,
+    required this.subtitle,
+    required this.createdAt,
+    this.isPinnedToTop = false,
+    this.isPinnedToHomescreen = false,
+  });
+}
+
+final allVaultItemsProvider = Provider<AsyncValue<List<VaultItem>>>((ref) {
+  final cards = ref.watch(cardsProvider);
+  final ids = ref.watch(idsProvider);
+  
+  return cards.whenData((c) {
+    return ids.whenData((i) {
+      final merged = [
+        ...c.map((card) => VaultItem(
+          type: VaultItemType.card,
+          item: card,
+          id: card.id!,
+          nickname: card.nickname,
+          subtitle: '${card.cardBrand} •••• ${card.lastFourDigits}',
+          createdAt: card.createdAt,
+          isPinnedToTop: card.isPinnedToTop,
+          isPinnedToHomescreen: card.isPinnedToHomescreen,
+        )),
+        ...i.map((idDoc) => VaultItem(
+          type: VaultItemType.id,
+          item: idDoc,
+          id: idDoc.id!,
+          nickname: idDoc.nickname,
+          subtitle: idDoc.idType,
+          createdAt: idDoc.createdAt,
+          isPinnedToTop: idDoc.isPinnedToTop,
+          isPinnedToHomescreen: idDoc.isPinnedToHomescreen,
+        )),
+      ]..sort((a, b) {
+          if (a.isPinnedToTop && !b.isPinnedToTop) return -1;
+          if (!a.isPinnedToTop && b.isPinnedToTop) return 1;
+          final cmp = b.createdAt.compareTo(a.createdAt);
+          return cmp != 0 ? cmp : a.id.compareTo(b.id);
+        });
+      return merged;
+    }).value ?? [];
+  });
+});
 
 class VaultScreen extends ConsumerStatefulWidget {
   const VaultScreen({super.key});
@@ -21,17 +90,18 @@ class _VaultScreenState extends ConsumerState<VaultScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final cardsAsync = ref.watch(cardsProvider);
+    final allItemsAsync = ref.watch(allVaultItemsProvider);
+    final loc = AppLocalizations.of(context)!;
 
     return Scaffold(
       appBar: AppBar(
         title: _isSearching
             ? TextField(
                 autofocus: true,
-                style: const TextStyle(color: Colors.white),
+                style: TextStyle(color: Theme.of(context).colorScheme.onSurface),
                 decoration: InputDecoration(
                   hintText: 'Search items...',
-                  hintStyle: TextStyle(color: Colors.white.withOpacity(0.5)),
+                  hintStyle: TextStyle(color: Theme.of(context).colorScheme.onSurface.withOpacity(0.5)),
                   border: InputBorder.none,
                 ),
                 onChanged: (val) {
@@ -58,9 +128,9 @@ class _VaultScreenState extends ConsumerState<VaultScreen> {
           ),
         ],
       ),
-      body: cardsAsync.when(
-        data: (cards) {
-          if (cards.isEmpty) {
+      body: allItemsAsync.when(
+        data: (allItems) {
+          if (allItems.isEmpty) {
             return Center(
               child: SingleChildScrollView(
                 child: Column(
@@ -119,21 +189,21 @@ class _VaultScreenState extends ConsumerState<VaultScreen> {
                         ),
                       ),
                       const SizedBox(height: 16),
-                      const Text(
-                        'Your vault is empty',
+                      Text(
+                        loc.myVault,
                         style: TextStyle(
-                          color: Color(0xFFF4F1EA),
+                          color: Theme.of(context).colorScheme.onSurface,
                           fontSize: 22,
                           fontWeight: FontWeight.bold,
                           fontFamily: 'Outfit',
                         ),
                       ),
                       const SizedBox(height: 8),
-                      const Text(
-                        'Add your first card and Karde will keep\nit encrypted, offline, forever.',
+                      Text(
+                        loc.welcomeSubtitle, // Closest match, can add custom if needed
                         textAlign: TextAlign.center,
                         style: TextStyle(
-                          color: Color(0xFF9AA1B0),
+                          color: Theme.of(context).textTheme.bodyMedium?.color,
                           fontSize: 14,
                           fontFamily: 'Inter',
                         ),
@@ -172,12 +242,12 @@ class _VaultScreenState extends ConsumerState<VaultScreen> {
                           ),
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.center,
-                            children: const [
-                              Icon(Icons.add, color: Color(0xFF0A0C11), size: 20),
-                              SizedBox(width: 8),
+                            children: [
+                              const Icon(Icons.add, color: Color(0xFF0A0C11), size: 20),
+                              const SizedBox(width: 8),
                               Text(
-                                'Add your first item',
-                                style: TextStyle(
+                                loc.addNewCard,
+                                style: const TextStyle(
                                   color: Color(0xFF0A0C11),
                                   fontSize: 15,
                                   fontWeight: FontWeight.bold,
@@ -189,10 +259,10 @@ class _VaultScreenState extends ConsumerState<VaultScreen> {
                         ),
                       ),
                       const SizedBox(height: 16),
-                      const Text(
-                        'Nothing ever leaves this device',
+                      Text(
+                        loc.offlineBadge,
                         style: TextStyle(
-                          color: Color(0xFF5C6472),
+                          color: Theme.of(context).textTheme.bodyMedium?.color?.withOpacity(0.7),
                           fontSize: 13,
                           fontFamily: 'Inter',
                         ),
@@ -203,48 +273,56 @@ class _VaultScreenState extends ConsumerState<VaultScreen> {
             );
           }
 
-          List<VirtualCard> filteredCards = List.from(cards);
+          List<VaultItem> filteredItems = _applyFilters(allItems);
 
-          // Category Filter
-          if (_selectedCategory == 'ids') {
-            filteredCards = [];
-          }
+          // Sorting — pinned items always float to top, then sort within each group
+          filteredItems.sort((a, b) {
+            // Pinned items first
+            if (a.isPinnedToTop && !b.isPinnedToTop) return -1;
+            if (!a.isPinnedToTop && b.isPinnedToTop) return 1;
+            // Within same pin group, apply user's chosen sort
+            if (_sortMode == 'newest') {
+              return b.createdAt.compareTo(a.createdAt);
+            } else if (_sortMode == 'oldest') {
+              return a.createdAt.compareTo(b.createdAt);
+            } else if (_sortMode == 'alphabetical') {
+              return a.nickname.compareTo(b.nickname);
+            }
+            return 0;
+          });
 
-          // Search Filter
-          if (_searchQuery.isNotEmpty) {
-            filteredCards = filteredCards.where((c) => 
-              c.nickname.toLowerCase().contains(_searchQuery) ||
-              c.cardBrand.toLowerCase().contains(_searchQuery)
-            ).toList();
-          }
-
-          // Sorting
-          if (_sortMode == 'newest') {
-            filteredCards.sort((a, b) => b.createdAt.compareTo(a.createdAt));
-          } else if (_sortMode == 'oldest') {
-            filteredCards.sort((a, b) => a.createdAt.compareTo(b.createdAt));
-          } else if (_sortMode == 'alphabetical') {
-            filteredCards.sort((a, b) => a.nickname.compareTo(b.nickname));
-          }
-
-          if (_selectedCardIndex >= filteredCards.length) {
+          if (_selectedCardIndex >= filteredItems.length) {
             _selectedCardIndex = 0;
           }
           
-          final selectedCard = filteredCards.isNotEmpty ? filteredCards[_selectedCardIndex] : null;
+          final selectedItem = filteredItems.isNotEmpty ? filteredItems[_selectedCardIndex] : null;
 
           return Column(
             children: [
-              // Hero Card
-              if (selectedCard != null)
-                Padding(
-                  padding: const EdgeInsets.fromLTRB(24, 24, 24, 8),
-                  child: DecryptableCard(
-                    key: ValueKey(selectedCard.id),
-                    card: selectedCard,
-                  ),
-                ),
-              
+              // Hero Card or ID Viewer. When the chosen category is empty this
+              // slot keeps its place and shows the placeholder illustration, so
+              // switching to an empty tab does not collapse the layout and jump
+              // the category tabs up the screen.
+              Padding(
+                padding: const EdgeInsets.fromLTRB(24, 24, 24, 8),
+                child: selectedItem == null
+                    ? _buildEmptyPreview()
+                    : Column(
+                        children: [
+                          selectedItem.type == VaultItemType.card
+                              ? DecryptableCard(
+                                  key: ValueKey('card_${selectedItem.id}'),
+                                  card: selectedItem.item as VirtualCard,
+                                )
+                              : DecryptableIdCard(
+                                  key: ValueKey('id_${selectedItem.id}'),
+                                  idDoc: selectedItem.item as VirtualId,
+                                ),
+                          _buildHeroHint(selectedItem),
+                        ],
+                      ),
+              ),
+
               // Category Tabs
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
@@ -252,11 +330,11 @@ class _VaultScreenState extends ConsumerState<VaultScreen> {
                   scrollDirection: Axis.horizontal,
                   child: Row(
                     children: [
-                      _buildCategoryTab('All', 'all'),
+                      _buildCategoryTab(loc.allFilter, 'all'),
                       const SizedBox(width: 12),
-                      _buildCategoryTab('Cards', 'cards'),
+                      _buildCategoryTab(loc.cardsFilter, 'cards'),
                       const SizedBox(width: 12),
-                      _buildCategoryTab('IDs · Soon', 'ids', disabled: true),
+                      _buildCategoryTab(loc.idsFilter, 'ids'),
                     ],
                   ),
                 ),
@@ -264,18 +342,13 @@ class _VaultScreenState extends ConsumerState<VaultScreen> {
 
               // Compact List or Empty State
               Expanded(
-                child: filteredCards.isEmpty
-                    ? Center(
-                        child: Text(
-                          _searchQuery.isNotEmpty ? 'No items found matching "$_searchQuery"' : 'No items in this category',
-                          style: TextStyle(color: Colors.white.withOpacity(0.5)),
-                        ),
-                      )
+                child: filteredItems.isEmpty
+                    ? _buildCategoryEmptyPrompt(context)
                     : ListView.builder(
                         padding: const EdgeInsets.fromLTRB(24, 0, 24, 24),
-                        itemCount: filteredCards.length,
+                        itemCount: filteredItems.length,
                         itemBuilder: (context, index) {
-                          final card = filteredCards[index];
+                          final item = filteredItems[index];
                           final isSelected = index == _selectedCardIndex;
 
                     return GestureDetector(
@@ -288,22 +361,35 @@ class _VaultScreenState extends ConsumerState<VaultScreen> {
                         margin: const EdgeInsets.only(bottom: 12),
                         padding: const EdgeInsets.all(16),
                         decoration: BoxDecoration(
-                          color: isSelected ? Colors.white.withOpacity(0.05) : const Color(0xFF161A23),
+                          color: isSelected 
+                              ? (Theme.of(context).brightness == Brightness.dark ? Colors.white.withOpacity(0.05) : const Color(0xFFC9A961).withOpacity(0.1))
+                              : Theme.of(context).colorScheme.surface,
                           borderRadius: BorderRadius.circular(16),
                           border: Border.all(
-                            color: isSelected ? const Color(0xFFC9A961).withOpacity(0.5) : Colors.white.withOpacity(0.05),
+                            color: isSelected ? const Color(0xFFC9A961).withOpacity(0.5) : Colors.transparent,
                             width: 1,
                           ),
+                          boxShadow: Theme.of(context).brightness == Brightness.light && !isSelected ? [
+                            BoxShadow(
+                              color: Colors.black.withOpacity(0.03),
+                              blurRadius: 10,
+                              offset: const Offset(0, 4),
+                            ),
+                          ] : null,
                         ),
                         child: Row(
                           children: [
                             Container(
                               padding: const EdgeInsets.all(10),
                               decoration: BoxDecoration(
-                                color: Colors.white.withOpacity(0.05),
+                                color: Theme.of(context).brightness == Brightness.dark ? Colors.white.withOpacity(0.05) : Colors.black.withOpacity(0.05),
                                 shape: BoxShape.circle,
                               ),
-                              child: const Icon(Icons.credit_card, color: Colors.white70, size: 20),
+                              child: Icon(
+                                item.type == VaultItemType.card ? Icons.credit_card : Icons.badge_outlined, 
+                                color: Theme.of(context).textTheme.bodyMedium?.color, 
+                                size: 20
+                              ),
                             ),
                             const SizedBox(width: 16),
                             Expanded(
@@ -311,18 +397,18 @@ class _VaultScreenState extends ConsumerState<VaultScreen> {
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Text(
-                                    card.nickname.toUpperCase(),
-                                    style: const TextStyle(
-                                      color: Colors.white,
+                                    item.nickname.toUpperCase(),
+                                    style: TextStyle(
+                                      color: Theme.of(context).colorScheme.onSurface,
                                       fontWeight: FontWeight.bold,
                                       fontSize: 15,
                                     ),
                                   ),
                                   const SizedBox(height: 4),
                                   Text(
-                                    '${card.cardBrand} •••• ${card.lastFourDigits}',
+                                    item.subtitle,
                                     style: TextStyle(
-                                      color: Colors.white.withOpacity(0.5),
+                                      color: Theme.of(context).colorScheme.onSurface.withOpacity(0.5),
                                       fontFamily: 'Roboto Mono',
                                       fontSize: 13,
                                     ),
@@ -330,10 +416,43 @@ class _VaultScreenState extends ConsumerState<VaultScreen> {
                                 ],
                               ),
                             ),
-                            if (isSelected)
-                              const Icon(Icons.check_circle, color: Color(0xFFC9A961), size: 20)
-                            else
-                              Icon(Icons.chevron_right, color: Colors.white.withOpacity(0.3), size: 20),
+                            Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                if (item.isPinnedToTop)
+                                  const Icon(Icons.push_pin, color: Color(0xFFC9A961), size: 16),
+                                if (item.isPinnedToHomescreen)
+                                  const Padding(
+                                    padding: EdgeInsets.only(left: 4.0),
+                                    child: Icon(Icons.home, color: Color(0xFFC9A961), size: 16),
+                                  ),
+                                const SizedBox(width: 8),
+                                if (isSelected)
+                                  const Icon(Icons.check_circle, color: Color(0xFFC9A961), size: 20)
+                                else
+                                  Icon(Icons.chevron_right, color: Theme.of(context).colorScheme.onSurface.withOpacity(0.3), size: 20),
+                                PopupMenuButton<String>(
+                                  icon: Icon(Icons.more_vert, color: Theme.of(context).colorScheme.onSurface.withOpacity(0.5), size: 20),
+                                  onSelected: (value) {
+                                    if (value == 'pin_top') {
+                                      _togglePinToTop(item);
+                                    } else if (value == 'pin_home') {
+                                      _togglePinToHomescreen(item);
+                                    }
+                                  },
+                                  itemBuilder: (context) => [
+                                    PopupMenuItem(
+                                      value: 'pin_top',
+                                      child: Text(item.isPinnedToTop ? 'Unpin from Top' : 'Pin to Top'),
+                                    ),
+                                    PopupMenuItem(
+                                      value: 'pin_home',
+                                      child: Text(item.isPinnedToHomescreen ? 'Unpin from Homescreen' : 'Pin to Homescreen'),
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            ),
                           ],
                         ),
                       ),
@@ -347,22 +466,396 @@ class _VaultScreenState extends ConsumerState<VaultScreen> {
         loading: () => const Center(child: CircularProgressIndicator()),
         error: (e, st) => Center(child: Text('Error: $e')),
       ),
-      floatingActionButton: cardsAsync.valueOrNull?.isNotEmpty == true
-          ? FloatingActionButton(
+      // Hidden whenever nothing is listed. An empty category already offers its
+      // own "Add New …" button, and the floating + both overlapped that button
+      // and duplicated it.
+      floatingActionButton: _applyFilters(allItemsAsync.valueOrNull ?? const []).isEmpty
+          ? null
+          : FloatingActionButton(
               onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => const AddCardScreen()),
-                );
+                _showAddOptionsBottomSheet();
               },
               child: const Icon(Icons.add),
-            )
-          : null,
+            ),
+    );
+  }
+
+  Future<void> _togglePinToTop(VaultItem item) async {
+    if (item.type == VaultItemType.card) {
+      final VirtualCard card = item.item;
+      final updatedCard = card.copyWith(isPinnedToTop: !card.isPinnedToTop);
+      await ref.read(cardsProvider.notifier).updateCard(updatedCard);
+    } else if (item.type == VaultItemType.id) {
+      final VirtualId idDoc = item.item;
+      final updatedId = idDoc.copyWith(isPinnedToTop: !idDoc.isPinnedToTop);
+      await ref.read(idsProvider.notifier).updateId(updatedId);
+    }
+  }
+
+  Future<void> _togglePinToHomescreen(VaultItem item) async {
+    final bool newValue;
+    
+    if (item.type == VaultItemType.card) {
+      final VirtualCard card = item.item;
+      newValue = !card.isPinnedToHomescreen;
+    } else {
+      final VirtualId idDoc = item.item;
+      newValue = !idDoc.isPinnedToHomescreen;
+    }
+    
+    // If pinning (not unpinning), unpin all other items first
+    if (newValue) {
+      final cards = ref.read(cardsProvider).valueOrNull ?? [];
+      final ids = ref.read(idsProvider).valueOrNull ?? [];
+      final cardRepo = ref.read(cardRepositoryProvider);
+      final idRepo = ref.read(idRepositoryProvider);
+      
+      for (final c in cards) {
+        if (c.isPinnedToHomescreen && c.id != item.id) {
+          await cardRepo.updateCard(c.copyWith(isPinnedToHomescreen: false));
+        }
+      }
+      for (final i in ids) {
+        if (i.isPinnedToHomescreen && i.id != item.id) {
+          await idRepo.updateId(i.copyWith(isPinnedToHomescreen: false));
+        }
+      }
+    }
+    
+    // Now toggle the selected item
+    if (item.type == VaultItemType.card) {
+      final VirtualCard card = item.item;
+      await ref.read(cardsProvider.notifier).updateCard(card.copyWith(isPinnedToHomescreen: newValue));
+    } else {
+      final VirtualId idDoc = item.item;
+      await ref.read(idsProvider.notifier).updateId(idDoc.copyWith(isPinnedToHomescreen: newValue));
+    }
+    
+    // Force refresh both providers since we may have updated items in both tables
+    ref.invalidate(cardsProvider);
+    ref.invalidate(idsProvider);
+  }
+
+  void _showAddOptionsBottomSheet() {
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: Theme.of(context).colorScheme.surface,
+      shape: const RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(20))),
+      builder: (context) {
+        return SafeArea(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Padding(
+                padding: const EdgeInsets.all(20),
+                child: Text('Add Item', style: TextStyle(color: Theme.of(context).colorScheme.onSurface, fontSize: 18, fontWeight: FontWeight.bold)),
+              ),
+              ListTile(
+                leading: const Icon(Icons.credit_card, color: Color(0xFFC9A961)),
+                title: Text(AppLocalizations.of(context)!.addACard, style: TextStyle(color: Theme.of(context).colorScheme.onSurface)),
+                onTap: () {
+                  Navigator.pop(context);
+                  Navigator.push(context, MaterialPageRoute(builder: (_) => const AddCardScreen()));
+                },
+              ),
+              ListTile(
+                leading: const Icon(Icons.badge, color: Color(0xFFC9A961)),
+                title: Text(AppLocalizations.of(context)!.addAnId, style: TextStyle(color: Theme.of(context).colorScheme.onSurface)),
+                onTap: () {
+                  Navigator.pop(context);
+                  Navigator.push(context, MaterialPageRoute(builder: (_) => const AddIdScreen()));
+                },
+              ),
+              const SizedBox(height: 20),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  /// Applies the active category tab and search query.
+  ///
+  /// Shared by the list and by the floating action button, so the two can never
+  /// disagree about whether anything is on screen. Sorting stays with the list,
+  /// which is the only caller that cares about order.
+  List<VaultItem> _applyFilters(List<VaultItem> allItems) {
+    Iterable<VaultItem> items = allItems;
+
+    if (_selectedCategory == 'cards') {
+      items = items.where((i) => i.type == VaultItemType.card);
+    } else if (_selectedCategory == 'ids') {
+      items = items.where((i) => i.type == VaultItemType.id);
+    }
+
+    if (_searchQuery.isNotEmpty) {
+      items = items.where((i) =>
+          i.nickname.toLowerCase().contains(_searchQuery) ||
+          i.subtitle.toLowerCase().contains(_searchQuery));
+    }
+
+    return items.toList();
+  }
+
+  /// Placeholder that stands in for the hero card when the chosen category is
+  /// empty.
+  ///
+  /// Sized to roughly the height of a real card so the category tabs beneath it
+  /// stay put: switching to an empty tab should not make the rest of the screen
+  /// jump upwards. It reuses the all-empty vault's glow and fanned mock cards so
+  /// an empty tab reads as the same app rather than a second, plainer design.
+  /// The strip under the hero card.
+  ///
+  /// Solves two things the card face cannot say for itself. Tapping it opens the
+  /// details page, which was entirely undiscoverable — nothing on screen
+  /// suggested the card was a button at all. And an attached photo was invisible
+  /// until you got to that page, so there was no way to tell which items had one.
+  ///
+  /// The photo badge reads [hasPhoto], which is stored unencrypted precisely so
+  /// this can be drawn without spending an authentication prompt per item.
+  Widget _buildHeroHint(VaultItem item) {
+    final theme = Theme.of(context);
+    final muted = theme.colorScheme.onSurface.withValues(alpha: 0.55);
+    final hasPhoto = item.type == VaultItemType.card
+        ? (item.item as VirtualCard).hasPhoto
+        : (item.item as VirtualId).hasPhoto;
+
+    return Padding(
+      padding: const EdgeInsets.only(top: 12),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          if (hasPhoto) ...[
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+              decoration: BoxDecoration(
+                color: KardeColors.champagneGold.withValues(alpha: 0.12),
+                borderRadius: BorderRadius.circular(20),
+                border: Border.all(
+                  color: KardeColors.champagneGold.withValues(alpha: 0.35),
+                ),
+              ),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: const [
+                  Icon(Icons.photo_camera_back_outlined,
+                      size: 13, color: KardeColors.champagneGold),
+                  SizedBox(width: 5),
+                  Text(
+                    'Photo',
+                    style: TextStyle(
+                      fontFamily: 'Inter',
+                      fontSize: 11,
+                      fontWeight: FontWeight.w600,
+                      color: KardeColors.champagneGold,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(width: 10),
+          ],
+          Icon(Icons.touch_app_outlined, size: 13, color: muted),
+          const SizedBox(width: 5),
+          Text(
+            'Tap the card for full details',
+            style: TextStyle(
+              fontFamily: 'Inter',
+              fontSize: 11.5,
+              color: muted,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildEmptyPreview() {
+    final bool isIds = _selectedCategory == 'ids';
+    final bool isSearching = _searchQuery.isNotEmpty;
+
+    return SizedBox(
+      height: 210,
+      width: double.infinity,
+      child: Stack(
+        alignment: Alignment.center,
+        children: [
+          Container(
+            width: 260,
+            height: 260,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              gradient: RadialGradient(
+                colors: [
+                  const Color(0xFF2BD1C4).withOpacity(0.14),
+                  const Color(0xFF2BD1C4).withOpacity(0),
+                ],
+                stops: const [0.0, 1.0],
+              ),
+            ),
+          ),
+          Transform.translate(
+            offset: const Offset(30, 26),
+            child: Transform.rotate(
+              angle: 10 * 3.14159 / 180,
+              child: _buildMockCard(opacity: 0.55),
+            ),
+          ),
+          Transform.translate(
+            offset: const Offset(-26, 10),
+            child: Transform.rotate(
+              angle: -8 * 3.14159 / 180,
+              child: _buildMockCard(opacity: 0.75),
+            ),
+          ),
+          Transform.translate(
+            offset: const Offset(2, -12),
+            child: Transform.rotate(
+              angle: 2 * 3.14159 / 180,
+              child: _buildMockCard(opacity: 1.0),
+            ),
+          ),
+          Icon(
+            isSearching
+                ? Icons.search_off
+                : (isIds ? Icons.badge_outlined : Icons.credit_card),
+            color: const Color(0xFFC9A961),
+            size: 40,
+          ),
+        ],
+      ),
+    );
+  }
+
+  /// Empty state for a category that has nothing in it, while the vault as a
+  /// whole is not empty.
+  ///
+  /// The all-empty vault has its own full-page illustration earlier in `build`.
+  /// This is the case where the user holds cards but no IDs (or the reverse) and
+  /// switches to the empty tab. It previously fell through to a single centred
+  /// line of hardcoded `Colors.white` text — which said nothing about what to do
+  /// next, and was invisible against the light theme's near-white background.
+  ///
+  /// A search that matches nothing is a different situation from a category that
+  /// is genuinely empty: the fix there is to change the query, not to add an
+  /// item, so it gets its own wording and no add button.
+  ///
+  /// The illustration lives in the hero slot above the tabs
+  /// ([_buildEmptyPreview]); this is only the wording and the call to action,
+  /// which sit in the list area where the items themselves would be. Splitting
+  /// them keeps the screen's normal three-part shape — preview, tabs, list —
+  /// instead of replacing the whole page with a takeover.
+  Widget _buildCategoryEmptyPrompt(BuildContext context) {
+    final theme = Theme.of(context);
+
+    final bool isSearching = _searchQuery.isNotEmpty;
+    final bool isIds = _selectedCategory == 'ids';
+
+    final String title;
+    final String message;
+    if (isSearching) {
+      title = 'No matches';
+      message = 'Nothing here matches "$_searchQuery". Try a different word.';
+    } else if (isIds) {
+      title = 'No IDs yet';
+      message = 'Passports, licences and other documents you add will appear here.';
+    } else {
+      title = 'No cards yet';
+      message = 'Bank cards, loyalty cards and anything else you add will appear here.';
+    }
+
+    return Center(
+      child: SingleChildScrollView(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text(
+              title,
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                color: theme.colorScheme.onSurface,
+                fontSize: 22,
+                fontWeight: FontWeight.bold,
+                fontFamily: 'Outfit',
+              ),
+            ),
+            const SizedBox(height: 8),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 40),
+              child: Text(
+                message,
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  color: theme.textTheme.bodyMedium?.color,
+                  fontSize: 14,
+                  fontFamily: 'Inter',
+                ),
+              ),
+            ),
+            if (!isSearching) ...[
+              const SizedBox(height: 32),
+              Container(
+                width: 286,
+                height: 56,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(18),
+                  gradient: const LinearGradient(
+                    colors: [Color(0xFFE7D4A0), Color(0xFFC9A961), Color(0xFF9C7C41)],
+                    stops: [0.0, 0.55, 1.0],
+                  ),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.35),
+                      blurRadius: 8,
+                      offset: const Offset(0, 4),
+                    ),
+                  ],
+                ),
+                child: ElevatedButton(
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => isIds ? const AddIdScreen() : const AddCardScreen(),
+                      ),
+                    );
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.transparent,
+                    shadowColor: Colors.transparent,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(18),
+                    ),
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      const Icon(Icons.add, color: Color(0xFF0A0C11), size: 20),
+                      const SizedBox(width: 8),
+                      Text(
+                        isIds ? 'Add New ID' : 'Add New Card',
+                        style: const TextStyle(
+                          color: Color(0xFF0A0C11),
+                          fontSize: 15,
+                          fontWeight: FontWeight.bold,
+                          fontFamily: 'Inter',
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ],
+          ],
+        ),
+      ),
     );
   }
 
   Widget _buildCategoryTab(String label, String value, {bool disabled = false}) {
     final isSelected = _selectedCategory == value;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    
     return GestureDetector(
       onTap: disabled ? null : () {
         setState(() {
@@ -373,16 +866,18 @@ class _VaultScreenState extends ConsumerState<VaultScreen> {
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
         decoration: BoxDecoration(
-          color: isSelected ? const Color(0xFFC9A961) : Colors.white.withOpacity(0.05),
+          color: isSelected ? const Color(0xFFC9A961) : (isDark ? Colors.white.withOpacity(0.05) : Colors.black.withOpacity(0.05)),
           borderRadius: BorderRadius.circular(20),
           border: Border.all(
-            color: isSelected ? Colors.transparent : Colors.white.withOpacity(0.1),
+            color: isSelected ? Colors.transparent : (isDark ? Colors.white.withOpacity(0.1) : Colors.black.withOpacity(0.05)),
           ),
         ),
         child: Text(
           label,
           style: TextStyle(
-            color: isSelected ? const Color(0xFF0A0C11) : (disabled ? Colors.white.withOpacity(0.3) : Colors.white),
+            color: isSelected 
+                ? (isDark ? const Color(0xFF0A0C11) : Colors.white) 
+                : (disabled ? Theme.of(context).colorScheme.onSurface.withOpacity(0.3) : Theme.of(context).colorScheme.onSurface),
             fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
             fontSize: 13,
           ),
@@ -394,16 +889,16 @@ class _VaultScreenState extends ConsumerState<VaultScreen> {
   void _showSortBottomSheet() {
     showModalBottomSheet(
       context: context,
-      backgroundColor: const Color(0xFF161A23),
+      backgroundColor: Theme.of(context).colorScheme.surface,
       shape: const RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(20))),
       builder: (context) {
         return SafeArea(
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              const Padding(
-                padding: EdgeInsets.all(20),
-                child: Text('Sort Items', style: TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold)),
+              Padding(
+                padding: const EdgeInsets.all(20),
+                child: Text('Sort Items', style: TextStyle(color: Theme.of(context).colorScheme.onSurface, fontSize: 18, fontWeight: FontWeight.bold)),
               ),
               _buildSortOption('Newest First', 'newest'),
               _buildSortOption('Oldest First', 'oldest'),
@@ -419,7 +914,7 @@ class _VaultScreenState extends ConsumerState<VaultScreen> {
   Widget _buildSortOption(String label, String value) {
     final isSelected = _sortMode == value;
     return ListTile(
-      title: Text(label, style: TextStyle(color: isSelected ? const Color(0xFFC9A961) : Colors.white)),
+      title: Text(label, style: TextStyle(color: isSelected ? const Color(0xFFC9A961) : Theme.of(context).colorScheme.onSurface)),
       trailing: isSelected ? const Icon(Icons.check, color: Color(0xFFC9A961)) : null,
       onTap: () {
         setState(() {

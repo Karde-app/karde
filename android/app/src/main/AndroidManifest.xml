@@ -1,5 +1,7 @@
-<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
     <uses-permission android:name="android.permission.USE_BIOMETRIC"/>
+    <uses-permission android:name="android.permission.INTERNET" tools:node="remove"/>
     <application
         android:label="Karde"
         android:name="${applicationName}"
@@ -28,6 +30,28 @@
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
+        <!-- Lets a camera app write a capture into Karde's own cache directory.
+
+             Needed because ACTION_IMAGE_CAPTURE hands the work to whatever camera
+             app the user already has, and that app has to be given somewhere to
+             put the result. Using a FileProvider rather than declaring the CAMERA
+             permission keeps Karde's permission list at USE_BIOMETRIC alone.
+
+             exported="false" with grantUriPermissions means access is handed out
+             one URI at a time, for the single file named in the intent, and only
+             for as long as that intent is being served. res/xml/file_paths.xml
+             restricts it to the captures cache directory — the encrypted photos
+             in filesDir are not reachable through it. -->
+        <provider
+            android:name="androidx.core.content.FileProvider"
+            android:authorities="${applicationId}.fileprovider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/file_paths" />
+        </provider>
+
         <!-- Don't delete the meta-data below.
              This is used by the Flutter tool to generate GeneratedPluginRegistrant.java -->
         <meta-data

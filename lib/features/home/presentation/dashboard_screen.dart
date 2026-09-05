@@ -1,11 +1,43 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../../l10n/app_localizations.dart';
 import '../../cards/data/card_repository.dart';
 import '../../cards/presentation/add_card_screen.dart';
 import '../../cards/presentation/vault_screen.dart';
+import '../../ids/presentation/add_id_screen.dart';
+import '../../ids/data/id_repository.dart';
+import '../../ids/domain/virtual_id.dart';
+import '../../ids/presentation/widgets/realistic_id_card.dart';
 import '../../cards/domain/virtual_card.dart';
 import 'widgets/dashboard_preview_card.dart';
 import '../../../theme/theme.dart';
+import '../../../core/security/device_security_service.dart';
+import '../../../core/security/vault_health_provider.dart';
+
+/// FIX 7-2: decorative placeholders for the empty / single-item dashboard stack.
+/// These were rebuilt on every frame; they hold no data, so one instance each is
+/// enough. `encryptedData` is empty by design — nothing ever decrypts them.
+final _placeholderEpoch = DateTime.fromMillisecondsSinceEpoch(0);
+
+final _placeholderVisa = VirtualCard(
+  id: -1,
+  nickname: 'ISSUER',
+  cardBrand: 'VISA',
+  encryptedData: '',
+  lastFourDigits: '1234',
+  createdAt: _placeholderEpoch,
+  updatedAt: _placeholderEpoch,
+);
+
+final _placeholderMastercard = VirtualCard(
+  id: -2,
+  nickname: 'ISSUER',
+  cardBrand: 'MASTERCARD',
+  encryptedData: '',
+  lastFourDigits: '4471',
+  createdAt: _placeholderEpoch,
+  updatedAt: _placeholderEpoch,
+);
 
 class DashboardScreen extends ConsumerWidget {
   const DashboardScreen({super.key});
@@ -13,7 +45,14 @@ class DashboardScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
+    final loc = AppLocalizations.of(context)!;
     final cardsAsync = ref.watch(cardsProvider);
+    final idsAsync = ref.watch(idsProvider);
+    final vaultHealthAsync = ref.watch(vaultHealthProvider);
+    
+    final int cardsCount = cardsAsync.valueOrNull?.length ?? 0;
+    final int idsCount = idsAsync.valueOrNull?.length ?? 0;
+    final int totalItems = cardsCount + idsCount;
 
     return Scaffold(
       body: SafeArea(
@@ -27,25 +66,27 @@ class DashboardScreen extends ConsumerWidget {
                 'Welcome to Karde', 
                 style: theme.textTheme.headlineMedium?.copyWith(
                   fontWeight: FontWeight.w700,
-                  color: KardeColors.warmIvory,
+                  color: theme.colorScheme.onSurface,
                 )
               ),
               const SizedBox(height: 4),
               Text(
                 'Your secure, offline digital wallet', 
                 style: theme.textTheme.bodyMedium?.copyWith(
-                  color: KardeColors.slate,
+                  color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
                 )
               ),
               const SizedBox(height: 16),
               
-              // Pill Badge
+              // Security Badge
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                 decoration: BoxDecoration(
+                  color: KardeColors.signalTeal.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(20),
-                  border: Border.all(color: KardeColors.signalTeal.withOpacity(0.3)),
-                  color: KardeColors.signalTeal.withOpacity(0.1),
+                  border: Border.all(
+                    color: KardeColors.signalTeal.withValues(alpha: 0.3),
+                  ),
                 ),
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
@@ -63,30 +104,28 @@ class DashboardScreen extends ConsumerWidget {
                       'Offline & Encrypted',
                       style: theme.textTheme.labelMedium?.copyWith(
                         color: KardeColors.signalTeal,
-                        fontWeight: FontWeight.w600,
+                        fontWeight: FontWeight.bold,
                       ),
                     ),
                   ],
                 ),
               ),
+              const SizedBox(height: 24),
               
-              const SizedBox(height: 16),
-              
-              // Quick Access
+              // Quick Access Label
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                crossAxisAlignment: CrossAxisAlignment.baseline,
-                textBaseline: TextBaseline.alphabetic,
                 children: [
-                  Text('Quick Access', style: theme.textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold)),
+                  Text(
+                    'Quick Access',
+                    style: theme.textTheme.titleMedium?.copyWith(
+                      fontWeight: FontWeight.bold,
+                      color: theme.colorScheme.onSurface.withValues(alpha: 0.8),
+                    ),
+                  ),
                   GestureDetector(
                     onTap: () {
-                      final cards = cardsAsync.valueOrNull;
-                      if (cards == null || cards.isEmpty) {
-                        Navigator.push(context, MaterialPageRoute(builder: (context) => const AddCardScreen()));
-                      } else {
-                        Navigator.push(context, MaterialPageRoute(builder: (context) => const VaultScreen()));
-                      }
+                      Navigator.push(context, MaterialPageRoute(builder: (context) => const VaultScreen()));
                     },
                     child: Text(
                       'See all', 
@@ -100,93 +139,82 @@ class DashboardScreen extends ConsumerWidget {
               ),
               const SizedBox(height: 16),
               
-              // Cards Stack
-              cardsAsync.when(
-                data: (cards) {
-                  List<VirtualCard> displayCards = List.from(cards);
-                  displayCards.sort((a, b) => b.createdAt.compareTo(a.createdAt));
+              // Quick Access Stack
+              Builder(
+                builder: (context) {
+                  final bool isLoading = cardsAsync.isLoading || idsAsync.isLoading;
+                  final bool hasError = cardsAsync.hasError || idsAsync.hasError;
+
+                  if (isLoading) {
+                    return const SizedBox(height: 220, child: Center(child: CircularProgressIndicator()));
+                  }
+                  
+                  if (hasError) {
+                    return const SizedBox(height: 220, child: Center(child: Text('Error loading data')));
+                  }
+
+                  final cards = cardsAsync.valueOrNull ?? [];
+                  final ids = idsAsync.valueOrNull ?? [];
+                  
+                  List<dynamic> displayItems = [...cards, ...ids];
+                  
+                  final pinnedItems = displayItems.where((item) {
+                    return (item is VirtualCard) ? item.isPinnedToHomescreen : (item as VirtualId).isPinnedToHomescreen;
+                  }).toList();
+                  
+                  if (pinnedItems.isNotEmpty) {
+                    displayItems = pinnedItems;
+                  }
+                  
+                  displayItems.sort((a, b) {
+                    final DateTime aTime = (a is VirtualCard) ? a.createdAt : (a as VirtualId).createdAt;
+                    final DateTime bTime = (b is VirtualCard) ? b.createdAt : (b as VirtualId).createdAt;
+                    return bTime.compareTo(aTime);
+                  });
                   
                   bool isEmptyState = false;
                   
-                  if (displayCards.isEmpty) {
+                  if (displayItems.isEmpty) {
                     isEmptyState = true;
-                    displayCards = [
-                      VirtualCard(
-                        id: -1,
-                        nickname: 'ISSUER',
-                        cardBrand: 'VISA',
-                        encryptedCardNumber: '',
-                        encryptedExpiry: '',
-                        encryptedCvv: '',
-                        encryptedCardholderName: '',
-                        encryptedNotes: '',
-                        lastFourDigits: '1234',
-                        createdAt: DateTime.now(),
-                        updatedAt: DateTime.now(),
-                      ),
-                      VirtualCard(
-                        id: -2,
-                        nickname: 'ISSUER',
-                        cardBrand: 'MASTERCARD',
-                        encryptedCardNumber: '',
-                        encryptedExpiry: '',
-                        encryptedCvv: '',
-                        encryptedCardholderName: '',
-                        encryptedNotes: '',
-                        lastFourDigits: '4471',
-                        createdAt: DateTime.now(),
-                        updatedAt: DateTime.now(),
-                      ),
-                    ];
-                  } else if (displayCards.length == 1) {
-                    displayCards.add(
-                      VirtualCard(
-                        id: -2,
-                        nickname: 'ISSUER',
-                        cardBrand: 'MASTERCARD',
-                        encryptedCardNumber: '',
-                        encryptedExpiry: '',
-                        encryptedCvv: '',
-                        encryptedCardholderName: '',
-                        encryptedNotes: '',
-                        lastFourDigits: '4471',
-                        createdAt: DateTime.now(),
-                        updatedAt: DateTime.now(),
-                      ),
-                    );
+                    displayItems = [_placeholderVisa, _placeholderMastercard];
+                  } else if (displayItems.length == 1) {
+                    displayItems.add(_placeholderMastercard);
+                  }
+                  
+                  Widget buildItem(dynamic item, bool isFront) {
+                    if (item is VirtualCard) {
+                      return DashboardPreviewCard(
+                        key: ValueKey('card_${item.id}'),
+                        card: item, 
+                        isFront: isFront
+                      );
+                    } else if (item is VirtualId) {
+                      return RealisticIdCard(
+                        key: ValueKey('id_${item.id}'),
+                        idDoc: item,
+                        isDecrypted: false,
+                      );
+                    }
+                    return const SizedBox();
                   }
                   
                   final stackWidget = SizedBox(
                     height: 220,
                     child: Stack(
                       children: [
-                        if (displayCards.length > 1)
+                        if (displayItems.length > 1)
                           Positioned(
-                            top: 20,
-                            left: 20,
-                            right: 0,
-                            bottom: 0,
+                            top: 20, left: 20, right: 0, bottom: 0,
                             child: Transform.rotate(
                               angle: 0.05,
-                              child: DashboardPreviewCard(
-                                key: ValueKey(displayCards[1].id),
-                                card: displayCards[1], 
-                                isFront: false
-                              ),
+                              child: buildItem(displayItems[1], false),
                             ),
                           ),
                         Positioned(
-                          top: 0,
-                          left: 0,
-                          right: 15,
-                          bottom: 20,
+                          top: 0, left: 0, right: 15, bottom: 20,
                           child: Transform.rotate(
                             angle: -0.02,
-                            child: DashboardPreviewCard(
-                              key: ValueKey(displayCards[0].id),
-                              card: displayCards[0], 
-                              isFront: true
-                            ),
+                            child: buildItem(displayItems[0], true),
                           ),
                         ),
                       ],
@@ -209,47 +237,99 @@ class DashboardScreen extends ConsumerWidget {
                     child: AbsorbPointer(child: stackWidget),
                   );
                 },
-                loading: () => const SizedBox(height: 220, child: Center(child: CircularProgressIndicator())),
-                error: (e, st) => const SizedBox(height: 220, child: Center(child: Text('Error loading cards'))),
               ),
               
               const Spacer(),
               
               // Vault Health Banner
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                decoration: BoxDecoration(
-                  color: KardeColors.graphite,
-                  borderRadius: BorderRadius.circular(16),
-                  border: Border.all(color: Colors.white.withOpacity(0.05)),
-                ),
-                child: Row(
-                  children: [
-                    const Icon(Icons.shield_outlined, color: KardeColors.champagneGold, size: 28),
-                    const SizedBox(width: 16),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          const Text(
-                            'Vault health: excellent',
-                            style: TextStyle(
-                              color: KardeColors.warmIvory,
-                              fontWeight: FontWeight.bold,
-                              fontSize: 16,
-                            ),
-                          ),
-                          const SizedBox(height: 4),
-                          Text(
-                            '${cardsAsync.valueOrNull?.length ?? 0} items encrypted with AES-256-GCM',
-                            style: theme.textTheme.bodyMedium?.copyWith(fontSize: 13),
-                          ),
-                        ],
+              vaultHealthAsync.when(
+                data: (status) {
+                  String title;
+                  IconData mainIcon;
+                  Color mainIconColor;
+                  IconData? trailingIcon;
+                  Color? trailingIconColor;
+                  String subtitle = loc.vaultHealthItems(totalItems);
+
+                  switch (status) {
+                    case VaultHealthStatus.excellent:
+                      title = loc.vaultHealthExcellent; // "Excellent"
+                      mainIcon = Icons.shield_outlined;
+                      mainIconColor = KardeColors.champagneGold;
+                      trailingIcon = Icons.check;
+                      trailingIconColor = KardeColors.signalTeal;
+                      break;
+                    case VaultHealthStatus.warning:
+                      title = "Security Warning";
+                      mainIcon = Icons.warning_amber_rounded;
+                      mainIconColor = Colors.orange;
+                      subtitle = "No biometrics enrolled. $subtitle";
+                      break;
+                    case VaultHealthStatus.atRisk:
+                      title = "Security Risk";
+                      mainIcon = Icons.gpp_bad_outlined;
+                      mainIconColor = Colors.red;
+                      subtitle = "Device is missing secure lock screen. $subtitle";
+                      break;
+                  }
+
+                  return Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                    decoration: BoxDecoration(
+                      color: theme.colorScheme.surface,
+                      borderRadius: BorderRadius.circular(16),
+                      border: Border.all(
+                        color: status == VaultHealthStatus.excellent 
+                          ? theme.dividerColor 
+                          : mainIconColor.withOpacity(0.5)
                       ),
+                      boxShadow: theme.brightness == Brightness.light ? [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.03),
+                          blurRadius: 10,
+                          offset: const Offset(0, 4),
+                        ),
+                      ] : null,
                     ),
-                    const Icon(Icons.check, color: KardeColors.signalTeal),
-                  ],
-                ),
+                    child: Row(
+                      children: [
+                        Icon(mainIcon, color: mainIconColor, size: 28),
+                        const SizedBox(width: 16),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                title,
+                                style: TextStyle(
+                                  color: status == VaultHealthStatus.excellent 
+                                    ? theme.colorScheme.onSurface 
+                                    : mainIconColor,
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 16,
+                                ),
+                              ),
+                              const SizedBox(height: 4),
+                              Text(
+                                subtitle,
+                                style: theme.textTheme.bodyMedium?.copyWith(
+                                  fontSize: 13,
+                                  color: status == VaultHealthStatus.excellent 
+                                    ? theme.textTheme.bodyMedium?.color
+                                    : mainIconColor.withOpacity(0.8),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        if (trailingIcon != null)
+                          Icon(trailingIcon, color: trailingIconColor),
+                      ],
+                    ),
+                  );
+                },
+                loading: () => const CircularProgressIndicator(),
+                error: (_, __) => const SizedBox(),
               ),
               
               const SizedBox(height: 16),
@@ -269,9 +349,16 @@ class DashboardScreen extends ConsumerWidget {
                       child: Container(
                         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                         decoration: BoxDecoration(
-                          color: KardeColors.graphite,
+                          color: theme.colorScheme.surface,
                           borderRadius: BorderRadius.circular(16),
-                          border: Border.all(color: Colors.white.withOpacity(0.05)),
+                          border: Border.all(color: theme.dividerColor),
+                          boxShadow: theme.brightness == Brightness.light ? [
+                            BoxShadow(
+                              color: Colors.black.withOpacity(0.03),
+                              blurRadius: 10,
+                              offset: const Offset(0, 4),
+                            ),
+                          ] : null,
                         ),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
@@ -280,15 +367,15 @@ class DashboardScreen extends ConsumerWidget {
                             Container(
                               padding: const EdgeInsets.all(8),
                               decoration: BoxDecoration(
-                                color: Colors.white.withOpacity(0.05),
+                                color: theme.brightness == Brightness.dark ? Colors.white.withOpacity(0.05) : KardeColors.champagneGold.withOpacity(0.1),
                                 shape: BoxShape.circle,
                               ),
                               child: const Icon(Icons.add, color: KardeColors.champagneGold, size: 20),
                             ),
                             const SizedBox(height: 8),
-                            const Text(
-                              'Add a card',
-                              style: TextStyle(color: KardeColors.warmIvory, fontWeight: FontWeight.bold, fontSize: 14),
+                            Text(
+                              loc.addACard,
+                              style: TextStyle(color: theme.colorScheme.onSurface, fontWeight: FontWeight.bold, fontSize: 14),
                             ),
                           ],
                         ),
@@ -301,15 +388,22 @@ class DashboardScreen extends ConsumerWidget {
                       onTap: () {
                         Navigator.push(
                           context,
-                          MaterialPageRoute(builder: (context) => const VaultScreen()),
+                          MaterialPageRoute(builder: (context) => const AddIdScreen()),
                         );
                       },
                       child: Container(
                         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                         decoration: BoxDecoration(
-                          color: KardeColors.graphite,
+                          color: theme.colorScheme.surface,
                           borderRadius: BorderRadius.circular(16),
-                          border: Border.all(color: Colors.white.withOpacity(0.05)),
+                          border: Border.all(color: theme.dividerColor),
+                          boxShadow: theme.brightness == Brightness.light ? [
+                            BoxShadow(
+                              color: Colors.black.withOpacity(0.03),
+                              blurRadius: 10,
+                              offset: const Offset(0, 4),
+                            ),
+                          ] : null,
                         ),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
@@ -318,15 +412,15 @@ class DashboardScreen extends ConsumerWidget {
                             Container(
                               padding: const EdgeInsets.all(8),
                               decoration: BoxDecoration(
-                                color: KardeColors.signalTeal.withOpacity(0.1),
+                                color: theme.brightness == Brightness.dark ? Colors.white.withOpacity(0.05) : KardeColors.champagneGold.withOpacity(0.1),
                                 shape: BoxShape.circle,
                               ),
-                              child: const Icon(Icons.all_inbox, color: KardeColors.signalTeal, size: 20),
+                              child: const Icon(Icons.badge_outlined, color: KardeColors.champagneGold, size: 20),
                             ),
                             const SizedBox(height: 8),
-                            const Text(
-                              'Open Vault',
-                              style: TextStyle(color: KardeColors.warmIvory, fontWeight: FontWeight.bold, fontSize: 14),
+                            Text(
+                              loc.addAnId,
+                              style: TextStyle(color: theme.colorScheme.onSurface, fontWeight: FontWeight.bold, fontSize: 14),
                             ),
                           ],
                         ),

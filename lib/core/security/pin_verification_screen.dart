@@ -1,13 +1,18 @@
 import 'dart:async';
+import 'dart:convert';
+import 'package:crypto/crypto.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../l10n/app_localizations.dart';
 import '../../theme/theme.dart';
 import '../storage/settings_repository.dart';
+import 'secret_hasher.dart';
+import '../../features/onboarding/presentation/pin_setup_screen.dart';
 import 'forgot_pin_screen.dart';
 
 class PinVerificationScreen extends ConsumerStatefulWidget {
-  const PinVerificationScreen({super.key});
+  final String? customSubtitle;
+  const PinVerificationScreen({super.key, this.customSubtitle});
 
   @override
   ConsumerState<PinVerificationScreen> createState() => _PinVerificationScreenState();
@@ -108,9 +113,28 @@ class _PinVerificationScreenState extends ConsumerState<PinVerificationScreen> {
     if (_lockoutUntil != null || _isPermanentlyLocked) return;
 
     final settings = ref.read(settingsRepositoryProvider);
-    final storedPin = await settings.getHashedPin();
-    
-    if (storedPin == _pin) {
+    final storedHash = await settings.getHashedPin();
+
+    // No PIN has ever been created, so there is nothing any input could match.
+    // Counting these as failed attempts marched the user toward the permanent
+    // lock for a PIN that never existed. Send them to set one instead.
+    if (storedHash == null || storedHash.isEmpty) {
+      if (!mounted) return;
+      setState(() => _pin = '');
+      final created = await Navigator.push<bool>(
+        context,
+        MaterialPageRoute(
+          builder: (_) => const PinSetupScreen(isResettingPin: true),
+        ),
+      );
+      if (created == true && mounted) Navigator.pop(context, true);
+      return;
+    }
+
+    // FIX 2-2: salted PBKDF2 verification, constant-time compared. Any PIN
+    // stored by an older build used a bare SHA-256 digest and will not verify,
+    // which is intended — those users are sent through PIN re-setup.
+    if (SecretHasher.verify(_pin, storedHash)) {
       await settings.setFailedAttempts(0);
       await settings.setLockoutUntil(null);
       if (mounted) Navigator.pop(context, true);
@@ -142,12 +166,12 @@ class _PinVerificationScreenState extends ConsumerState<PinVerificationScreen> {
     final loc = AppLocalizations.of(context)!;
 
     return Scaffold(
-      backgroundColor: KardeColors.graphite,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
         leading: IconButton(
-          icon: const Icon(Icons.close, color: Colors.white),
+          icon: Icon(Icons.close, color: Theme.of(context).colorScheme.onSurface),
           onPressed: () => Navigator.pop(context, false),
         ),
       ),
@@ -163,19 +187,19 @@ class _PinVerificationScreenState extends ConsumerState<PinVerificationScreen> {
             const SizedBox(height: 20),
             Text(
               loc.enterKardePin,
-              style: const TextStyle(
+              style: TextStyle(
                 fontFamily: 'Outfit',
-                color: Colors.white,
+                color: Theme.of(context).colorScheme.onSurface,
                 fontSize: 28,
                 fontWeight: FontWeight.bold,
               ),
             ),
             const SizedBox(height: 8),
             Text(
-              loc.unlockToReveal,
-              style: const TextStyle(
+              widget.customSubtitle ?? loc.unlockToReveal,
+              style: TextStyle(
                 fontFamily: 'Inter',
-                color: Colors.white70,
+                color: Theme.of(context).colorScheme.onSurface.withOpacity(0.7),
                 fontSize: 16,
               ),
             ),
@@ -188,14 +212,14 @@ class _PinVerificationScreenState extends ConsumerState<PinVerificationScreen> {
                   margin: const EdgeInsets.symmetric(horizontal: 12),
                   width: 24,
                   height: 24,
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    color: isFilled ? KardeColors.champagneGold : Colors.transparent,
-                    border: Border.all(
-                      color: isFilled ? KardeColors.champagneGold : Colors.white38,
-                      width: 2,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: isFilled ? Theme.of(context).primaryColor : Colors.transparent,
+                      border: Border.all(
+                        color: isFilled ? Theme.of(context).primaryColor : (Theme.of(context).brightness == Brightness.dark ? Colors.white38 : Colors.black38),
+                        width: 2,
+                      ),
                     ),
-                  ),
                 );
               }),
             ),
@@ -278,26 +302,34 @@ class _PinVerificationScreenState extends ConsumerState<PinVerificationScreen> {
 
   Widget _buildDialButton(String digit) {
     final isDisabled = _lockoutUntil != null || _isPermanentlyLocked;
-    return InkWell(
-      onTap: isDisabled ? null : () => _onDigitPressed(digit),
-      borderRadius: BorderRadius.circular(36),
-      child: Opacity(
-        opacity: isDisabled ? 0.3 : 1.0,
-        child: Container(
-          width: 72,
-          height: 72,
-          decoration: BoxDecoration(
-            shape: BoxShape.circle,
-            color: Colors.white.withOpacity(0.05),
-          ),
-          alignment: Alignment.center,
-          child: Text(
-            digit,
-            style: const TextStyle(
-              fontFamily: 'Inter',
-              color: Colors.white,
-              fontSize: 28,
-              fontWeight: FontWeight.w500,
+    // FIX 6-1: the dial pad was an InkWell wrapping bare Text, so TalkBack read
+    // out a floating digit with no indication it was a button or what it did.
+    return Semantics(
+      label: 'PIN digit $digit',
+      button: true,
+      enabled: !isDisabled,
+      excludeSemantics: true,
+      child: InkWell(
+        onTap: isDisabled ? null : () => _onDigitPressed(digit),
+        borderRadius: BorderRadius.circular(36),
+        child: Opacity(
+          opacity: isDisabled ? 0.3 : 1.0,
+          child: Container(
+            width: 72,
+            height: 72,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              color: Theme.of(context).brightness == Brightness.dark ? Colors.white.withOpacity(0.05) : Colors.black.withOpacity(0.05),
+            ),
+            alignment: Alignment.center,
+            child: Text(
+              digit,
+              style: TextStyle(
+                fontFamily: 'Inter',
+                color: Theme.of(context).colorScheme.onSurface,
+                fontSize: 28,
+                fontWeight: FontWeight.w500,
+              ),
             ),
           ),
         ),
@@ -307,19 +339,27 @@ class _PinVerificationScreenState extends ConsumerState<PinVerificationScreen> {
 
   Widget _buildDeleteButton() {
     final isDisabled = _lockoutUntil != null || _isPermanentlyLocked;
-    return InkWell(
-      onTap: isDisabled ? null : _onDeletePressed,
-      borderRadius: BorderRadius.circular(36),
-      child: Opacity(
-        opacity: isDisabled ? 0.3 : 1.0,
-        child: Container(
-          width: 72,
-          height: 72,
-          alignment: Alignment.center,
-          child: const Icon(
-            Icons.backspace_outlined,
-            color: Colors.white70,
-            size: 28,
+    // FIX 6-1: the delete key had no semantic label at all — screen readers
+    // announced nothing.
+    return Semantics(
+      label: 'Delete last digit',
+      button: true,
+      enabled: !isDisabled,
+      excludeSemantics: true,
+      child: InkWell(
+        onTap: isDisabled ? null : _onDeletePressed,
+        borderRadius: BorderRadius.circular(36),
+        child: Opacity(
+          opacity: isDisabled ? 0.3 : 1.0,
+          child: Container(
+            width: 72,
+            height: 72,
+            alignment: Alignment.center,
+            child: Icon(
+              Icons.backspace_outlined,
+              color: Theme.of(context).colorScheme.onSurface.withOpacity(0.7),
+              size: 28,
+            ),
           ),
         ),
       ),

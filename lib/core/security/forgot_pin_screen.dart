@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:local_auth/local_auth.dart';
 import '../../l10n/app_localizations.dart';
+import '../widgets/karde_confirm_dialog.dart';
 import '../storage/settings_repository.dart';
+import '../storage/vault_reset.dart';
 import '../../theme/theme.dart';
 import '../../features/onboarding/presentation/pin_setup_screen.dart';
 import '../../features/onboarding/presentation/language_screen.dart';
@@ -19,6 +21,10 @@ class _ForgotPinScreenState extends ConsumerState<ForgotPinScreen> {
   final LocalAuthentication _auth = LocalAuthentication();
   String? _recoveryPreference;
   bool _isLoading = true;
+
+  /// FIX 4-1: surfaces biometric recovery failures, which were previously
+  /// swallowed by an empty catch.
+  String? _errorMessage;
 
   @override
   void initState() {
@@ -57,41 +63,45 @@ class _ForgotPinScreenState extends ConsumerState<ForgotPinScreen> {
             ),
           );
         }
+      } else if (mounted) {
+        // FIX 4-1: authentication was declined or cancelled. Previously nothing
+        // happened at all and the user was left staring at an unchanged screen
+        // with no idea whether it had failed or simply not registered.
+        setState(() {
+          _errorMessage = 'Verification was not completed. Try again, or use '
+              'another recovery option below.';
+        });
       }
     } catch (e) {
-      // Biometric error, fallback
+      // FIX 4-1: this catch was empty. A biometric hardware error, a lockout
+      // after too many failures, or a corrupted enrolment all left the user
+      // stuck on this screen with no feedback and no suggested way forward.
+      if (mounted) {
+        setState(() {
+          _errorMessage = 'Biometric verification is unavailable right now. '
+              'Use another recovery option below.';
+        });
+      }
     }
   }
 
   void _wipeData(AppLocalizations loc) async {
-    final confirm = await showDialog<bool>(
-      context: context,
-      builder: (context) => AlertDialog(
-        backgroundColor: KardeColors.obsidian,
-        title: Text(
-          loc.wipeDataBtn,
-          style: const TextStyle(color: Colors.redAccent, fontFamily: 'Outfit'),
-        ),
-        content: Text(
-          loc.wipeDataWarning,
-          style: const TextStyle(color: Colors.white70, fontFamily: 'Inter'),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context, false),
-            child: Text(loc.cancel, style: const TextStyle(color: Colors.white)),
-          ),
-          TextButton(
-            onPressed: () => Navigator.pop(context, true),
-            child: Text(loc.wipe, style: const TextStyle(color: Colors.redAccent)),
-          ),
-        ],
-      ),
+    // FIX 5-1 / 5-4: shared dialog, so this no longer hardcodes dark-theme
+    // colours that rendered white-on-white in light mode.
+    final confirm = await KardeConfirmDialog.show(
+      context,
+      title: loc.wipeDataBtn,
+      message: loc.wipeDataWarning,
+      confirmLabel: loc.wipe,
+      cancelLabel: loc.cancel,
     );
 
-    if (confirm == true && mounted) {
+    if (confirm && mounted) {
       final settings = ref.read(settingsRepositoryProvider);
       await settings.wipeAllData();
+      // Same reason as the Settings path: deleting the database does not empty
+      // the providers that cached it.
+      resetAllVaultState(ref);
 
       if (mounted) {
         Navigator.pushAndRemoveUntil(
@@ -199,8 +209,39 @@ class _ForgotPinScreenState extends ConsumerState<ForgotPinScreen> {
                   ),
                 ),
 
+              // FIX 4-1: tell the user when biometric recovery did not work.
+              if (_errorMessage != null) ...[
+                const SizedBox(height: 20),
+                Container(
+                  padding: const EdgeInsets.all(14),
+                  decoration: BoxDecoration(
+                    color: KardeColors.ember.withValues(alpha: 0.12),
+                    borderRadius: BorderRadius.circular(12),
+                    border: Border.all(color: KardeColors.ember.withValues(alpha: 0.4)),
+                  ),
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Icon(Icons.error_outline, color: KardeColors.ember, size: 20),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: Text(
+                          _errorMessage!,
+                          style: const TextStyle(
+                            fontFamily: 'Inter',
+                            color: KardeColors.ember,
+                            fontSize: 13,
+                            height: 1.4,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+
               const Spacer(),
-              
+
               SizedBox(
                 width: double.infinity,
                 child: ElevatedButton.icon(

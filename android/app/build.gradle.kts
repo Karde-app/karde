@@ -1,3 +1,12 @@
+import java.io.FileInputStream
+import java.util.Properties
+
+val keystorePropertiesFile = rootProject.file("key.properties")
+val keystoreProperties = Properties()
+if (keystorePropertiesFile.exists()) {
+    keystoreProperties.load(FileInputStream(keystorePropertiesFile))
+}
+
 plugins {
     id("com.android.application")
     // The Flutter Gradle Plugin must be applied after the Android and Kotlin Gradle plugins.
@@ -19,17 +28,31 @@ android {
         applicationId = "com.karde.app"
         // You can update the following values to match your application needs.
         // For more information, see: https://flutter.dev/to/review-gradle-config.
-        minSdk = flutter.minSdkVersion
+        // FIX 10: minSdk >= 23 is required for local_auth and Android Keystore AES-256-GCM.
+        // Pinned to 24 (not 23): the Flutter tool's MinSdkVersionMigration rewrites any
+        // hardcoded minSdk of 16-23 back to flutter.minSdkVersion on every build, and
+        // Flutter's own floor is 24. 24 satisfies the >= 23 security requirement.
+        minSdk = 24
         targetSdk = flutter.targetSdkVersion
         versionCode = flutter.versionCode
         versionName = flutter.versionName
     }
 
+    signingConfigs {
+        create("release") {
+            keyAlias = keystoreProperties["keyAlias"] as String?
+            keyPassword = keystoreProperties["keyPassword"] as String?
+            storeFile = keystoreProperties["storeFile"]?.let { file(it) }
+            storePassword = keystoreProperties["storePassword"] as String?
+        }
+    }
+
     buildTypes {
         release {
-            // TODO: Add your own signing config for the release build.
-            // Signing with the debug keys for now, so `flutter run --release` works.
-            signingConfig = signingConfigs.getByName("debug")
+            signingConfig = signingConfigs.getByName("release")
+            isMinifyEnabled = true
+            isShrinkResources = true
+            proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
         }
     }
 }
@@ -42,4 +65,11 @@ kotlin {
 
 flutter {
     source = "../.."
+}
+
+dependencies {
+    // FIX 2-1: BiometricPrompt is required to authorise the Keystore CryptoObject.
+    // The vault key is generated with per-use user authentication, so every
+    // encrypt/decrypt must be released by an OS-level auth prompt.
+    implementation("androidx.biometric:biometric:1.1.0")
 }

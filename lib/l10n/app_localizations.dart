@@ -201,7 +201,7 @@ abstract class AppLocalizations {
   /// No description provided for @idsFilter.
   ///
   /// In en, this message translates to:
-  /// **'IDs • Soon'**
+  /// **'IDs'**
   String get idsFilter;
 
   /// No description provided for @addNewCard.
@@ -635,6 +635,336 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Maximum attempts reached. You must reset your PIN.'**
   String get maxAttemptsReached;
+
+  /// No description provided for @appearance.
+  ///
+  /// In en, this message translates to:
+  /// **'APPEARANCE'**
+  String get appearance;
+
+  /// No description provided for @theme.
+  ///
+  /// In en, this message translates to:
+  /// **'Theme'**
+  String get theme;
+
+  /// No description provided for @themeDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'System, Light or Dark'**
+  String get themeDesc;
+
+  /// No description provided for @appDisplayLanguage.
+  ///
+  /// In en, this message translates to:
+  /// **'App display language'**
+  String get appDisplayLanguage;
+
+  /// No description provided for @privacy.
+  ///
+  /// In en, this message translates to:
+  /// **'PRIVACY'**
+  String get privacy;
+
+  /// No description provided for @autoHide.
+  ///
+  /// In en, this message translates to:
+  /// **'Auto-hide sensitive details'**
+  String get autoHide;
+
+  /// No description provided for @autoHideDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Mask card number & CVV automatically'**
+  String get autoHideDesc;
+
+  /// No description provided for @security.
+  ///
+  /// In en, this message translates to:
+  /// **'SECURITY'**
+  String get security;
+
+  /// No description provided for @appPinLock.
+  ///
+  /// In en, this message translates to:
+  /// **'App PIN lock'**
+  String get appPinLock;
+
+  /// No description provided for @appPinLockDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Require a PIN to open Karde'**
+  String get appPinLockDesc;
+
+  /// No description provided for @biometricUnlockTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Biometric unlock'**
+  String get biometricUnlockTitle;
+
+  /// No description provided for @biometricUnlockDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Use fingerprint to open Karde'**
+  String get biometricUnlockDesc;
+
+  /// No description provided for @changePin.
+  ///
+  /// In en, this message translates to:
+  /// **'Change Karde PIN'**
+  String get changePin;
+
+  /// No description provided for @changePinDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Update your master PIN'**
+  String get changePinDesc;
+
+  /// No description provided for @about.
+  ///
+  /// In en, this message translates to:
+  /// **'ABOUT'**
+  String get about;
+
+  /// No description provided for @aboutKarde.
+  ///
+  /// In en, this message translates to:
+  /// **'About Karde'**
+  String get aboutKarde;
+
+  /// No description provided for @aboutKardeDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Version, credits & licenses'**
+  String get aboutKardeDesc;
+
+  /// No description provided for @privacyPolicy.
+  ///
+  /// In en, this message translates to:
+  /// **'Privacy Policy'**
+  String get privacyPolicy;
+
+  /// No description provided for @privacyPolicyDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'How your data stays on-device'**
+  String get privacyPolicyDesc;
+
+  /// No description provided for @mustKeepOneLock.
+  ///
+  /// In en, this message translates to:
+  /// **'You must keep at least one lock method enabled.'**
+  String get mustKeepOneLock;
+
+  /// No description provided for @biometricsNotSupported.
+  ///
+  /// In en, this message translates to:
+  /// **'Biometrics are not supported on this device.'**
+  String get biometricsNotSupported;
+
+  /// No description provided for @biometricsError.
+  ///
+  /// In en, this message translates to:
+  /// **'Error checking biometric support.'**
+  String get biometricsError;
+
+  /// No description provided for @invalidCardLength.
+  ///
+  /// In en, this message translates to:
+  /// **'Invalid card length'**
+  String get invalidCardLength;
+
+  /// No description provided for @invalidCardNumber.
+  ///
+  /// In en, this message translates to:
+  /// **'Invalid card number'**
+  String get invalidCardNumber;
+
+  /// No description provided for @invalidExpiryFormat.
+  ///
+  /// In en, this message translates to:
+  /// **'Format must be MM/YY'**
+  String get invalidExpiryFormat;
+
+  /// No description provided for @invalidMonth.
+  ///
+  /// In en, this message translates to:
+  /// **'Invalid month'**
+  String get invalidMonth;
+
+  /// No description provided for @cardExpired.
+  ///
+  /// In en, this message translates to:
+  /// **'Card has expired'**
+  String get cardExpired;
+
+  /// No description provided for @invalidCvvLength.
+  ///
+  /// In en, this message translates to:
+  /// **'CVV must be 3 or 4 digits'**
+  String get invalidCvvLength;
+
+  /// No description provided for @numbersOnly.
+  ///
+  /// In en, this message translates to:
+  /// **'Numbers only'**
+  String get numbersOnly;
+
+  /// No description provided for @lettersAndSymbolsNotAllowed.
+  ///
+  /// In en, this message translates to:
+  /// **'Letters and symbols are not allowed'**
+  String get lettersAndSymbolsNotAllowed;
+
+  /// No description provided for @kardeIsLocked.
+  ///
+  /// In en, this message translates to:
+  /// **'Karde is Locked'**
+  String get kardeIsLocked;
+
+  /// No description provided for @authenticateToAccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Authenticate to access your vault.'**
+  String get authenticateToAccess;
+
+  /// No description provided for @authenticating.
+  ///
+  /// In en, this message translates to:
+  /// **'Authenticating...'**
+  String get authenticating;
+
+  /// No description provided for @unlockKarde.
+  ///
+  /// In en, this message translates to:
+  /// **'Unlock Karde'**
+  String get unlockKarde;
+
+  /// No description provided for @exitApp.
+  ///
+  /// In en, this message translates to:
+  /// **'Exit App'**
+  String get exitApp;
+
+  /// No description provided for @enterCurrentPin.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter your current Karde PIN'**
+  String get enterCurrentPin;
+
+  /// No description provided for @createKardePin.
+  ///
+  /// In en, this message translates to:
+  /// **'Create Karde PIN'**
+  String get createKardePin;
+
+  /// No description provided for @pinChangedSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'PIN Successfully Changed'**
+  String get pinChangedSuccess;
+
+  /// No description provided for @done.
+  ///
+  /// In en, this message translates to:
+  /// **'Done'**
+  String get done;
+
+  /// No description provided for @addAnId.
+  ///
+  /// In en, this message translates to:
+  /// **'Add an ID'**
+  String get addAnId;
+
+  /// No description provided for @idDetails.
+  ///
+  /// In en, this message translates to:
+  /// **'ID Details'**
+  String get idDetails;
+
+  /// No description provided for @documentType.
+  ///
+  /// In en, this message translates to:
+  /// **'Document Type'**
+  String get documentType;
+
+  /// No description provided for @documentNumber.
+  ///
+  /// In en, this message translates to:
+  /// **'Document Number'**
+  String get documentNumber;
+
+  /// No description provided for @fullName.
+  ///
+  /// In en, this message translates to:
+  /// **'Full Name'**
+  String get fullName;
+
+  /// No description provided for @dateOfBirth.
+  ///
+  /// In en, this message translates to:
+  /// **'Date of Birth'**
+  String get dateOfBirth;
+
+  /// No description provided for @sexGender.
+  ///
+  /// In en, this message translates to:
+  /// **'Sex / Gender'**
+  String get sexGender;
+
+  /// No description provided for @issuingAuthority.
+  ///
+  /// In en, this message translates to:
+  /// **'Issuing Country / Authority'**
+  String get issuingAuthority;
+
+  /// No description provided for @issueDate.
+  ///
+  /// In en, this message translates to:
+  /// **'Issue Date'**
+  String get issueDate;
+
+  /// No description provided for @expiryDate.
+  ///
+  /// In en, this message translates to:
+  /// **'Expiry Date'**
+  String get expiryDate;
+
+  /// No description provided for @placeOfBirth.
+  ///
+  /// In en, this message translates to:
+  /// **'Place of Birth'**
+  String get placeOfBirth;
+
+  /// No description provided for @personalId.
+  ///
+  /// In en, this message translates to:
+  /// **'Personal ID / SSN'**
+  String get personalId;
+
+  /// No description provided for @bloodGroup.
+  ///
+  /// In en, this message translates to:
+  /// **'Blood Group'**
+  String get bloodGroup;
+
+  /// No description provided for @tabAll.
+  ///
+  /// In en, this message translates to:
+  /// **'All'**
+  String get tabAll;
+
+  /// No description provided for @tabCards.
+  ///
+  /// In en, this message translates to:
+  /// **'Cards'**
+  String get tabCards;
+
+  /// No description provided for @tabIds.
+  ///
+  /// In en, this message translates to:
+  /// **'IDs'**
+  String get tabIds;
 }
 
 class _AppLocalizationsDelegate

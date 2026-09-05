@@ -1,11 +1,14 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import '../../../../core/widgets/karde_feedback.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../core/security/authentication_service.dart';
 import '../../../../core/security/encryption_service.dart';
+import '../../../../core/security/system_interaction_guard.dart';
 import '../../../../core/security/window_security_service.dart';
 import '../../../../core/storage/settings_repository.dart';
+import '../../data/card_repository.dart';
 import '../../domain/virtual_card.dart';
 import '../card_details_screen.dart';
 import 'realistic_card.dart';
@@ -37,18 +40,11 @@ class _DecryptableCardState extends ConsumerState<DecryptableCard> with WidgetsB
   void initState() {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
-    _loadCardholderName();
-  }
-
-  Future<void> _loadCardholderName() async {
-    try {
-      final name = await _encryptionService.decrypt(widget.card.encryptedCardholderName);
-      if (mounted) {
-        setState(() {
-          _cardholderName = name;
-        });
-      }
-    } catch (_) {}
+    // FIX 2-1: the cardholder name is NO LONGER decrypted here. The vault key
+    // now requires authentication for every use, so eagerly decrypting on build
+    // would fire one OS prompt per card just to render the vault list — and it
+    // put real PII on screen before the user had authenticated at all. The name
+    // is revealed only via _revealDetails().
   }
 
   @override
@@ -58,12 +54,28 @@ class _DecryptableCardState extends ConsumerState<DecryptableCard> with WidgetsB
     if (_isDecrypted) {
       _windowSecurity.disableSecureMode();
     }
+    // FIX 2-4: drop decrypted secrets rather than leaving them for the GC.
+    _cardNumber = null;
+    _expiry = null;
+    _cvv = null;
+    _cardholderName = null;
     super.dispose();
   }
 
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
     if (state == AppLifecycleState.inactive || state == AppLifecycleState.paused) {
+      // Masking when the app leaves the foreground is the point of this hook:
+      // a revealed card must not survive into the task switcher.
+      //
+      // But Karde raising its own BiometricPrompt drives the activity inactive
+      // too, and the native success callback fires while that prompt is still
+      // dismissing — so the decrypted values arrive BEFORE the pending inactive
+      // event reaches Dart. Without this guard that stale event lands after the
+      // reveal and masks the card again within a second of the user
+      // authenticating, which reads as the reveal simply not working.
+      // main_scaffold needed the same guard, for the same reason.
+      if (SystemInteractionGuard.isActive) return;
       _hideDetails();
     }
   }
@@ -85,6 +97,9 @@ class _DecryptableCardState extends ConsumerState<DecryptableCard> with WidgetsB
       _cardNumber = null;
       _expiry = null;
       _cvv = null;
+      // The cardholder name is decrypted PII too. Leaving it set meant that
+      // after auto-hide the number re-masked but the real name stayed on screen.
+      _cardholderName = null;
     });
     _windowSecurity.disableSecureMode();
     _hideTimer?.cancel();
@@ -92,40 +107,57 @@ class _DecryptableCardState extends ConsumerState<DecryptableCard> with WidgetsB
 
   Future<void> _revealDetails() async {
     final settings = ref.read(settingsRepositoryProvider);
-    final authenticated = await _authService.authenticate(context, settings);
+    final authenticated = await _authService.authenticate(context, settings, cryptoWillPrompt: true);
     if (!authenticated) return;
 
     try {
-      final cardNumber = await _encryptionService.decrypt(widget.card.encryptedCardNumber);
-      final expiry = await _encryptionService.decrypt(widget.card.encryptedExpiry);
-      final cvv = await _encryptionService.decrypt(widget.card.encryptedCvv);
-      final cardholderName = await _encryptionService.decrypt(widget.card.encryptedCardholderName);
+      // The list does not carry payloads, so fetch this one first. A read by
+      // primary key is nothing next to the prompt about to be raised.
+      final payload = await ref.read(cardRepositoryProvider).payloadFor(widget.card);
+      if (payload.isEmpty) throw const VaultCryptoFailure('no payload');
+
+      // FIX 2-1: a single authenticated decrypt yields every field — and, now
+      // that the photo travels in the same payload, the picture along with them.
+      final secrets = CardSecrets.fromJson(
+        await _encryptionService.decrypt(payload),
+      );
 
       if (mounted) {
         setState(() {
-          _cardNumber = cardNumber;
-          _expiry = expiry;
-          _cvv = cvv;
+          _cardNumber = secrets.cardNumber;
+          _expiry = secrets.expiry;
+          _cvv = secrets.cvv;
+          _cardholderName = secrets.cardholderName;
           _isDecrypted = true;
         });
         _windowSecurity.enableSecureMode();
         _startHideTimer();
       }
+    } on VaultAuthCancelled {
+      // FIX 4-2: user dismissed the prompt. Stay masked, say nothing.
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Decryption failed: $e')),
-        );
+        KardeFeedback.error(context, _revealErrorMessage(e));
       }
     }
+  }
+
+  /// FIX 4-2: previously surfaced the raw exception text to the user.
+  String _revealErrorMessage(Object error) {
+    if (error is VaultUnavailable) {
+      return 'Set a screen lock on your device to unlock your vault.';
+    }
+    if (error is VaultKeyInvalidated) {
+      return 'Your device security settings changed, so this item can no longer '
+          'be decrypted.';
+    }
+    return 'Could not unlock this card. Please try again.';
   }
 
   void _copyToClipboard() {
     if (_cardNumber == null) return;
     Clipboard.setData(ClipboardData(text: _cardNumber!));
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Card number copied to clipboard')),
-    );
+    KardeFeedback.success(context, 'Card number copied. Clipboard clears in 60s.');
     
     // Clear clipboard after 60 seconds
     Timer(const Duration(seconds: 60), () async {

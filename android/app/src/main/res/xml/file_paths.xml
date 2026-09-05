@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    The only path Karde ever shares outside the app.
+
+    A camera app cannot write into an encrypted store, so a capture lands in this
+    one cache directory as a plaintext JPEG and is deleted the moment it has been
+    decoded and encrypted. Nothing else is exposed: not filesDir, where the
+    encrypted photos live, and not the database.
+-->
+<paths>
+    <cache-path name="karde_captures" path="captures/" />
+</paths>

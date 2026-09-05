@@ -19,43 +19,13 @@ class DashboardPreviewCard extends StatefulWidget {
 }
 
 class _DashboardPreviewCardState extends State<DashboardPreviewCard> {
-  final _encryptionService = EncryptionService();
-  String? _cardholderName;
-
-  @override
-  void initState() {
-    super.initState();
-    _loadCardholderName();
-  }
-
-  @override
-  void didUpdateWidget(DashboardPreviewCard oldWidget) {
-    super.didUpdateWidget(oldWidget);
-    if (oldWidget.card.id != widget.card.id || 
-        oldWidget.card.encryptedCardholderName != widget.card.encryptedCardholderName) {
-      _loadCardholderName();
-    }
-  }
-
-  Future<void> _loadCardholderName() async {
-    if (widget.card.encryptedCardholderName.isEmpty) {
-      if (mounted) {
-        setState(() {
-          _cardholderName = null;
-        });
-      }
-      return;
-    }
-    
-    try {
-      final name = await _encryptionService.decrypt(widget.card.encryptedCardholderName);
-      if (mounted) {
-        setState(() {
-          _cardholderName = name;
-        });
-      }
-    } catch (_) {}
-  }
+  // FIX 2-1: this preview no longer decrypts anything. It previously decrypted
+  // the cardholder name on initState (and again on didUpdateWidget), which under
+  // per-use key authentication would fire an OS prompt just to paint the home
+  // screen. It also displayed real PII on the dashboard before the user had
+  // authenticated. The preview now shows only the masked placeholder; the real
+  // name appears after an explicit reveal in the vault or details screen.
+  String? get _cardholderName => null;
 
   @override
   Widget build(BuildContext context) {

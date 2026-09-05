@@ -9,12 +9,23 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:ibank/app/app.dart';
+import 'package:ibank/core/storage/settings_repository.dart';
 
 void main() {
   testWidgets('App shows empty state initially', (WidgetTester tester) async {
-    await tester.pumpWidget(const ProviderScope(child: IBankApp()));
+    SharedPreferences.setMockInitialValues({});
+    final sharedPrefs = await SharedPreferences.getInstance();
+
+    await tester.pumpWidget(ProviderScope(
+      overrides: [
+        sharedPreferencesProvider.overrideWithValue(sharedPrefs),
+      ],
+      child: const IBankApp(),
+    ));
+    await tester.pumpAndSettle();
     
-    expect(find.text('Your Card Vault is empty'), findsOneWidget);
+    expect(find.text('Welcome to Karde'), findsWidgets);
   });
 }

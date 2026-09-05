@@ -19,26 +19,86 @@ class _RecoverySetupScreenState extends ConsumerState<RecoverySetupScreen> {
   bool _canCheckBiometrics = false;
   bool _isLoading = true;
 
+  /// True for a user who chose "Phone Lock" and therefore has no Karde PIN.
+  ///
+  /// They reach this screen too now, but what these options do for them is
+  /// different enough that saying nothing would be misleading — see
+  /// [_buildNoPinNote].
+  bool _hasNoKardePin = false;
+
   @override
   void initState() {
     super.initState();
-    _checkBiometrics();
+    _load();
   }
 
-  Future<void> _checkBiometrics() async {
+  Future<void> _load() async {
+    bool canCheck = false;
     try {
-      final canCheck = await _auth.canCheckBiometrics;
-      final isSupported = await _auth.isDeviceSupported();
-      setState(() {
-        _canCheckBiometrics = canCheck || isSupported;
-        _isLoading = false;
-      });
+      canCheck = await _auth.canCheckBiometrics || await _auth.isDeviceSupported();
     } catch (e) {
-      setState(() {
-        _canCheckBiometrics = false;
-        _isLoading = false;
-      });
+      canCheck = false;
     }
+
+    final storedPin = await ref.read(settingsRepositoryProvider).getHashedPin();
+
+    if (!mounted) return;
+    setState(() {
+      _canCheckBiometrics = canCheck;
+      _hasNoKardePin = storedPin == null || storedPin.isEmpty;
+      _isLoading = false;
+    });
+  }
+
+  /// Explains what recovery does, and does not, mean without a Karde PIN.
+  ///
+  /// Two honest points, because getting either wrong would leave the user with a
+  /// false sense of safety.
+  ///
+  /// These options unlock a PIN reset. Somebody with no Karde PIN has nothing to
+  /// reset today, so what they are really doing is arranging the way back in
+  /// against the day they turn App PIN Lock on in Settings — a real possibility,
+  /// and much easier to arrange now than after they are locked out.
+  ///
+  /// And none of them protect the vault contents. The encryption key lives in the
+  /// phone's secure hardware, tied to the phone's own screen lock; if that lock is
+  /// removed or reset, Android destroys the key and no security question can bring
+  /// it back. The only thing that survives that is an encrypted backup.
+  Widget _buildNoPinNote() {
+    return Container(
+      margin: const EdgeInsets.only(bottom: 24),
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Colors.white.withValues(alpha: 0.05),
+        borderRadius: BorderRadius.circular(14),
+        border: Border.all(color: Colors.white12),
+      ),
+      child: const Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Icon(Icons.info_outline, color: KardeColors.champagneGold, size: 20),
+          SizedBox(width: 12),
+          Expanded(
+            child: Text(
+              "You chose to unlock Karde with your phone's own lock, so there is "
+              "no Karde PIN to recover yet. Setting this up now means a way back "
+              "in already exists if you ever add one.\n\n"
+              "Separately, and more importantly: your items are encrypted with a "
+              "key held in your phone's security chip. If you remove or reset "
+              "your phone's screen lock, that key is destroyed and nothing here "
+              "can bring your items back. An encrypted backup, from Settings, is "
+              "the only thing that survives it.",
+              style: TextStyle(
+                fontFamily: 'Inter',
+                color: Colors.white70,
+                fontSize: 13,
+                height: 1.5,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
   }
 
   void _onOptionSelected(String option) async {
@@ -114,8 +174,7 @@ class _RecoverySetupScreenState extends ConsumerState<RecoverySetupScreen> {
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 24.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+          child: ListView(
             children: [
               const SizedBox(height: 60),
               Text(
@@ -136,7 +195,8 @@ class _RecoverySetupScreenState extends ConsumerState<RecoverySetupScreen> {
                   fontSize: 16,
                 ),
               ),
-              const SizedBox(height: 48),
+              const SizedBox(height: 32),
+              if (_hasNoKardePin) _buildNoPinNote(),
               if (_canCheckBiometrics)
                 _buildOptionCard(
                   title: loc.biometricRecovery,

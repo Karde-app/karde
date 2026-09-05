@@ -59,7 +59,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get cardsFilter => 'Cards';
 
   @override
-  String get idsFilter => 'IDs • Soon';
+  String get idsFilter => 'IDs';
 
   @override
   String get addNewCard => 'Add New Card';
@@ -286,4 +286,172 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get maxAttemptsReached =>
       'Maximum attempts reached. You must reset your PIN.';
+
+  @override
+  String get appearance => 'APPEARANCE';
+
+  @override
+  String get theme => 'Theme';
+
+  @override
+  String get themeDesc => 'System, Light or Dark';
+
+  @override
+  String get appDisplayLanguage => 'App display language';
+
+  @override
+  String get privacy => 'PRIVACY';
+
+  @override
+  String get autoHide => 'Auto-hide sensitive details';
+
+  @override
+  String get autoHideDesc => 'Mask card number & CVV automatically';
+
+  @override
+  String get security => 'SECURITY';
+
+  @override
+  String get appPinLock => 'App PIN lock';
+
+  @override
+  String get appPinLockDesc => 'Require a PIN to open Karde';
+
+  @override
+  String get biometricUnlockTitle => 'Biometric unlock';
+
+  @override
+  String get biometricUnlockDesc => 'Use fingerprint to open Karde';
+
+  @override
+  String get changePin => 'Change Karde PIN';
+
+  @override
+  String get changePinDesc => 'Update your master PIN';
+
+  @override
+  String get about => 'ABOUT';
+
+  @override
+  String get aboutKarde => 'About Karde';
+
+  @override
+  String get aboutKardeDesc => 'Version, credits & licenses';
+
+  @override
+  String get privacyPolicy => 'Privacy Policy';
+
+  @override
+  String get privacyPolicyDesc => 'How your data stays on-device';
+
+  @override
+  String get mustKeepOneLock =>
+      'You must keep at least one lock method enabled.';
+
+  @override
+  String get biometricsNotSupported =>
+      'Biometrics are not supported on this device.';
+
+  @override
+  String get biometricsError => 'Error checking biometric support.';
+
+  @override
+  String get invalidCardLength => 'Invalid card length';
+
+  @override
+  String get invalidCardNumber => 'Invalid card number';
+
+  @override
+  String get invalidExpiryFormat => 'Format must be MM/YY';
+
+  @override
+  String get invalidMonth => 'Invalid month';
+
+  @override
+  String get cardExpired => 'Card has expired';
+
+  @override
+  String get invalidCvvLength => 'CVV must be 3 or 4 digits';
+
+  @override
+  String get numbersOnly => 'Numbers only';
+
+  @override
+  String get lettersAndSymbolsNotAllowed =>
+      'Letters and symbols are not allowed';
+
+  @override
+  String get kardeIsLocked => 'Karde is Locked';
+
+  @override
+  String get authenticateToAccess => 'Authenticate to access your vault.';
+
+  @override
+  String get authenticating => 'Authenticating...';
+
+  @override
+  String get unlockKarde => 'Unlock Karde';
+
+  @override
+  String get exitApp => 'Exit App';
+
+  @override
+  String get enterCurrentPin => 'Enter your current Karde PIN';
+
+  @override
+  String get createKardePin => 'Create Karde PIN';
+
+  @override
+  String get pinChangedSuccess => 'PIN Successfully Changed';
+
+  @override
+  String get done => 'Done';
+
+  @override
+  String get addAnId => 'Add an ID';
+
+  @override
+  String get idDetails => 'ID Details';
+
+  @override
+  String get documentType => 'Document Type';
+
+  @override
+  String get documentNumber => 'Document Number';
+
+  @override
+  String get fullName => 'Full Name';
+
+  @override
+  String get dateOfBirth => 'Date of Birth';
+
+  @override
+  String get sexGender => 'Sex / Gender';
+
+  @override
+  String get issuingAuthority => 'Issuing Country / Authority';
+
+  @override
+  String get issueDate => 'Issue Date';
+
+  @override
+  String get expiryDate => 'Expiry Date';
+
+  @override
+  String get placeOfBirth => 'Place of Birth';
+
+  @override
+  String get personalId => 'Personal ID / SSN';
+
+  @override
+  String get bloodGroup => 'Blood Group';
+
+  @override
+  String get tabAll => 'All';
+
+  @override
+  String get tabCards => 'Cards';
+
+  @override
+  String get tabIds => 'IDs';
 }

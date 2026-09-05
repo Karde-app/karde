@@ -1,108 +1,792 @@
 import 'package:flutter/material.dart';
+import '../../../core/widgets/karde_feedback.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:local_auth/local_auth.dart';
 import '../../../core/storage/settings_repository.dart';
+import '../../../core/storage/vault_reset.dart';
+import '../../../core/app_info.dart';
+import '../../../theme/theme.dart';
+import '../../../l10n/app_localizations.dart';
+import '../../../core/security/authentication_service.dart';
+import '../../../core/security/encryption_service.dart';
+import '../../../core/security/pin_verification_screen.dart';
+import '../../../core/widgets/karde_confirm_dialog.dart';
+import '../../onboarding/presentation/pin_setup_screen.dart';
+import '../../onboarding/presentation/language_screen.dart';
+import '../../onboarding/presentation/security_questions_setup_screen.dart';
+import '../../backup/presentation/backup_screen.dart';
+import 'privacy_policy_screen.dart';
 
-class SettingsScreen extends ConsumerWidget {
+class SettingsScreen extends ConsumerStatefulWidget {
   const SettingsScreen({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<SettingsScreen> createState() => _SettingsScreenState();
+}
+
+class _SettingsScreenState extends ConsumerState<SettingsScreen> {
+  final LocalAuthentication _auth = LocalAuthentication();
+
+  @override
+  Widget build(BuildContext context) {
     final themeMode = ref.watch(themeModeProvider);
     final autoHideDuration = ref.watch(autoHideDurationProvider);
+    final requirePinLock = ref.watch(requirePinLockProvider);
+    final biometricUnlock = ref.watch(biometricUnlockProvider);
+    final language = ref.watch(languageProvider);
+    final loc = AppLocalizations.of(context)!;
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Settings'),
+        title: Text(loc.settingsTab),
       ),
       body: ListView(
+        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
         children: [
-          const ListTile(
-            title: Text('Appearance', style: TextStyle(fontWeight: FontWeight.bold)),
-          ),
-          ListTile(
-            leading: const Icon(Icons.brightness_medium),
-            title: const Text('Theme'),
-            trailing: DropdownButton<ThemeMode>(
-              value: themeMode,
-              underline: const SizedBox(),
-              onChanged: (ThemeMode? newValue) {
-                if (newValue != null) {
-                  ref.read(themeModeProvider.notifier).updateThemeMode(newValue);
-                }
-              },
-              items: const [
-                DropdownMenuItem(value: ThemeMode.system, child: Text('System')),
-                DropdownMenuItem(value: ThemeMode.light, child: Text('Light')),
-                DropdownMenuItem(value: ThemeMode.dark, child: Text('Dark')),
+          _buildSectionHeader(loc.appearance, context),
+          _buildGlassContainer(
+            context: context,
+            child: Column(
+              children: [
+                _buildSettingRow(
+                  context: context,
+                  title: loc.theme,
+                  subtitle: loc.themeDesc,
+                  trailing: _buildThemeSegmentedControl(context, ref, themeMode),
+                ),
+                _buildSettingRow(
+                  context: context,
+                  title: loc.language,
+                  subtitle: loc.appDisplayLanguage,
+                  trailing: _buildLanguageDropdown(context, ref, language),
+                ),
               ],
             ),
           ),
-          const Divider(),
-          const ListTile(
-            title: Text('Auto-hide', style: TextStyle(fontWeight: FontWeight.bold)),
+          const SizedBox(height: 24),
+
+          _buildSectionHeader(loc.privacy, context),
+          _buildGlassContainer(
+            context: context,
+            child: _buildSettingRow(
+              context: context,
+              title: loc.autoHide,
+              subtitle: loc.autoHideDesc,
+              trailing: _buildTimerSegmentedControl(context, ref, autoHideDuration),
+            ),
           ),
-          ListTile(
-            leading: const Icon(Icons.timer),
-            title: const Text('Hide sensitive details after'),
-            trailing: DropdownButton<int>(
-              value: autoHideDuration,
-              underline: const SizedBox(),
-              onChanged: (int? newValue) {
-                if (newValue != null) {
-                  ref.read(autoHideDurationProvider.notifier).updateDuration(newValue);
-                }
-              },
-              items: const [
-                DropdownMenuItem(value: 15, child: Text('15 seconds')),
-                DropdownMenuItem(value: 30, child: Text('30 seconds')),
-                DropdownMenuItem(value: 60, child: Text('60 seconds')),
+          const SizedBox(height: 24),
+
+          _buildSectionHeader(loc.security, context),
+          _buildGlassContainer(
+            context: context,
+            child: Column(
+              children: [
+                _buildSettingRow(
+                  context: context,
+                  title: loc.appPinLock,
+                  subtitle: loc.appPinLockDesc,
+                  leadingIcon: Icons.lock_outline,
+                  trailing: _buildCustomSwitch(
+                    context: context,
+                    value: requirePinLock,
+                    onChanged: (val) async {
+                      if (!val && !biometricUnlock) {
+                        _showErrorSnackBar(loc.mustKeepOneLock, context);
+                        return;
+                      }
+
+                      // Turning this on when no Karde PIN has ever been created
+                      // locked the user out of their own app: the lock screen
+                      // demanded a PIN that did not exist, every attempt failed,
+                      // and five failures triggered the permanent lock whose only
+                      // escape is wiping the vault. Users who chose "Phone Lock"
+                      // at onboarding never set a PIN, so this was reachable from
+                      // a single settings tap. Create the PIN first.
+                      if (val) {
+                        final settings = ref.read(settingsRepositoryProvider);
+                        final existingPin = await settings.getHashedPin();
+                        if (existingPin == null || existingPin.isEmpty) {
+                          if (!context.mounted) return;
+                          final created = await Navigator.push<bool>(
+                            context,
+                            MaterialPageRoute(
+                              builder: (_) => const PinSetupScreen(isChangingPin: true),
+                            ),
+                          );
+                          // Only enable the lock if a PIN now actually exists.
+                          final pinNow = await settings.getHashedPin();
+                          if (created != true && (pinNow == null || pinNow.isEmpty)) {
+                            return;
+                          }
+                        }
+                      }
+
+                      ref.read(requirePinLockProvider.notifier).updateRequirePinLock(val);
+                    },
+                  ),
+                ),
+                _buildSettingRow(
+                  context: context,
+                  title: loc.biometricUnlockTitle,
+                  subtitle: loc.biometricUnlockDesc,
+                  leadingIcon: Icons.fingerprint,
+                  trailing: _buildCustomSwitch(
+                    context: context,
+                    value: biometricUnlock,
+                    onChanged: (val) async {
+                      if (!val && !requirePinLock) {
+                        _showErrorSnackBar(loc.mustKeepOneLock, context);
+                        return;
+                      }
+
+                      if (val) {
+                        // Check if device supports biometrics before enabling
+                        try {
+                          final canCheck = await _auth.canCheckBiometrics;
+                          final isSupported = await _auth.isDeviceSupported();
+                          if (!canCheck && !isSupported) {
+                            if (!mounted) return;
+                            _showErrorSnackBar(loc.biometricsNotSupported, context);
+                            return;
+                          }
+                        } catch (_) {
+                          if (!mounted) return;
+                          _showErrorSnackBar(loc.biometricsError, context);
+                          return;
+                        }
+                      }
+                      ref.read(biometricUnlockProvider.notifier).updateBiometricUnlock(val);
+                    },
+                  ),
+                ),
+                _buildNavigationRow(
+                  context: context,
+                  title: loc.changePin,
+                  subtitle: loc.changePinDesc,
+                  leadingIcon: Icons.password,
+                  onTap: () async {
+                    if (requirePinLock) {
+                      final bool? verified = await Navigator.push(context, MaterialPageRoute(builder: (_) => PinVerificationScreen(customSubtitle: loc.enterCurrentPin)));
+                      if (verified != true) return;
+                    }
+                    if (context.mounted) {
+                      Navigator.push(context, MaterialPageRoute(builder: (_) => const PinSetupScreen(isChangingPin: true)));
+                    }
+                  },
+                ),
+                // Not localised, in keeping with the deferred decision on 5-3.
+                _buildNavigationRow(
+                  context: context,
+                  title: 'Security questions',
+                  subtitle: 'Change the questions used to recover your PIN',
+                  leadingIcon: Icons.quiz_outlined,
+                  onTap: _changeSecurityQuestions,
+                ),
               ],
             ),
           ),
-          const Divider(),
-          const ListTile(
-            title: Text('Security', style: TextStyle(fontWeight: FontWeight.bold)),
+          _buildVaultKeyNote(context),
+          const SizedBox(height: 24),
+
+          // Not localised, in keeping with the deferred decision on finding 5-3:
+          // the whole backup flow is English for now, so a translated header on
+          // an untranslated screen would be the odder result.
+          _buildSectionHeader('Backup', context),
+          _buildGlassContainer(
+            context: context,
+            child: _buildNavigationRow(
+              context: context,
+              title: 'Backup & restore',
+              subtitle: 'Save an encrypted copy of your vault, or restore one',
+              leadingIcon: Icons.backup_outlined,
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (_) => const BackupScreen()),
+                );
+              },
+            ),
           ),
-          const Padding(
-            padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+          const SizedBox(height: 24),
+
+          // Kept apart from Security, and last before About, so a destructive
+          // action is never adjacent to the toggles people come here to flip.
+          _buildSectionHeader('Danger zone', context),
+          _buildGlassContainer(
+            context: context,
+            child: _buildNavigationRow(
+              context: context,
+              title: 'Erase vault',
+              subtitle: 'Permanently delete every card, ID, photo and setting',
+              leadingIcon: Icons.delete_forever_outlined,
+              isDestructive: true,
+              onTap: _eraseVault,
+            ),
+          ),
+          const SizedBox(height: 24),
+
+          _buildSectionHeader(loc.about, context),
+          _buildGlassContainer(
+            context: context,
+            child: Column(
+              children: [
+                _buildNavigationRow(
+                  context: context,
+                  title: loc.aboutKarde,
+                  subtitle: loc.aboutKardeDesc,
+                  onTap: () {
+                    showDialog(
+                      context: context,
+                      builder: (context) => AlertDialog(
+                        title: Text(loc.aboutKarde),
+                        // FIX 9-4: version comes from a single constant.
+                        content: const Text(
+                          '${AppInfo.name} Secure Wallet v${AppInfo.version}\n\n'
+                          'A totally offline, encrypted secure vault for your cards.',
+                        ),
+                      ),
+                    );
+                  },
+                ),
+                _buildNavigationRow(
+                  context: context,
+                  title: loc.privacyPolicy,
+                  subtitle: loc.privacyPolicyDesc,
+                  onTap: () {
+                    Navigator.push(context, MaterialPageRoute(builder: (_) => const PrivacyPolicyScreen()));
+                  },
+                ),
+              ],
+            ),
+          ),
+          
+          const SizedBox(height: 40),
+          Center(
             child: Text(
-              'Card details are protected using your Android device authentication. '
-              'The information is encrypted at rest using Android Keystore and AES-256-GCM.',
-              style: TextStyle(color: Colors.grey),
+              '${AppInfo.nameWithVersion} · ${loc.offlineBadge} · Zero-Knowledge',
+              style: TextStyle(
+                fontFamily: 'Inter',
+                fontSize: 12,
+                color: Theme.of(context).textTheme.bodyMedium?.color?.withOpacity(0.5),
+                fontWeight: FontWeight.w500,
+              ),
             ),
           ),
-          const Divider(),
-          const ListTile(
-            title: Text('About', style: TextStyle(fontWeight: FontWeight.bold)),
-          ),
-          ListTile(
-            leading: const Icon(Icons.info_outline),
-            title: const Text('About iBank'),
-            onTap: () {
-              showDialog(
-                context: context,
-                builder: (context) => const AlertDialog(
-                  title: Text('About iBank'),
-                  content: Text('iBank Secure Wallet v1.0.0\n\nA totally offline, encrypted secure vault for your cards.'),
+          const SizedBox(height: 40),
+        ],
+      ),
+    );
+  }
+
+  // FIX 5-2: routed through the shared helper so settings errors look the same
+  // as errors everywhere else in the app.
+  void _showErrorSnackBar(String message, BuildContext context) {
+    KardeFeedback.error(context, message);
+  }
+
+  /// Lets the user change their security questions after onboarding.
+  ///
+  /// Previously there was no way to. The questions were set once during setup
+  /// and could never be revisited — so a user who had forgotten their own
+  /// answers, or who realised the answers were guessable by anyone who knew
+  /// them, had no remedy at all.
+  ///
+  /// Identity is checked first. These answers are a way back into the vault, so
+  /// being able to overwrite them is equivalent to being able to reset the PIN:
+  /// anyone who picked up an unlocked phone could otherwise quietly replace the
+  /// recovery credentials with their own.
+  Future<void> _changeSecurityQuestions() async {
+    final authenticated = await AuthenticationService().authenticate(
+      context,
+      ref.read(settingsRepositoryProvider),
+    );
+    if (!authenticated || !mounted) return;
+
+    await Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (_) => const SecurityQuestionsSetupScreen(isChanging: true),
+      ),
+    );
+  }
+
+  /// Erases everything and returns the app to a first-run state.
+  ///
+  /// [SettingsRepository.wipeAllData] has existed all along but was reachable
+  /// only by failing the PIN enough times to trigger the permanent lockout and
+  /// then choosing to wipe. A user who simply wanted to hand the phone on, or
+  /// start over, had no way to do it from inside the app.
+  ///
+  /// Two gates, in this order: an explicit confirmation that spells out what
+  /// goes, and then the app's own authentication. The confirmation comes first
+  /// so nobody is asked to authenticate before they know what they are agreeing
+  /// to; the authentication comes second so a tap by someone holding an unlocked
+  /// phone is not enough on its own.
+  Future<void> _eraseVault() async {
+    final choice = await KardeConfirmDialog.showWithAlternative(
+      context,
+      title: 'Erase everything?',
+      message: 'Every card, ID document and photo will be permanently deleted, '
+          'along with your PIN and settings. This cannot be undone, and Karde '
+          'keeps no copy anywhere.',
+      alternativeLabel: 'Back up first',
+      confirmLabel: 'Erase vault',
+    );
+    if (!mounted) return;
+
+    // Telling someone to go and make a backup is not much help when they are
+    // already standing in front of the warning. The way out is offered here, and
+    // they are returned to Settings afterwards rather than being tipped straight
+    // back into the erase they may no longer want.
+    if (choice == KardeConfirmChoice.alternative) {
+      await Navigator.push(
+        context,
+        MaterialPageRoute(builder: (_) => const BackupScreen()),
+      );
+      return;
+    }
+    if (choice != KardeConfirmChoice.confirmed) return;
+
+    final authenticated = await AuthenticationService().authenticate(
+      context,
+      ref.read(settingsRepositoryProvider),
+    );
+    if (!authenticated || !mounted) return;
+
+    await ref.read(settingsRepositoryProvider).wipeAllData();
+
+    // The database is gone, but the providers still hold the vault they built
+    // from it. Without this the user walks back through onboarding and finds
+    // every card and ID still listed.
+    resetAllVaultState(ref);
+    if (!mounted) return;
+
+    // Back to the very beginning, with no route left to go back to: the
+    // providers behind the screens underneath now describe a vault that no
+    // longer exists.
+    Navigator.pushAndRemoveUntil(
+      context,
+      MaterialPageRoute(builder: (_) => const LanguageSelectionScreen()),
+      (route) => false,
+    );
+  }
+
+  /// Explains the one authentication step the toggles above do NOT control.
+  ///
+  /// Users read "Biometric unlock: off" as "Karde will never ask me for a
+  /// fingerprint", then got a device prompt anyway when revealing a card and
+  /// reported it as a bug. The toggles govern Karde's own checks; the prompt they
+  /// were seeing comes from Android enforcing the vault key, which is created
+  /// with `setUserAuthenticationRequired(true)` and cannot be used without it.
+  ///
+  /// The same note carries the warning for a device with no screen lock at all.
+  /// That case is not a nuisance but a hard stop: without a secure lock screen
+  /// the Keystore will not hold the key, so nothing can be encrypted or opened.
+  /// Saying so here means the user finds out in Settings rather than after
+  /// typing a full card in.
+  ///
+  /// Not localised, in keeping with the deferred decision on finding 5-3.
+  Widget _buildVaultKeyNote(BuildContext context) {
+    final theme = Theme.of(context);
+
+    return FutureBuilder<bool>(
+      future: EncryptionService().canUseVault(),
+      builder: (context, snapshot) {
+        // Say nothing until the answer is known, rather than flashing a warning
+        // at a user whose device is perfectly well configured.
+        if (!snapshot.hasData) return const SizedBox.shrink();
+
+        final bool hasSecureLock = snapshot.data!;
+        final Color accent =
+            hasSecureLock ? theme.textTheme.bodyMedium?.color ?? theme.colorScheme.onSurface : theme.colorScheme.error;
+        final IconData icon =
+            hasSecureLock ? Icons.info_outline : Icons.warning_amber_rounded;
+        final String message = hasSecureLock
+            ? 'These settings control how Karde locks itself. Your phone will '
+                'also ask for your fingerprint or screen lock whenever you open '
+                'an item, whichever of these you choose.'
+            : 'This phone has no screen lock, so Karde cannot store or open your '
+                'items. Add a PIN, pattern, password or fingerprint in your '
+                'phone\'s settings, then come back.';
+
+        return Padding(
+          padding: const EdgeInsets.fromLTRB(8, 12, 8, 0),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Icon(icon, size: 16, color: accent),
+              const SizedBox(width: 10),
+              Expanded(
+                child: Text(
+                  message,
+                  style: TextStyle(
+                    fontFamily: 'Inter',
+                    fontSize: 12.5,
+                    height: 1.45,
+                    color: accent,
+                    fontWeight: hasSecureLock ? FontWeight.normal : FontWeight.w600,
+                  ),
                 ),
-              );
-            },
+              ),
+            ],
           ),
-          ListTile(
-            leading: const Icon(Icons.privacy_tip_outlined),
-            title: const Text('Privacy Policy'),
-            onTap: () {
-              showDialog(
-                context: context,
-                builder: (context) => const AlertDialog(
-                  title: Text('Privacy Policy'),
-                  content: Text('Your data never leaves your device. Everything is encrypted locally using AES-256 and Android Keystore. We collect no analytics and have no servers.'),
-                ),
-              );
-            },
+        );
+      },
+    );
+  }
+
+  Widget _buildSectionHeader(String title, BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.only(left: 8.0, bottom: 8.0),
+      child: Text(
+        title,
+        style: TextStyle(
+          fontFamily: 'Inter',
+          fontSize: 12.5,
+          fontWeight: FontWeight.w700,
+          letterSpacing: 1.5,
+          color: Theme.of(context).primaryColor,
+        ),
+      ),
+    );
+  }
+
+  Widget _buildGlassContainer({required Widget child, required BuildContext context}) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    
+    return Container(
+      decoration: BoxDecoration(
+        color: isDark ? Colors.white.withOpacity(0.045) : Theme.of(context).colorScheme.surface,
+        borderRadius: BorderRadius.circular(18),
+        border: isDark ? Border.all(
+          color: Colors.white.withOpacity(0.10),
+          width: 1,
+        ) : null,
+        boxShadow: isDark ? null : [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.03),
+            blurRadius: 10,
+            offset: const Offset(0, 4),
           ),
         ],
       ),
+      child: child,
+    );
+  }
+
+  Widget _buildSettingRow({
+    required String title,
+    required String subtitle,
+    IconData? leadingIcon,
+    required Widget trailing,
+    required BuildContext context,
+  }) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 16.0),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          if (leadingIcon != null) ...[
+            Icon(leadingIcon, color: Theme.of(context).primaryColor, size: 24),
+            const SizedBox(width: 16),
+          ],
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  title,
+                  style: TextStyle(
+                    fontFamily: 'Inter',
+                    fontSize: 15,
+                    fontWeight: FontWeight.w600,
+                    color: Theme.of(context).colorScheme.onSurface,
+                  ),
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  subtitle,
+                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                    fontSize: 12.5,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(width: 16),
+          trailing,
+        ],
+      ),
+    );
+  }
+
+  Widget _buildNavigationRow({
+    required String title,
+    required String subtitle,
+    IconData? leadingIcon,
+    required VoidCallback onTap,
+    required BuildContext context,
+    bool isDestructive = false,
+  }) {
+    // A row that destroys data is drawn in the error colour, so it cannot be
+    // mistaken at a glance for the navigation rows around it.
+    final accent = isDestructive
+        ? Theme.of(context).colorScheme.error
+        : Theme.of(context).primaryColor;
+
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(18),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 16.0),
+        child: Row(
+          children: [
+            if (leadingIcon != null) ...[
+              Icon(leadingIcon, color: accent, size: 24),
+              const SizedBox(width: 16),
+            ],
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    title,
+                    style: TextStyle(
+                      fontFamily: 'Inter',
+                      fontSize: 15,
+                      fontWeight: FontWeight.w600,
+                      color: isDestructive
+                          ? accent
+                          : Theme.of(context).colorScheme.onSurface,
+                    ),
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    subtitle,
+                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                      fontSize: 12.5,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            Icon(
+              Icons.chevron_right,
+              color: Theme.of(context).textTheme.bodyMedium?.color?.withOpacity(0.5),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildThemeSegmentedControl(BuildContext context, WidgetRef ref, ThemeMode currentTheme) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    return Container(
+      height: 40,
+      decoration: BoxDecoration(
+        color: isDark ? Colors.white.withOpacity(0.05) : Colors.black.withOpacity(0.05),
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          _buildThemeSegment(
+            icon: Icons.brightness_auto,
+            isSelected: currentTheme == ThemeMode.system,
+            onTap: () => ref.read(themeModeProvider.notifier).updateThemeMode(ThemeMode.system),
+            context: context,
+          ),
+          _buildThemeSegment(
+            icon: Icons.light_mode,
+            isSelected: currentTheme == ThemeMode.light,
+            onTap: () => ref.read(themeModeProvider.notifier).updateThemeMode(ThemeMode.light),
+            context: context,
+          ),
+          _buildThemeSegment(
+            icon: Icons.dark_mode,
+            isSelected: currentTheme == ThemeMode.dark,
+            onTap: () => ref.read(themeModeProvider.notifier).updateThemeMode(ThemeMode.dark),
+            context: context,
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildThemeSegment({required IconData icon, required bool isSelected, required VoidCallback onTap, required BuildContext context}) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        width: 46,
+        height: 40,
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(12),
+          gradient: isSelected ? const LinearGradient(
+            colors: [Color(0xFFE7D4A0), Color(0xFFC9A961), Color(0xFF9C7C41)],
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+          ) : null,
+          boxShadow: (isSelected && !isDark) ? [
+            BoxShadow(
+              color: const Color(0xFFC9A961).withOpacity(0.3),
+              blurRadius: 4,
+              offset: const Offset(0, 2),
+            )
+          ] : null,
+        ),
+        child: Icon(
+          icon,
+          size: 18,
+          color: isSelected 
+              ? (isDark ? KardeColors.obsidian : Colors.white) 
+              : Theme.of(context).textTheme.bodyMedium?.color?.withOpacity(0.7),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildTimerSegmentedControl(BuildContext context, WidgetRef ref, int currentDuration) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    return Container(
+      height: 30,
+      decoration: BoxDecoration(
+        color: isDark ? Colors.white.withOpacity(0.05) : Colors.black.withOpacity(0.05),
+        borderRadius: BorderRadius.circular(15),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          _buildTimerSegment(
+            label: '15s',
+            isSelected: currentDuration == 15,
+            onTap: () => ref.read(autoHideDurationProvider.notifier).updateDuration(15),
+            context: context,
+          ),
+          _buildTimerSegment(
+            label: '30s',
+            isSelected: currentDuration == 30,
+            onTap: () => ref.read(autoHideDurationProvider.notifier).updateDuration(30),
+            context: context,
+          ),
+          _buildTimerSegment(
+            label: '60s',
+            isSelected: currentDuration == 60,
+            onTap: () => ref.read(autoHideDurationProvider.notifier).updateDuration(60),
+            context: context,
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildTimerSegment({required String label, required bool isSelected, required VoidCallback onTap, required BuildContext context}) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        width: 48,
+        height: 30,
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(15),
+          gradient: isSelected ? const LinearGradient(
+            colors: [Color(0xFFE7D4A0), Color(0xFFC9A961), Color(0xFF9C7C41)],
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+          ) : null,
+          boxShadow: (isSelected && !isDark) ? [
+            BoxShadow(
+              color: const Color(0xFFC9A961).withOpacity(0.3),
+              blurRadius: 4,
+              offset: const Offset(0, 2),
+            )
+          ] : null,
+        ),
+        alignment: Alignment.center,
+        child: Text(
+          label,
+          style: TextStyle(
+            fontFamily: 'Inter',
+            fontSize: 12.5,
+            fontWeight: FontWeight.w600,
+            color: isSelected 
+                ? (isDark ? KardeColors.obsidian : Colors.white) 
+                : Theme.of(context).textTheme.bodyMedium?.color?.withOpacity(0.7),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildCustomSwitch({required bool value, required ValueChanged<bool> onChanged, required BuildContext context}) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    return GestureDetector(
+      onTap: () => onChanged(!value),
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 200),
+        width: 50,
+        height: 26,
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(13),
+          gradient: value ? const LinearGradient(
+            colors: [Color(0xFF57E9DC), Color(0xFF12746C)],
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+          ) : null,
+          color: value ? null : (isDark ? Colors.white.withOpacity(0.1) : Colors.black.withOpacity(0.1)),
+          boxShadow: (value && !isDark) ? [
+            BoxShadow(
+              color: const Color(0xFF12746C).withOpacity(0.3),
+              blurRadius: 4,
+              offset: const Offset(0, 2),
+            )
+          ] : null,
+        ),
+        child: AnimatedAlign(
+          duration: const Duration(milliseconds: 200),
+          curve: Curves.easeInOut,
+          alignment: value ? Alignment.centerRight : Alignment.centerLeft,
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 2.0),
+            child: Container(
+              width: 22,
+              height: 22,
+              decoration: const BoxDecoration(
+                shape: BoxShape.circle,
+                color: Colors.white,
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildLanguageDropdown(BuildContext context, WidgetRef ref, String currentLanguage) {
+    return DropdownButton<String>(
+      value: currentLanguage,
+      underline: const SizedBox(),
+      icon: Icon(Icons.arrow_drop_down, color: Theme.of(context).primaryColor),
+      dropdownColor: Theme.of(context).colorScheme.surface,
+      style: TextStyle(
+        fontFamily: 'Inter',
+        fontSize: 14,
+        fontWeight: FontWeight.w600,
+        color: Theme.of(context).colorScheme.onSurface,
+      ),
+      items: const [
+        DropdownMenuItem(value: 'en', child: Text('English')),
+        DropdownMenuItem(value: 'fr', child: Text('Français')),
+        DropdownMenuItem(value: 'ar', child: Text('العربية')),
+        DropdownMenuItem(value: 'am', child: Text('አማርኛ')),
+      ],
+      onChanged: (String? newValue) {
+        if (newValue != null) {
+          ref.read(languageProvider.notifier).updateLanguage(newValue);
+        }
+      },
     );
   }
 }

@@ -1,33 +1,37 @@
+import 'package:flutter/material.dart';
+import '../../../l10n/app_localizations.dart';
+
 class Validators {
-  static String? validateRequired(String? value, String fieldName) {
+  static String? validateRequired(BuildContext context, String? value) {
     if (value == null || value.trim().isEmpty) {
-      return '$fieldName is required';
+      return AppLocalizations.of(context)!.requiredField;
     }
     return null;
   }
 
-  static String? validateCardNumber(String? value) {
+  static String? validateCardNumber(BuildContext context, String? value) {
+    final loc = AppLocalizations.of(context)!;
     if (value == null || value.trim().isEmpty) {
-      return 'Card number is required';
+      return loc.requiredField;
     }
     
     String normalized = value.replaceAll(RegExp(r'\s+'), '');
     if (!RegExp(r'^\d+$').hasMatch(normalized)) {
-      return 'Card number must contain only digits';
+      return loc.numbersOnly;
     }
     
     if (normalized.length < 13 || normalized.length > 19) {
-      return 'Invalid card length';
+      return loc.invalidCardLength;
     }
 
-    if (!_luhnCheck(normalized)) {
-      return 'Invalid card number';
+    if (!luhnCheck(normalized)) {
+      return loc.invalidCardNumber;
     }
 
     return null;
   }
 
-  static bool _luhnCheck(String cardNumber) {
+  static bool luhnCheck(String cardNumber) {
     int sum = 0;
     bool alternate = false;
     for (int i = cardNumber.length - 1; i >= 0; i--) {
@@ -44,41 +48,54 @@ class Validators {
     return (sum % 10 == 0);
   }
 
-  static String? validateExpiry(String? value) {
+  static String? validateExpiry(BuildContext context, String? value) {
+    final loc = AppLocalizations.of(context)!;
     if (value == null || value.trim().isEmpty) {
-      return 'Expiry date is required';
+      return loc.requiredField;
     }
     
     if (!RegExp(r'^\d{2}/\d{2}$').hasMatch(value)) {
-      return 'Format must be MM/YY';
+      return loc.invalidExpiryFormat;
     }
 
-    final parts = value.split('/');
-    final month = int.tryParse(parts[0]);
-    final yearStr = parts[1];
-    
+    final month = int.tryParse(value.split('/')[0]);
+
     if (month == null || month < 1 || month > 12) {
-      return 'Invalid month';
+      return loc.invalidMonth;
     }
 
-    final now = DateTime.now();
-    final currentYear = now.year % 100;
-    final year = int.parse(yearStr);
-
-    if (year < currentYear || (year == currentYear && month < now.month)) {
-      return 'Card has expired';
-    }
-
+    // Deliberately NOT rejected for being in the past. An expired card is a
+    // reasonable thing to keep — for records, a disputed charge, or updating a
+    // subscription that still has the old number on file — and refusing to store
+    // one is the app overruling its owner about their own wallet. The form shows
+    // [isCardExpired] as an advisory instead.
     return null;
   }
 
-  static String? validateCvv(String? value) {
+  /// Whether a well-formed `MM/YY` expiry has already passed.
+  ///
+  /// Separate from validation on purpose: this drives a warning the user can
+  /// read and ignore, not an error that stops them saving.
+  static bool isCardExpired(String? value) {
+    if (value == null || !RegExp(r'^\d{2}/\d{2}$').hasMatch(value)) return false;
+    final parts = value.split('/');
+    final month = int.tryParse(parts[0]);
+    final year = int.tryParse(parts[1]);
+    if (month == null || year == null || month < 1 || month > 12) return false;
+
+    final now = DateTime.now();
+    final currentYear = now.year % 100;
+    return year < currentYear || (year == currentYear && month < now.month);
+  }
+
+  static String? validateCvv(BuildContext context, String? value) {
+    final loc = AppLocalizations.of(context)!;
     if (value == null || value.trim().isEmpty) {
-      return 'CVV is required';
+      return loc.requiredField;
     }
     
     if (!RegExp(r'^\d{3,4}$').hasMatch(value)) {
-      return 'CVV must be 3 or 4 digits';
+      return loc.invalidCvvLength;
     }
     
     return null;

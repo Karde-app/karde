@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'database.dart';
+import '../security/secret_hasher.dart';
 
 final sharedPreferencesProvider = Provider<SharedPreferences>((ref) {
   throw UnimplementedError('sharedPreferencesProvider must be overridden in main.dart');
@@ -29,6 +30,16 @@ final autoHideDurationProvider = StateNotifierProvider<AutoHideDurationNotifier,
   return AutoHideDurationNotifier(repository);
 });
 
+final requirePinLockProvider = StateNotifierProvider<RequirePinLockNotifier, bool>((ref) {
+  final repository = ref.watch(settingsRepositoryProvider);
+  return RequirePinLockNotifier(repository);
+});
+
+final biometricUnlockProvider = StateNotifierProvider<BiometricUnlockNotifier, bool>((ref) {
+  final repository = ref.watch(settingsRepositoryProvider);
+  return BiometricUnlockNotifier(repository);
+});
+
 class SettingsRepository {
   final SharedPreferences _prefs;
   final FlutterSecureStorage _secureStorage;
@@ -45,6 +56,9 @@ class SettingsRepository {
   static const _lockoutUntilKey = 'lockout_until';
   static const _isPermanentlyLockedKey = 'is_permanently_locked';
   
+  static const _requirePinLockKey = 'require_pin_lock';
+  static const _biometricUnlockKey = 'biometric_unlock';
+  
   static const _recoveryPreferenceKey = 'recovery_preference'; // 'biometrics', 'questions', 'none'
   static const _securityQuestion1Key = 'security_question_1';
   static const _securityAnswer1Key = 'security_answer_1';
@@ -56,7 +70,7 @@ class SettingsRepository {
     if (index != null && index >= 0 && index < ThemeMode.values.length) {
       return ThemeMode.values[index];
     }
-    return ThemeMode.system; // Default
+    return ThemeMode.dark; // Default
   }
 
   Future<void> setThemeMode(ThemeMode mode) async {
@@ -64,11 +78,28 @@ class SettingsRepository {
   }
 
   int getAutoHideDuration() {
-    return _prefs.getInt(_autoHideKey) ?? 30; // Default 30 seconds
+    return _prefs.getInt(_autoHideKey) ?? 15; // Default 15 seconds
   }
 
   Future<void> setAutoHideDuration(int seconds) async {
     await _prefs.setInt(_autoHideKey, seconds);
+  }
+
+  // Security Toggles
+  bool getRequirePinLock() {
+    return _prefs.getBool(_requirePinLockKey) ?? true; // Default to true
+  }
+
+  Future<void> setRequirePinLock(bool value) async {
+    await _prefs.setBool(_requirePinLockKey, value);
+  }
+
+  bool getBiometricUnlock() {
+    return _prefs.getBool(_biometricUnlockKey) ?? false; // Default to false
+  }
+
+  Future<void> setBiometricUnlock(bool value) async {
+    await _prefs.setBool(_biometricUnlockKey, value);
   }
 
   // First Launch
@@ -147,11 +178,33 @@ class SettingsRepository {
   }
 
   // Security Questions
+  /// FIX 2-3: answers are hashed, never stored in readable form. They are
+  /// normalised (trimmed, lowercased) first so that capitalisation or a stray
+  /// space does not lock the user out of their own recovery flow.
   Future<void> setSecurityQuestions(String q1, String a1, String q2, String a2) async {
     await _secureStorage.write(key: _securityQuestion1Key, value: q1);
-    await _secureStorage.write(key: _securityAnswer1Key, value: a1);
+    await _secureStorage.write(
+      key: _securityAnswer1Key,
+      value: SecretHasher.hash(SecretHasher.normaliseAnswer(a1)),
+    );
     await _secureStorage.write(key: _securityQuestion2Key, value: q2);
-    await _secureStorage.write(key: _securityAnswer2Key, value: a2);
+    await _secureStorage.write(
+      key: _securityAnswer2Key,
+      value: SecretHasher.hash(SecretHasher.normaliseAnswer(a2)),
+    );
+  }
+
+  /// Verifies both answers against their stored hashes.
+  ///
+  /// Both are always checked, and the results combined at the end, so the time
+  /// taken does not reveal which of the two answers was wrong.
+  Future<bool> verifySecurityAnswers(String a1, String a2) async {
+    final stored1 = await _secureStorage.read(key: _securityAnswer1Key);
+    final stored2 = await _secureStorage.read(key: _securityAnswer2Key);
+
+    final ok1 = SecretHasher.verify(SecretHasher.normaliseAnswer(a1), stored1);
+    final ok2 = SecretHasher.verify(SecretHasher.normaliseAnswer(a2), stored2);
+    return ok1 && ok2;
   }
 
   Future<Map<String, String?>> getSecurityQuestions() async {
@@ -163,6 +216,12 @@ class SettingsRepository {
     };
   }
 
+  /// Removes everything Karde holds: settings, the PIN and security answers, and
+  /// the database.
+  ///
+  /// Photos need no separate step. They live inside each record's encrypted
+  /// payload rather than as files of their own, so deleting the database deletes
+  /// them with it.
   Future<void> wipeAllData() async {
     await _prefs.clear();
     await _secureStorage.deleteAll();
@@ -200,5 +259,27 @@ class LanguageNotifier extends StateNotifier<String> {
   Future<void> updateLanguage(String languageCode) async {
     state = languageCode;
     await _repository.setLanguage(languageCode);
+  }
+}
+
+class RequirePinLockNotifier extends StateNotifier<bool> {
+  final SettingsRepository _repository;
+
+  RequirePinLockNotifier(this._repository) : super(_repository.getRequirePinLock());
+
+  Future<void> updateRequirePinLock(bool value) async {
+    state = value;
+    await _repository.setRequirePinLock(value);
+  }
+}
+
+class BiometricUnlockNotifier extends StateNotifier<bool> {
+  final SettingsRepository _repository;
+
+  BiometricUnlockNotifier(this._repository) : super(_repository.getBiometricUnlock());
+
+  Future<void> updateBiometricUnlock(bool value) async {
+    state = value;
+    await _repository.setBiometricUnlock(value);
   }
 }

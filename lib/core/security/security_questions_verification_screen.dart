@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../widgets/karde_feedback.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:crypto/crypto.dart';
 import 'dart:convert';
@@ -39,16 +40,13 @@ class _SecurityQuestionsVerificationScreenState extends ConsumerState<SecurityQu
 
   @override
   void dispose() {
+    // FIX 2-4: security answers are recovery credentials; clear them rather than
+    // leaving them in heap memory for the GC to collect whenever it feels like it.
+    _answer1Controller.clear();
+    _answer2Controller.clear();
     _answer1Controller.dispose();
     _answer2Controller.dispose();
     super.dispose();
-  }
-
-  String _hashAnswer(String answer) {
-    final normalized = answer.trim().toLowerCase();
-    final bytes = utf8.encode(normalized);
-    final digest = sha256.convert(bytes);
-    return digest.toString();
   }
 
   void _onVerify() async {
@@ -57,10 +55,19 @@ class _SecurityQuestionsVerificationScreenState extends ConsumerState<SecurityQu
         _errorMessage = null;
       });
 
-      final hashedA1 = _hashAnswer(_answer1Controller.text);
-      final hashedA2 = _hashAnswer(_answer2Controller.text);
+      // FIX 2-3: verify against the stored PBKDF2 hashes.
+      //
+      // This also repairs a latent bug: this screen used to compare a SHA-256
+      // digest of the typed answer against the stored value, but the stored
+      // value was raw plaintext. Those could never be equal, so security
+      // question recovery could not succeed for anyone.
+      final settingsRepo = ref.read(settingsRepositoryProvider);
+      final answersMatch = await settingsRepo.verifySecurityAnswers(
+        _answer1Controller.text,
+        _answer2Controller.text,
+      );
 
-      if (hashedA1 == _questions['a1'] && hashedA2 == _questions['a2']) {
+      if (answersMatch) {
         // Success
         final settings = ref.read(settingsRepositoryProvider);
         await settings.setFailedAttempts(0);
@@ -68,11 +75,10 @@ class _SecurityQuestionsVerificationScreenState extends ConsumerState<SecurityQu
         await settings.setLockoutUntil(null);
 
         if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(AppLocalizations.of(context)!.resetPinSuccess),
-              backgroundColor: Colors.green,
-            ),
+          // FIX 5-2: consistent success feedback.
+          KardeFeedback.success(
+            context,
+            AppLocalizations.of(context)!.resetPinSuccess,
           );
           Navigator.pushReplacement(
             context,

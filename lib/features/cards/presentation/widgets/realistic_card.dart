@@ -102,6 +102,33 @@ class RealisticCard extends StatelessWidget {
               Positioned.fill(
                 child: CustomPaint(painter: patternPainter),
               ),
+            // Same corner and the same inset as every ID template, so the reveal
+            // control does not move as the user pages between a card and a
+            // document.
+            if (onTapReveal != null || onTapHide != null)
+              Positioned(
+                top: 14,
+                right: 14,
+                child: Material(
+                  color: Colors.transparent,
+                  child: InkWell(
+                    borderRadius: BorderRadius.circular(20),
+                    onTap: isDecrypted ? onTapHide : onTapReveal,
+                    child: Container(
+                      padding: const EdgeInsets.all(7),
+                      decoration: BoxDecoration(
+                        color: Colors.white.withValues(alpha: 0.10),
+                        shape: BoxShape.circle,
+                      ),
+                      child: Icon(
+                        isDecrypted ? Icons.visibility_off : Icons.visibility,
+                        color: const Color(0xFFC9A961),
+                        size: 18,
+                      ),
+                    ),
+                  ),
+                ),
+              ),
             Padding(
               padding: const EdgeInsets.all(24),
               child: Column(
@@ -143,46 +170,26 @@ class RealisticCard extends StatelessWidget {
                       ],
                     ),
 
-                  // Chip & Reveal Icon
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Container(
-                        width: 45,
-                        height: 32,
-                        decoration: BoxDecoration(
-                          color: const Color(0xFFC9A961),
-                          borderRadius: BorderRadius.circular(6),
-                          gradient: const LinearGradient(
-                            colors: [Color(0xFFE7D4A0), Color(0xFF9C7C41)],
-                            begin: Alignment.topLeft,
-                            end: Alignment.bottomRight,
-                          ),
+                  // The chip, alone and left-aligned — where it sits on a real
+                  // payment card. It used to share a row with the reveal button,
+                  // which stretched the row and left the chip looking stranded
+                  // rather than sitting squarely above the number.
+                  Align(
+                    alignment: Alignment.centerLeft,
+                    child: Container(
+                      width: 45,
+                      height: 32,
+                      decoration: BoxDecoration(
+                        color: const Color(0xFFC9A961),
+                        borderRadius: BorderRadius.circular(6),
+                        gradient: const LinearGradient(
+                          colors: [Color(0xFFE7D4A0), Color(0xFF9C7C41)],
+                          begin: Alignment.topLeft,
+                          end: Alignment.bottomRight,
                         ),
-                        child: CustomPaint(painter: _ChipPainter()),
                       ),
-                      if (onTapReveal != null || onTapHide != null)
-                        Material(
-                          color: Colors.transparent,
-                          child: InkWell(
-                            borderRadius: BorderRadius.circular(20),
-                            onTap: isDecrypted ? onTapHide : onTapReveal,
-                            child: Container(
-                              padding: const EdgeInsets.all(8),
-                              decoration: BoxDecoration(
-                                color: Colors.white.withOpacity(0.05),
-                                shape: BoxShape.circle,
-                              ),
-                              child: Icon(
-                                isDecrypted ? Icons.visibility_off : Icons.visibility,
-                                color: const Color(0xFFC9A961),
-                                size: 20,
-                              ),
-                            ),
-                          ),
-                        ),
-                    ],
+                      child: CustomPaint(painter: _ChipPainter()),
+                    ),
                   ),
                   
 
