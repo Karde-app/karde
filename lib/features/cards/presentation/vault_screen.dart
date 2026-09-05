@@ -100,7 +100,7 @@ class _VaultScreenState extends ConsumerState<VaultScreen> {
                 autofocus: true,
                 style: TextStyle(color: Theme.of(context).colorScheme.onSurface),
                 decoration: InputDecoration(
-                  hintText: 'Search items...',
+                  hintText: loc.searchItems,
                   hintStyle: TextStyle(color: Theme.of(context).colorScheme.onSurface.withOpacity(0.5)),
                   border: InputBorder.none,
                 ),
@@ -111,7 +111,7 @@ class _VaultScreenState extends ConsumerState<VaultScreen> {
                   });
                 },
               )
-            : const Text('My Vault', style: TextStyle(fontWeight: FontWeight.bold)),
+            : Text(loc.myVault, style: const TextStyle(fontWeight: FontWeight.bold)),
         actions: [
           IconButton(
             icon: Icon(_isSearching ? Icons.close : Icons.search, color: const Color(0xFFC9A961)),
@@ -443,11 +443,11 @@ class _VaultScreenState extends ConsumerState<VaultScreen> {
                                   itemBuilder: (context) => [
                                     PopupMenuItem(
                                       value: 'pin_top',
-                                      child: Text(item.isPinnedToTop ? 'Unpin from Top' : 'Pin to Top'),
+                                      child: Text(item.isPinnedToTop ? loc.unpinFromTop : loc.pinToTop),
                                     ),
                                     PopupMenuItem(
                                       value: 'pin_home',
-                                      child: Text(item.isPinnedToHomescreen ? 'Unpin from Homescreen' : 'Pin to Homescreen'),
+                                      child: Text(item.isPinnedToHomescreen ? loc.unpinFromHomescreen : loc.pinToHomescreen),
                                     ),
                                   ],
                                 ),
@@ -464,7 +464,7 @@ class _VaultScreenState extends ConsumerState<VaultScreen> {
           );
         },
         loading: () => const Center(child: CircularProgressIndicator()),
-        error: (e, st) => Center(child: Text('Error: $e')),
+        error: (e, st) => Center(child: Text(loc.genericError)),
       ),
       // Hidden whenever nothing is listed. An empty category already offers its
       // own "Add New …" button, and the floating + both overlapped that button
@@ -548,7 +548,7 @@ class _VaultScreenState extends ConsumerState<VaultScreen> {
             children: [
               Padding(
                 padding: const EdgeInsets.all(20),
-                child: Text('Add Item', style: TextStyle(color: Theme.of(context).colorScheme.onSurface, fontSize: 18, fontWeight: FontWeight.bold)),
+                child: Text(AppLocalizations.of(context)!.addItem, style: TextStyle(color: Theme.of(context).colorScheme.onSurface, fontSize: 18, fontWeight: FontWeight.bold)),
               ),
               ListTile(
                 leading: const Icon(Icons.credit_card, color: Color(0xFFC9A961)),
@@ -615,6 +615,7 @@ class _VaultScreenState extends ConsumerState<VaultScreen> {
   /// this can be drawn without spending an authentication prompt per item.
   Widget _buildHeroHint(VaultItem item) {
     final theme = Theme.of(context);
+    final loc = AppLocalizations.of(context)!;
     final muted = theme.colorScheme.onSurface.withValues(alpha: 0.55);
     final hasPhoto = item.type == VaultItemType.card
         ? (item.item as VirtualCard).hasPhoto
@@ -637,13 +638,13 @@ class _VaultScreenState extends ConsumerState<VaultScreen> {
               ),
               child: Row(
                 mainAxisSize: MainAxisSize.min,
-                children: const [
-                  Icon(Icons.photo_camera_back_outlined,
+                children: [
+                  const Icon(Icons.photo_camera_back_outlined,
                       size: 13, color: KardeColors.champagneGold),
-                  SizedBox(width: 5),
+                  const SizedBox(width: 5),
                   Text(
-                    'Photo',
-                    style: TextStyle(
+                    loc.photoBadge,
+                    style: const TextStyle(
                       fontFamily: 'Inter',
                       fontSize: 11,
                       fontWeight: FontWeight.w600,
@@ -658,7 +659,7 @@ class _VaultScreenState extends ConsumerState<VaultScreen> {
           Icon(Icons.touch_app_outlined, size: 13, color: muted),
           const SizedBox(width: 5),
           Text(
-            'Tap the card for full details',
+            loc.tapCardForDetails,
             style: TextStyle(
               fontFamily: 'Inter',
               fontSize: 11.5,
@@ -747,6 +748,7 @@ class _VaultScreenState extends ConsumerState<VaultScreen> {
   /// instead of replacing the whole page with a takeover.
   Widget _buildCategoryEmptyPrompt(BuildContext context) {
     final theme = Theme.of(context);
+    final loc = AppLocalizations.of(context)!;
 
     final bool isSearching = _searchQuery.isNotEmpty;
     final bool isIds = _selectedCategory == 'ids';
@@ -754,14 +756,14 @@ class _VaultScreenState extends ConsumerState<VaultScreen> {
     final String title;
     final String message;
     if (isSearching) {
-      title = 'No matches';
-      message = 'Nothing here matches "$_searchQuery". Try a different word.';
+      title = loc.noMatches;
+      message = loc.noMatchesMessage(_searchQuery);
     } else if (isIds) {
-      title = 'No IDs yet';
-      message = 'Passports, licences and other documents you add will appear here.';
+      title = loc.noIdsYet;
+      message = loc.noIdsYetMessage;
     } else {
-      title = 'No cards yet';
-      message = 'Bank cards, loyalty cards and anything else you add will appear here.';
+      title = loc.noCardsYet;
+      message = loc.noCardsYetMessage;
     }
 
     return Center(
@@ -833,7 +835,7 @@ class _VaultScreenState extends ConsumerState<VaultScreen> {
                       const Icon(Icons.add, color: Color(0xFF0A0C11), size: 20),
                       const SizedBox(width: 8),
                       Text(
-                        isIds ? 'Add New ID' : 'Add New Card',
+                        isIds ? loc.addNewId : loc.addNewCard,
                         style: const TextStyle(
                           color: Color(0xFF0A0C11),
                           fontSize: 15,
@@ -898,11 +900,11 @@ class _VaultScreenState extends ConsumerState<VaultScreen> {
             children: [
               Padding(
                 padding: const EdgeInsets.all(20),
-                child: Text('Sort Items', style: TextStyle(color: Theme.of(context).colorScheme.onSurface, fontSize: 18, fontWeight: FontWeight.bold)),
+                child: Text(AppLocalizations.of(context)!.sortItems, style: TextStyle(color: Theme.of(context).colorScheme.onSurface, fontSize: 18, fontWeight: FontWeight.bold)),
               ),
-              _buildSortOption('Newest First', 'newest'),
-              _buildSortOption('Oldest First', 'oldest'),
-              _buildSortOption('Alphabetical (A-Z)', 'alphabetical'),
+              _buildSortOption(AppLocalizations.of(context)!.sortNewestFirst, 'newest'),
+              _buildSortOption(AppLocalizations.of(context)!.sortOldestFirst, 'oldest'),
+              _buildSortOption(AppLocalizations.of(context)!.sortAlphabetical, 'alphabetical'),
               const SizedBox(height: 20),
             ],
           ),

@@ -765,4 +765,300 @@ class AppLocalizationsFr extends AppLocalizations {
   @override
   String get backupProblemFileDamaged =>
       'Ce fichier de sauvegarde n\'a pas pu être lu. Il est peut-être endommagé.';
+
+  @override
+  String get otherOption => 'Autre';
+
+  @override
+  String get goBack => 'Retour';
+
+  @override
+  String get saving => 'Enregistrement…';
+
+  @override
+  String get loadingDetails => 'Chargement des détails';
+
+  @override
+  String get setScreenLockFirst =>
+      'Définissez d\'abord un verrouillage d\'écran';
+
+  @override
+  String get screenLockExplainer =>
+      'Karde chiffre chaque élément avec une clé conservée dans le matériel sécurisé de votre téléphone, et ce matériel ne conserve une clé que si le téléphone lui-même est verrouillé.\n\nAjoutez un code, un schéma, un mot de passe ou une empreinte digitale dans les réglages de votre téléphone, puis revenez.';
+
+  @override
+  String get vaultKeyChangedItemsLost =>
+      'Les réglages de sécurité de votre appareil ont changé, la clé du coffre n\'est donc plus valide. Les éléments existants ne peuvent pas être récupérés.';
+
+  @override
+  String get addCardDecryptFailed =>
+      'Impossible de déchiffrer les données de la carte existante.';
+
+  @override
+  String get addCardNeedsScreenLock =>
+      'Définissez un verrouillage d\'écran (code, schéma ou biométrie) sur votre appareil pour enregistrer les cartes en toute sécurité.';
+
+  @override
+  String get addCardSaveFailed =>
+      'Une erreur s\'est produite lors de l\'enregistrement de cette carte. Veuillez réessayer.';
+
+  @override
+  String get selectCardNetwork => 'Choisir le réseau de la carte';
+
+  @override
+  String get editCard => 'Modifier la carte';
+
+  @override
+  String get issuerFieldLabel => 'Émetteur';
+
+  @override
+  String get issuerTooltip =>
+      'Le nom de la banque ou de l\'établissement qui a émis cette carte.\n\nExemple : BNP Paribas';
+
+  @override
+  String get customNetworkFieldLabel => 'Réseau personnalisé';
+
+  @override
+  String get customNetworkHint => 'ex. UnionPay, JCB';
+
+  @override
+  String get secureDetails => 'DONNÉES SÉCURISÉES';
+
+  @override
+  String get cardNumberFieldLabel => 'Numéro de carte';
+
+  @override
+  String get cardholderNameFieldLabel => 'Nom du titulaire';
+
+  @override
+  String get privateNotesFieldLabel => 'Notes privées';
+
+  @override
+  String get privateNotesTooltip =>
+      'Tout détail, adresse ou contexte supplémentaire.\n\nExemple : Téléphone de la banque : 01 23 45 67 89';
+
+  @override
+  String get cardExpiredStillSave =>
+      'Cette carte a expiré. Vous pouvez tout de même l\'enregistrer.';
+
+  @override
+  String get cardPhotoLabel => 'PHOTO DE LA CARTE';
+
+  @override
+  String get cardPhotoHint =>
+      'Facultatif. Conservée sous clé avec le reste de la carte.';
+
+  @override
+  String get cardPhotoViewerTitle => 'Photo de la carte';
+
+  @override
+  String requiredFieldMarker(String label) {
+    return '$label *';
+  }
+
+  @override
+  String get idTypePassport => 'Passeport';
+
+  @override
+  String get idTypeDriversLicense => 'Permis de conduire';
+
+  @override
+  String get idTypeNationalId => 'Carte nationale d\'identité';
+
+  @override
+  String get idTypeResidentPermit => 'Titre de séjour';
+
+  @override
+  String get selectDocumentType => 'Choisir le type de document';
+
+  @override
+  String get addIdDocument => 'Ajouter un document d\'identité';
+
+  @override
+  String get editDocument => 'Modifier le document';
+
+  @override
+  String get idExpiryAfterIssue =>
+      'L\'expiration doit être postérieure à la date de délivrance';
+
+  @override
+  String get idDobNotInFuture =>
+      'La date de naissance ne peut pas être dans le futur';
+
+  @override
+  String get idIssueDateNotInFuture =>
+      'La date de délivrance ne peut pas être dans le futur';
+
+  @override
+  String get idUpdatedSecurely =>
+      'Document d\'identité mis à jour en toute sécurité.';
+
+  @override
+  String get idAddedSecurely =>
+      'Document d\'identité ajouté en toute sécurité.';
+
+  @override
+  String get addIdNeedsScreenLock =>
+      'Définissez un verrouillage d\'écran sur votre appareil pour enregistrer les documents en toute sécurité.';
+
+  @override
+  String get addIdSaveFailed =>
+      'Une erreur s\'est produite lors de l\'enregistrement de ce document. Veuillez réessayer.';
+
+  @override
+  String get issuingAuthorityTooltip =>
+      'L\'organisme, la région ou le pays qui a délivré le document.\n\nExemple : Préfecture de Paris';
+
+  @override
+  String get personalIdTooltip =>
+      'Un identifiant personnel secondaire.\n\nExemple : 1 85 12 75 108 123';
+
+  @override
+  String get idNotesTooltip =>
+      'Tout détail ou adresse supplémentaire figurant sur le document.\n\nExemple : Donneur d\'organes, permis catégorie B';
+
+  @override
+  String get idUnlockFailedWarning =>
+      'Ce document n\'a pas pu être déverrouillé, ses détails ne sont donc pas affichés. L\'enregistrement est désactivé pour éviter d\'écraser vos données. Revenez en arrière et réessayez.';
+
+  @override
+  String get customDocumentType => 'Type de document personnalisé';
+
+  @override
+  String get customDocumentTypeHint => 'ex. carte d\'étudiant';
+
+  @override
+  String get customDocumentTypeTooltip =>
+      'Le nom précis de ce type de document personnalisé.\n\nExemple : carte de salle de sport';
+
+  @override
+  String get nicknameLabel => 'Surnom';
+
+  @override
+  String get nicknameHint => 'ex. mon passeport';
+
+  @override
+  String get nicknameTooltip =>
+      'Un surnom personnel pour repérer facilement ce document dans votre coffre.\n\nExemple : mon passeport';
+
+  @override
+  String get documentPhotoLabel => 'PHOTO DU DOCUMENT';
+
+  @override
+  String get documentPhotoHint =>
+      'Facultatif. Conservée sous clé avec le reste du document.';
+
+  @override
+  String get documentPhotoViewerTitle => 'Photo du document';
+
+  @override
+  String get searchItems => 'Rechercher…';
+
+  @override
+  String get pinToTop => 'Épingler en haut';
+
+  @override
+  String get unpinFromTop => 'Détacher du haut';
+
+  @override
+  String get pinToHomescreen => 'Épingler à l\'accueil';
+
+  @override
+  String get unpinFromHomescreen => 'Détacher de l\'accueil';
+
+  @override
+  String get addItem => 'Ajouter un élément';
+
+  @override
+  String get photoBadge => 'Photo';
+
+  @override
+  String get tapCardForDetails => 'Touchez la carte pour tous les détails';
+
+  @override
+  String get noMatches => 'Aucun résultat';
+
+  @override
+  String noMatchesMessage(String query) {
+    return 'Rien ici ne correspond à « $query ». Essayez un autre mot.';
+  }
+
+  @override
+  String get noIdsYet => 'Aucun document pour l\'instant';
+
+  @override
+  String get noIdsYetMessage =>
+      'Les passeports, permis et autres documents que vous ajoutez apparaîtront ici.';
+
+  @override
+  String get noCardsYet => 'Aucune carte pour l\'instant';
+
+  @override
+  String get noCardsYetMessage =>
+      'Les cartes bancaires, cartes de fidélité et tout ce que vous ajoutez apparaîtront ici.';
+
+  @override
+  String get addNewId => 'Ajouter un document';
+
+  @override
+  String get sortItems => 'Trier les éléments';
+
+  @override
+  String get sortNewestFirst => 'Plus récents d\'abord';
+
+  @override
+  String get sortOldestFirst => 'Plus anciens d\'abord';
+
+  @override
+  String get sortAlphabetical => 'Alphabétique (A-Z)';
+
+  @override
+  String get settingsSecurityQuestions => 'Questions de sécurité';
+
+  @override
+  String get settingsSecurityQuestionsDesc =>
+      'Modifier les questions servant à récupérer votre code';
+
+  @override
+  String get settingsBackupSection => 'SAUVEGARDE';
+
+  @override
+  String get settingsBackupRestoreDesc =>
+      'Enregistrer une copie chiffrée de votre coffre, ou en restaurer une';
+
+  @override
+  String get settingsDangerZone => 'ZONE SENSIBLE';
+
+  @override
+  String get settingsEraseVault => 'Effacer le coffre';
+
+  @override
+  String get settingsEraseVaultDesc =>
+      'Supprimer définitivement chaque carte, document, photo et réglage';
+
+  @override
+  String aboutDialogBody(String name, String version) {
+    return '$name Secure Wallet v$version\n\nUn coffre chiffré pour vos cartes, entièrement hors ligne.';
+  }
+
+  @override
+  String get zeroKnowledge => 'Zero-Knowledge';
+
+  @override
+  String get eraseEverythingTitle => 'Tout effacer ?';
+
+  @override
+  String get eraseEverythingMessage =>
+      'Chaque carte, document d\'identité et photo sera définitivement supprimé, ainsi que votre code et vos réglages. Cette action est irréversible, et Karde n\'en conserve aucune copie nulle part.';
+
+  @override
+  String get backUpFirst => 'Sauvegarder d\'abord';
+
+  @override
+  String get settingsLockExplainer =>
+      'Ces réglages déterminent la façon dont Karde se verrouille. Votre téléphone vous demandera aussi votre empreinte ou votre verrouillage d\'écran chaque fois que vous ouvrez un élément, quel que soit votre choix ici.';
+
+  @override
+  String get settingsNoScreenLockWarning =>
+      'Ce téléphone n\'a aucun verrouillage d\'écran, Karde ne peut donc ni enregistrer ni ouvrir vos éléments. Ajoutez un code, un schéma, un mot de passe ou une empreinte dans les réglages de votre téléphone, puis revenez.';
 }

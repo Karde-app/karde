@@ -175,11 +175,10 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                     }
                   },
                 ),
-                // Not localised, in keeping with the deferred decision on 5-3.
                 _buildNavigationRow(
                   context: context,
-                  title: 'Security questions',
-                  subtitle: 'Change the questions used to recover your PIN',
+                  title: loc.settingsSecurityQuestions,
+                  subtitle: loc.settingsSecurityQuestionsDesc,
                   leadingIcon: Icons.quiz_outlined,
                   onTap: _changeSecurityQuestions,
                 ),
@@ -189,16 +188,13 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
           _buildVaultKeyNote(context),
           const SizedBox(height: 24),
 
-          // Not localised, in keeping with the deferred decision on finding 5-3:
-          // the whole backup flow is English for now, so a translated header on
-          // an untranslated screen would be the odder result.
-          _buildSectionHeader('Backup', context),
+          _buildSectionHeader(loc.settingsBackupSection, context),
           _buildGlassContainer(
             context: context,
             child: _buildNavigationRow(
               context: context,
-              title: 'Backup & restore',
-              subtitle: 'Save an encrypted copy of your vault, or restore one',
+              title: loc.backupTitle,
+              subtitle: loc.settingsBackupRestoreDesc,
               leadingIcon: Icons.backup_outlined,
               onTap: () {
                 Navigator.push(
@@ -212,13 +208,13 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
 
           // Kept apart from Security, and last before About, so a destructive
           // action is never adjacent to the toggles people come here to flip.
-          _buildSectionHeader('Danger zone', context),
+          _buildSectionHeader(loc.settingsDangerZone, context),
           _buildGlassContainer(
             context: context,
             child: _buildNavigationRow(
               context: context,
-              title: 'Erase vault',
-              subtitle: 'Permanently delete every card, ID, photo and setting',
+              title: loc.settingsEraseVault,
+              subtitle: loc.settingsEraseVaultDesc,
               leadingIcon: Icons.delete_forever_outlined,
               isDestructive: true,
               onTap: _eraseVault,
@@ -241,9 +237,8 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                       builder: (context) => AlertDialog(
                         title: Text(loc.aboutKarde),
                         // FIX 9-4: version comes from a single constant.
-                        content: const Text(
-                          '${AppInfo.name} Secure Wallet v${AppInfo.version}\n\n'
-                          'A totally offline, encrypted secure vault for your cards.',
+                        content: Text(
+                          loc.aboutDialogBody(AppInfo.name, AppInfo.version),
                         ),
                       ),
                     );
@@ -264,7 +259,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
           const SizedBox(height: 40),
           Center(
             child: Text(
-              '${AppInfo.nameWithVersion} · ${loc.offlineBadge} · Zero-Knowledge',
+              '${AppInfo.nameWithVersion} · ${loc.offlineBadge} · ${loc.zeroKnowledge}',
               style: TextStyle(
                 fontFamily: 'Inter',
                 fontSize: 12,
@@ -324,14 +319,13 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
   /// to; the authentication comes second so a tap by someone holding an unlocked
   /// phone is not enough on its own.
   Future<void> _eraseVault() async {
+    final loc = AppLocalizations.of(context)!;
     final choice = await KardeConfirmDialog.showWithAlternative(
       context,
-      title: 'Erase everything?',
-      message: 'Every card, ID document and photo will be permanently deleted, '
-          'along with your PIN and settings. This cannot be undone, and Karde '
-          'keeps no copy anywhere.',
-      alternativeLabel: 'Back up first',
-      confirmLabel: 'Erase vault',
+      title: loc.eraseEverythingTitle,
+      message: loc.eraseEverythingMessage,
+      alternativeLabel: loc.backUpFirst,
+      confirmLabel: loc.settingsEraseVault,
     );
     if (!mounted) return;
 
@@ -385,10 +379,9 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
   /// the Keystore will not hold the key, so nothing can be encrypted or opened.
   /// Saying so here means the user finds out in Settings rather than after
   /// typing a full card in.
-  ///
-  /// Not localised, in keeping with the deferred decision on finding 5-3.
   Widget _buildVaultKeyNote(BuildContext context) {
     final theme = Theme.of(context);
+    final loc = AppLocalizations.of(context)!;
 
     return FutureBuilder<bool>(
       future: EncryptionService().canUseVault(),
@@ -403,12 +396,8 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
         final IconData icon =
             hasSecureLock ? Icons.info_outline : Icons.warning_amber_rounded;
         final String message = hasSecureLock
-            ? 'These settings control how Karde locks itself. Your phone will '
-                'also ask for your fingerprint or screen lock whenever you open '
-                'an item, whichever of these you choose.'
-            : 'This phone has no screen lock, so Karde cannot store or open your '
-                'items. Add a PIN, pattern, password or fingerprint in your '
-                'phone\'s settings, then come back.';
+            ? loc.settingsLockExplainer
+            : loc.settingsNoScreenLockWarning;
 
         return Padding(
           padding: const EdgeInsets.fromLTRB(8, 12, 8, 0),

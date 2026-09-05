@@ -1449,6 +1449,522 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'That backup file could not be read. It may be damaged.'**
   String get backupProblemFileDamaged;
+
+  /// No description provided for @otherOption.
+  ///
+  /// In en, this message translates to:
+  /// **'Other'**
+  String get otherOption;
+
+  /// No description provided for @goBack.
+  ///
+  /// In en, this message translates to:
+  /// **'Go back'**
+  String get goBack;
+
+  /// No description provided for @saving.
+  ///
+  /// In en, this message translates to:
+  /// **'Saving...'**
+  String get saving;
+
+  /// No description provided for @loadingDetails.
+  ///
+  /// In en, this message translates to:
+  /// **'Loading Details'**
+  String get loadingDetails;
+
+  /// No description provided for @setScreenLockFirst.
+  ///
+  /// In en, this message translates to:
+  /// **'Set a screen lock first'**
+  String get setScreenLockFirst;
+
+  /// No description provided for @screenLockExplainer.
+  ///
+  /// In en, this message translates to:
+  /// **'Karde encrypts every item with a key held in your phone\'s secure hardware, and that hardware will not hold a key unless the phone itself is locked.\n\nAdd a PIN, pattern, password or fingerprint in your phone\'s settings, then come back.'**
+  String get screenLockExplainer;
+
+  /// No description provided for @vaultKeyChangedItemsLost.
+  ///
+  /// In en, this message translates to:
+  /// **'Your device security settings changed, so the vault key is no longer valid. Existing items cannot be recovered.'**
+  String get vaultKeyChangedItemsLost;
+
+  /// No description provided for @addCardDecryptFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to decrypt existing card data.'**
+  String get addCardDecryptFailed;
+
+  /// No description provided for @addCardNeedsScreenLock.
+  ///
+  /// In en, this message translates to:
+  /// **'Set a screen lock (PIN, pattern, or biometrics) on your device to save cards securely.'**
+  String get addCardNeedsScreenLock;
+
+  /// No description provided for @addCardSaveFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Something went wrong saving this card. Please try again.'**
+  String get addCardSaveFailed;
+
+  /// No description provided for @selectCardNetwork.
+  ///
+  /// In en, this message translates to:
+  /// **'Select Card Network'**
+  String get selectCardNetwork;
+
+  /// No description provided for @editCard.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit Card'**
+  String get editCard;
+
+  /// No description provided for @issuerFieldLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Issuer'**
+  String get issuerFieldLabel;
+
+  /// No description provided for @issuerTooltip.
+  ///
+  /// In en, this message translates to:
+  /// **'The name of the bank or institution that issued this card.\n\nExample: Chase Bank'**
+  String get issuerTooltip;
+
+  /// No description provided for @customNetworkFieldLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Custom Network'**
+  String get customNetworkFieldLabel;
+
+  /// No description provided for @customNetworkHint.
+  ///
+  /// In en, this message translates to:
+  /// **'e.g. UnionPay, JCB'**
+  String get customNetworkHint;
+
+  /// No description provided for @secureDetails.
+  ///
+  /// In en, this message translates to:
+  /// **'SECURE DETAILS'**
+  String get secureDetails;
+
+  /// No description provided for @cardNumberFieldLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Card Number'**
+  String get cardNumberFieldLabel;
+
+  /// No description provided for @cardholderNameFieldLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Cardholder Name'**
+  String get cardholderNameFieldLabel;
+
+  /// No description provided for @privateNotesFieldLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Private Notes'**
+  String get privateNotesFieldLabel;
+
+  /// No description provided for @privateNotesTooltip.
+  ///
+  /// In en, this message translates to:
+  /// **'Any additional details, addresses, or context.\n\nExample: Bank Phone: 1-800-123-4567'**
+  String get privateNotesTooltip;
+
+  /// No description provided for @cardExpiredStillSave.
+  ///
+  /// In en, this message translates to:
+  /// **'This card has expired. You can still save it.'**
+  String get cardExpiredStillSave;
+
+  /// No description provided for @cardPhotoLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'CARD PHOTO'**
+  String get cardPhotoLabel;
+
+  /// No description provided for @cardPhotoHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Optional. Kept locked with the rest of the card.'**
+  String get cardPhotoHint;
+
+  /// No description provided for @cardPhotoViewerTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Card photo'**
+  String get cardPhotoViewerTitle;
+
+  /// Wraps a form field label to mark it as required. The asterisk position is the only thing that varies.
+  ///
+  /// In en, this message translates to:
+  /// **'{label} *'**
+  String requiredFieldMarker(String label);
+
+  /// No description provided for @idTypePassport.
+  ///
+  /// In en, this message translates to:
+  /// **'Passport'**
+  String get idTypePassport;
+
+  /// No description provided for @idTypeDriversLicense.
+  ///
+  /// In en, this message translates to:
+  /// **'Driver\'s License'**
+  String get idTypeDriversLicense;
+
+  /// No description provided for @idTypeNationalId.
+  ///
+  /// In en, this message translates to:
+  /// **'National ID'**
+  String get idTypeNationalId;
+
+  /// No description provided for @idTypeResidentPermit.
+  ///
+  /// In en, this message translates to:
+  /// **'Resident Permit'**
+  String get idTypeResidentPermit;
+
+  /// No description provided for @selectDocumentType.
+  ///
+  /// In en, this message translates to:
+  /// **'Select Document Type'**
+  String get selectDocumentType;
+
+  /// No description provided for @addIdDocument.
+  ///
+  /// In en, this message translates to:
+  /// **'Add ID Document'**
+  String get addIdDocument;
+
+  /// No description provided for @editDocument.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit Document'**
+  String get editDocument;
+
+  /// No description provided for @idExpiryAfterIssue.
+  ///
+  /// In en, this message translates to:
+  /// **'Expiry must be after the issue date'**
+  String get idExpiryAfterIssue;
+
+  /// No description provided for @idDobNotInFuture.
+  ///
+  /// In en, this message translates to:
+  /// **'Date of birth cannot be in the future'**
+  String get idDobNotInFuture;
+
+  /// No description provided for @idIssueDateNotInFuture.
+  ///
+  /// In en, this message translates to:
+  /// **'Issue date cannot be in the future'**
+  String get idIssueDateNotInFuture;
+
+  /// No description provided for @idUpdatedSecurely.
+  ///
+  /// In en, this message translates to:
+  /// **'ID document updated securely.'**
+  String get idUpdatedSecurely;
+
+  /// No description provided for @idAddedSecurely.
+  ///
+  /// In en, this message translates to:
+  /// **'ID document added securely.'**
+  String get idAddedSecurely;
+
+  /// No description provided for @addIdNeedsScreenLock.
+  ///
+  /// In en, this message translates to:
+  /// **'Set a screen lock on your device to save documents securely.'**
+  String get addIdNeedsScreenLock;
+
+  /// No description provided for @addIdSaveFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Something went wrong saving this document. Please try again.'**
+  String get addIdSaveFailed;
+
+  /// No description provided for @issuingAuthorityTooltip.
+  ///
+  /// In en, this message translates to:
+  /// **'The organization, state, or country that issued the ID.\n\nExample: State of California'**
+  String get issuingAuthorityTooltip;
+
+  /// No description provided for @personalIdTooltip.
+  ///
+  /// In en, this message translates to:
+  /// **'A secondary personal identifier.\n\nExample: 123-45-6789'**
+  String get personalIdTooltip;
+
+  /// No description provided for @idNotesTooltip.
+  ///
+  /// In en, this message translates to:
+  /// **'Any additional details or address information from the ID.\n\nExample: Organ donor, Class C driver'**
+  String get idNotesTooltip;
+
+  /// No description provided for @idUnlockFailedWarning.
+  ///
+  /// In en, this message translates to:
+  /// **'This document could not be unlocked, so its details are not shown. Saving is disabled to avoid overwriting your data. Go back and try again.'**
+  String get idUnlockFailedWarning;
+
+  /// No description provided for @customDocumentType.
+  ///
+  /// In en, this message translates to:
+  /// **'Custom Document Type'**
+  String get customDocumentType;
+
+  /// No description provided for @customDocumentTypeHint.
+  ///
+  /// In en, this message translates to:
+  /// **'e.g., Student ID'**
+  String get customDocumentTypeHint;
+
+  /// No description provided for @customDocumentTypeTooltip.
+  ///
+  /// In en, this message translates to:
+  /// **'The specific name of this custom document type.\n\nExample: Gym Pass'**
+  String get customDocumentTypeTooltip;
+
+  /// No description provided for @nicknameLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Nickname'**
+  String get nicknameLabel;
+
+  /// No description provided for @nicknameHint.
+  ///
+  /// In en, this message translates to:
+  /// **'e.g., My Passport'**
+  String get nicknameHint;
+
+  /// No description provided for @nicknameTooltip.
+  ///
+  /// In en, this message translates to:
+  /// **'A personal nickname to easily identify this document in your vault.\n\nExample: My Passport'**
+  String get nicknameTooltip;
+
+  /// No description provided for @documentPhotoLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'DOCUMENT PHOTO'**
+  String get documentPhotoLabel;
+
+  /// No description provided for @documentPhotoHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Optional. Kept locked with the rest of the document.'**
+  String get documentPhotoHint;
+
+  /// No description provided for @documentPhotoViewerTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Document photo'**
+  String get documentPhotoViewerTitle;
+
+  /// No description provided for @searchItems.
+  ///
+  /// In en, this message translates to:
+  /// **'Search items...'**
+  String get searchItems;
+
+  /// No description provided for @pinToTop.
+  ///
+  /// In en, this message translates to:
+  /// **'Pin to Top'**
+  String get pinToTop;
+
+  /// No description provided for @unpinFromTop.
+  ///
+  /// In en, this message translates to:
+  /// **'Unpin from Top'**
+  String get unpinFromTop;
+
+  /// No description provided for @pinToHomescreen.
+  ///
+  /// In en, this message translates to:
+  /// **'Pin to Homescreen'**
+  String get pinToHomescreen;
+
+  /// No description provided for @unpinFromHomescreen.
+  ///
+  /// In en, this message translates to:
+  /// **'Unpin from Homescreen'**
+  String get unpinFromHomescreen;
+
+  /// No description provided for @addItem.
+  ///
+  /// In en, this message translates to:
+  /// **'Add Item'**
+  String get addItem;
+
+  /// No description provided for @photoBadge.
+  ///
+  /// In en, this message translates to:
+  /// **'Photo'**
+  String get photoBadge;
+
+  /// No description provided for @tapCardForDetails.
+  ///
+  /// In en, this message translates to:
+  /// **'Tap the card for full details'**
+  String get tapCardForDetails;
+
+  /// No description provided for @noMatches.
+  ///
+  /// In en, this message translates to:
+  /// **'No matches'**
+  String get noMatches;
+
+  /// No description provided for @noMatchesMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Nothing here matches \"{query}\". Try a different word.'**
+  String noMatchesMessage(String query);
+
+  /// No description provided for @noIdsYet.
+  ///
+  /// In en, this message translates to:
+  /// **'No IDs yet'**
+  String get noIdsYet;
+
+  /// No description provided for @noIdsYetMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Passports, licences and other documents you add will appear here.'**
+  String get noIdsYetMessage;
+
+  /// No description provided for @noCardsYet.
+  ///
+  /// In en, this message translates to:
+  /// **'No cards yet'**
+  String get noCardsYet;
+
+  /// No description provided for @noCardsYetMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Bank cards, loyalty cards and anything else you add will appear here.'**
+  String get noCardsYetMessage;
+
+  /// No description provided for @addNewId.
+  ///
+  /// In en, this message translates to:
+  /// **'Add New ID'**
+  String get addNewId;
+
+  /// No description provided for @sortItems.
+  ///
+  /// In en, this message translates to:
+  /// **'Sort Items'**
+  String get sortItems;
+
+  /// No description provided for @sortNewestFirst.
+  ///
+  /// In en, this message translates to:
+  /// **'Newest First'**
+  String get sortNewestFirst;
+
+  /// No description provided for @sortOldestFirst.
+  ///
+  /// In en, this message translates to:
+  /// **'Oldest First'**
+  String get sortOldestFirst;
+
+  /// No description provided for @sortAlphabetical.
+  ///
+  /// In en, this message translates to:
+  /// **'Alphabetical (A-Z)'**
+  String get sortAlphabetical;
+
+  /// No description provided for @settingsSecurityQuestions.
+  ///
+  /// In en, this message translates to:
+  /// **'Security questions'**
+  String get settingsSecurityQuestions;
+
+  /// No description provided for @settingsSecurityQuestionsDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Change the questions used to recover your PIN'**
+  String get settingsSecurityQuestionsDesc;
+
+  /// No description provided for @settingsBackupSection.
+  ///
+  /// In en, this message translates to:
+  /// **'BACKUP'**
+  String get settingsBackupSection;
+
+  /// No description provided for @settingsBackupRestoreDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Save an encrypted copy of your vault, or restore one'**
+  String get settingsBackupRestoreDesc;
+
+  /// No description provided for @settingsDangerZone.
+  ///
+  /// In en, this message translates to:
+  /// **'DANGER ZONE'**
+  String get settingsDangerZone;
+
+  /// No description provided for @settingsEraseVault.
+  ///
+  /// In en, this message translates to:
+  /// **'Erase vault'**
+  String get settingsEraseVault;
+
+  /// No description provided for @settingsEraseVaultDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Permanently delete every card, ID, photo and setting'**
+  String get settingsEraseVaultDesc;
+
+  /// No description provided for @aboutDialogBody.
+  ///
+  /// In en, this message translates to:
+  /// **'{name} Secure Wallet v{version}\n\nA totally offline, encrypted secure vault for your cards.'**
+  String aboutDialogBody(String name, String version);
+
+  /// No description provided for @zeroKnowledge.
+  ///
+  /// In en, this message translates to:
+  /// **'Zero-Knowledge'**
+  String get zeroKnowledge;
+
+  /// No description provided for @eraseEverythingTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Erase everything?'**
+  String get eraseEverythingTitle;
+
+  /// No description provided for @eraseEverythingMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Every card, ID document and photo will be permanently deleted, along with your PIN and settings. This cannot be undone, and Karde keeps no copy anywhere.'**
+  String get eraseEverythingMessage;
+
+  /// No description provided for @backUpFirst.
+  ///
+  /// In en, this message translates to:
+  /// **'Back up first'**
+  String get backUpFirst;
+
+  /// No description provided for @settingsLockExplainer.
+  ///
+  /// In en, this message translates to:
+  /// **'These settings control how Karde locks itself. Your phone will also ask for your fingerprint or screen lock whenever you open an item, whichever of these you choose.'**
+  String get settingsLockExplainer;
+
+  /// No description provided for @settingsNoScreenLockWarning.
+  ///
+  /// In en, this message translates to:
+  /// **'This phone has no screen lock, so Karde cannot store or open your items. Add a PIN, pattern, password or fingerprint in your phone\'s settings, then come back.'**
+  String get settingsNoScreenLockWarning;
 }
 
 class _AppLocalizationsDelegate

@@ -759,4 +759,293 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get backupProblemFileDamaged =>
       'That backup file could not be read. It may be damaged.';
+
+  @override
+  String get otherOption => 'Other';
+
+  @override
+  String get goBack => 'Go back';
+
+  @override
+  String get saving => 'Saving...';
+
+  @override
+  String get loadingDetails => 'Loading Details';
+
+  @override
+  String get setScreenLockFirst => 'Set a screen lock first';
+
+  @override
+  String get screenLockExplainer =>
+      'Karde encrypts every item with a key held in your phone\'s secure hardware, and that hardware will not hold a key unless the phone itself is locked.\n\nAdd a PIN, pattern, password or fingerprint in your phone\'s settings, then come back.';
+
+  @override
+  String get vaultKeyChangedItemsLost =>
+      'Your device security settings changed, so the vault key is no longer valid. Existing items cannot be recovered.';
+
+  @override
+  String get addCardDecryptFailed => 'Failed to decrypt existing card data.';
+
+  @override
+  String get addCardNeedsScreenLock =>
+      'Set a screen lock (PIN, pattern, or biometrics) on your device to save cards securely.';
+
+  @override
+  String get addCardSaveFailed =>
+      'Something went wrong saving this card. Please try again.';
+
+  @override
+  String get selectCardNetwork => 'Select Card Network';
+
+  @override
+  String get editCard => 'Edit Card';
+
+  @override
+  String get issuerFieldLabel => 'Issuer';
+
+  @override
+  String get issuerTooltip =>
+      'The name of the bank or institution that issued this card.\n\nExample: Chase Bank';
+
+  @override
+  String get customNetworkFieldLabel => 'Custom Network';
+
+  @override
+  String get customNetworkHint => 'e.g. UnionPay, JCB';
+
+  @override
+  String get secureDetails => 'SECURE DETAILS';
+
+  @override
+  String get cardNumberFieldLabel => 'Card Number';
+
+  @override
+  String get cardholderNameFieldLabel => 'Cardholder Name';
+
+  @override
+  String get privateNotesFieldLabel => 'Private Notes';
+
+  @override
+  String get privateNotesTooltip =>
+      'Any additional details, addresses, or context.\n\nExample: Bank Phone: 1-800-123-4567';
+
+  @override
+  String get cardExpiredStillSave =>
+      'This card has expired. You can still save it.';
+
+  @override
+  String get cardPhotoLabel => 'CARD PHOTO';
+
+  @override
+  String get cardPhotoHint =>
+      'Optional. Kept locked with the rest of the card.';
+
+  @override
+  String get cardPhotoViewerTitle => 'Card photo';
+
+  @override
+  String requiredFieldMarker(String label) {
+    return '$label *';
+  }
+
+  @override
+  String get idTypePassport => 'Passport';
+
+  @override
+  String get idTypeDriversLicense => 'Driver\'s License';
+
+  @override
+  String get idTypeNationalId => 'National ID';
+
+  @override
+  String get idTypeResidentPermit => 'Resident Permit';
+
+  @override
+  String get selectDocumentType => 'Select Document Type';
+
+  @override
+  String get addIdDocument => 'Add ID Document';
+
+  @override
+  String get editDocument => 'Edit Document';
+
+  @override
+  String get idExpiryAfterIssue => 'Expiry must be after the issue date';
+
+  @override
+  String get idDobNotInFuture => 'Date of birth cannot be in the future';
+
+  @override
+  String get idIssueDateNotInFuture => 'Issue date cannot be in the future';
+
+  @override
+  String get idUpdatedSecurely => 'ID document updated securely.';
+
+  @override
+  String get idAddedSecurely => 'ID document added securely.';
+
+  @override
+  String get addIdNeedsScreenLock =>
+      'Set a screen lock on your device to save documents securely.';
+
+  @override
+  String get addIdSaveFailed =>
+      'Something went wrong saving this document. Please try again.';
+
+  @override
+  String get issuingAuthorityTooltip =>
+      'The organization, state, or country that issued the ID.\n\nExample: State of California';
+
+  @override
+  String get personalIdTooltip =>
+      'A secondary personal identifier.\n\nExample: 123-45-6789';
+
+  @override
+  String get idNotesTooltip =>
+      'Any additional details or address information from the ID.\n\nExample: Organ donor, Class C driver';
+
+  @override
+  String get idUnlockFailedWarning =>
+      'This document could not be unlocked, so its details are not shown. Saving is disabled to avoid overwriting your data. Go back and try again.';
+
+  @override
+  String get customDocumentType => 'Custom Document Type';
+
+  @override
+  String get customDocumentTypeHint => 'e.g., Student ID';
+
+  @override
+  String get customDocumentTypeTooltip =>
+      'The specific name of this custom document type.\n\nExample: Gym Pass';
+
+  @override
+  String get nicknameLabel => 'Nickname';
+
+  @override
+  String get nicknameHint => 'e.g., My Passport';
+
+  @override
+  String get nicknameTooltip =>
+      'A personal nickname to easily identify this document in your vault.\n\nExample: My Passport';
+
+  @override
+  String get documentPhotoLabel => 'DOCUMENT PHOTO';
+
+  @override
+  String get documentPhotoHint =>
+      'Optional. Kept locked with the rest of the document.';
+
+  @override
+  String get documentPhotoViewerTitle => 'Document photo';
+
+  @override
+  String get searchItems => 'Search items...';
+
+  @override
+  String get pinToTop => 'Pin to Top';
+
+  @override
+  String get unpinFromTop => 'Unpin from Top';
+
+  @override
+  String get pinToHomescreen => 'Pin to Homescreen';
+
+  @override
+  String get unpinFromHomescreen => 'Unpin from Homescreen';
+
+  @override
+  String get addItem => 'Add Item';
+
+  @override
+  String get photoBadge => 'Photo';
+
+  @override
+  String get tapCardForDetails => 'Tap the card for full details';
+
+  @override
+  String get noMatches => 'No matches';
+
+  @override
+  String noMatchesMessage(String query) {
+    return 'Nothing here matches \"$query\". Try a different word.';
+  }
+
+  @override
+  String get noIdsYet => 'No IDs yet';
+
+  @override
+  String get noIdsYetMessage =>
+      'Passports, licences and other documents you add will appear here.';
+
+  @override
+  String get noCardsYet => 'No cards yet';
+
+  @override
+  String get noCardsYetMessage =>
+      'Bank cards, loyalty cards and anything else you add will appear here.';
+
+  @override
+  String get addNewId => 'Add New ID';
+
+  @override
+  String get sortItems => 'Sort Items';
+
+  @override
+  String get sortNewestFirst => 'Newest First';
+
+  @override
+  String get sortOldestFirst => 'Oldest First';
+
+  @override
+  String get sortAlphabetical => 'Alphabetical (A-Z)';
+
+  @override
+  String get settingsSecurityQuestions => 'Security questions';
+
+  @override
+  String get settingsSecurityQuestionsDesc =>
+      'Change the questions used to recover your PIN';
+
+  @override
+  String get settingsBackupSection => 'BACKUP';
+
+  @override
+  String get settingsBackupRestoreDesc =>
+      'Save an encrypted copy of your vault, or restore one';
+
+  @override
+  String get settingsDangerZone => 'DANGER ZONE';
+
+  @override
+  String get settingsEraseVault => 'Erase vault';
+
+  @override
+  String get settingsEraseVaultDesc =>
+      'Permanently delete every card, ID, photo and setting';
+
+  @override
+  String aboutDialogBody(String name, String version) {
+    return '$name Secure Wallet v$version\n\nA totally offline, encrypted secure vault for your cards.';
+  }
+
+  @override
+  String get zeroKnowledge => 'Zero-Knowledge';
+
+  @override
+  String get eraseEverythingTitle => 'Erase everything?';
+
+  @override
+  String get eraseEverythingMessage =>
+      'Every card, ID document and photo will be permanently deleted, along with your PIN and settings. This cannot be undone, and Karde keeps no copy anywhere.';
+
+  @override
+  String get backUpFirst => 'Back up first';
+
+  @override
+  String get settingsLockExplainer =>
+      'These settings control how Karde locks itself. Your phone will also ask for your fingerprint or screen lock whenever you open an item, whichever of these you choose.';
+
+  @override
+  String get settingsNoScreenLockWarning =>
+      'This phone has no screen lock, so Karde cannot store or open your items. Add a PIN, pattern, password or fingerprint in your phone\'s settings, then come back.';
 }

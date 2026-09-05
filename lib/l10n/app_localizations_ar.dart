@@ -769,4 +769,293 @@ class AppLocalizationsAr extends AppLocalizations {
   @override
   String get backupProblemFileDamaged =>
       'تعذّرت قراءة ملف النسخة الاحتياطية هذا. قد يكون تالفاً.';
+
+  @override
+  String get otherOption => 'أخرى';
+
+  @override
+  String get goBack => 'رجوع';
+
+  @override
+  String get saving => 'جارٍ الحفظ…';
+
+  @override
+  String get loadingDetails => 'جارٍ تحميل التفاصيل';
+
+  @override
+  String get setScreenLockFirst => 'اضبط قفل الشاشة أولاً';
+
+  @override
+  String get screenLockExplainer =>
+      'يشفّر Karde كل عنصر بمفتاح محفوظ في العتاد الآمن داخل هاتفك، وهذا العتاد لا يحتفظ بأي مفتاح ما لم يكن الهاتف نفسه مقفلاً.\n\nأضف رمزاً أو نقشاً أو كلمة مرور أو بصمة في إعدادات هاتفك، ثم عد إلى هنا.';
+
+  @override
+  String get vaultKeyChangedItemsLost =>
+      'تغيّرت إعدادات الأمان في جهازك، لذا لم يعد مفتاح الخزنة صالحاً. لا يمكن استرجاع العناصر الموجودة.';
+
+  @override
+  String get addCardDecryptFailed => 'تعذّر فك تشفير بيانات البطاقة الحالية.';
+
+  @override
+  String get addCardNeedsScreenLock =>
+      'اضبط قفل شاشة (رمز أو نقش أو بصمة) على جهازك لحفظ البطاقات بأمان.';
+
+  @override
+  String get addCardSaveFailed =>
+      'حدث خطأ أثناء حفظ هذه البطاقة. يرجى المحاولة مرة أخرى.';
+
+  @override
+  String get selectCardNetwork => 'اختر شبكة البطاقة';
+
+  @override
+  String get editCard => 'تعديل البطاقة';
+
+  @override
+  String get issuerFieldLabel => 'المُصدِر';
+
+  @override
+  String get issuerTooltip =>
+      'اسم البنك أو المؤسسة التي أصدرت هذه البطاقة.\n\nمثال: البنك الأهلي';
+
+  @override
+  String get customNetworkFieldLabel => 'شبكة مخصّصة';
+
+  @override
+  String get customNetworkHint => 'مثال: UnionPay أو JCB';
+
+  @override
+  String get secureDetails => 'التفاصيل المحمية';
+
+  @override
+  String get cardNumberFieldLabel => 'رقم البطاقة';
+
+  @override
+  String get cardholderNameFieldLabel => 'اسم حامل البطاقة';
+
+  @override
+  String get privateNotesFieldLabel => 'ملاحظات خاصة';
+
+  @override
+  String get privateNotesTooltip =>
+      'أي تفاصيل أو عناوين أو ملاحظات إضافية.\n\nمثال: هاتف البنك: 19666';
+
+  @override
+  String get cardExpiredStillSave =>
+      'انتهت صلاحية هذه البطاقة. لا يزال بإمكانك حفظها.';
+
+  @override
+  String get cardPhotoLabel => 'صورة البطاقة';
+
+  @override
+  String get cardPhotoHint => 'اختياري. تُحفظ مقفلة مع بقية بيانات البطاقة.';
+
+  @override
+  String get cardPhotoViewerTitle => 'صورة البطاقة';
+
+  @override
+  String requiredFieldMarker(String label) {
+    return '$label *';
+  }
+
+  @override
+  String get idTypePassport => 'جواز سفر';
+
+  @override
+  String get idTypeDriversLicense => 'رخصة قيادة';
+
+  @override
+  String get idTypeNationalId => 'بطاقة هوية وطنية';
+
+  @override
+  String get idTypeResidentPermit => 'تصريح إقامة';
+
+  @override
+  String get selectDocumentType => 'اختر نوع المستند';
+
+  @override
+  String get addIdDocument => 'إضافة مستند هوية';
+
+  @override
+  String get editDocument => 'تعديل المستند';
+
+  @override
+  String get idExpiryAfterIssue =>
+      'يجب أن يكون تاريخ الانتهاء بعد تاريخ الإصدار';
+
+  @override
+  String get idDobNotInFuture => 'لا يمكن أن يكون تاريخ الميلاد في المستقبل';
+
+  @override
+  String get idIssueDateNotInFuture =>
+      'لا يمكن أن يكون تاريخ الإصدار في المستقبل';
+
+  @override
+  String get idUpdatedSecurely => 'تم تحديث مستند الهوية بأمان.';
+
+  @override
+  String get idAddedSecurely => 'تمت إضافة مستند الهوية بأمان.';
+
+  @override
+  String get addIdNeedsScreenLock =>
+      'اضبط قفل شاشة على جهازك لحفظ المستندات بأمان.';
+
+  @override
+  String get addIdSaveFailed =>
+      'حدث خطأ أثناء حفظ هذا المستند. يرجى المحاولة مرة أخرى.';
+
+  @override
+  String get issuingAuthorityTooltip =>
+      'الجهة أو الولاية أو الدولة التي أصدرت المستند.\n\nمثال: وزارة الداخلية';
+
+  @override
+  String get personalIdTooltip => 'معرّف شخصي ثانوي.\n\nمثال: 123-45-6789';
+
+  @override
+  String get idNotesTooltip =>
+      'أي تفاصيل أو معلومات عنوان إضافية من المستند.\n\nمثال: متبرع بالأعضاء، رخصة فئة ب';
+
+  @override
+  String get idUnlockFailedWarning =>
+      'تعذّر فتح هذا المستند، لذا لا تظهر تفاصيله. تم تعطيل الحفظ لتفادي الكتابة فوق بياناتك. عد إلى الخلف وحاول مرة أخرى.';
+
+  @override
+  String get customDocumentType => 'نوع مستند مخصّص';
+
+  @override
+  String get customDocumentTypeHint => 'مثال: بطاقة طالب';
+
+  @override
+  String get customDocumentTypeTooltip =>
+      'الاسم المحدد لنوع المستند المخصّص هذا.\n\nمثال: بطاقة نادٍ رياضي';
+
+  @override
+  String get nicknameLabel => 'اسم مختصر';
+
+  @override
+  String get nicknameHint => 'مثال: جواز سفري';
+
+  @override
+  String get nicknameTooltip =>
+      'اسم مختصر شخصي يسهّل تمييز هذا المستند داخل خزنتك.\n\nمثال: جواز سفري';
+
+  @override
+  String get documentPhotoLabel => 'صورة المستند';
+
+  @override
+  String get documentPhotoHint =>
+      'اختياري. تُحفظ مقفلة مع بقية بيانات المستند.';
+
+  @override
+  String get documentPhotoViewerTitle => 'صورة المستند';
+
+  @override
+  String get searchItems => 'ابحث في العناصر…';
+
+  @override
+  String get pinToTop => 'تثبيت في الأعلى';
+
+  @override
+  String get unpinFromTop => 'إلغاء التثبيت من الأعلى';
+
+  @override
+  String get pinToHomescreen => 'تثبيت في الشاشة الرئيسية';
+
+  @override
+  String get unpinFromHomescreen => 'إلغاء التثبيت من الشاشة الرئيسية';
+
+  @override
+  String get addItem => 'إضافة عنصر';
+
+  @override
+  String get photoBadge => 'صورة';
+
+  @override
+  String get tapCardForDetails => 'اضغط على البطاقة لعرض كل التفاصيل';
+
+  @override
+  String get noMatches => 'لا توجد نتائج';
+
+  @override
+  String noMatchesMessage(String query) {
+    return 'لا يوجد هنا ما يطابق \"$query\". جرّب كلمة أخرى.';
+  }
+
+  @override
+  String get noIdsYet => 'لا توجد هويات بعد';
+
+  @override
+  String get noIdsYetMessage =>
+      'ستظهر هنا جوازات السفر والرخص والمستندات الأخرى التي تضيفها.';
+
+  @override
+  String get noCardsYet => 'لا توجد بطاقات بعد';
+
+  @override
+  String get noCardsYetMessage =>
+      'ستظهر هنا البطاقات المصرفية وبطاقات الولاء وكل ما تضيفه.';
+
+  @override
+  String get addNewId => 'إضافة هوية جديدة';
+
+  @override
+  String get sortItems => 'ترتيب العناصر';
+
+  @override
+  String get sortNewestFirst => 'الأحدث أولاً';
+
+  @override
+  String get sortOldestFirst => 'الأقدم أولاً';
+
+  @override
+  String get sortAlphabetical => 'أبجدياً (أ-ي)';
+
+  @override
+  String get settingsSecurityQuestions => 'أسئلة الأمان';
+
+  @override
+  String get settingsSecurityQuestionsDesc =>
+      'غيّر الأسئلة المستخدمة لاستعادة رمزك السري';
+
+  @override
+  String get settingsBackupSection => 'النسخ الاحتياطي';
+
+  @override
+  String get settingsBackupRestoreDesc =>
+      'احفظ نسخة مشفّرة من خزنتك، أو استعد واحدة';
+
+  @override
+  String get settingsDangerZone => 'منطقة الخطر';
+
+  @override
+  String get settingsEraseVault => 'محو الخزنة';
+
+  @override
+  String get settingsEraseVaultDesc =>
+      'احذف نهائياً كل بطاقة ومستند وصورة وإعداد';
+
+  @override
+  String aboutDialogBody(String name, String version) {
+    return '$name Secure Wallet v$version\n\nخزنة مشفّرة لبطاقاتك، تعمل بالكامل دون اتصال بالإنترنت.';
+  }
+
+  @override
+  String get zeroKnowledge => 'بدون أي معرفة ببياناتك';
+
+  @override
+  String get eraseEverythingTitle => 'محو كل شيء؟';
+
+  @override
+  String get eraseEverythingMessage =>
+      'ستُحذف نهائياً كل بطاقة ومستند هوية وصورة، إلى جانب رمزك السري وإعداداتك. لا يمكن التراجع عن هذا، ولا يحتفظ Karde بأي نسخة في أي مكان.';
+
+  @override
+  String get backUpFirst => 'انسخ احتياطياً أولاً';
+
+  @override
+  String get settingsLockExplainer =>
+      'تتحكم هذه الإعدادات في طريقة قفل Karde لنفسه. كما سيطلب منك هاتفك بصمتك أو قفل شاشتك في كل مرة تفتح فيها عنصراً، مهما كان اختيارك هنا.';
+
+  @override
+  String get settingsNoScreenLockWarning =>
+      'لا يحتوي هذا الهاتف على قفل شاشة، لذا لا يستطيع Karde حفظ عناصرك أو فتحها. أضف رمزاً أو نقشاً أو كلمة مرور أو بصمة في إعدادات هاتفك، ثم عد إلى هنا.';
 }

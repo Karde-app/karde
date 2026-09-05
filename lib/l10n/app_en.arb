@@ -300,5 +300,116 @@
     }
   },
   "backupProblemRecordUnreadable": "A vault record could not be read.",
-  "backupProblemFileDamaged": "That backup file could not be read. It may be damaged."
+  "backupProblemFileDamaged": "That backup file could not be read. It may be damaged.",
+  "otherOption": "Other",
+  "goBack": "Go back",
+  "saving": "Saving...",
+  "loadingDetails": "Loading Details",
+  "setScreenLockFirst": "Set a screen lock first",
+  "screenLockExplainer": "Karde encrypts every item with a key held in your phone's secure hardware, and that hardware will not hold a key unless the phone itself is locked.\n\nAdd a PIN, pattern, password or fingerprint in your phone's settings, then come back.",
+  "vaultKeyChangedItemsLost": "Your device security settings changed, so the vault key is no longer valid. Existing items cannot be recovered.",
+  "addCardDecryptFailed": "Failed to decrypt existing card data.",
+  "addCardNeedsScreenLock": "Set a screen lock (PIN, pattern, or biometrics) on your device to save cards securely.",
+  "addCardSaveFailed": "Something went wrong saving this card. Please try again.",
+  "selectCardNetwork": "Select Card Network",
+  "editCard": "Edit Card",
+  "issuerFieldLabel": "Issuer",
+  "issuerTooltip": "The name of the bank or institution that issued this card.\n\nExample: Chase Bank",
+  "customNetworkFieldLabel": "Custom Network",
+  "customNetworkHint": "e.g. UnionPay, JCB",
+  "secureDetails": "SECURE DETAILS",
+  "cardNumberFieldLabel": "Card Number",
+  "cardholderNameFieldLabel": "Cardholder Name",
+  "privateNotesFieldLabel": "Private Notes",
+  "privateNotesTooltip": "Any additional details, addresses, or context.\n\nExample: Bank Phone: 1-800-123-4567",
+  "cardExpiredStillSave": "This card has expired. You can still save it.",
+  "cardPhotoLabel": "CARD PHOTO",
+  "cardPhotoHint": "Optional. Kept locked with the rest of the card.",
+  "cardPhotoViewerTitle": "Card photo",
+  "requiredFieldMarker": "{label} *",
+  "@requiredFieldMarker": {
+    "placeholders": {
+      "label": {
+        "type": "String"
+      }
+    },
+    "description": "Wraps a form field label to mark it as required. The asterisk position is the only thing that varies."
+  },
+  "idTypePassport": "Passport",
+  "idTypeDriversLicense": "Driver's License",
+  "idTypeNationalId": "National ID",
+  "idTypeResidentPermit": "Resident Permit",
+  "selectDocumentType": "Select Document Type",
+  "addIdDocument": "Add ID Document",
+  "editDocument": "Edit Document",
+  "idExpiryAfterIssue": "Expiry must be after the issue date",
+  "idDobNotInFuture": "Date of birth cannot be in the future",
+  "idIssueDateNotInFuture": "Issue date cannot be in the future",
+  "idUpdatedSecurely": "ID document updated securely.",
+  "idAddedSecurely": "ID document added securely.",
+  "addIdNeedsScreenLock": "Set a screen lock on your device to save documents securely.",
+  "addIdSaveFailed": "Something went wrong saving this document. Please try again.",
+  "issuingAuthorityTooltip": "The organization, state, or country that issued the ID.\n\nExample: State of California",
+  "personalIdTooltip": "A secondary personal identifier.\n\nExample: 123-45-6789",
+  "idNotesTooltip": "Any additional details or address information from the ID.\n\nExample: Organ donor, Class C driver",
+  "idUnlockFailedWarning": "This document could not be unlocked, so its details are not shown. Saving is disabled to avoid overwriting your data. Go back and try again.",
+  "customDocumentType": "Custom Document Type",
+  "customDocumentTypeHint": "e.g., Student ID",
+  "customDocumentTypeTooltip": "The specific name of this custom document type.\n\nExample: Gym Pass",
+  "nicknameLabel": "Nickname",
+  "nicknameHint": "e.g., My Passport",
+  "nicknameTooltip": "A personal nickname to easily identify this document in your vault.\n\nExample: My Passport",
+  "documentPhotoLabel": "DOCUMENT PHOTO",
+  "documentPhotoHint": "Optional. Kept locked with the rest of the document.",
+  "documentPhotoViewerTitle": "Document photo",
+  "searchItems": "Search items...",
+  "pinToTop": "Pin to Top",
+  "unpinFromTop": "Unpin from Top",
+  "pinToHomescreen": "Pin to Homescreen",
+  "unpinFromHomescreen": "Unpin from Homescreen",
+  "addItem": "Add Item",
+  "photoBadge": "Photo",
+  "tapCardForDetails": "Tap the card for full details",
+  "noMatches": "No matches",
+  "noMatchesMessage": "Nothing here matches \"{query}\". Try a different word.",
+  "@noMatchesMessage": {
+    "placeholders": {
+      "query": {
+        "type": "String"
+      }
+    }
+  },
+  "noIdsYet": "No IDs yet",
+  "noIdsYetMessage": "Passports, licences and other documents you add will appear here.",
+  "noCardsYet": "No cards yet",
+  "noCardsYetMessage": "Bank cards, loyalty cards and anything else you add will appear here.",
+  "addNewId": "Add New ID",
+  "sortItems": "Sort Items",
+  "sortNewestFirst": "Newest First",
+  "sortOldestFirst": "Oldest First",
+  "sortAlphabetical": "Alphabetical (A-Z)",
+  "settingsSecurityQuestions": "Security questions",
+  "settingsSecurityQuestionsDesc": "Change the questions used to recover your PIN",
+  "settingsBackupSection": "BACKUP",
+  "settingsBackupRestoreDesc": "Save an encrypted copy of your vault, or restore one",
+  "settingsDangerZone": "DANGER ZONE",
+  "settingsEraseVault": "Erase vault",
+  "settingsEraseVaultDesc": "Permanently delete every card, ID, photo and setting",
+  "aboutDialogBody": "{name} Secure Wallet v{version}\n\nA totally offline, encrypted secure vault for your cards.",
+  "@aboutDialogBody": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      },
+      "version": {
+        "type": "String"
+      }
+    }
+  },
+  "zeroKnowledge": "Zero-Knowledge",
+  "eraseEverythingTitle": "Erase everything?",
+  "eraseEverythingMessage": "Every card, ID document and photo will be permanently deleted, along with your PIN and settings. This cannot be undone, and Karde keeps no copy anywhere.",
+  "backUpFirst": "Back up first",
+  "settingsLockExplainer": "These settings control how Karde locks itself. Your phone will also ask for your fingerprint or screen lock whenever you open an item, whichever of these you choose.",
+  "settingsNoScreenLockWarning": "This phone has no screen lock, so Karde cannot store or open your items. Add a PIN, pattern, password or fingerprint in your phone's settings, then come back."
 }

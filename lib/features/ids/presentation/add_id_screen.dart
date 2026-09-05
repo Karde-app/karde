@@ -87,6 +87,30 @@ final Map<String, List<IdFieldConfig>> idTypeConfig = {
   ],
 };
 
+/// The translated name for one of [idTypeConfig]'s keys.
+///
+/// The keys themselves stay in English because they are *stored* on the
+/// record and later matched by `RealisticIdCard` to pick a card template, so
+/// translating them would silently change which template a document gets and
+/// break every ID already saved. A type the user typed themselves is not in
+/// the map and is shown exactly as they wrote it.
+String idTypeLabel(String type, AppLocalizations loc) {
+  switch (type) {
+    case 'Passport':
+      return loc.idTypePassport;
+    case "Driver's License":
+      return loc.idTypeDriversLicense;
+    case 'National ID':
+      return loc.idTypeNationalId;
+    case 'Resident Permit':
+      return loc.idTypeResidentPermit;
+    case 'Other':
+      return loc.otherOption;
+    default:
+      return type;
+  }
+}
+
 /// Parses one of the ID form's `dd/MM/yyyy` fields. Null when blank or invalid.
 ///
 /// Top-level and public so the date rules can be tested without building a
@@ -119,10 +143,12 @@ String formatIdDate(DateTime date) =>
 /// A document that has already expired is a reasonable thing to keep in a
 /// vault, so a past expiry is allowed. What is not allowed is an expiry that
 /// precedes its own issue, which the form used to accept without complaint.
-String? expiryDateError({DateTime? issue, DateTime? expiry}) {
-  if (issue == null || expiry == null) return null;
-  if (!expiry.isAfter(issue)) return 'Expiry must be after the issue date';
-  return null;
+///
+/// Returns whether the rule is broken rather than the sentence to show. The
+/// rule has no locale; the wording is chosen by the form.
+bool expiryPrecedesIssue({DateTime? issue, DateTime? expiry}) {
+  if (issue == null || expiry == null) return false;
+  return !expiry.isAfter(issue);
 }
 
 class AddIdScreen extends ConsumerStatefulWidget {
@@ -341,18 +367,21 @@ class _AddIdScreenState extends ConsumerState<AddIdScreen> {
   }
 
   /// Cross-field date rules, applied on top of the plain "required" check.
-  String? _validateDateField(IdFieldType type, String? value) {
+  String? _validateDateField(AppLocalizations loc, IdFieldType type, String? value) {
     final parsed = parseIdDate(value);
     if (parsed == null) return null; // blank, or handled by the required check
 
     final today = DateTime.now();
     switch (type) {
       case IdFieldType.dateOfBirth:
-        if (parsed.isAfter(today)) return 'Date of birth cannot be in the future';
+        if (parsed.isAfter(today)) return loc.idDobNotInFuture;
       case IdFieldType.issueDate:
-        if (parsed.isAfter(today)) return 'Issue date cannot be in the future';
+        if (parsed.isAfter(today)) return loc.idIssueDateNotInFuture;
       case IdFieldType.expiryDate:
-        return expiryDateError(issue: _dateIn(IdFieldType.issueDate), expiry: parsed);
+        return expiryPrecedesIssue(
+                issue: _dateIn(IdFieldType.issueDate), expiry: parsed)
+            ? loc.idExpiryAfterIssue
+            : null;
       default:
         break;
     }
@@ -361,6 +390,7 @@ class _AddIdScreenState extends ConsumerState<AddIdScreen> {
 
   void _showTypePicker() {
     final theme = Theme.of(context);
+    final loc = AppLocalizations.of(context)!;
     showModalBottomSheet(
       context: context,
       backgroundColor: theme.colorScheme.surface,
@@ -372,14 +402,14 @@ class _AddIdScreenState extends ConsumerState<AddIdScreen> {
             children: [
               Padding(
                 padding: const EdgeInsets.all(24),
-                child: Text('Select Document Type', style: theme.textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold)),
+                child: Text(loc.selectDocumentType, style: theme.textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold)),
               ),
               ...idTypeConfig.keys.map((type) {
                 final isSelected = type == _selectedIdType;
                 return ListTile(
                   contentPadding: const EdgeInsets.symmetric(horizontal: 24, vertical: 4),
                   title: Text(
-                    type, 
+                    idTypeLabel(type, loc),
                     style: TextStyle(
                       fontWeight: isSelected ? FontWeight.bold : FontWeight.normal, 
                       color: isSelected ? KardeColors.champagneGold : theme.colorScheme.onSurface,
@@ -456,8 +486,8 @@ class _AddIdScreenState extends ConsumerState<AddIdScreen> {
         KardeFeedback.success(
           context,
           widget.existingId != null
-              ? 'ID document updated securely.'
-              : 'ID document added securely.',
+              ? AppLocalizations.of(context)!.idUpdatedSecurely
+              : AppLocalizations.of(context)!.idAddedSecurely,
         );
       }
     } on VaultAuthCancelled {
@@ -468,8 +498,8 @@ class _AddIdScreenState extends ConsumerState<AddIdScreen> {
         KardeFeedback.error(
           context,
           e is VaultUnavailable
-              ? 'Set a screen lock on your device to save documents securely.'
-              : 'Something went wrong saving this document. Please try again.',
+              ? AppLocalizations.of(context)!.addIdNeedsScreenLock
+              : AppLocalizations.of(context)!.addIdSaveFailed,
         );
       }
     } finally {
@@ -497,11 +527,11 @@ class _AddIdScreenState extends ConsumerState<AddIdScreen> {
     }
   }
 
-  String? _getTooltipForType(IdFieldType type) {
+  String? _getTooltipForType(IdFieldType type, AppLocalizations loc) {
     switch (type) {
-      case IdFieldType.issuingAuthority: return 'The organization, state, or country that issued the ID.\n\nExample: State of California';
-      case IdFieldType.personalId: return 'A secondary personal identifier.\n\nExample: 123-45-6789';
-      case IdFieldType.notes: return 'Any additional details or address information from the ID.\n\nExample: Organ donor, Class C driver';
+      case IdFieldType.issuingAuthority: return loc.issuingAuthorityTooltip;
+      case IdFieldType.personalId: return loc.personalIdTooltip;
+      case IdFieldType.notes: return loc.idNotesTooltip;
       default: return null;
     }
   }
@@ -538,8 +568,9 @@ class _AddIdScreenState extends ConsumerState<AddIdScreen> {
 
   Widget _buildVaultUnavailable(BuildContext context) {
     final theme = Theme.of(context);
+    final loc = AppLocalizations.of(context)!;
     return Scaffold(
-      appBar: AppBar(title: const Text("Add ID Document"), centerTitle: true),
+      appBar: AppBar(title: Text(loc.addIdDocument), centerTitle: true),
       body: Center(
         child: Padding(
           padding: const EdgeInsets.all(32),
@@ -549,7 +580,7 @@ class _AddIdScreenState extends ConsumerState<AddIdScreen> {
               Icon(Icons.lock_clock_outlined, size: 56, color: theme.colorScheme.error),
               const SizedBox(height: 20),
               Text(
-                "Set a screen lock first",
+                loc.setScreenLockFirst,
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   fontFamily: "Outfit",
@@ -560,18 +591,14 @@ class _AddIdScreenState extends ConsumerState<AddIdScreen> {
               ),
               const SizedBox(height: 12),
               Text(
-                "Karde encrypts every item with a key held in your phone's secure "
-                "hardware, and that hardware will not hold a key unless the phone "
-                "itself is locked.\n\n"
-                "Add a PIN, pattern, password or fingerprint in your phone's "
-                "settings, then come back.",
+                loc.screenLockExplainer,
                 textAlign: TextAlign.center,
                 style: theme.textTheme.bodyMedium?.copyWith(fontSize: 14, height: 1.5),
               ),
               const SizedBox(height: 28),
               OutlinedButton(
                 onPressed: () => Navigator.pop(context),
-                child: const Text("Go back"),
+                child: Text(loc.goBack),
               ),
             ],
           ),
@@ -589,7 +616,7 @@ class _AddIdScreenState extends ConsumerState<AddIdScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(widget.existingId != null ? 'Edit Document' : loc.addAnId),
+        title: Text(widget.existingId != null ? loc.editDocument : loc.addAnId),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
           onPressed: () => Navigator.pop(context),
@@ -622,9 +649,7 @@ class _AddIdScreenState extends ConsumerState<AddIdScreen> {
                           const SizedBox(width: 12),
                           Expanded(
                             child: Text(
-                              'This document could not be unlocked, so its details '
-                              'are not shown. Saving is disabled to avoid '
-                              'overwriting your data. Go back and try again.',
+                              loc.idUnlockFailedWarning,
                               style: TextStyle(
                                 fontFamily: 'Inter',
                                 fontSize: 13,
@@ -646,7 +671,7 @@ class _AddIdScreenState extends ConsumerState<AddIdScreen> {
                         controller: TextEditingController(
                           text: _isCustomType && _customTypeController.text.isNotEmpty
                               ? _customTypeController.text
-                              : _selectedIdType,
+                              : idTypeLabel(_selectedIdType, loc),
                         ),
                         decoration: InputDecoration(
                           labelText: loc.documentType,
@@ -660,9 +685,9 @@ class _AddIdScreenState extends ConsumerState<AddIdScreen> {
                     TextFormField(
                       controller: _customTypeController,
                       decoration: InputDecoration(
-                        labelText: 'Custom Document Type *',
-                        hintText: 'e.g., Student ID',
-                        suffixIcon: _buildTooltipIcon('The specific name of this custom document type.\n\nExample: Gym Pass'),
+                        labelText: loc.requiredFieldMarker(loc.customDocumentType),
+                        hintText: loc.customDocumentTypeHint,
+                        suffixIcon: _buildTooltipIcon(loc.customDocumentTypeTooltip),
                       ),
                       textCapitalization: TextCapitalization.words,
                       validator: (val) => (val == null || val.isEmpty) ? loc.requiredField : null,
@@ -672,9 +697,9 @@ class _AddIdScreenState extends ConsumerState<AddIdScreen> {
                   TextFormField(
                     controller: _nicknameController,
                     decoration: InputDecoration(
-                      labelText: 'Nickname *',
-                      hintText: 'e.g., My Passport',
-                      suffixIcon: _buildTooltipIcon('A personal nickname to easily identify this document in your vault.\n\nExample: My Passport'),
+                      labelText: loc.requiredFieldMarker(loc.nicknameLabel),
+                      hintText: loc.nicknameHint,
+                      suffixIcon: _buildTooltipIcon(loc.nicknameTooltip),
                     ),
                     validator: (val) => (val == null || val.isEmpty) ? loc.requiredField : null,
                   ),
@@ -692,11 +717,13 @@ class _AddIdScreenState extends ConsumerState<AddIdScreen> {
                         readOnly: isDate,
                         onTap: isDate ? () => _selectDate(context, config.type) : null,
                         decoration: InputDecoration(
-                          labelText: '${_getLabelForType(config.type, loc)}${config.required ? " *" : ""}',
+                          labelText: config.required
+                              ? loc.requiredFieldMarker(_getLabelForType(config.type, loc))
+                              : _getLabelForType(config.type, loc),
                           suffixIcon: isDate 
                             ? const Icon(Icons.calendar_today, size: 20, color: Colors.grey)
-                            : (_getTooltipForType(config.type) != null 
-                                ? _buildTooltipIcon(_getTooltipForType(config.type)!) 
+                            : (_getTooltipForType(config.type, loc) != null 
+                                ? _buildTooltipIcon(_getTooltipForType(config.type, loc)!) 
                                 : null),
                         ),
                         autovalidateMode: _submitted
@@ -708,7 +735,7 @@ class _AddIdScreenState extends ConsumerState<AddIdScreen> {
                           }
                           // Runs for optional dates too: a date that is present
                           // has to be coherent whether or not it was compulsory.
-                          if (isDate) return _validateDateField(config.type, val);
+                          if (isDate) return _validateDateField(loc, config.type, val);
                           return null;
                         },
                       ),
@@ -717,9 +744,9 @@ class _AddIdScreenState extends ConsumerState<AddIdScreen> {
 
                   VaultPhotoField(
                     controller: _photo,
-                    label: 'DOCUMENT PHOTO',
-                    hint: 'Optional. Kept locked with the rest of the document.',
-                    viewerTitle: 'Document photo',
+                    label: loc.documentPhotoLabel,
+                    hint: loc.documentPhotoHint,
+                    viewerTitle: loc.documentPhotoViewerTitle,
                     enabled: !_isLoading && !_loadFailed,
                   ),
 
@@ -736,7 +763,7 @@ class _AddIdScreenState extends ConsumerState<AddIdScreen> {
             icon: _isLoading 
               ? const SizedBox(width: 20, height: 20, child: CircularProgressIndicator(strokeWidth: 2)) 
               : const Icon(Icons.save),
-            label: Text(_isLoading ? 'Saving...' : loc.saveItem),
+            label: Text(_isLoading ? loc.saving : loc.saveItem),
             style: ElevatedButton.styleFrom(
               padding: const EdgeInsets.symmetric(vertical: 16),
             ),

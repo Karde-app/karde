@@ -50,31 +50,31 @@ void main() {
       final issue = DateTime(2026, 3, 9);
 
       expect(
-        expiryDateError(issue: issue, expiry: DateTime(2026, 3, 8)),
-        isNotNull,
+        expiryPrecedesIssue(issue: issue, expiry: DateTime(2026, 3, 8)),
+        isTrue,
         reason: 'this is the bug that was reported — it must not be accepted',
       );
       expect(
-        expiryDateError(issue: issue, expiry: issue),
-        isNotNull,
+        expiryPrecedesIssue(issue: issue, expiry: issue),
+        isTrue,
         reason: 'a document that expires the instant it is issued is not valid',
       );
-      expect(expiryDateError(issue: issue, expiry: DateTime(2026, 3, 10)), isNull);
+      expect(expiryPrecedesIssue(issue: issue, expiry: DateTime(2026, 3, 10)), isFalse);
     });
 
     test('an expiry in the past is allowed, so long as it follows the issue', () {
       // Keeping an expired passport in a vault is entirely reasonable.
       expect(
-        expiryDateError(issue: DateTime(2010, 1, 1), expiry: DateTime(2020, 1, 1)),
-        isNull,
+        expiryPrecedesIssue(issue: DateTime(2010, 1, 1), expiry: DateTime(2020, 1, 1)),
+        isFalse,
       );
     });
 
     test('a missing date on either side is not an error yet', () {
       // Blank fields are the "required" check's business, not this one's.
-      expect(expiryDateError(issue: null, expiry: DateTime(2026, 1, 1)), isNull);
-      expect(expiryDateError(issue: DateTime(2026, 1, 1), expiry: null), isNull);
-      expect(expiryDateError(issue: null, expiry: null), isNull);
+      expect(expiryPrecedesIssue(issue: null, expiry: DateTime(2026, 1, 1)), isFalse);
+      expect(expiryPrecedesIssue(issue: DateTime(2026, 1, 1), expiry: null), isFalse);
+      expect(expiryPrecedesIssue(issue: null, expiry: null), isFalse);
     });
   });
 

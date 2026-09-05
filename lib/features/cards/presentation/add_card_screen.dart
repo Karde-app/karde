@@ -156,7 +156,7 @@ class _AddCardScreenState extends ConsumerState<AddCardScreen> {
       }
     } catch (e) {
       if (mounted) {
-        KardeFeedback.error(context, 'Failed to decrypt existing card data.');
+        KardeFeedback.error(context, AppLocalizations.of(context)!.addCardDecryptFailed);
       }
     } finally {
       if (mounted) {
@@ -167,16 +167,10 @@ class _AddCardScreenState extends ConsumerState<AddCardScreen> {
 
   /// FIX 4-2: never show a raw exception to the user. Explain what they can act
   /// on; keep the underlying detail internal.
-  String _saveErrorMessage(Object error) {
-    if (error is VaultUnavailable) {
-      return 'Set a screen lock (PIN, pattern, or biometrics) on your device to '
-          'save cards securely.';
-    }
-    if (error is VaultKeyInvalidated) {
-      return 'Your device security settings changed, so the vault key is no '
-          'longer valid. Existing items cannot be recovered.';
-    }
-    return 'Something went wrong saving this card. Please try again.';
+  String _saveErrorMessage(AppLocalizations loc, Object error) {
+    if (error is VaultUnavailable) return loc.addCardNeedsScreenLock;
+    if (error is VaultKeyInvalidated) return loc.vaultKeyChangedItemsLost;
+    return loc.addCardSaveFailed;
   }
 
   @override
@@ -261,7 +255,7 @@ class _AddCardScreenState extends ConsumerState<AddCardScreen> {
       if (mounted) setState(() => _isSaving = false);
     } catch (e) {
       if (mounted) {
-        KardeFeedback.error(context, _saveErrorMessage(e));
+        KardeFeedback.error(context, _saveErrorMessage(AppLocalizations.of(context)!, e));
         setState(() {
           _isSaving = false;
         });
@@ -271,6 +265,7 @@ class _AddCardScreenState extends ConsumerState<AddCardScreen> {
 
   void _showNetworkPicker() {
     final theme = Theme.of(context);
+    final loc = AppLocalizations.of(context)!;
     final networks = ['VISA', 'Mastercard', 'AMEX', 'Discover', 'Other'];
     final currentSelection = _isCustomBrand ? 'Other' : _cardBrandController.text;
 
@@ -285,14 +280,14 @@ class _AddCardScreenState extends ConsumerState<AddCardScreen> {
             children: [
               Padding(
                 padding: const EdgeInsets.all(24),
-                child: Text('Select Card Network', style: theme.textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold)),
+                child: Text(loc.selectCardNetwork, style: theme.textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold)),
               ),
               ...networks.map((val) {
                 final isSelected = val == currentSelection;
                 return ListTile(
                   contentPadding: const EdgeInsets.symmetric(horizontal: 24, vertical: 4),
                   title: Text(
-                    val, 
+                    val == 'Other' ? loc.otherOption : val,
                     style: TextStyle(
                       fontWeight: isSelected ? FontWeight.bold : FontWeight.normal, 
                       color: isSelected ? const Color(0xFFC9A961) : theme.colorScheme.onSurface,
@@ -365,8 +360,9 @@ class _AddCardScreenState extends ConsumerState<AddCardScreen> {
 
   Widget _buildVaultUnavailable(BuildContext context) {
     final theme = Theme.of(context);
+    final loc = AppLocalizations.of(context)!;
     return Scaffold(
-      appBar: AppBar(title: const Text("Add New Card"), centerTitle: true),
+      appBar: AppBar(title: Text(loc.addNewCard), centerTitle: true),
       body: Center(
         child: Padding(
           padding: const EdgeInsets.all(32),
@@ -376,7 +372,7 @@ class _AddCardScreenState extends ConsumerState<AddCardScreen> {
               Icon(Icons.lock_clock_outlined, size: 56, color: theme.colorScheme.error),
               const SizedBox(height: 20),
               Text(
-                "Set a screen lock first",
+                loc.setScreenLockFirst,
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   fontFamily: "Outfit",
@@ -387,18 +383,14 @@ class _AddCardScreenState extends ConsumerState<AddCardScreen> {
               ),
               const SizedBox(height: 12),
               Text(
-                "Karde encrypts every item with a key held in your phone's secure "
-                "hardware, and that hardware will not hold a key unless the phone "
-                "itself is locked.\n\n"
-                "Add a PIN, pattern, password or fingerprint in your phone's "
-                "settings, then come back.",
+                loc.screenLockExplainer,
                 textAlign: TextAlign.center,
                 style: theme.textTheme.bodyMedium?.copyWith(fontSize: 14, height: 1.5),
               ),
               const SizedBox(height: 28),
               OutlinedButton(
                 onPressed: () => Navigator.pop(context),
-                child: const Text("Go back"),
+                child: Text(loc.goBack),
               ),
             ],
           ),
@@ -411,16 +403,18 @@ class _AddCardScreenState extends ConsumerState<AddCardScreen> {
   Widget build(BuildContext context) {
     if (_vaultAvailable == false) return _buildVaultUnavailable(context);
 
+    final loc = AppLocalizations.of(context)!;
+
     if (_isLoadingExisting) {
       return Scaffold(
-        appBar: AppBar(title: const Text('Loading Details')),
+        appBar: AppBar(title: Text(loc.loadingDetails)),
         body: const Center(child: CircularProgressIndicator()),
       );
     }
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(widget.existingCard != null ? 'Edit Card' : 'Add New Card'),
+        title: Text(widget.existingCard != null ? loc.editCard : loc.addNewCard),
         centerTitle: true,
       ),
       body: Form(
@@ -431,14 +425,14 @@ class _AddCardScreenState extends ConsumerState<AddCardScreen> {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               // Identification Section
-              const Text('IDENTIFICATION', style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: Colors.grey, letterSpacing: 1.5)),
+              Text(loc.identification, style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: Colors.grey, letterSpacing: 1.5)),
               const SizedBox(height: 16),
               TextFormField(
                 controller: _nicknameController,
                 decoration: _buildInputDecoration(
-                  'Issuer *', 
-                  hint: 'e.g. Bank Name or Provider',
-                  suffixIcon: _buildTooltipIcon('The name of the bank or institution that issued this card.\n\nExample: Chase Bank'),
+                  loc.requiredFieldMarker(loc.issuerFieldLabel),
+                  hint: loc.issuerHint,
+                  suffixIcon: _buildTooltipIcon(loc.issuerTooltip),
                 ),
                 autovalidateMode: AutovalidateMode.onUserInteraction,
                 validator: (value) => Validators.validateRequired(context, value),
@@ -448,9 +442,9 @@ class _AddCardScreenState extends ConsumerState<AddCardScreen> {
                 onTap: _showNetworkPicker,
                 child: AbsorbPointer(
                   child: TextFormField(
-                    controller: TextEditingController(text: _isCustomBrand ? 'Other' : _cardBrandController.text),
+                    controller: TextEditingController(text: _isCustomBrand ? loc.otherOption : _cardBrandController.text),
                     decoration: _buildInputDecoration(
-                      'Card Network *',
+                      loc.requiredFieldMarker(loc.cardNetworkLabel),
                       suffixIcon: const Icon(Icons.arrow_drop_down),
                     ),
                   ),
@@ -461,8 +455,8 @@ class _AddCardScreenState extends ConsumerState<AddCardScreen> {
                 TextFormField(
                   controller: _cardBrandController,
                   decoration: _buildInputDecoration(
-                    'Custom Network *', 
-                    hint: 'e.g. UnionPay, JCB',
+                    loc.requiredFieldMarker(loc.customNetworkFieldLabel),
+                    hint: loc.customNetworkHint,
                   ),
                   textCapitalization: TextCapitalization.words,
                   autovalidateMode: AutovalidateMode.onUserInteraction,
@@ -472,13 +466,13 @@ class _AddCardScreenState extends ConsumerState<AddCardScreen> {
               
               const SizedBox(height: 32),
               // Secure Details Section
-              const Text('SECURE DETAILS', style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: Colors.grey, letterSpacing: 1.5)),
+              Text(loc.secureDetails, style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: Colors.grey, letterSpacing: 1.5)),
               const SizedBox(height: 16),
               TextFormField(
                 controller: _cardNumberController,
                 decoration: _buildInputDecoration(
-                  'Card Number *', 
-                  hint: '0000 0000 0000 0000',
+                  loc.requiredFieldMarker(loc.cardNumberFieldLabel),
+                  hint: loc.cardNumberHint,
                 ),
                 keyboardType: TextInputType.number,
                 maxLength: 19,
@@ -503,8 +497,8 @@ class _AddCardScreenState extends ConsumerState<AddCardScreen> {
                     child: TextFormField(
                       controller: _expiryController,
                       decoration: _buildInputDecoration(
-                        'Expiry Date *', 
-                        hint: 'MM/YY',
+                        loc.requiredFieldMarker(loc.expiryDate),
+                        hint: loc.expiryHint,
                       ),
                       keyboardType: TextInputType.text, // Allowing slash
                       inputFormatters: [ExpiryDateFormatter()],
@@ -521,8 +515,8 @@ class _AddCardScreenState extends ConsumerState<AddCardScreen> {
                     child: TextFormField(
                       controller: _cvvController,
                       decoration: _buildInputDecoration(
-                        'CVV *',
-                        hint: '123',
+                        loc.requiredFieldMarker(loc.cvvLabel),
+                        hint: loc.cvvHint,
                         suffixIcon: IconButton(
                           icon: Icon(
                             _obscureCvv ? Icons.visibility_off : Icons.visibility,
@@ -558,7 +552,7 @@ class _AddCardScreenState extends ConsumerState<AddCardScreen> {
                     const SizedBox(width: 8),
                     Expanded(
                       child: Text(
-                        'This card has expired. You can still save it.',
+                        loc.cardExpiredStillSave,
                         style: TextStyle(
                           fontFamily: 'Inter',
                           fontSize: 12.5,
@@ -574,8 +568,8 @@ class _AddCardScreenState extends ConsumerState<AddCardScreen> {
               TextFormField(
                 controller: _cardholderNameController,
                 decoration: _buildInputDecoration(
-                  'Cardholder Name *', 
-                  hint: 'Name on card',
+                  loc.requiredFieldMarker(loc.cardholderNameFieldLabel),
+                  hint: loc.cardholderNameHint,
                 ),
                 textCapitalization: TextCapitalization.words,
                 autovalidateMode: AutovalidateMode.onUserInteraction,
@@ -590,14 +584,14 @@ class _AddCardScreenState extends ConsumerState<AddCardScreen> {
               
               const SizedBox(height: 32),
               // Private Notes Section
-              const Text('EXTRA INFO (OPTIONAL)', style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: Colors.grey, letterSpacing: 1.5)),
+              Text(loc.extraInfo, style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: Colors.grey, letterSpacing: 1.5)),
               const SizedBox(height: 16),
               TextFormField(
                 controller: _notesController,
                 decoration: _buildInputDecoration(
-                  'Private Notes', 
-                  hint: 'Bank phone numbers, PIN hints...',
-                  suffixIcon: _buildTooltipIcon('Any additional details, addresses, or context.\n\nExample: Bank Phone: 1-800-123-4567'),
+                  loc.privateNotesFieldLabel,
+                  hint: loc.privateNotesHint,
+                  suffixIcon: _buildTooltipIcon(loc.privateNotesTooltip),
                 ),
                 maxLines: 3,
               ),
@@ -605,9 +599,9 @@ class _AddCardScreenState extends ConsumerState<AddCardScreen> {
               const SizedBox(height: 28),
               VaultPhotoField(
                 controller: _photo,
-                label: 'CARD PHOTO',
-                hint: 'Optional. Kept locked with the rest of the card.',
-                viewerTitle: 'Card photo',
+                label: loc.cardPhotoLabel,
+                hint: loc.cardPhotoHint,
+                viewerTitle: loc.cardPhotoViewerTitle,
                 enabled: !_isSaving,
               ),
             ],
@@ -620,7 +614,7 @@ class _AddCardScreenState extends ConsumerState<AddCardScreen> {
           child: ElevatedButton.icon(
             onPressed: _isSaving ? null : _saveCard,
             icon: _isSaving ? const SizedBox(width: 20, height: 20, child: CircularProgressIndicator(strokeWidth: 2)) : const Icon(Icons.save),
-            label: Text(_isSaving ? 'Saving...' : 'Save Item'),
+            label: Text(_isSaving ? loc.saving : loc.saveItem),
             style: ElevatedButton.styleFrom(
               padding: const EdgeInsets.symmetric(vertical: 16),
             ),
