@@ -411,5 +411,53 @@
   "eraseEverythingMessage": "Every card, ID document and photo will be permanently deleted, along with your PIN and settings. This cannot be undone, and Karde keeps no copy anywhere.",
   "backUpFirst": "Back up first",
   "settingsLockExplainer": "These settings control how Karde locks itself. Your phone will also ask for your fingerprint or screen lock whenever you open an item, whichever of these you choose.",
-  "settingsNoScreenLockWarning": "This phone has no screen lock, so Karde cannot store or open your items. Add a PIN, pattern, password or fingerprint in your phone's settings, then come back."
+  "settingsNoScreenLockWarning": "This phone has no screen lock, so Karde cannot store or open your items. Add a PIN, pattern, password or fingerprint in your phone's settings, then come back.",
+  "passphraseTooShort": "Too short",
+  "passphraseWeak": "Weak",
+  "passphraseReasonable": "Reasonable",
+  "passphraseStrong": "Strong",
+  "passphraseWeakHint": "{label} — longer is far better than more complicated",
+  "@passphraseWeakHint": {
+    "placeholders": {
+      "label": {
+        "type": "String"
+      }
+    }
+  },
+  "passphraseChooseTitle": "Choose a passphrase",
+  "passphraseEnterTitle": "Enter the passphrase",
+  "passphraseCreateExplainer": "This passphrase encrypts your backup file. Karde never stores it and cannot recover it — if you forget it, the backup is gone.",
+  "passphraseUnlockExplainer": "Enter the passphrase you chose when this backup was created.",
+  "passphraseFieldLabel": "Passphrase",
+  "passphraseShow": "Show passphrase",
+  "passphraseHide": "Hide passphrase",
+  "passphraseRequired": "Enter a passphrase.",
+  "passphraseMinimumLength": "Use at least {count} characters.",
+  "@passphraseMinimumLength": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "passphraseConfirmLabel": "Confirm passphrase",
+  "passphraseMismatch": "The two entries do not match.",
+  "passphraseAdvice": "A few unrelated words are easier to remember and harder to guess than one short complicated word.",
+  "unlock": "Unlock",
+  "securityQuestionFirstPet": "What was the name of your first pet?",
+  "securityQuestionMothersMaidenName": "What is your mother's maiden name?",
+  "securityQuestionElementarySchool": "What was the name of your elementary school?",
+  "securityQuestionCityOfBirth": "In what city were you born?",
+  "securityQuestionFirstCar": "What was the make of your first car?",
+  "securityQuestionFavouriteBook": "What is your favorite book?",
+  "chooseBothQuestions": "Choose both questions.",
+  "chooseTwoDifferentQuestions": "Choose two different questions.",
+  "securityQuestionsUpdated": "Security questions updated.",
+  "changeSecurityQuestionsTitle": "Change your security questions",
+  "changeSecurityQuestionsSubtitle": "These let you back in if you forget your Karde PIN.",
+  "saveQuestions": "Save questions",
+  "chooseAQuestion": "Choose a question",
+  "securityAnswersHashNoteChanging": "Your current answers cannot be shown. They are stored as one-way hashes, so Karde cannot read them back — only replace them. Saving overwrites both.",
+  "securityAnswersHashNoteNew": "Answers are stored as one-way hashes, so nobody — including Karde — can read them back. Capitalisation and spacing do not matter.",
+  "alreadyUsedAbove": "Already used above"
 }

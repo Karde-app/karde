@@ -1058,4 +1058,116 @@ class AppLocalizationsAr extends AppLocalizations {
   @override
   String get settingsNoScreenLockWarning =>
       'لا يحتوي هذا الهاتف على قفل شاشة، لذا لا يستطيع Karde حفظ عناصرك أو فتحها. أضف رمزاً أو نقشاً أو كلمة مرور أو بصمة في إعدادات هاتفك، ثم عد إلى هنا.';
+
+  @override
+  String get passphraseTooShort => 'قصيرة جداً';
+
+  @override
+  String get passphraseWeak => 'ضعيفة';
+
+  @override
+  String get passphraseReasonable => 'مقبولة';
+
+  @override
+  String get passphraseStrong => 'قوية';
+
+  @override
+  String passphraseWeakHint(String label) {
+    return '$label — الأطول أفضل بكثير من الأكثر تعقيداً';
+  }
+
+  @override
+  String get passphraseChooseTitle => 'اختر عبارة مرور';
+
+  @override
+  String get passphraseEnterTitle => 'أدخل عبارة المرور';
+
+  @override
+  String get passphraseCreateExplainer =>
+      'تشفّر عبارة المرور هذه ملف نسختك الاحتياطية. لا يحفظها Karde أبداً ولا يستطيع استرجاعها — وإذا نسيتها، ضاعت النسخة الاحتياطية.';
+
+  @override
+  String get passphraseUnlockExplainer =>
+      'أدخل عبارة المرور التي اخترتها عند إنشاء هذه النسخة الاحتياطية.';
+
+  @override
+  String get passphraseFieldLabel => 'عبارة المرور';
+
+  @override
+  String get passphraseShow => 'إظهار عبارة المرور';
+
+  @override
+  String get passphraseHide => 'إخفاء عبارة المرور';
+
+  @override
+  String get passphraseRequired => 'أدخل عبارة مرور.';
+
+  @override
+  String passphraseMinimumLength(int count) {
+    return 'استخدم $count أحرف على الأقل.';
+  }
+
+  @override
+  String get passphraseConfirmLabel => 'تأكيد عبارة المرور';
+
+  @override
+  String get passphraseMismatch => 'الإدخالان غير متطابقين.';
+
+  @override
+  String get passphraseAdvice =>
+      'بضع كلمات غير مترابطة أسهل في التذكّر وأصعب في التخمين من كلمة واحدة قصيرة ومعقّدة.';
+
+  @override
+  String get unlock => 'فتح';
+
+  @override
+  String get securityQuestionFirstPet => 'ما اسم أول حيوان أليف امتلكته؟';
+
+  @override
+  String get securityQuestionMothersMaidenName => 'ما اسم والدتك قبل الزواج؟';
+
+  @override
+  String get securityQuestionElementarySchool => 'ما اسم مدرستك الابتدائية؟';
+
+  @override
+  String get securityQuestionCityOfBirth => 'في أي مدينة وُلدت؟';
+
+  @override
+  String get securityQuestionFirstCar => 'ما ماركة سيارتك الأولى؟';
+
+  @override
+  String get securityQuestionFavouriteBook => 'ما كتابك المفضّل؟';
+
+  @override
+  String get chooseBothQuestions => 'اختر كلا السؤالين.';
+
+  @override
+  String get chooseTwoDifferentQuestions => 'اختر سؤالين مختلفين.';
+
+  @override
+  String get securityQuestionsUpdated => 'تم تحديث أسئلة الأمان.';
+
+  @override
+  String get changeSecurityQuestionsTitle => 'تغيير أسئلة الأمان';
+
+  @override
+  String get changeSecurityQuestionsSubtitle =>
+      'تتيح لك هذه الأسئلة العودة إذا نسيت رمز Karde.';
+
+  @override
+  String get saveQuestions => 'حفظ الأسئلة';
+
+  @override
+  String get chooseAQuestion => 'اختر سؤالاً';
+
+  @override
+  String get securityAnswersHashNoteChanging =>
+      'لا يمكن عرض إجاباتك الحالية. فهي محفوظة كبصمات أحادية الاتجاه، لذا لا يستطيع Karde قراءتها — بل استبدالها فقط. الحفظ يستبدل كلتيهما.';
+
+  @override
+  String get securityAnswersHashNoteNew =>
+      'تُحفظ الإجابات كبصمات أحادية الاتجاه، فلا يستطيع أحد — ولا حتى Karde — قراءتها. لا يهمّ استخدام الأحرف الكبيرة أو المسافات.';
+
+  @override
+  String get alreadyUsedAbove => 'مستخدم بالفعل أعلاه';
 }

@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../../../../l10n/app_localizations.dart';
+
 import '../../../../theme/theme.dart';
 
 /// Collects the passphrase that protects a backup file.
@@ -14,6 +16,13 @@ import '../../../../theme/theme.dart';
 /// There is also no recovery. Karde cannot reset a backup passphrase, because it
 /// never sees it and the file carries nothing derived from anything else. The
 /// dialog says so plainly when creating one.
+/// How a passphrase reads on the strength meter.
+///
+/// A band rather than a sentence, so the reading can be translated and so the
+/// dialog can pick its colour by comparing bands instead of comparing English
+/// text — which it used to do, and which quietly breaks in any other language.
+enum PassphraseStrength { empty, tooShort, weak, reasonable, strong }
+
 class PassphraseDialog extends StatefulWidget {
   /// Creating a passphrase asks twice and enforces a minimum length; entering an
   /// existing one asks once and validates nothing, since the file itself is the
@@ -51,8 +60,10 @@ class PassphraseDialog extends StatefulWidget {
   /// Not an entropy calculation and not presented as one: it rewards length
   /// first, because length dominates, and character variety second. Anything
   /// clever here would only invite trusting it.
-  static ({double fraction, String label, bool weak}) strengthOf(String value) {
-    if (value.isEmpty) return (fraction: 0, label: '', weak: true);
+  static ({double fraction, PassphraseStrength band, bool weak}) strengthOf(String value) {
+    if (value.isEmpty) {
+      return (fraction: 0, band: PassphraseStrength.empty, weak: true);
+    }
 
     var classes = 0;
     if (RegExp(r'[a-z]').hasMatch(value)) classes++;
@@ -66,11 +77,15 @@ class PassphraseDialog extends StatefulWidget {
     final score = lengthScore + varietyScore;
 
     if (value.length < minimumLength) {
-      return (fraction: score, label: 'Too short', weak: true);
+      return (fraction: score, band: PassphraseStrength.tooShort, weak: true);
     }
-    if (score < 0.45) return (fraction: score, label: 'Weak', weak: true);
-    if (score < 0.7) return (fraction: score, label: 'Reasonable', weak: false);
-    return (fraction: score, label: 'Strong', weak: false);
+    if (score < 0.45) {
+      return (fraction: score, band: PassphraseStrength.weak, weak: true);
+    }
+    if (score < 0.7) {
+      return (fraction: score, band: PassphraseStrength.reasonable, weak: false);
+    }
+    return (fraction: score, band: PassphraseStrength.strong, weak: false);
   }
 
   @override
@@ -106,13 +121,30 @@ class _PassphraseDialogState extends State<PassphraseDialog> {
   /// to become the target. This makes the difference visible at the moment the
   /// choice is being made — which is the only moment it can be changed, since
   /// the passphrase cannot be recovered or altered afterwards.
-  Widget _buildStrengthMeter(ThemeData theme) {
+  /// The translated reading for a strength band.
+  String _strengthLabel(AppLocalizations loc, PassphraseStrength band) {
+    switch (band) {
+      case PassphraseStrength.empty:
+        return '';
+      case PassphraseStrength.tooShort:
+        return loc.passphraseTooShort;
+      case PassphraseStrength.weak:
+        return loc.passphraseWeak;
+      case PassphraseStrength.reasonable:
+        return loc.passphraseReasonable;
+      case PassphraseStrength.strong:
+        return loc.passphraseStrong;
+    }
+  }
+
+  Widget _buildStrengthMeter(ThemeData theme, AppLocalizations loc) {
     final strength = PassphraseDialog.strengthOf(_passphrase.text);
     if (_passphrase.text.isEmpty) return const SizedBox.shrink();
 
+    final label = _strengthLabel(loc, strength.band);
     final Color colour = strength.weak
         ? theme.colorScheme.error
-        : (strength.label == 'Reasonable'
+        : (strength.band == PassphraseStrength.reasonable
             ? KardeColors.champagneGold
             : KardeColors.signalTeal);
 
@@ -130,9 +162,7 @@ class _PassphraseDialogState extends State<PassphraseDialog> {
         ),
         const SizedBox(height: 6),
         Text(
-          strength.weak
-              ? '${strength.label} — longer is far better than more complicated'
-              : strength.label,
+          strength.weak ? loc.passphraseWeakHint(label) : label,
           style: TextStyle(
             fontFamily: 'Inter',
             fontSize: 11.5,
@@ -147,6 +177,7 @@ class _PassphraseDialogState extends State<PassphraseDialog> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final loc = AppLocalizations.of(context)!;
 
     return AlertDialog(
       backgroundColor: theme.colorScheme.surface,
@@ -157,7 +188,7 @@ class _PassphraseDialogState extends State<PassphraseDialog> {
           const SizedBox(width: 12),
           Expanded(
             child: Text(
-              widget.isCreating ? 'Choose a passphrase' : 'Enter the passphrase',
+              widget.isCreating ? loc.passphraseChooseTitle : loc.passphraseEnterTitle,
               style: TextStyle(
                 fontFamily: 'Outfit',
                 fontSize: 18,
@@ -180,9 +211,8 @@ class _PassphraseDialogState extends State<PassphraseDialog> {
           children: [
             Text(
               widget.isCreating
-                  ? 'This passphrase encrypts your backup file. Karde never stores it '
-                      'and cannot recover it — if you forget it, the backup is gone.'
-                  : 'Enter the passphrase you chose when this backup was created.',
+                  ? loc.passphraseCreateExplainer
+                  : loc.passphraseUnlockExplainer,
               style: theme.textTheme.bodyMedium?.copyWith(fontSize: 13, height: 1.4),
             ),
             const SizedBox(height: 20),
@@ -193,19 +223,19 @@ class _PassphraseDialogState extends State<PassphraseDialog> {
               enableSuggestions: false,
               autocorrect: false,
               decoration: InputDecoration(
-                labelText: 'Passphrase',
+                labelText: loc.passphraseFieldLabel,
                 border: const OutlineInputBorder(),
                 suffixIcon: IconButton(
                   icon: Icon(_obscured ? Icons.visibility_off : Icons.visibility),
-                  tooltip: _obscured ? 'Show passphrase' : 'Hide passphrase',
+                  tooltip: _obscured ? loc.passphraseShow : loc.passphraseHide,
                   onPressed: () => setState(() => _obscured = !_obscured),
                 ),
               ),
               validator: (value) {
                 final text = value ?? '';
-                if (text.isEmpty) return 'Enter a passphrase.';
+                if (text.isEmpty) return loc.passphraseRequired;
                 if (widget.isCreating && text.length < PassphraseDialog.minimumLength) {
-                  return 'Use at least ${PassphraseDialog.minimumLength} characters.';
+                  return loc.passphraseMinimumLength(PassphraseDialog.minimumLength);
                 }
                 return null;
               },
@@ -216,19 +246,19 @@ class _PassphraseDialogState extends State<PassphraseDialog> {
             ),
             if (widget.isCreating) ...[
               const SizedBox(height: 10),
-              _buildStrengthMeter(theme),
+              _buildStrengthMeter(theme, loc),
               const SizedBox(height: 12),
               TextFormField(
                 controller: _confirmation,
                 obscureText: _obscured,
                 enableSuggestions: false,
                 autocorrect: false,
-                decoration: const InputDecoration(
-                  labelText: 'Confirm passphrase',
-                  border: OutlineInputBorder(),
+                decoration: InputDecoration(
+                  labelText: loc.passphraseConfirmLabel,
+                  border: const OutlineInputBorder(),
                 ),
                 validator: (value) {
-                  if (value != _passphrase.text) return 'The two entries do not match.';
+                  if (value != _passphrase.text) return loc.passphraseMismatch;
                   return null;
                 },
                 onFieldSubmitted: (_) => _submit(),
@@ -242,8 +272,7 @@ class _PassphraseDialogState extends State<PassphraseDialog> {
                   const SizedBox(width: 8),
                   Expanded(
                     child: Text(
-                      'A few unrelated words are easier to remember and harder to '
-                      'guess than one short complicated word.',
+                      loc.passphraseAdvice,
                       style: theme.textTheme.bodyMedium?.copyWith(fontSize: 12, height: 1.4),
                     ),
                   ),
@@ -256,7 +285,7 @@ class _PassphraseDialogState extends State<PassphraseDialog> {
       actions: [
         TextButton(
           onPressed: () => Navigator.pop(context),
-          child: const Text('Cancel'),
+          child: Text(loc.cancel),
         ),
         FilledButton(
           style: FilledButton.styleFrom(
@@ -264,7 +293,7 @@ class _PassphraseDialogState extends State<PassphraseDialog> {
             foregroundColor: KardeColors.obsidian,
           ),
           onPressed: _submit,
-          child: Text(widget.isCreating ? 'Continue' : 'Unlock'),
+          child: Text(widget.isCreating ? loc.continueBtn : loc.unlock),
         ),
       ],
     );

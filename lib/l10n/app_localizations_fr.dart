@@ -1061,4 +1061,123 @@ class AppLocalizationsFr extends AppLocalizations {
   @override
   String get settingsNoScreenLockWarning =>
       'Ce téléphone n\'a aucun verrouillage d\'écran, Karde ne peut donc ni enregistrer ni ouvrir vos éléments. Ajoutez un code, un schéma, un mot de passe ou une empreinte dans les réglages de votre téléphone, puis revenez.';
+
+  @override
+  String get passphraseTooShort => 'Trop courte';
+
+  @override
+  String get passphraseWeak => 'Faible';
+
+  @override
+  String get passphraseReasonable => 'Correcte';
+
+  @override
+  String get passphraseStrong => 'Robuste';
+
+  @override
+  String passphraseWeakHint(String label) {
+    return '$label — plus longue vaut bien mieux que plus compliquée';
+  }
+
+  @override
+  String get passphraseChooseTitle => 'Choisissez une phrase secrète';
+
+  @override
+  String get passphraseEnterTitle => 'Saisissez la phrase secrète';
+
+  @override
+  String get passphraseCreateExplainer =>
+      'Cette phrase secrète chiffre votre fichier de sauvegarde. Karde ne la conserve jamais et ne peut pas la retrouver — si vous l\'oubliez, la sauvegarde est perdue.';
+
+  @override
+  String get passphraseUnlockExplainer =>
+      'Saisissez la phrase secrète que vous avez choisie lors de la création de cette sauvegarde.';
+
+  @override
+  String get passphraseFieldLabel => 'Phrase secrète';
+
+  @override
+  String get passphraseShow => 'Afficher la phrase secrète';
+
+  @override
+  String get passphraseHide => 'Masquer la phrase secrète';
+
+  @override
+  String get passphraseRequired => 'Saisissez une phrase secrète.';
+
+  @override
+  String passphraseMinimumLength(int count) {
+    return 'Utilisez au moins $count caractères.';
+  }
+
+  @override
+  String get passphraseConfirmLabel => 'Confirmez la phrase secrète';
+
+  @override
+  String get passphraseMismatch => 'Les deux saisies ne correspondent pas.';
+
+  @override
+  String get passphraseAdvice =>
+      'Quelques mots sans rapport entre eux sont plus faciles à retenir et plus difficiles à deviner qu\'un seul mot court et compliqué.';
+
+  @override
+  String get unlock => 'Déverrouiller';
+
+  @override
+  String get securityQuestionFirstPet =>
+      'Quel était le nom de votre premier animal de compagnie ?';
+
+  @override
+  String get securityQuestionMothersMaidenName =>
+      'Quel est le nom de jeune fille de votre mère ?';
+
+  @override
+  String get securityQuestionElementarySchool =>
+      'Quel était le nom de votre école primaire ?';
+
+  @override
+  String get securityQuestionCityOfBirth =>
+      'Dans quelle ville êtes-vous né(e) ?';
+
+  @override
+  String get securityQuestionFirstCar =>
+      'Quelle était la marque de votre première voiture ?';
+
+  @override
+  String get securityQuestionFavouriteBook => 'Quel est votre livre préféré ?';
+
+  @override
+  String get chooseBothQuestions => 'Choisissez les deux questions.';
+
+  @override
+  String get chooseTwoDifferentQuestions =>
+      'Choisissez deux questions différentes.';
+
+  @override
+  String get securityQuestionsUpdated => 'Questions de sécurité mises à jour.';
+
+  @override
+  String get changeSecurityQuestionsTitle =>
+      'Modifier vos questions de sécurité';
+
+  @override
+  String get changeSecurityQuestionsSubtitle =>
+      'Elles vous permettent de revenir si vous oubliez votre code Karde.';
+
+  @override
+  String get saveQuestions => 'Enregistrer les questions';
+
+  @override
+  String get chooseAQuestion => 'Choisissez une question';
+
+  @override
+  String get securityAnswersHashNoteChanging =>
+      'Vos réponses actuelles ne peuvent pas être affichées. Elles sont stockées sous forme d\'empreintes à sens unique : Karde ne peut pas les relire, seulement les remplacer. Enregistrer écrase les deux.';
+
+  @override
+  String get securityAnswersHashNoteNew =>
+      'Les réponses sont stockées sous forme d\'empreintes à sens unique : personne, pas même Karde, ne peut les relire. Les majuscules et les espaces n\'ont aucune importance.';
+
+  @override
+  String get alreadyUsedAbove => 'Déjà utilisée ci-dessus';
 }

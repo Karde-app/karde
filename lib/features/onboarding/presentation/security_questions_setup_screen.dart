@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../../../core/widgets/karde_feedback.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../l10n/app_localizations.dart';
+import '../../../core/security/security_question_catalog.dart';
 import '../../../core/storage/settings_repository.dart';
 import '../../../theme/theme.dart';
 import '../../home/presentation/main_scaffold.dart';
@@ -32,13 +33,11 @@ class _SecurityQuestionsSetupScreenState extends ConsumerState<SecurityQuestions
   bool _isSaving = false;
   bool _isLoading = false;
 
+  /// Stored question values, not sentences. A value from an older build is an
+  /// English sentence rather than a code; `securityQuestionText` shows those
+  /// verbatim, so a user keeps the question their answer was hashed against.
   final List<String> _questions = [
-    "What was the name of your first pet?",
-    "What is your mother's maiden name?",
-    "What was the name of your elementary school?",
-    "In what city were you born?",
-    "What was the make of your first car?",
-    "What is your favorite book?",
+    for (final question in SecurityQuestion.values) question.code,
   ];
 
   @override
@@ -91,11 +90,11 @@ class _SecurityQuestionsSetupScreenState extends ConsumerState<SecurityQuestions
     if (!_formKey.currentState!.validate()) return;
 
     if (_selectedQ1 == null || _selectedQ2 == null) {
-      KardeFeedback.error(context, 'Choose both questions.');
+      KardeFeedback.error(context, AppLocalizations.of(context)!.chooseBothQuestions);
       return;
     }
     if (_selectedQ1 == _selectedQ2) {
-      KardeFeedback.error(context, 'Choose two different questions.');
+      KardeFeedback.error(context, AppLocalizations.of(context)!.chooseTwoDifferentQuestions);
       return;
     }
 
@@ -122,7 +121,7 @@ class _SecurityQuestionsSetupScreenState extends ConsumerState<SecurityQuestions
 
     if (widget.isChanging) {
       Navigator.pop(context);
-      KardeFeedback.success(context, 'Security questions updated.');
+      KardeFeedback.success(context, AppLocalizations.of(context)!.securityQuestionsUpdated);
       return;
     }
 
@@ -183,7 +182,7 @@ class _SecurityQuestionsSetupScreenState extends ConsumerState<SecurityQuestions
                   children: [
                     Text(
                       widget.isChanging
-                          ? 'Change your security questions'
+                          ? loc.changeSecurityQuestionsTitle
                           : loc.setupQuestionsTitle,
                       style: TextStyle(
                         fontFamily: 'Outfit',
@@ -196,7 +195,7 @@ class _SecurityQuestionsSetupScreenState extends ConsumerState<SecurityQuestions
                     const SizedBox(height: 10),
                     Text(
                       widget.isChanging
-                          ? 'These let you back in if you forget your Karde PIN.'
+                          ? loc.changeSecurityQuestionsSubtitle
                           : loc.setupQuestionsSubtitle,
                       style: TextStyle(
                         fontFamily: 'Inter',
@@ -228,7 +227,7 @@ class _SecurityQuestionsSetupScreenState extends ConsumerState<SecurityQuestions
                     ),
 
                     const SizedBox(height: 24),
-                    _buildHashNote(),
+                    _buildHashNote(loc),
                   ],
                 ),
               ),
@@ -267,7 +266,7 @@ class _SecurityQuestionsSetupScreenState extends ConsumerState<SecurityQuestions
                     ),
                   )
                 : Text(
-                    widget.isChanging ? 'Save questions' : loc.finishSetup,
+                    widget.isChanging ? loc.saveQuestions : loc.finishSetup,
                     style: const TextStyle(
                       fontFamily: 'Inter',
                       fontSize: 16,
@@ -346,7 +345,7 @@ class _SecurityQuestionsSetupScreenState extends ConsumerState<SecurityQuestions
           // bare DropdownButtonFormField, which looked out of place next to
           // everything else and made the current selection hard to read.
           InkWell(
-            onTap: () => _showQuestionPicker(selected, other, onPick),
+            onTap: () => _showQuestionPicker(selected, other, onPick, loc),
             borderRadius: BorderRadius.circular(12),
             child: Container(
               padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 14),
@@ -358,7 +357,9 @@ class _SecurityQuestionsSetupScreenState extends ConsumerState<SecurityQuestions
                 children: [
                   Expanded(
                     child: Text(
-                      selected ?? 'Choose a question',
+                      selected == null
+                          ? loc.chooseAQuestion
+                          : securityQuestionText(selected, loc),
                       style: TextStyle(
                         fontFamily: 'Inter',
                         fontSize: 14.5,
@@ -419,7 +420,7 @@ class _SecurityQuestionsSetupScreenState extends ConsumerState<SecurityQuestions
   }
 
   /// Explains why the answer boxes are empty even when questions are already set.
-  Widget _buildHashNote() {
+  Widget _buildHashNote(AppLocalizations loc) {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -429,12 +430,8 @@ class _SecurityQuestionsSetupScreenState extends ConsumerState<SecurityQuestions
         Expanded(
           child: Text(
             widget.isChanging
-                ? 'Your current answers cannot be shown. They are stored as '
-                    'one-way hashes, so Karde cannot read them back — only '
-                    'replace them. Saving overwrites both.'
-                : 'Answers are stored as one-way hashes, so nobody — including '
-                    'Karde — can read them back. Capitalisation and spacing do '
-                    'not matter.',
+                ? loc.securityAnswersHashNoteChanging
+                : loc.securityAnswersHashNoteNew,
             style: TextStyle(
               fontFamily: 'Inter',
               fontSize: 12.5,
@@ -451,6 +448,7 @@ class _SecurityQuestionsSetupScreenState extends ConsumerState<SecurityQuestions
     String? selected,
     String? other,
     ValueChanged<String> onPick,
+    AppLocalizations loc,
   ) {
     showModalBottomSheet(
       context: context,
@@ -477,7 +475,7 @@ class _SecurityQuestionsSetupScreenState extends ConsumerState<SecurityQuestions
                 child: Align(
                   alignment: Alignment.centerLeft,
                   child: Text(
-                    'Choose a question',
+                    loc.chooseAQuestion,
                     style: TextStyle(
                       fontFamily: 'Outfit',
                       fontSize: 19,
@@ -498,7 +496,7 @@ class _SecurityQuestionsSetupScreenState extends ConsumerState<SecurityQuestions
                       const EdgeInsets.symmetric(horizontal: 24, vertical: 2),
                   enabled: !takenByOther,
                   title: Text(
-                    question,
+                    securityQuestionText(question, loc),
                     style: TextStyle(
                       fontFamily: 'Inter',
                       fontSize: 14.5,
@@ -514,7 +512,7 @@ class _SecurityQuestionsSetupScreenState extends ConsumerState<SecurityQuestions
                   ),
                   subtitle: takenByOther
                       ? Text(
-                          'Already used above',
+                          loc.alreadyUsedAbove,
                           style: TextStyle(
                             fontFamily: 'Inter',
                             fontSize: 11.5,

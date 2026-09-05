@@ -1965,6 +1965,210 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'This phone has no screen lock, so Karde cannot store or open your items. Add a PIN, pattern, password or fingerprint in your phone\'s settings, then come back.'**
   String get settingsNoScreenLockWarning;
+
+  /// No description provided for @passphraseTooShort.
+  ///
+  /// In en, this message translates to:
+  /// **'Too short'**
+  String get passphraseTooShort;
+
+  /// No description provided for @passphraseWeak.
+  ///
+  /// In en, this message translates to:
+  /// **'Weak'**
+  String get passphraseWeak;
+
+  /// No description provided for @passphraseReasonable.
+  ///
+  /// In en, this message translates to:
+  /// **'Reasonable'**
+  String get passphraseReasonable;
+
+  /// No description provided for @passphraseStrong.
+  ///
+  /// In en, this message translates to:
+  /// **'Strong'**
+  String get passphraseStrong;
+
+  /// No description provided for @passphraseWeakHint.
+  ///
+  /// In en, this message translates to:
+  /// **'{label} — longer is far better than more complicated'**
+  String passphraseWeakHint(String label);
+
+  /// No description provided for @passphraseChooseTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose a passphrase'**
+  String get passphraseChooseTitle;
+
+  /// No description provided for @passphraseEnterTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter the passphrase'**
+  String get passphraseEnterTitle;
+
+  /// No description provided for @passphraseCreateExplainer.
+  ///
+  /// In en, this message translates to:
+  /// **'This passphrase encrypts your backup file. Karde never stores it and cannot recover it — if you forget it, the backup is gone.'**
+  String get passphraseCreateExplainer;
+
+  /// No description provided for @passphraseUnlockExplainer.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter the passphrase you chose when this backup was created.'**
+  String get passphraseUnlockExplainer;
+
+  /// No description provided for @passphraseFieldLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Passphrase'**
+  String get passphraseFieldLabel;
+
+  /// No description provided for @passphraseShow.
+  ///
+  /// In en, this message translates to:
+  /// **'Show passphrase'**
+  String get passphraseShow;
+
+  /// No description provided for @passphraseHide.
+  ///
+  /// In en, this message translates to:
+  /// **'Hide passphrase'**
+  String get passphraseHide;
+
+  /// No description provided for @passphraseRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter a passphrase.'**
+  String get passphraseRequired;
+
+  /// No description provided for @passphraseMinimumLength.
+  ///
+  /// In en, this message translates to:
+  /// **'Use at least {count} characters.'**
+  String passphraseMinimumLength(int count);
+
+  /// No description provided for @passphraseConfirmLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Confirm passphrase'**
+  String get passphraseConfirmLabel;
+
+  /// No description provided for @passphraseMismatch.
+  ///
+  /// In en, this message translates to:
+  /// **'The two entries do not match.'**
+  String get passphraseMismatch;
+
+  /// No description provided for @passphraseAdvice.
+  ///
+  /// In en, this message translates to:
+  /// **'A few unrelated words are easier to remember and harder to guess than one short complicated word.'**
+  String get passphraseAdvice;
+
+  /// No description provided for @unlock.
+  ///
+  /// In en, this message translates to:
+  /// **'Unlock'**
+  String get unlock;
+
+  /// No description provided for @securityQuestionFirstPet.
+  ///
+  /// In en, this message translates to:
+  /// **'What was the name of your first pet?'**
+  String get securityQuestionFirstPet;
+
+  /// No description provided for @securityQuestionMothersMaidenName.
+  ///
+  /// In en, this message translates to:
+  /// **'What is your mother\'s maiden name?'**
+  String get securityQuestionMothersMaidenName;
+
+  /// No description provided for @securityQuestionElementarySchool.
+  ///
+  /// In en, this message translates to:
+  /// **'What was the name of your elementary school?'**
+  String get securityQuestionElementarySchool;
+
+  /// No description provided for @securityQuestionCityOfBirth.
+  ///
+  /// In en, this message translates to:
+  /// **'In what city were you born?'**
+  String get securityQuestionCityOfBirth;
+
+  /// No description provided for @securityQuestionFirstCar.
+  ///
+  /// In en, this message translates to:
+  /// **'What was the make of your first car?'**
+  String get securityQuestionFirstCar;
+
+  /// No description provided for @securityQuestionFavouriteBook.
+  ///
+  /// In en, this message translates to:
+  /// **'What is your favorite book?'**
+  String get securityQuestionFavouriteBook;
+
+  /// No description provided for @chooseBothQuestions.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose both questions.'**
+  String get chooseBothQuestions;
+
+  /// No description provided for @chooseTwoDifferentQuestions.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose two different questions.'**
+  String get chooseTwoDifferentQuestions;
+
+  /// No description provided for @securityQuestionsUpdated.
+  ///
+  /// In en, this message translates to:
+  /// **'Security questions updated.'**
+  String get securityQuestionsUpdated;
+
+  /// No description provided for @changeSecurityQuestionsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Change your security questions'**
+  String get changeSecurityQuestionsTitle;
+
+  /// No description provided for @changeSecurityQuestionsSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'These let you back in if you forget your Karde PIN.'**
+  String get changeSecurityQuestionsSubtitle;
+
+  /// No description provided for @saveQuestions.
+  ///
+  /// In en, this message translates to:
+  /// **'Save questions'**
+  String get saveQuestions;
+
+  /// No description provided for @chooseAQuestion.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose a question'**
+  String get chooseAQuestion;
+
+  /// No description provided for @securityAnswersHashNoteChanging.
+  ///
+  /// In en, this message translates to:
+  /// **'Your current answers cannot be shown. They are stored as one-way hashes, so Karde cannot read them back — only replace them. Saving overwrites both.'**
+  String get securityAnswersHashNoteChanging;
+
+  /// No description provided for @securityAnswersHashNoteNew.
+  ///
+  /// In en, this message translates to:
+  /// **'Answers are stored as one-way hashes, so nobody — including Karde — can read them back. Capitalisation and spacing do not matter.'**
+  String get securityAnswersHashNoteNew;
+
+  /// No description provided for @alreadyUsedAbove.
+  ///
+  /// In en, this message translates to:
+  /// **'Already used above'**
+  String get alreadyUsedAbove;
 }
 
 class _AppLocalizationsDelegate

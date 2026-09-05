@@ -1048,4 +1048,118 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get settingsNoScreenLockWarning =>
       'This phone has no screen lock, so Karde cannot store or open your items. Add a PIN, pattern, password or fingerprint in your phone\'s settings, then come back.';
+
+  @override
+  String get passphraseTooShort => 'Too short';
+
+  @override
+  String get passphraseWeak => 'Weak';
+
+  @override
+  String get passphraseReasonable => 'Reasonable';
+
+  @override
+  String get passphraseStrong => 'Strong';
+
+  @override
+  String passphraseWeakHint(String label) {
+    return '$label — longer is far better than more complicated';
+  }
+
+  @override
+  String get passphraseChooseTitle => 'Choose a passphrase';
+
+  @override
+  String get passphraseEnterTitle => 'Enter the passphrase';
+
+  @override
+  String get passphraseCreateExplainer =>
+      'This passphrase encrypts your backup file. Karde never stores it and cannot recover it — if you forget it, the backup is gone.';
+
+  @override
+  String get passphraseUnlockExplainer =>
+      'Enter the passphrase you chose when this backup was created.';
+
+  @override
+  String get passphraseFieldLabel => 'Passphrase';
+
+  @override
+  String get passphraseShow => 'Show passphrase';
+
+  @override
+  String get passphraseHide => 'Hide passphrase';
+
+  @override
+  String get passphraseRequired => 'Enter a passphrase.';
+
+  @override
+  String passphraseMinimumLength(int count) {
+    return 'Use at least $count characters.';
+  }
+
+  @override
+  String get passphraseConfirmLabel => 'Confirm passphrase';
+
+  @override
+  String get passphraseMismatch => 'The two entries do not match.';
+
+  @override
+  String get passphraseAdvice =>
+      'A few unrelated words are easier to remember and harder to guess than one short complicated word.';
+
+  @override
+  String get unlock => 'Unlock';
+
+  @override
+  String get securityQuestionFirstPet => 'What was the name of your first pet?';
+
+  @override
+  String get securityQuestionMothersMaidenName =>
+      'What is your mother\'s maiden name?';
+
+  @override
+  String get securityQuestionElementarySchool =>
+      'What was the name of your elementary school?';
+
+  @override
+  String get securityQuestionCityOfBirth => 'In what city were you born?';
+
+  @override
+  String get securityQuestionFirstCar => 'What was the make of your first car?';
+
+  @override
+  String get securityQuestionFavouriteBook => 'What is your favorite book?';
+
+  @override
+  String get chooseBothQuestions => 'Choose both questions.';
+
+  @override
+  String get chooseTwoDifferentQuestions => 'Choose two different questions.';
+
+  @override
+  String get securityQuestionsUpdated => 'Security questions updated.';
+
+  @override
+  String get changeSecurityQuestionsTitle => 'Change your security questions';
+
+  @override
+  String get changeSecurityQuestionsSubtitle =>
+      'These let you back in if you forget your Karde PIN.';
+
+  @override
+  String get saveQuestions => 'Save questions';
+
+  @override
+  String get chooseAQuestion => 'Choose a question';
+
+  @override
+  String get securityAnswersHashNoteChanging =>
+      'Your current answers cannot be shown. They are stored as one-way hashes, so Karde cannot read them back — only replace them. Saving overwrites both.';
+
+  @override
+  String get securityAnswersHashNoteNew =>
+      'Answers are stored as one-way hashes, so nobody — including Karde — can read them back. Capitalisation and spacing do not matter.';
+
+  @override
+  String get alreadyUsedAbove => 'Already used above';
 }

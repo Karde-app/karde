@@ -81,7 +81,7 @@ void main() {
   group('Backup passphrase strength', () {
     test('the minimum is enforced as a floor', () {
       expect(PassphraseDialog.minimumLength, 8);
-      expect(PassphraseDialog.strengthOf('short').label, 'Too short');
+      expect(PassphraseDialog.strengthOf('short').band, PassphraseStrength.tooShort);
       expect(PassphraseDialog.strengthOf('short').weak, isTrue);
       expect(PassphraseDialog.strengthOf('1234567').weak, isTrue);
     });
@@ -91,14 +91,14 @@ void main() {
       // letters should be told it is thin rather than congratulated.
       final result = PassphraseDialog.strengthOf('aaaaaaaa');
       expect(result.weak, isTrue);
-      expect(result.label, 'Weak');
+      expect(result.band, PassphraseStrength.weak);
     });
 
     test('length and variety both improve the reading', () {
       final short = PassphraseDialog.strengthOf('Ab3\$abcd');
       final long = PassphraseDialog.strengthOf('Ab3\$abcdefghijklmnop');
       expect(long.fraction, greaterThan(short.fraction));
-      expect(long.label, 'Strong');
+      expect(long.band, PassphraseStrength.strong);
       expect(long.weak, isFalse);
 
       // A long passphrase of one class still beats a short mixed one, because
@@ -112,7 +112,7 @@ void main() {
     test('an empty passphrase reads as nothing at all', () {
       final result = PassphraseDialog.strengthOf('');
       expect(result.fraction, 0);
-      expect(result.label, isEmpty);
+      expect(result.band, PassphraseStrength.empty);
     });
   });
 

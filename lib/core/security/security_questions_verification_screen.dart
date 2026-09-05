@@ -5,6 +5,7 @@ import 'package:crypto/crypto.dart';
 import 'dart:convert';
 import '../../l10n/app_localizations.dart';
 import '../storage/settings_repository.dart';
+import 'security_question_catalog.dart';
 import '../../theme/theme.dart';
 import '../../features/onboarding/presentation/pin_setup_screen.dart';
 
@@ -164,9 +165,11 @@ class _SecurityQuestionsVerificationScreenState extends ConsumerState<SecurityQu
                 const SizedBox(height: 24),
               ],
 
-              _buildQuestionBlock(loc.question1, q1, _answer1Controller, loc),
+              _buildQuestionBlock(
+                  loc.question1, securityQuestionText(q1, loc), _answer1Controller, loc),
               const SizedBox(height: 32),
-              _buildQuestionBlock(loc.question2, q2, _answer2Controller, loc),
+              _buildQuestionBlock(
+                  loc.question2, securityQuestionText(q2, loc), _answer2Controller, loc),
 
               const SizedBox(height: 48),
 
