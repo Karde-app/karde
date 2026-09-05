@@ -34,7 +34,6 @@ class IBankApp extends ConsumerWidget {
         Locale('en'),
         Locale('fr'),
         Locale('ar'),
-        Locale('am'),
       ],
       home: isFirstLaunch ? const LanguageSelectionScreen() : const MainScaffold(),
       debugShowCheckedModeBanner: false,

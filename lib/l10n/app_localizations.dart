@@ -5,7 +5,6 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:intl/intl.dart' as intl;
 
-import 'app_localizations_am.dart';
 import 'app_localizations_ar.dart';
 import 'app_localizations_en.dart';
 import 'app_localizations_fr.dart';
@@ -96,7 +95,6 @@ abstract class AppLocalizations {
 
   /// A list of this localizations delegate's supported locales.
   static const List<Locale> supportedLocales = <Locale>[
-    Locale('am'),
     Locale('ar'),
     Locale('en'),
     Locale('fr'),
@@ -365,12 +363,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'العربية'**
   String get arabic;
-
-  /// No description provided for @amharic.
-  ///
-  /// In en, this message translates to:
-  /// **'አማርኛ'**
-  String get amharic;
 
   /// No description provided for @setupLockTitle.
   ///
@@ -965,6 +957,498 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'IDs'**
   String get tabIds;
+
+  /// No description provided for @idCardNotAvailable.
+  ///
+  /// In en, this message translates to:
+  /// **'N/A'**
+  String get idCardNotAvailable;
+
+  /// No description provided for @idCardPassportTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'INTERNATIONAL PASSPORT'**
+  String get idCardPassportTitle;
+
+  /// No description provided for @idCardType.
+  ///
+  /// In en, this message translates to:
+  /// **'TYPE'**
+  String get idCardType;
+
+  /// No description provided for @idCardCodeOfIssuingState.
+  ///
+  /// In en, this message translates to:
+  /// **'CODE OF ISSUING STATE'**
+  String get idCardCodeOfIssuingState;
+
+  /// No description provided for @idCardPassportNo.
+  ///
+  /// In en, this message translates to:
+  /// **'PASSPORT NO.'**
+  String get idCardPassportNo;
+
+  /// No description provided for @idCardSurname.
+  ///
+  /// In en, this message translates to:
+  /// **'SURNAME'**
+  String get idCardSurname;
+
+  /// No description provided for @idCardGivenNames.
+  ///
+  /// In en, this message translates to:
+  /// **'GIVEN NAMES'**
+  String get idCardGivenNames;
+
+  /// No description provided for @idCardNationalityUpper.
+  ///
+  /// In en, this message translates to:
+  /// **'NATIONALITY'**
+  String get idCardNationalityUpper;
+
+  /// No description provided for @idCardDobUpper.
+  ///
+  /// In en, this message translates to:
+  /// **'DATE OF BIRTH'**
+  String get idCardDobUpper;
+
+  /// No description provided for @idCardSexUpper.
+  ///
+  /// In en, this message translates to:
+  /// **'SEX'**
+  String get idCardSexUpper;
+
+  /// No description provided for @idCardPlaceOfBirthUpper.
+  ///
+  /// In en, this message translates to:
+  /// **'PLACE OF BIRTH'**
+  String get idCardPlaceOfBirthUpper;
+
+  /// No description provided for @idCardAuthorityUpper.
+  ///
+  /// In en, this message translates to:
+  /// **'AUTHORITY'**
+  String get idCardAuthorityUpper;
+
+  /// No description provided for @idCardDateOfIssueUpper.
+  ///
+  /// In en, this message translates to:
+  /// **'DATE OF ISSUE'**
+  String get idCardDateOfIssueUpper;
+
+  /// No description provided for @idCardDateOfExpiryUpper.
+  ///
+  /// In en, this message translates to:
+  /// **'DATE OF EXPIRY'**
+  String get idCardDateOfExpiryUpper;
+
+  /// No description provided for @idCardHoldersSignature.
+  ///
+  /// In en, this message translates to:
+  /// **'HOLDERS SIGNATURE'**
+  String get idCardHoldersSignature;
+
+  /// No description provided for @idCardResidencePermitTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'BIOMETRIC RESIDENCE PERMIT'**
+  String get idCardResidencePermitTitle;
+
+  /// No description provided for @idCardName.
+  ///
+  /// In en, this message translates to:
+  /// **'Name'**
+  String get idCardName;
+
+  /// No description provided for @idCardGender.
+  ///
+  /// In en, this message translates to:
+  /// **'Gender'**
+  String get idCardGender;
+
+  /// No description provided for @idCardNationality.
+  ///
+  /// In en, this message translates to:
+  /// **'Nationality'**
+  String get idCardNationality;
+
+  /// No description provided for @idCardDocumentNo.
+  ///
+  /// In en, this message translates to:
+  /// **'Document No.'**
+  String get idCardDocumentNo;
+
+  /// No description provided for @idCardNationalFallback.
+  ///
+  /// In en, this message translates to:
+  /// **'NATIONAL'**
+  String get idCardNationalFallback;
+
+  /// No description provided for @idCardIdCard.
+  ///
+  /// In en, this message translates to:
+  /// **'ID CARD'**
+  String get idCardIdCard;
+
+  /// No description provided for @idCardNationalIdLogo.
+  ///
+  /// In en, this message translates to:
+  /// **'National ID'**
+  String get idCardNationalIdLogo;
+
+  /// No description provided for @idCardEthiopianDigitalId.
+  ///
+  /// In en, this message translates to:
+  /// **'Ethiopian Digital ID Card'**
+  String get idCardEthiopianDigitalId;
+
+  /// No description provided for @idCardEthiopianFullName.
+  ///
+  /// In en, this message translates to:
+  /// **'First, Middle, Surname'**
+  String get idCardEthiopianFullName;
+
+  /// No description provided for @idCardFullNameUpper.
+  ///
+  /// In en, this message translates to:
+  /// **'FULL NAME'**
+  String get idCardFullNameUpper;
+
+  /// No description provided for @idCardDateOfExpiry.
+  ///
+  /// In en, this message translates to:
+  /// **'Date of Expiry'**
+  String get idCardDateOfExpiry;
+
+  /// No description provided for @idCardCountryOfCitizenship.
+  ///
+  /// In en, this message translates to:
+  /// **'Country of Citizenship (Self-declared)'**
+  String get idCardCountryOfCitizenship;
+
+  /// No description provided for @idCardIssuingAuthorityUpper.
+  ///
+  /// In en, this message translates to:
+  /// **'ISSUING AUTHORITY'**
+  String get idCardIssuingAuthorityUpper;
+
+  /// No description provided for @idCardIdNo.
+  ///
+  /// In en, this message translates to:
+  /// **'ID NO'**
+  String get idCardIdNo;
+
+  /// No description provided for @idCardDrivingLicenceTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'DRIVING LICENCE'**
+  String get idCardDrivingLicenceTitle;
+
+  /// No description provided for @idCardNameUpper.
+  ///
+  /// In en, this message translates to:
+  /// **'NAME'**
+  String get idCardNameUpper;
+
+  /// No description provided for @idCardPassportNoShort.
+  ///
+  /// In en, this message translates to:
+  /// **'Passport No'**
+  String get idCardPassportNoShort;
+
+  /// No description provided for @idCardDlNo.
+  ///
+  /// In en, this message translates to:
+  /// **'DL No'**
+  String get idCardDlNo;
+
+  /// No description provided for @idCardDocNo.
+  ///
+  /// In en, this message translates to:
+  /// **'Doc No'**
+  String get idCardDocNo;
+
+  /// No description provided for @idCardDocumentFallback.
+  ///
+  /// In en, this message translates to:
+  /// **'DOCUMENT'**
+  String get idCardDocumentFallback;
+
+  /// No description provided for @idCardDocumentHolder.
+  ///
+  /// In en, this message translates to:
+  /// **'DOCUMENT HOLDER'**
+  String get idCardDocumentHolder;
+
+  /// No description provided for @idCardDocumentNumberUpper.
+  ///
+  /// In en, this message translates to:
+  /// **'DOCUMENT NUMBER'**
+  String get idCardDocumentNumberUpper;
+
+  /// No description provided for @idCardValidFrom.
+  ///
+  /// In en, this message translates to:
+  /// **'VALID FROM'**
+  String get idCardValidFrom;
+
+  /// No description provided for @idCardExpires.
+  ///
+  /// In en, this message translates to:
+  /// **'EXPIRES'**
+  String get idCardExpires;
+
+  /// No description provided for @genericError.
+  ///
+  /// In en, this message translates to:
+  /// **'Something went wrong. Please try again.'**
+  String get genericError;
+
+  /// No description provided for @backupTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Backup & restore'**
+  String get backupTitle;
+
+  /// No description provided for @backupCouldNotReadVault.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not read your vault. Please try again.'**
+  String get backupCouldNotReadVault;
+
+  /// No description provided for @backupVaultEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'There is nothing in your vault to back up yet.'**
+  String get backupVaultEmpty;
+
+  /// No description provided for @backupConfirmTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{Back up 1 item} other{Back up {count} items}}'**
+  String backupConfirmTitle(int count);
+
+  /// No description provided for @backupConfirmMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Your phone will ask you to confirm your identity a few times while this runs.\n\nNext you will choose a passphrase and where to save the file.'**
+  String get backupConfirmMessage;
+
+  /// No description provided for @backupPreparing.
+  ///
+  /// In en, this message translates to:
+  /// **'Preparing backup'**
+  String get backupPreparing;
+
+  /// No description provided for @backupUnlockingVault.
+  ///
+  /// In en, this message translates to:
+  /// **'Unlocking your vault'**
+  String get backupUnlockingVault;
+
+  /// No description provided for @backupSavedAs.
+  ///
+  /// In en, this message translates to:
+  /// **'Backup saved as {fileName}.'**
+  String backupSavedAs(String fileName);
+
+  /// No description provided for @backupOpening.
+  ///
+  /// In en, this message translates to:
+  /// **'Opening backup'**
+  String get backupOpening;
+
+  /// No description provided for @backupAllDuplicates.
+  ///
+  /// In en, this message translates to:
+  /// **'Everything in that backup is already in your vault.'**
+  String get backupAllDuplicates;
+
+  /// No description provided for @backupNoItems.
+  ///
+  /// In en, this message translates to:
+  /// **'That backup does not contain any items.'**
+  String get backupNoItems;
+
+  /// No description provided for @backupSkippedNote.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{1 item is already in your vault and will be skipped.} other{{count} items are already in your vault and will be skipped.}}'**
+  String backupSkippedNote(int count);
+
+  /// No description provided for @backupRestoreConfirmTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{Restore 1 item} other{Restore {count} items}}'**
+  String backupRestoreConfirmTitle(int count);
+
+  /// No description provided for @backupRestoreConfirmMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Your phone will ask you to confirm your identity a few times while this runs.{skipped}\n\nNothing already in your vault is removed or changed.'**
+  String backupRestoreConfirmMessage(String skipped);
+
+  /// No description provided for @backupRestoreConfirmAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Restore'**
+  String get backupRestoreConfirmAction;
+
+  /// No description provided for @backupRestoring.
+  ///
+  /// In en, this message translates to:
+  /// **'Restoring'**
+  String get backupRestoring;
+
+  /// No description provided for @backupRestoredCount.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{Restored 1 item to your vault.} other{Restored {count} items to your vault.}}'**
+  String backupRestoredCount(int count);
+
+  /// No description provided for @backupRestoreCancelled.
+  ///
+  /// In en, this message translates to:
+  /// **'Restore cancelled. Nothing was changed.'**
+  String get backupRestoreCancelled;
+
+  /// No description provided for @backupWrongPassphrase.
+  ///
+  /// In en, this message translates to:
+  /// **'That passphrase does not open this backup. Check it and try again.'**
+  String get backupWrongPassphrase;
+
+  /// No description provided for @backupFileChooseAgain.
+  ///
+  /// In en, this message translates to:
+  /// **'That file could not be read. Try choosing it again.'**
+  String get backupFileChooseAgain;
+
+  /// No description provided for @backupNeedsScreenLock.
+  ///
+  /// In en, this message translates to:
+  /// **'Set a screen lock on your device before backing up or restoring.'**
+  String get backupNeedsScreenLock;
+
+  /// No description provided for @backupKeyInvalidated.
+  ///
+  /// In en, this message translates to:
+  /// **'Your vault key is no longer valid, so existing items cannot be read. Restoring from a backup will still work.'**
+  String get backupKeyInvalidated;
+
+  /// No description provided for @backupExplainerPassphrase.
+  ///
+  /// In en, this message translates to:
+  /// **'Your backup is locked with a passphrase you choose. Without it the file is unreadable — and Karde cannot recover it for you, so keep it somewhere safe.'**
+  String get backupExplainerPassphrase;
+
+  /// No description provided for @backupExplainerOffline.
+  ///
+  /// In en, this message translates to:
+  /// **'Nothing is uploaded. You pick where the file goes, and it can be restored on this phone or on a new one.'**
+  String get backupExplainerOffline;
+
+  /// No description provided for @backupCreateTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Create a backup'**
+  String get backupCreateTitle;
+
+  /// No description provided for @backupCreateSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Save a locked copy of everything in your vault, wherever you choose.'**
+  String get backupCreateSubtitle;
+
+  /// No description provided for @backupCreateAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Back up now'**
+  String get backupCreateAction;
+
+  /// No description provided for @backupRestoreCardTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Restore a backup'**
+  String get backupRestoreCardTitle;
+
+  /// No description provided for @backupRestoreCardSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Add the items from a backup file to this vault. Existing items are kept, and anything already here is skipped.'**
+  String get backupRestoreCardSubtitle;
+
+  /// No description provided for @backupRestoreCardAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose a file'**
+  String get backupRestoreCardAction;
+
+  /// No description provided for @backupKeepFileSafe.
+  ///
+  /// In en, this message translates to:
+  /// **'Keep the backup file somewhere you trust. It holds everything in your vault, protected only by the passphrase you chose.'**
+  String get backupKeepFileSafe;
+
+  /// No description provided for @backupProgressCount.
+  ///
+  /// In en, this message translates to:
+  /// **'{label} — {completed} of {total}'**
+  String backupProgressCount(String label, int completed, int total);
+
+  /// No description provided for @backupConfirmIdentityHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Confirm your identity when your phone asks. Cancelling stops everything safely — nothing is changed.'**
+  String get backupConfirmIdentityHint;
+
+  /// No description provided for @backupProblemDamaged.
+  ///
+  /// In en, this message translates to:
+  /// **'The backup contents are damaged.'**
+  String get backupProblemDamaged;
+
+  /// No description provided for @backupProblemNotKardeBackup.
+  ///
+  /// In en, this message translates to:
+  /// **'That file is not a Karde vault backup.'**
+  String get backupProblemNotKardeBackup;
+
+  /// No description provided for @backupProblemNewerVersion.
+  ///
+  /// In en, this message translates to:
+  /// **'That backup was made by a newer version of Karde. Update the app and try again.'**
+  String get backupProblemNewerVersion;
+
+  /// No description provided for @backupProblemPhotoDamaged.
+  ///
+  /// In en, this message translates to:
+  /// **'A photo in the backup is damaged.'**
+  String get backupProblemPhotoDamaged;
+
+  /// No description provided for @backupProblemMissingValue.
+  ///
+  /// In en, this message translates to:
+  /// **'The backup is missing its \"{key}\" value.'**
+  String backupProblemMissingValue(String key);
+
+  /// No description provided for @backupProblemUnreadableValue.
+  ///
+  /// In en, this message translates to:
+  /// **'The backup has an unreadable \"{key}\" value.'**
+  String backupProblemUnreadableValue(String key);
+
+  /// No description provided for @backupProblemRecordUnreadable.
+  ///
+  /// In en, this message translates to:
+  /// **'A vault record could not be read.'**
+  String get backupProblemRecordUnreadable;
+
+  /// No description provided for @backupProblemFileDamaged.
+  ///
+  /// In en, this message translates to:
+  /// **'That backup file could not be read. It may be damaged.'**
+  String get backupProblemFileDamaged;
 }
 
 class _AppLocalizationsDelegate
@@ -978,7 +1462,7 @@ class _AppLocalizationsDelegate
 
   @override
   bool isSupported(Locale locale) =>
-      <String>['am', 'ar', 'en', 'fr'].contains(locale.languageCode);
+      <String>['ar', 'en', 'fr'].contains(locale.languageCode);
 
   @override
   bool shouldReload(_AppLocalizationsDelegate old) => false;
@@ -987,8 +1471,6 @@ class _AppLocalizationsDelegate
 AppLocalizations lookupAppLocalizations(Locale locale) {
   // Lookup logic when only language code is specified.
   switch (locale.languageCode) {
-    case 'am':
-      return AppLocalizationsAm();
     case 'ar':
       return AppLocalizationsAr();
     case 'en':

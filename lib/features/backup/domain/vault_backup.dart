@@ -2,10 +2,32 @@ import 'dart:convert';
 
 import '../../../core/app_info.dart';
 
+/// What is wrong with a backup file.
+///
+/// A code rather than a sentence: the domain layer has no locale, so the
+/// wording lives in the ARB files and is chosen by whichever screen reports
+/// the failure.
+enum BackupContentProblem {
+  damaged,
+  notAKardeBackup,
+  newerVersion,
+  photoDamaged,
+  recordUnreadable,
+  missingValue,
+  unreadableValue,
+}
+
 /// The backup file is structurally valid but its contents are not usable.
 class BackupContentInvalid implements Exception {
-  final String message;
-  const BackupContentInvalid(this.message);
+  final BackupContentProblem problem;
+
+  /// The JSON key at fault, for the two problems that name one.
+  final String? key;
+
+  const BackupContentInvalid(this.problem, {this.key});
+
+  @override
+  String toString() => 'BackupContentInvalid($problem${key == null ? '' : ': $key'})';
 }
 
 /// One card, with its secrets in the clear.
@@ -206,23 +228,20 @@ class VaultBackup {
     try {
       raw = jsonDecode(source);
     } on FormatException {
-      throw const BackupContentInvalid('The backup contents are damaged.');
+      throw const BackupContentInvalid(BackupContentProblem.damaged);
     }
 
     if (raw is! Map<String, dynamic>) {
-      throw const BackupContentInvalid('The backup contents are damaged.');
+      throw const BackupContentInvalid(BackupContentProblem.damaged);
     }
 
     if (raw['format'] != format) {
-      throw const BackupContentInvalid('That file is not a Karde vault backup.');
+      throw const BackupContentInvalid(BackupContentProblem.notAKardeBackup);
     }
 
     final fileVersion = raw['version'];
     if (fileVersion is! int || fileVersion > version) {
-      throw const BackupContentInvalid(
-        'That backup was made by a newer version of Karde. '
-        'Update the app and try again.',
-      );
+      throw const BackupContentInvalid(BackupContentProblem.newerVersion);
     }
 
     try {
@@ -235,14 +254,14 @@ class VaultBackup {
     } on BackupContentInvalid {
       rethrow;
     } catch (_) {
-      throw const BackupContentInvalid('The backup contents are damaged.');
+      throw const BackupContentInvalid(BackupContentProblem.damaged);
     }
   }
 
   static List<Map<String, dynamic>> _entryList(Object? value) {
     if (value == null) return const [];
     if (value is! List) {
-      throw const BackupContentInvalid('The backup contents are damaged.');
+      throw const BackupContentInvalid(BackupContentProblem.damaged);
     }
     return value.cast<Map<String, dynamic>>();
   }
@@ -258,7 +277,7 @@ String? optionalBackupImage(Map<String, dynamic> json) {
   final value = json['image'];
   if (value == null) return null;
   if (value is! String || value.isEmpty) {
-    throw const BackupContentInvalid('A photo in the backup is damaged.');
+    throw const BackupContentInvalid(BackupContentProblem.photoDamaged);
   }
   return value;
 }
@@ -266,7 +285,7 @@ String? optionalBackupImage(Map<String, dynamic> json) {
 String requireBackupString(Map<String, dynamic> json, String key) {
   final value = json[key];
   if (value is! String) {
-    throw BackupContentInvalid('The backup is missing its "$key" value.');
+    throw BackupContentInvalid(BackupContentProblem.missingValue, key: key);
   }
   return value;
 }
@@ -274,7 +293,7 @@ String requireBackupString(Map<String, dynamic> json, String key) {
 Map<String, dynamic> requireBackupMap(Map<String, dynamic> json, String key) {
   final value = json[key];
   if (value is! Map) {
-    throw BackupContentInvalid('The backup is missing its "$key" value.');
+    throw BackupContentInvalid(BackupContentProblem.missingValue, key: key);
   }
   return Map<String, dynamic>.from(value);
 }
@@ -282,11 +301,11 @@ Map<String, dynamic> requireBackupMap(Map<String, dynamic> json, String key) {
 DateTime requireBackupDate(Map<String, dynamic> json, String key) {
   final value = json[key];
   if (value is! String) {
-    throw BackupContentInvalid('The backup is missing its "$key" value.');
+    throw BackupContentInvalid(BackupContentProblem.missingValue, key: key);
   }
   final parsed = DateTime.tryParse(value);
   if (parsed == null) {
-    throw BackupContentInvalid('The backup has an unreadable "$key" value.');
+    throw BackupContentInvalid(BackupContentProblem.unreadableValue, key: key);
   }
   return parsed;
 }

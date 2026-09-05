@@ -17,7 +17,6 @@ class LanguageSelectionScreen extends ConsumerWidget {
       {'code': 'en', 'name': 'English'},
       {'code': 'fr', 'name': 'Français'},
       {'code': 'ar', 'name': 'العربية'},
-      {'code': 'am', 'name': 'አማርኛ'},
     ];
 
     return Scaffold(

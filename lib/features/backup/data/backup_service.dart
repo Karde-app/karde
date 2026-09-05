@@ -287,10 +287,10 @@ class BackupService {
   String _validImage(String base64Image) {
     try {
       if (base64Decode(base64Image).isEmpty) {
-        throw const BackupContentInvalid('A photo in the backup is damaged.');
+        throw const BackupContentInvalid(BackupContentProblem.photoDamaged);
       }
     } on FormatException {
-      throw const BackupContentInvalid('A photo in the backup is damaged.');
+      throw const BackupContentInvalid(BackupContentProblem.photoDamaged);
     }
     return base64Image;
   }
@@ -301,7 +301,7 @@ class BackupService {
   Map<String, dynamic> _asMap(String json) {
     final decoded = jsonDecode(json);
     if (decoded is! Map) {
-      throw const BackupContentInvalid('A vault record could not be read.');
+      throw const BackupContentInvalid(BackupContentProblem.recordUnreadable);
     }
     return Map<String, dynamic>.from(decoded);
   }

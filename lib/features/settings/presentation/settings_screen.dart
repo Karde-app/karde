@@ -780,7 +780,6 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
         DropdownMenuItem(value: 'en', child: Text('English')),
         DropdownMenuItem(value: 'fr', child: Text('Français')),
         DropdownMenuItem(value: 'ar', child: Text('العربية')),
-        DropdownMenuItem(value: 'am', child: Text('አማርኛ')),
       ],
       onChanged: (String? newValue) {
         if (newValue != null) {

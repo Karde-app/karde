@@ -20,12 +20,10 @@
   "homeTab": "Home",
   "vaultTab": "Vault",
   "settingsTab": "Settings",
-  
   "myVault": "My Vault",
   "allFilter": "All",
   "cardsFilter": "Cards",
   "idsFilter": "IDs",
-  
   "addNewCard": "Add New Card",
   "identification": "IDENTIFICATION",
   "issuerLabel": "ISSUER",
@@ -33,7 +31,6 @@
   "cardNetworkLabel": "Card Network",
   "cardholderNameLabel": "CARDHOLDER NAME",
   "cardholderNameHint": "Name on card",
-  
   "cardDetails": "CARD DETAILS",
   "cardNumberLabel": "CARD NUMBER",
   "cardNumberHint": "0000 0000 0000 0000",
@@ -41,25 +38,19 @@
   "expiryHint": "MM/YY",
   "cvvLabel": "CVV",
   "cvvHint": "123",
-  
   "extraInfo": "EXTRA INFO (OPTIONAL)",
   "privateNotesLabel": "PRIVATE NOTES",
   "privateNotesHint": "Bank phone numbers, PIN hints...",
-  
   "saveItem": "Save Item",
   "requiredField": "Required",
   "invalidFormat": "Invalid format",
-  
   "cardDetailsTitle": "Card Details",
   "editDetails": "Edit details",
   "deleteCard": "Delete card",
-  
   "language": "Language",
   "english": "English",
   "french": "Français",
   "arabic": "العربية",
-  "amharic": "አማርኛ",
-  
   "setupLockTitle": "Secure Your Wallet",
   "setupLockSubtitle": "How would you like to protect your secrets?",
   "phoneLock": "Phone Lock",
@@ -69,16 +60,13 @@
   "bothLocks": "Both",
   "bothLocksDesc": "Phone lock to open app, Karde PIN to view secrets.",
   "continueBtn": "Continue",
-  
   "createPin": "Create PIN",
   "enterPin": "Enter your new PIN",
   "confirmPin": "Confirm PIN",
   "reEnterPin": "Please re-enter your PIN",
   "pinMismatch": "PINs do not match. Try again.",
-  
   "enterKardePin": "Enter Karde PIN",
   "unlockToReveal": "Unlock to reveal secrets",
-  
   "recoverySetupTitle": "PIN Recovery",
   "recoverySetupSubtitle": "How would you like to recover your PIN if you forget it?",
   "biometricRecovery": "Phone Lock",
@@ -87,7 +75,6 @@
   "securityQuestionsDesc": "Answer 2 personal questions to reset your PIN.",
   "noRecovery": "No Recovery",
   "noRecoveryDesc": "Maximum security. Forgetting your PIN means permanent data loss.",
-  
   "setupQuestionsTitle": "Set Security Questions",
   "setupQuestionsSubtitle": "Choose 2 questions and answers",
   "question1": "Question 1",
@@ -95,7 +82,6 @@
   "answer": "Answer",
   "answerRequired": "Answer is required",
   "finishSetup": "Finish Setup",
-  
   "forgotPin": "Forgot PIN?",
   "resetPinTitle": "Reset PIN",
   "resetPinSubtitle": "Choose a recovery method",
@@ -109,7 +95,6 @@
   "wrongAnswers": "One or both answers are incorrect.",
   "resetPinSuccess": "Verification successful. You can now set a new PIN.",
   "maxAttemptsReached": "Maximum attempts reached. You must reset your PIN.",
-
   "appearance": "APPEARANCE",
   "theme": "Theme",
   "themeDesc": "System, Light or Dark",
@@ -132,7 +117,6 @@
   "mustKeepOneLock": "You must keep at least one lock method enabled.",
   "biometricsNotSupported": "Biometrics are not supported on this device.",
   "biometricsError": "Error checking biometric support.",
-  
   "invalidCardLength": "Invalid card length",
   "invalidCardNumber": "Invalid card number",
   "invalidExpiryFormat": "Format must be MM/YY",
@@ -141,18 +125,15 @@
   "invalidCvvLength": "CVV must be 3 or 4 digits",
   "numbersOnly": "Numbers only",
   "lettersAndSymbolsNotAllowed": "Letters and symbols are not allowed",
-
   "kardeIsLocked": "Karde is Locked",
   "authenticateToAccess": "Authenticate to access your vault.",
   "authenticating": "Authenticating...",
   "unlockKarde": "Unlock Karde",
   "exitApp": "Exit App",
-
   "enterCurrentPin": "Enter your current Karde PIN",
   "createKardePin": "Create Karde PIN",
   "pinChangedSuccess": "PIN Successfully Changed",
   "done": "Done",
-  
   "addAnId": "Add an ID",
   "idDetails": "ID Details",
   "documentType": "Document Type",
@@ -168,5 +149,156 @@
   "bloodGroup": "Blood Group",
   "tabAll": "All",
   "tabCards": "Cards",
-  "tabIds": "IDs"
+  "tabIds": "IDs",
+  "idCardNotAvailable": "N/A",
+  "idCardPassportTitle": "INTERNATIONAL PASSPORT",
+  "idCardType": "TYPE",
+  "idCardCodeOfIssuingState": "CODE OF ISSUING STATE",
+  "idCardPassportNo": "PASSPORT NO.",
+  "idCardSurname": "SURNAME",
+  "idCardGivenNames": "GIVEN NAMES",
+  "idCardNationalityUpper": "NATIONALITY",
+  "idCardDobUpper": "DATE OF BIRTH",
+  "idCardSexUpper": "SEX",
+  "idCardPlaceOfBirthUpper": "PLACE OF BIRTH",
+  "idCardAuthorityUpper": "AUTHORITY",
+  "idCardDateOfIssueUpper": "DATE OF ISSUE",
+  "idCardDateOfExpiryUpper": "DATE OF EXPIRY",
+  "idCardHoldersSignature": "HOLDERS SIGNATURE",
+  "idCardResidencePermitTitle": "BIOMETRIC RESIDENCE PERMIT",
+  "idCardName": "Name",
+  "idCardGender": "Gender",
+  "idCardNationality": "Nationality",
+  "idCardDocumentNo": "Document No.",
+  "idCardNationalFallback": "NATIONAL",
+  "idCardIdCard": "ID CARD",
+  "idCardNationalIdLogo": "National ID",
+  "idCardEthiopianDigitalId": "Ethiopian Digital ID Card",
+  "idCardEthiopianFullName": "First, Middle, Surname",
+  "idCardFullNameUpper": "FULL NAME",
+  "idCardDateOfExpiry": "Date of Expiry",
+  "idCardCountryOfCitizenship": "Country of Citizenship (Self-declared)",
+  "idCardIssuingAuthorityUpper": "ISSUING AUTHORITY",
+  "idCardIdNo": "ID NO",
+  "idCardDrivingLicenceTitle": "DRIVING LICENCE",
+  "idCardNameUpper": "NAME",
+  "idCardPassportNoShort": "Passport No",
+  "idCardDlNo": "DL No",
+  "idCardDocNo": "Doc No",
+  "idCardDocumentFallback": "DOCUMENT",
+  "idCardDocumentHolder": "DOCUMENT HOLDER",
+  "idCardDocumentNumberUpper": "DOCUMENT NUMBER",
+  "idCardValidFrom": "VALID FROM",
+  "idCardExpires": "EXPIRES",
+  "genericError": "Something went wrong. Please try again.",
+  "backupTitle": "Backup & restore",
+  "backupCouldNotReadVault": "Could not read your vault. Please try again.",
+  "backupVaultEmpty": "There is nothing in your vault to back up yet.",
+  "backupConfirmTitle": "{count, plural, =1{Back up 1 item} other{Back up {count} items}}",
+  "@backupConfirmTitle": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "backupConfirmMessage": "Your phone will ask you to confirm your identity a few times while this runs.\n\nNext you will choose a passphrase and where to save the file.",
+  "backupPreparing": "Preparing backup",
+  "backupUnlockingVault": "Unlocking your vault",
+  "backupSavedAs": "Backup saved as {fileName}.",
+  "@backupSavedAs": {
+    "placeholders": {
+      "fileName": {
+        "type": "String"
+      }
+    }
+  },
+  "backupOpening": "Opening backup",
+  "backupAllDuplicates": "Everything in that backup is already in your vault.",
+  "backupNoItems": "That backup does not contain any items.",
+  "backupSkippedNote": "{count, plural, =1{1 item is already in your vault and will be skipped.} other{{count} items are already in your vault and will be skipped.}}",
+  "@backupSkippedNote": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "backupRestoreConfirmTitle": "{count, plural, =1{Restore 1 item} other{Restore {count} items}}",
+  "@backupRestoreConfirmTitle": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "backupRestoreConfirmMessage": "Your phone will ask you to confirm your identity a few times while this runs.{skipped}\n\nNothing already in your vault is removed or changed.",
+  "@backupRestoreConfirmMessage": {
+    "placeholders": {
+      "skipped": {
+        "type": "String"
+      }
+    }
+  },
+  "backupRestoreConfirmAction": "Restore",
+  "backupRestoring": "Restoring",
+  "backupRestoredCount": "{count, plural, =1{Restored 1 item to your vault.} other{Restored {count} items to your vault.}}",
+  "@backupRestoredCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "backupRestoreCancelled": "Restore cancelled. Nothing was changed.",
+  "backupWrongPassphrase": "That passphrase does not open this backup. Check it and try again.",
+  "backupFileChooseAgain": "That file could not be read. Try choosing it again.",
+  "backupNeedsScreenLock": "Set a screen lock on your device before backing up or restoring.",
+  "backupKeyInvalidated": "Your vault key is no longer valid, so existing items cannot be read. Restoring from a backup will still work.",
+  "backupExplainerPassphrase": "Your backup is locked with a passphrase you choose. Without it the file is unreadable — and Karde cannot recover it for you, so keep it somewhere safe.",
+  "backupExplainerOffline": "Nothing is uploaded. You pick where the file goes, and it can be restored on this phone or on a new one.",
+  "backupCreateTitle": "Create a backup",
+  "backupCreateSubtitle": "Save a locked copy of everything in your vault, wherever you choose.",
+  "backupCreateAction": "Back up now",
+  "backupRestoreCardTitle": "Restore a backup",
+  "backupRestoreCardSubtitle": "Add the items from a backup file to this vault. Existing items are kept, and anything already here is skipped.",
+  "backupRestoreCardAction": "Choose a file",
+  "backupKeepFileSafe": "Keep the backup file somewhere you trust. It holds everything in your vault, protected only by the passphrase you chose.",
+  "backupProgressCount": "{label} — {completed} of {total}",
+  "@backupProgressCount": {
+    "placeholders": {
+      "label": {
+        "type": "String"
+      },
+      "completed": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "backupConfirmIdentityHint": "Confirm your identity when your phone asks. Cancelling stops everything safely — nothing is changed.",
+  "backupProblemDamaged": "The backup contents are damaged.",
+  "backupProblemNotKardeBackup": "That file is not a Karde vault backup.",
+  "backupProblemNewerVersion": "That backup was made by a newer version of Karde. Update the app and try again.",
+  "backupProblemPhotoDamaged": "A photo in the backup is damaged.",
+  "backupProblemMissingValue": "The backup is missing its \"{key}\" value.",
+  "@backupProblemMissingValue": {
+    "placeholders": {
+      "key": {
+        "type": "String"
+      }
+    }
+  },
+  "backupProblemUnreadableValue": "The backup has an unreadable \"{key}\" value.",
+  "@backupProblemUnreadableValue": {
+    "placeholders": {
+      "key": {
+        "type": "String"
+      }
+    }
+  },
+  "backupProblemRecordUnreadable": "A vault record could not be read.",
+  "backupProblemFileDamaged": "That backup file could not be read. It may be damaged."
 }

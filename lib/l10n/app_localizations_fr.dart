@@ -60,7 +60,7 @@ class AppLocalizationsFr extends AppLocalizations {
   String get cardsFilter => 'Cartes';
 
   @override
-  String get idsFilter => 'Pièces d\'identité • Bientôt';
+  String get idsFilter => 'Pièces d\'identité';
 
   @override
   String get addNewCard => 'Ajouter';
@@ -142,9 +142,6 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get arabic => 'العربية';
-
-  @override
-  String get amharic => 'አማርኛ';
 
   @override
   String get setupLockTitle => 'Sécurisez';
@@ -358,102 +355,414 @@ class AppLocalizationsFr extends AppLocalizations {
       'Erreur lors de la vérification du support biométrique.';
 
   @override
-  String get invalidCardLength => 'Invalid card length';
+  String get invalidCardLength => 'Longueur de carte invalide';
 
   @override
-  String get invalidCardNumber => 'Invalid card number';
+  String get invalidCardNumber => 'Numéro de carte invalide';
 
   @override
-  String get invalidExpiryFormat => 'Format must be MM/YY';
+  String get invalidExpiryFormat => 'Le format doit être MM/AA';
 
   @override
-  String get invalidMonth => 'Invalid month';
+  String get invalidMonth => 'Mois invalide';
 
   @override
-  String get cardExpired => 'Card has expired';
+  String get cardExpired => 'La carte a expiré';
 
   @override
-  String get invalidCvvLength => 'CVV must be 3 or 4 digits';
+  String get invalidCvvLength => 'Le CVV doit comporter 3 ou 4 chiffres';
 
   @override
-  String get numbersOnly => 'Numbers only';
+  String get numbersOnly => 'Chiffres uniquement';
 
   @override
   String get lettersAndSymbolsNotAllowed =>
-      'Letters and symbols are not allowed';
+      'Les lettres et les symboles ne sont pas autorisés';
 
   @override
-  String get kardeIsLocked => 'Karde is Locked';
+  String get kardeIsLocked => 'Karde est verrouillé';
 
   @override
-  String get authenticateToAccess => 'Authenticate to access your vault.';
+  String get authenticateToAccess =>
+      'Authentifiez-vous pour accéder à votre coffre.';
 
   @override
-  String get authenticating => 'Authenticating...';
+  String get authenticating => 'Authentification…';
 
   @override
-  String get unlockKarde => 'Unlock Karde';
+  String get unlockKarde => 'Déverrouiller Karde';
 
   @override
-  String get exitApp => 'Exit App';
+  String get exitApp => 'Quitter l\'application';
 
   @override
-  String get enterCurrentPin => 'Enter your current Karde PIN';
+  String get enterCurrentPin => 'Saisissez votre code Karde actuel';
 
   @override
-  String get createKardePin => 'Create Karde PIN';
+  String get createKardePin => 'Créer un code Karde';
 
   @override
-  String get pinChangedSuccess => 'PIN Successfully Changed';
+  String get pinChangedSuccess => 'Code modifié avec succès';
 
   @override
-  String get done => 'Done';
+  String get done => 'Terminé';
 
   @override
-  String get addAnId => 'Add an ID';
+  String get addAnId => 'Ajouter une pièce d\'identité';
 
   @override
-  String get idDetails => 'ID Details';
+  String get idDetails => 'Détails du document';
 
   @override
-  String get documentType => 'Document Type';
+  String get documentType => 'Type de document';
 
   @override
-  String get documentNumber => 'Document Number';
+  String get documentNumber => 'Numéro du document';
 
   @override
-  String get fullName => 'Full Name';
+  String get fullName => 'Nom complet';
 
   @override
-  String get dateOfBirth => 'Date of Birth';
+  String get dateOfBirth => 'Date de naissance';
 
   @override
-  String get sexGender => 'Sex / Gender';
+  String get sexGender => 'Sexe / Genre';
 
   @override
-  String get issuingAuthority => 'Issuing Country / Authority';
+  String get issuingAuthority => 'Pays / autorité de délivrance';
 
   @override
-  String get issueDate => 'Issue Date';
+  String get issueDate => 'Date de délivrance';
 
   @override
-  String get expiryDate => 'Expiry Date';
+  String get expiryDate => 'Date d\'expiration';
 
   @override
-  String get placeOfBirth => 'Place of Birth';
+  String get placeOfBirth => 'Lieu de naissance';
 
   @override
-  String get personalId => 'Personal ID / SSN';
+  String get personalId => 'Identifiant personnel';
 
   @override
-  String get bloodGroup => 'Blood Group';
+  String get bloodGroup => 'Groupe sanguin';
 
   @override
-  String get tabAll => 'All';
+  String get tabAll => 'Tout';
 
   @override
-  String get tabCards => 'Cards';
+  String get tabCards => 'Cartes';
 
   @override
-  String get tabIds => 'IDs';
+  String get tabIds => 'Documents';
+
+  @override
+  String get idCardNotAvailable => 'N/D';
+
+  @override
+  String get idCardPassportTitle => 'PASSEPORT INTERNATIONAL';
+
+  @override
+  String get idCardType => 'TYPE';
+
+  @override
+  String get idCardCodeOfIssuingState => 'CODE DE L\'ÉTAT ÉMETTEUR';
+
+  @override
+  String get idCardPassportNo => 'N° DE PASSEPORT';
+
+  @override
+  String get idCardSurname => 'NOM';
+
+  @override
+  String get idCardGivenNames => 'PRÉNOMS';
+
+  @override
+  String get idCardNationalityUpper => 'NATIONALITÉ';
+
+  @override
+  String get idCardDobUpper => 'DATE DE NAISSANCE';
+
+  @override
+  String get idCardSexUpper => 'SEXE';
+
+  @override
+  String get idCardPlaceOfBirthUpper => 'LIEU DE NAISSANCE';
+
+  @override
+  String get idCardAuthorityUpper => 'AUTORITÉ';
+
+  @override
+  String get idCardDateOfIssueUpper => 'DATE DE DÉLIVRANCE';
+
+  @override
+  String get idCardDateOfExpiryUpper => 'DATE D\'EXPIRATION';
+
+  @override
+  String get idCardHoldersSignature => 'SIGNATURE DU TITULAIRE';
+
+  @override
+  String get idCardResidencePermitTitle => 'TITRE DE SÉJOUR BIOMÉTRIQUE';
+
+  @override
+  String get idCardName => 'Nom';
+
+  @override
+  String get idCardGender => 'Genre';
+
+  @override
+  String get idCardNationality => 'Nationalité';
+
+  @override
+  String get idCardDocumentNo => 'N° du document';
+
+  @override
+  String get idCardNationalFallback => 'NATIONAL';
+
+  @override
+  String get idCardIdCard => 'CARTE D\'IDENTITÉ';
+
+  @override
+  String get idCardNationalIdLogo => 'Identité nationale';
+
+  @override
+  String get idCardEthiopianDigitalId =>
+      'Carte d\'identité numérique éthiopienne';
+
+  @override
+  String get idCardEthiopianFullName => 'Prénom, second prénom, nom';
+
+  @override
+  String get idCardFullNameUpper => 'NOM COMPLET';
+
+  @override
+  String get idCardDateOfExpiry => 'Date d\'expiration';
+
+  @override
+  String get idCardCountryOfCitizenship => 'Pays de citoyenneté (auto-déclaré)';
+
+  @override
+  String get idCardIssuingAuthorityUpper => 'AUTORITÉ DE DÉLIVRANCE';
+
+  @override
+  String get idCardIdNo => 'N° D\'IDENTITÉ';
+
+  @override
+  String get idCardDrivingLicenceTitle => 'PERMIS DE CONDUIRE';
+
+  @override
+  String get idCardNameUpper => 'NOM';
+
+  @override
+  String get idCardPassportNoShort => 'N° passeport';
+
+  @override
+  String get idCardDlNo => 'N° permis';
+
+  @override
+  String get idCardDocNo => 'N° doc';
+
+  @override
+  String get idCardDocumentFallback => 'DOCUMENT';
+
+  @override
+  String get idCardDocumentHolder => 'TITULAIRE DU DOCUMENT';
+
+  @override
+  String get idCardDocumentNumberUpper => 'NUMÉRO DU DOCUMENT';
+
+  @override
+  String get idCardValidFrom => 'VALABLE À PARTIR DU';
+
+  @override
+  String get idCardExpires => 'EXPIRE LE';
+
+  @override
+  String get genericError => 'Une erreur s\'est produite. Veuillez réessayer.';
+
+  @override
+  String get backupTitle => 'Sauvegarde et restauration';
+
+  @override
+  String get backupCouldNotReadVault =>
+      'Impossible de lire votre coffre. Veuillez réessayer.';
+
+  @override
+  String get backupVaultEmpty =>
+      'Votre coffre ne contient encore rien à sauvegarder.';
+
+  @override
+  String backupConfirmTitle(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'Sauvegarder $count éléments',
+      one: 'Sauvegarder 1 élément',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get backupConfirmMessage =>
+      'Votre téléphone vous demandera de confirmer votre identité à plusieurs reprises pendant l\'opération.\n\nVous choisirez ensuite une phrase secrète et l\'emplacement du fichier.';
+
+  @override
+  String get backupPreparing => 'Préparation de la sauvegarde';
+
+  @override
+  String get backupUnlockingVault => 'Déverrouillage de votre coffre';
+
+  @override
+  String backupSavedAs(String fileName) {
+    return 'Sauvegarde enregistrée sous $fileName.';
+  }
+
+  @override
+  String get backupOpening => 'Ouverture de la sauvegarde';
+
+  @override
+  String get backupAllDuplicates =>
+      'Tout ce que contient cette sauvegarde se trouve déjà dans votre coffre.';
+
+  @override
+  String get backupNoItems => 'Cette sauvegarde ne contient aucun élément.';
+
+  @override
+  String backupSkippedNote(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other:
+          '$count éléments se trouvent déjà dans votre coffre et seront ignorés.',
+      one: '1 élément se trouve déjà dans votre coffre et sera ignoré.',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String backupRestoreConfirmTitle(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'Restaurer $count éléments',
+      one: 'Restaurer 1 élément',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String backupRestoreConfirmMessage(String skipped) {
+    return 'Votre téléphone vous demandera de confirmer votre identité à plusieurs reprises pendant l\'opération.$skipped\n\nRien de ce qui se trouve déjà dans votre coffre n\'est supprimé ni modifié.';
+  }
+
+  @override
+  String get backupRestoreConfirmAction => 'Restaurer';
+
+  @override
+  String get backupRestoring => 'Restauration';
+
+  @override
+  String backupRestoredCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count éléments restaurés dans votre coffre.',
+      one: '1 élément restauré dans votre coffre.',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get backupRestoreCancelled =>
+      'Restauration annulée. Rien n\'a été modifié.';
+
+  @override
+  String get backupWrongPassphrase =>
+      'Cette phrase secrète n\'ouvre pas cette sauvegarde. Vérifiez-la et réessayez.';
+
+  @override
+  String get backupFileChooseAgain =>
+      'Ce fichier n\'a pas pu être lu. Essayez de le sélectionner à nouveau.';
+
+  @override
+  String get backupNeedsScreenLock =>
+      'Définissez un verrouillage d\'écran sur votre appareil avant de sauvegarder ou de restaurer.';
+
+  @override
+  String get backupKeyInvalidated =>
+      'La clé de votre coffre n\'est plus valide, les éléments existants ne peuvent donc pas être lus. La restauration à partir d\'une sauvegarde fonctionne toujours.';
+
+  @override
+  String get backupExplainerPassphrase =>
+      'Votre sauvegarde est verrouillée par une phrase secrète que vous choisissez. Sans elle, le fichier est illisible — et Karde ne peut pas la récupérer pour vous, alors conservez-la en lieu sûr.';
+
+  @override
+  String get backupExplainerOffline =>
+      'Rien n\'est envoyé en ligne. Vous choisissez où va le fichier, et il peut être restauré sur ce téléphone ou sur un nouveau.';
+
+  @override
+  String get backupCreateTitle => 'Créer une sauvegarde';
+
+  @override
+  String get backupCreateSubtitle =>
+      'Enregistrez une copie verrouillée de tout ce que contient votre coffre, où vous le souhaitez.';
+
+  @override
+  String get backupCreateAction => 'Sauvegarder maintenant';
+
+  @override
+  String get backupRestoreCardTitle => 'Restaurer une sauvegarde';
+
+  @override
+  String get backupRestoreCardSubtitle =>
+      'Ajoutez à ce coffre les éléments d\'un fichier de sauvegarde. Les éléments existants sont conservés, et tout ce qui est déjà là est ignoré.';
+
+  @override
+  String get backupRestoreCardAction => 'Choisir un fichier';
+
+  @override
+  String get backupKeepFileSafe =>
+      'Conservez le fichier de sauvegarde dans un endroit sûr. Il contient tout ce que renferme votre coffre, protégé uniquement par la phrase secrète que vous avez choisie.';
+
+  @override
+  String backupProgressCount(String label, int completed, int total) {
+    return '$label — $completed sur $total';
+  }
+
+  @override
+  String get backupConfirmIdentityHint =>
+      'Confirmez votre identité lorsque votre téléphone vous le demande. Annuler arrête tout en toute sécurité — rien n\'est modifié.';
+
+  @override
+  String get backupProblemDamaged =>
+      'Le contenu de la sauvegarde est endommagé.';
+
+  @override
+  String get backupProblemNotKardeBackup =>
+      'Ce fichier n\'est pas une sauvegarde de coffre Karde.';
+
+  @override
+  String get backupProblemNewerVersion =>
+      'Cette sauvegarde a été créée par une version plus récente de Karde. Mettez l\'application à jour et réessayez.';
+
+  @override
+  String get backupProblemPhotoDamaged =>
+      'Une photo de la sauvegarde est endommagée.';
+
+  @override
+  String backupProblemMissingValue(String key) {
+    return 'Il manque la valeur « $key » dans la sauvegarde.';
+  }
+
+  @override
+  String backupProblemUnreadableValue(String key) {
+    return 'La valeur « $key » de la sauvegarde est illisible.';
+  }
+
+  @override
+  String get backupProblemRecordUnreadable =>
+      'Un enregistrement du coffre n\'a pas pu être lu.';
+
+  @override
+  String get backupProblemFileDamaged =>
+      'Ce fichier de sauvegarde n\'a pas pu être lu. Il est peut-être endommagé.';
 }

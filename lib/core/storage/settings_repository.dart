@@ -126,8 +126,16 @@ class SettingsRepository {
   }
 
   // Language
+  /// Languages Karde actually ships translations for. Anything else — including
+  /// 'am', which was offered in an earlier build and has since been withdrawn —
+  /// reads back as English, so a phone that still has the old value saved shows
+  /// English rather than crashing the settings language dropdown.
+  static const supportedLanguages = <String>{'en', 'fr', 'ar'};
+
   String getLanguage() {
-    return _prefs.getString(_languageKey) ?? 'en';
+    final saved = _prefs.getString(_languageKey);
+    if (saved == null || !supportedLanguages.contains(saved)) return 'en';
+    return saved;
   }
 
   Future<void> setLanguage(String languageCode) async {

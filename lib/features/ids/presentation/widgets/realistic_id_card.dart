@@ -1,6 +1,7 @@
 import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
+import '../../../../l10n/app_localizations.dart';
 import '../../domain/virtual_id.dart';
 
 class RealisticIdCard extends StatelessWidget {
@@ -71,10 +72,10 @@ class RealisticIdCard extends StatelessWidget {
     return GestureDetector(onTap: onTapPhoto, child: slot);
   }
 
-  String _getDecryptedValue(String key, String hiddenPlaceholder) {
+  String _getDecryptedValue(AppLocalizations loc, String key, String hiddenPlaceholder) {
     if (!isDecrypted) return hiddenPlaceholder;
     final val = decryptedData?[key];
-    if (val == null || val.trim().isEmpty) return 'N/A';
+    if (val == null || val.trim().isEmpty) return loc.idCardNotAvailable;
     return val;
   }
 
@@ -135,20 +136,21 @@ class RealisticIdCard extends StatelessWidget {
   }
 
   Widget _buildPassportTemplate(BuildContext context) {
-    final title = 'INTERNATIONAL PASSPORT';
+    final loc = AppLocalizations.of(context)!;
+    final title = loc.idCardPassportTitle;
     
-    final fullName = _getDecryptedValue('fullName', '••••••••••••').toUpperCase();
+    final fullName = _getDecryptedValue(loc, 'fullName', '••••••••••••').toUpperCase();
     final names = fullName.split(' ');
-    final surname = names.isNotEmpty ? names.last : 'N/A';
+    final surname = names.isNotEmpty ? names.last : loc.idCardNotAvailable;
     final givenNames = names.length > 1 ? names.sublist(0, names.length - 1).join(' ') : fullName;
     
-    final dob = _getDecryptedValue('dateOfBirth', '••/••/••••');
-    final issueDate = _getDecryptedValue('issueDate', '••/••/••••');
-    final expiryDate = _getDecryptedValue('expiryDate', '••/••/••••');
-    final documentNumber = _getDecryptedValue('documentNumber', '••••••••••••');
-    final sex = _getDecryptedValue('sexGender', '•');
-    final placeOfBirth = _getDecryptedValue('placeOfBirth', '••••••').toUpperCase();
-    final authority = _getDecryptedValue('issuingAuthority', '••••••').toUpperCase();
+    final dob = _getDecryptedValue(loc, 'dateOfBirth', '••/••/••••');
+    final issueDate = _getDecryptedValue(loc, 'issueDate', '••/••/••••');
+    final expiryDate = _getDecryptedValue(loc, 'expiryDate', '••/••/••••');
+    final documentNumber = _getDecryptedValue(loc, 'documentNumber', '••••••••••••');
+    final sex = _getDecryptedValue(loc, 'sexGender', '•');
+    final placeOfBirth = _getDecryptedValue(loc, 'placeOfBirth', '••••••').toUpperCase();
+    final authority = _getDecryptedValue(loc, 'issuingAuthority', '••••••').toUpperCase();
 
     // Generating fake MRZ
     final mrzLine1 = 'P<<$surname<<$givenNames<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<'.replaceAll(' ', '<').substring(0, 44);
@@ -204,12 +206,12 @@ class RealisticIdCard extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
                     const SizedBox(width: 60), // Removed PASSPORT/PASSEPORT text
-                    _buildLabelText('TYPE\nP', size: 6, align: TextAlign.center),
-                    _buildLabelText('CODE OF ISSUING STATE\nXXX', size: 6, align: TextAlign.center),
+                    _buildLabelText('${loc.idCardType}\nP', size: 6, align: TextAlign.center),
+                    _buildLabelText('${loc.idCardCodeOfIssuingState}\nXXX', size: 6, align: TextAlign.center),
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.end,
                       children: [
-                        _buildLabelText('PASSPORT NO.', size: 6),
+                        _buildLabelText(loc.idCardPassportNo, size: 6),
                         Text(
                           documentNumber, 
                           style: const TextStyle(fontFamily: 'Roboto Mono', color: Colors.redAccent, fontSize: 12, fontWeight: FontWeight.bold),
@@ -244,10 +246,10 @@ class RealisticIdCard extends StatelessWidget {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            _buildLabelText('SURNAME', size: 6),
+                            _buildLabelText(loc.idCardSurname, size: 6),
                             _buildValueText(surname, size: 12, fontHeight: 1.0),
                             
-                            _buildLabelText('GIVEN NAMES', size: 6),
+                            _buildLabelText(loc.idCardGivenNames, size: 6),
                             _buildValueText(givenNames, size: 12, fontHeight: 1.0),
                             
                             Row(
@@ -257,7 +259,7 @@ class RealisticIdCard extends StatelessWidget {
                                   child: Column(
                                     crossAxisAlignment: CrossAxisAlignment.start,
                                     children: [
-                                      _buildLabelText('NATIONALITY', size: 6),
+                                      _buildLabelText(loc.idCardNationalityUpper, size: 6),
                                       _buildValueText(authority, size: 10, fontHeight: 1.0),
                                     ],
                                   ),
@@ -267,7 +269,7 @@ class RealisticIdCard extends StatelessWidget {
                                   child: Column(
                                     crossAxisAlignment: CrossAxisAlignment.start,
                                     children: [
-                                      _buildLabelText('DATE OF BIRTH', size: 6),
+                                      _buildLabelText(loc.idCardDobUpper, size: 6),
                                       _buildValueText(dob, size: 10, fontHeight: 1.0),
                                     ],
                                   ),
@@ -277,9 +279,9 @@ class RealisticIdCard extends StatelessWidget {
                             
                             Row(
                               children: [
-                                Expanded(flex: 1, child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [_buildLabelText('SEX', size: 6), _buildValueText(sex, size: 10, fontHeight: 1.0)])),
-                                Expanded(flex: 2, child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [_buildLabelText('PLACE OF BIRTH', size: 6), _buildValueText(placeOfBirth, size: 10, fontHeight: 1.0)])),
-                                Expanded(flex: 2, child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [_buildLabelText('AUTHORITY', size: 6), _buildValueText(authority, size: 10, fontHeight: 1.0)])),
+                                Expanded(flex: 1, child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [_buildLabelText(loc.idCardSexUpper, size: 6), _buildValueText(sex, size: 10, fontHeight: 1.0)])),
+                                Expanded(flex: 2, child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [_buildLabelText(loc.idCardPlaceOfBirthUpper, size: 6), _buildValueText(placeOfBirth, size: 10, fontHeight: 1.0)])),
+                                Expanded(flex: 2, child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [_buildLabelText(loc.idCardAuthorityUpper, size: 6), _buildValueText(authority, size: 10, fontHeight: 1.0)])),
                               ],
                             ),
                             
@@ -290,16 +292,16 @@ class RealisticIdCard extends StatelessWidget {
                                   child: Column(
                                     crossAxisAlignment: CrossAxisAlignment.start,
                                     children: [
-                                      _buildLabelText('DATE OF ISSUE', size: 6),
+                                      _buildLabelText(loc.idCardDateOfIssueUpper, size: 6),
                                       _buildValueText(issueDate, size: 10, fontHeight: 1.0),
-                                      _buildLabelText('DATE OF EXPIRY', size: 6),
+                                      _buildLabelText(loc.idCardDateOfExpiryUpper, size: 6),
                                       _buildValueText(expiryDate, size: 10, fontHeight: 1.0),
                                     ],
                                   ),
                                 ),
                                 Column(
                                   children: [
-                                    _buildLabelText('HOLDERS SIGNATURE', size: 6),
+                                    _buildLabelText(loc.idCardHoldersSignature, size: 6),
                                     const Text('Signature', style: TextStyle(fontFamily: 'Autography', fontStyle: FontStyle.italic, color: Color(0xFF1F487E), fontSize: 13, height: 1)),
                                   ],
                                 ),
@@ -338,16 +340,17 @@ class RealisticIdCard extends StatelessWidget {
   }
 
   Widget _buildResidentPermitTemplate(BuildContext context) {
+    final loc = AppLocalizations.of(context)!;
     final title = idDoc.idType.toUpperCase();
     
-    final name = _getDecryptedValue('fullName', '••••••••••••').toUpperCase();
-    final dob = _getDecryptedValue('dateOfBirth', '••/••/••••');
-    final sex = _getDecryptedValue('sexGender', '•');
-    final issueDate = _getDecryptedValue('issueDate', '••/••/••••');
-    final expiryDate = _getDecryptedValue('expiryDate', '••/••/••••');
-    final documentNumber = _getDecryptedValue('documentNumber', '••••••••••••');
-    final bloodGroup = _getDecryptedValue('bloodGroup', '••');
-    final authority = _getDecryptedValue('issuingAuthority', '••••••').toUpperCase();
+    final name = _getDecryptedValue(loc, 'fullName', '••••••••••••').toUpperCase();
+    final dob = _getDecryptedValue(loc, 'dateOfBirth', '••/••/••••');
+    final sex = _getDecryptedValue(loc, 'sexGender', '•');
+    final issueDate = _getDecryptedValue(loc, 'issueDate', '••/••/••••');
+    final expiryDate = _getDecryptedValue(loc, 'expiryDate', '••/••/••••');
+    final documentNumber = _getDecryptedValue(loc, 'documentNumber', '••••••••••••');
+    final bloodGroup = _getDecryptedValue(loc, 'bloodGroup', '••');
+    final authority = _getDecryptedValue(loc, 'issuingAuthority', '••••••').toUpperCase();
 
     return Container(
       width: double.infinity,
@@ -379,7 +382,7 @@ class RealisticIdCard extends StatelessWidget {
                   children: [
                     Expanded(
                       child: Text(
-                        title.isNotEmpty ? title : 'BIOMETRIC RESIDENCE PERMIT',
+                        title.isNotEmpty ? title : loc.idCardResidencePermitTitle,
                         style: const TextStyle(
                           fontFamily: 'Inter', color: Color(0xFF1B3B6F), fontSize: 13, fontWeight: FontWeight.w900, letterSpacing: 1.0,
                         ),
@@ -428,21 +431,21 @@ class RealisticIdCard extends StatelessWidget {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            _buildPermitRow('Name', name),
+                            _buildPermitRow(loc.idCardName, name),
                             const SizedBox(height: 1),
-                            _buildPermitRow('Date of Birth', dob),
+                            _buildPermitRow(loc.dateOfBirth, dob),
                             const SizedBox(height: 1),
-                            _buildPermitRow('Nationality', authority),
+                            _buildPermitRow(loc.idCardNationality, authority),
                             const SizedBox(height: 1),
-                            _buildPermitRow('Gender', sex),
+                            _buildPermitRow(loc.idCardGender, sex),
                             const SizedBox(height: 1),
-                            _buildPermitRow('Blood Group', bloodGroup),
+                            _buildPermitRow(loc.bloodGroup, bloodGroup),
                             const SizedBox(height: 1),
-                            _buildPermitRow('Issue Date', issueDate),
+                            _buildPermitRow(loc.issueDate, issueDate),
                             const SizedBox(height: 1),
-                            _buildPermitRow('Expiry Date', expiryDate),
+                            _buildPermitRow(loc.expiryDate, expiryDate),
                             const SizedBox(height: 1),
-                            _buildPermitRow('Document No.', documentNumber),
+                            _buildPermitRow(loc.idCardDocumentNo, documentNumber),
                           ],
                         ),
                       ),
@@ -516,12 +519,13 @@ class RealisticIdCard extends StatelessWidget {
   }
 
   Widget _buildNationalIdTemplate(BuildContext context) {
-    final name = _getDecryptedValue('fullName', '••••••••••••').toUpperCase();
-    final dob = _getDecryptedValue('dateOfBirth', '••/••/••••');
-    final sex = _getDecryptedValue('sexGender', '•');
-    final expiryDate = _getDecryptedValue('expiryDate', '••/••/••••');
-    final documentNumber = _getDecryptedValue('documentNumber', '••••••••••••');
-    final authority = _getDecryptedValue('issuingAuthority', '••••••').toUpperCase();
+    final loc = AppLocalizations.of(context)!;
+    final name = _getDecryptedValue(loc, 'fullName', '••••••••••••').toUpperCase();
+    final dob = _getDecryptedValue(loc, 'dateOfBirth', '••/••/••••');
+    final sex = _getDecryptedValue(loc, 'sexGender', '•');
+    final expiryDate = _getDecryptedValue(loc, 'expiryDate', '••/••/••••');
+    final documentNumber = _getDecryptedValue(loc, 'documentNumber', '••••••••••••');
+    final authority = _getDecryptedValue(loc, 'issuingAuthority', '••••••').toUpperCase();
 
     final isEthiopian = authority.contains('ETHIOPIA');
 
@@ -597,11 +601,11 @@ class RealisticIdCard extends StatelessWidget {
                       child: Column(
                         children: [
                           Text(
-                            isEthiopian ? 'የኢትዮጵያ ዲጂታል መታወቂያ ካርድ' : (authority != '••••••' ? authority : 'NATIONAL'),
+                            isEthiopian ? 'የኢትዮጵያ ዲጂታል መታወቂያ ካርድ' : (authority != '••••••' ? authority : loc.idCardNationalFallback),
                             style: const TextStyle(color: Color(0xFF1F2937), fontSize: 10, fontWeight: FontWeight.bold, height: 1.1),
                           ),
                           Text(
-                            isEthiopian ? 'Ethiopian Digital ID Card' : 'ID CARD',
+                            isEthiopian ? loc.idCardEthiopianDigitalId : loc.idCardIdCard,
                             style: const TextStyle(color: Color(0xFF1F2937), fontSize: 13, fontWeight: FontWeight.bold, height: 1.1),
                           ),
                         ],
@@ -620,7 +624,7 @@ class RealisticIdCard extends StatelessWidget {
                         Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            const Text('National ID', style: TextStyle(fontSize: 6, fontWeight: FontWeight.bold, color: Color(0xFF1F2937))),
+                            Text(loc.idCardNationalIdLogo, style: const TextStyle(fontSize: 6, fontWeight: FontWeight.bold, color: Color(0xFF1F2937))),
                             if (isEthiopian)
                               const Text('ብሔራዊ መታወቂያ', style: TextStyle(fontSize: 5, color: Color(0xFF1F2937))),
                           ],
@@ -658,7 +662,7 @@ class RealisticIdCard extends StatelessWidget {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            _buildNationalIdLabel(isEthiopian ? 'ሙሉ ስም / First, Middle, Surname' : 'FULL NAME'),
+                            _buildNationalIdLabel(isEthiopian ? 'ሙሉ ስም / ${loc.idCardEthiopianFullName}' : loc.idCardFullNameUpper),
                             _buildNationalIdValue(name, size: 12),
                             const SizedBox(height: 4),
                             
@@ -670,11 +674,11 @@ class RealisticIdCard extends StatelessWidget {
                                   child: Column(
                                     crossAxisAlignment: CrossAxisAlignment.start,
                                     children: [
-                                      _buildNationalIdLabel(isEthiopian ? 'የትውልድ ቀን / Date of Birth' : 'DATE OF BIRTH'),
+                                      _buildNationalIdLabel(isEthiopian ? 'የትውልድ ቀን / ${loc.dateOfBirth}' : loc.idCardDobUpper),
                                       _buildNationalIdValue(dob),
                                       const SizedBox(height: 4),
                                       
-                                      _buildNationalIdLabel(isEthiopian ? 'መታወቂያው የሚያበቃበት ቀን / Date of Expiry' : 'DATE OF EXPIRY'),
+                                      _buildNationalIdLabel(isEthiopian ? 'መታወቂያው የሚያበቃበት ቀን / ${loc.idCardDateOfExpiry}' : loc.idCardDateOfExpiryUpper),
                                       _buildNationalIdValue(expiryDate),
                                     ],
                                   ),
@@ -685,7 +689,7 @@ class RealisticIdCard extends StatelessWidget {
                                   child: Column(
                                     crossAxisAlignment: CrossAxisAlignment.start,
                                     children: [
-                                      _buildNationalIdLabel(isEthiopian ? 'ፆታ / SEX' : 'SEX'),
+                                      _buildNationalIdLabel(isEthiopian ? 'ፆታ / ${loc.idCardSexUpper}' : loc.idCardSexUpper),
                                       _buildNationalIdValue(sex),
                                     ],
                                   ),
@@ -694,7 +698,7 @@ class RealisticIdCard extends StatelessWidget {
                             ),
                             
                             const SizedBox(height: 4),
-                            _buildNationalIdLabel(isEthiopian ? 'ዜግነት (በተገለጸው መሠረት) / Country of Citizenship (Self-declared)' : 'ISSUING AUTHORITY'),
+                            _buildNationalIdLabel(isEthiopian ? 'ዜግነት (በተገለጸው መሠረት) / ${loc.idCardCountryOfCitizenship}' : loc.idCardIssuingAuthorityUpper),
                             _buildNationalIdValue(
                               authority.isNotEmpty && authority != '••••••' 
                                 ? authority 
@@ -711,7 +715,7 @@ class RealisticIdCard extends StatelessWidget {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
-                    Text(isEthiopian ? 'FCN' : 'ID NO', style: const TextStyle(color: Color(0xFF927038), fontWeight: FontWeight.w900, fontSize: 13, letterSpacing: 1.0)),
+                    Text(isEthiopian ? 'FCN' : loc.idCardIdNo, style: const TextStyle(color: Color(0xFF927038), fontWeight: FontWeight.w900, fontSize: 13, letterSpacing: 1.0)),
                     const SizedBox(width: 8),
                     Container(
                       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 2),
@@ -748,14 +752,15 @@ class RealisticIdCard extends StatelessWidget {
   }
 
   Widget _buildDrivingLicenseTemplate(BuildContext context) {
+    final loc = AppLocalizations.of(context)!;
     final title = idDoc.idType.toUpperCase();
     
     // Extract fields if decrypted
-    final name = _getDecryptedValue('fullName', '••••••••••••').toUpperCase();
-    final dob = _getDecryptedValue('dateOfBirth', '••/••/••••');
-    final issueDate = _getDecryptedValue('issueDate', '••/••/••••');
-    final expiryDate = _getDecryptedValue('expiryDate', '••/••/••••');
-    final documentNumber = _getDecryptedValue('documentNumber', '••••••••••••');
+    final name = _getDecryptedValue(loc, 'fullName', '••••••••••••').toUpperCase();
+    final dob = _getDecryptedValue(loc, 'dateOfBirth', '••/••/••••');
+    final issueDate = _getDecryptedValue(loc, 'issueDate', '••/••/••••');
+    final expiryDate = _getDecryptedValue(loc, 'expiryDate', '••/••/••••');
+    final documentNumber = _getDecryptedValue(loc, 'documentNumber', '••••••••••••');
 
     // The image has a light/off-white background
     return Container(
@@ -800,7 +805,7 @@ class RealisticIdCard extends StatelessWidget {
                     const SizedBox(width: 32), // Balance for the icon
                     Expanded(
                       child: Text(
-                        title.isNotEmpty ? title : 'DRIVING LICENCE',
+                        title.isNotEmpty ? title : loc.idCardDrivingLicenceTitle,
                         textAlign: TextAlign.center,
                         style: const TextStyle(
                           fontFamily: 'Inter',
@@ -840,7 +845,7 @@ class RealisticIdCard extends StatelessWidget {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            _buildLabelText('NAME:'),
+                            _buildLabelText('${loc.idCardNameUpper}:'),
                             Text(
                               name,
                               style: const TextStyle(
@@ -861,10 +866,10 @@ class RealisticIdCard extends StatelessWidget {
                                   child: Column(
                                     crossAxisAlignment: CrossAxisAlignment.start,
                                     children: [
-                                      _buildLabelText('DATE OF BIRTH:'),
+                                      _buildLabelText('${loc.idCardDobUpper}:'),
                                       _buildValueText(dob),
                                       const SizedBox(height: 4),
-                                      _buildLabelText('DATE OF EXPIRY:'),
+                                      _buildLabelText('${loc.idCardDateOfExpiryUpper}:'),
                                       _buildValueText(expiryDate),
                                     ],
                                   ),
@@ -874,7 +879,7 @@ class RealisticIdCard extends StatelessWidget {
                                   child: Column(
                                     crossAxisAlignment: CrossAxisAlignment.start,
                                     children: [
-                                      _buildLabelText('DATE OF ISSUE:'),
+                                      _buildLabelText('${loc.idCardDateOfIssueUpper}:'),
                                       _buildValueText(issueDate),
                                     ],
                                   ),
@@ -897,7 +902,7 @@ class RealisticIdCard extends StatelessWidget {
                   children: [
                     Expanded(
                       child: Text(
-                        '${title.contains('PASSPORT') ? 'Passport No' : title.contains('DRIV') ? 'DL No' : 'Doc No'}: $documentNumber',
+                        '${title.contains('PASSPORT') ? loc.idCardPassportNoShort : title.contains('DRIV') ? loc.idCardDlNo : loc.idCardDocNo}: $documentNumber',
                         style: const TextStyle(
                           fontFamily: 'Roboto Mono',
                           color: Color(0xFF0A1128),
@@ -939,12 +944,13 @@ class RealisticIdCard extends StatelessWidget {
   }
 
   Widget _buildGenericTemplate(BuildContext context) {
+    final loc = AppLocalizations.of(context)!;
     final title = idDoc.idType.toUpperCase();
     
-    final name = _getDecryptedValue('fullName', '••••••••••••').toUpperCase();
-    final documentNumber = _getDecryptedValue('documentNumber', '••••••••••••');
-    final issueDate = _getDecryptedValue('issueDate', '••/••/••••');
-    final expiryDate = _getDecryptedValue('expiryDate', '••/••/••••');
+    final name = _getDecryptedValue(loc, 'fullName', '••••••••••••').toUpperCase();
+    final documentNumber = _getDecryptedValue(loc, 'documentNumber', '••••••••••••');
+    final issueDate = _getDecryptedValue(loc, 'issueDate', '••/••/••••');
+    final expiryDate = _getDecryptedValue(loc, 'expiryDate', '••/••/••••');
 
     return Container(
       width: double.infinity,
@@ -975,7 +981,7 @@ class RealisticIdCard extends StatelessWidget {
                   children: [
                     Expanded(
                       child: Text(
-                        title.isNotEmpty ? title : 'DOCUMENT',
+                        title.isNotEmpty ? title : loc.idCardDocumentFallback,
                         style: const TextStyle(
                           fontFamily: 'Inter', color: Color(0xFFD4AF37), fontSize: 16, fontWeight: FontWeight.w900, letterSpacing: 2.0,
                         ),
@@ -991,7 +997,7 @@ class RealisticIdCard extends StatelessWidget {
                 const SizedBox(height: 24),
                 
                 // Name
-                Text('DOCUMENT HOLDER', style: TextStyle(fontFamily: 'Inter', color: Colors.white.withOpacity(0.5), fontSize: 9, fontWeight: FontWeight.w600, letterSpacing: 1.0)),
+                Text(loc.idCardDocumentHolder, style: TextStyle(fontFamily: 'Inter', color: Colors.white.withOpacity(0.5), fontSize: 9, fontWeight: FontWeight.w600, letterSpacing: 1.0)),
                 Text(
                   name,
                   style: const TextStyle(fontFamily: 'Inter', color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold, letterSpacing: 1.0),
@@ -1010,7 +1016,7 @@ class RealisticIdCard extends StatelessWidget {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text('DOCUMENT NUMBER', style: TextStyle(fontFamily: 'Inter', color: Colors.white.withOpacity(0.5), fontSize: 8, fontWeight: FontWeight.w600, letterSpacing: 1.0)),
+                          Text(loc.idCardDocumentNumberUpper, style: TextStyle(fontFamily: 'Inter', color: Colors.white.withOpacity(0.5), fontSize: 8, fontWeight: FontWeight.w600, letterSpacing: 1.0)),
                           Text(
                             documentNumber,
                             style: const TextStyle(fontFamily: 'Roboto Mono', color: Color(0xFFD4AF37), fontSize: 16, fontWeight: FontWeight.bold, letterSpacing: 2.0),
@@ -1025,7 +1031,7 @@ class RealisticIdCard extends StatelessWidget {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text('VALID FROM', style: TextStyle(fontFamily: 'Inter', color: Colors.white.withOpacity(0.5), fontSize: 8, fontWeight: FontWeight.w600, letterSpacing: 1.0)),
+                          Text(loc.idCardValidFrom, style: TextStyle(fontFamily: 'Inter', color: Colors.white.withOpacity(0.5), fontSize: 8, fontWeight: FontWeight.w600, letterSpacing: 1.0)),
                           Text(issueDate, style: const TextStyle(fontFamily: 'Roboto Mono', color: Colors.white, fontSize: 12, fontWeight: FontWeight.w600)),
                         ],
                       ),
@@ -1035,7 +1041,7 @@ class RealisticIdCard extends StatelessWidget {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text('EXPIRES', style: TextStyle(fontFamily: 'Inter', color: Colors.white.withOpacity(0.5), fontSize: 8, fontWeight: FontWeight.w600, letterSpacing: 1.0)),
+                          Text(loc.idCardExpires, style: TextStyle(fontFamily: 'Inter', color: Colors.white.withOpacity(0.5), fontSize: 8, fontWeight: FontWeight.w600, letterSpacing: 1.0)),
                           Text(expiryDate, style: const TextStyle(fontFamily: 'Roboto Mono', color: Colors.white, fontSize: 12, fontWeight: FontWeight.w600)),
                         ],
                       ),

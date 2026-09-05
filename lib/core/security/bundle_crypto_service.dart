@@ -9,9 +9,16 @@ class BackupPassphraseIncorrect implements Exception {
 }
 
 /// The chosen file is not a Karde backup, or its envelope is damaged.
+///
+/// [details] comes from the platform channel and is for diagnostics only. It
+/// is never shown: it has no locale and no meaning to a user, so the screen
+/// reporting this failure uses its own translated sentence instead.
 class BackupFileUnreadable implements Exception {
-  final String message;
-  const BackupFileUnreadable(this.message);
+  final String? details;
+  const BackupFileUnreadable([this.details]);
+
+  @override
+  String toString() => 'BackupFileUnreadable(${details ?? 'no detail'})';
 }
 
 /// Any other failure while sealing or opening a backup.
@@ -69,7 +76,7 @@ class BundleCryptoService {
       case 'BAD_PASSPHRASE':
         return const BackupPassphraseIncorrect();
       case 'MALFORMED_BACKUP':
-        return BackupFileUnreadable(e.message ?? 'Backup file is damaged');
+        return BackupFileUnreadable(e.message);
       default:
         return BackupCryptoFailure(e.message ?? e.code);
     }

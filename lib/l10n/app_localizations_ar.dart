@@ -59,7 +59,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get cardsFilter => 'البطاقات';
 
   @override
-  String get idsFilter => 'الهويات • قريباً';
+  String get idsFilter => 'الهويات';
 
   @override
   String get addNewCard => 'إضافة بطاقة جديدة';
@@ -141,9 +141,6 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get arabic => 'العربية';
-
-  @override
-  String get amharic => 'አማርኛ';
 
   @override
   String get setupLockTitle => 'تأمين محفظتك';
@@ -287,170 +284,489 @@ class AppLocalizationsAr extends AppLocalizations {
       'تم الوصول إلى الحد الأقصى للمحاولات. يجب عليك إعادة تعيين رقم التعريف.';
 
   @override
-  String get appearance => 'APPEARANCE';
+  String get appearance => 'المظهر';
 
   @override
-  String get theme => 'Theme';
+  String get theme => 'السمة';
 
   @override
-  String get themeDesc => 'System, Light or Dark';
+  String get themeDesc => 'النظام أو فاتح أو داكن';
 
   @override
-  String get appDisplayLanguage => 'App display language';
+  String get appDisplayLanguage => 'لغة عرض التطبيق';
 
   @override
-  String get privacy => 'PRIVACY';
+  String get privacy => 'الخصوصية';
 
   @override
-  String get autoHide => 'Auto-hide sensitive details';
+  String get autoHide => 'إخفاء التفاصيل الحساسة تلقائياً';
 
   @override
-  String get autoHideDesc => 'Mask card number & CVV automatically';
+  String get autoHideDesc => 'إخفاء رقم البطاقة ورمز CVV تلقائياً';
 
   @override
-  String get security => 'SECURITY';
+  String get security => 'الأمان';
 
   @override
-  String get appPinLock => 'App PIN lock';
+  String get appPinLock => 'قفل التطبيق برمز سري';
 
   @override
-  String get appPinLockDesc => 'Require a PIN to open Karde';
+  String get appPinLockDesc => 'طلب رمز سري لفتح Karde';
 
   @override
-  String get biometricUnlockTitle => 'Biometric unlock';
+  String get biometricUnlockTitle => 'الفتح بالبصمة';
 
   @override
-  String get biometricUnlockDesc => 'Use fingerprint to open Karde';
+  String get biometricUnlockDesc => 'استخدم بصمة إصبعك لفتح Karde';
 
   @override
-  String get changePin => 'Change Karde PIN';
+  String get changePin => 'تغيير رمز Karde';
 
   @override
-  String get changePinDesc => 'Update your master PIN';
+  String get changePinDesc => 'تحديث رمزك الرئيسي';
 
   @override
-  String get about => 'ABOUT';
+  String get about => 'حول التطبيق';
 
   @override
-  String get aboutKarde => 'About Karde';
+  String get aboutKarde => 'حول Karde';
 
   @override
-  String get aboutKardeDesc => 'Version, credits & licenses';
+  String get aboutKardeDesc => 'الإصدار والاعتمادات والتراخيص';
 
   @override
-  String get privacyPolicy => 'Privacy Policy';
+  String get privacyPolicy => 'سياسة الخصوصية';
 
   @override
-  String get privacyPolicyDesc => 'How your data stays on-device';
+  String get privacyPolicyDesc => 'كيف تبقى بياناتك على جهازك';
 
   @override
-  String get mustKeepOneLock =>
-      'You must keep at least one lock method enabled.';
+  String get mustKeepOneLock => 'يجب إبقاء طريقة قفل واحدة على الأقل مفعّلة.';
 
   @override
   String get biometricsNotSupported =>
-      'Biometrics are not supported on this device.';
+      'القياسات الحيوية غير مدعومة على هذا الجهاز.';
 
   @override
-  String get biometricsError => 'Error checking biometric support.';
+  String get biometricsError => 'تعذر التحقق من دعم القياسات الحيوية.';
 
   @override
-  String get invalidCardLength => 'Invalid card length';
+  String get invalidCardLength => 'طول رقم البطاقة غير صالح';
 
   @override
-  String get invalidCardNumber => 'Invalid card number';
+  String get invalidCardNumber => 'رقم البطاقة غير صالح';
 
   @override
-  String get invalidExpiryFormat => 'Format must be MM/YY';
+  String get invalidExpiryFormat => 'يجب أن يكون التنسيق شهر/سنة';
 
   @override
-  String get invalidMonth => 'Invalid month';
+  String get invalidMonth => 'شهر غير صالح';
 
   @override
-  String get cardExpired => 'Card has expired';
+  String get cardExpired => 'انتهت صلاحية البطاقة';
 
   @override
-  String get invalidCvvLength => 'CVV must be 3 or 4 digits';
+  String get invalidCvvLength => 'يجب أن يتكون رمز CVV من 3 أو 4 أرقام';
 
   @override
-  String get numbersOnly => 'Numbers only';
+  String get numbersOnly => 'أرقام فقط';
 
   @override
-  String get lettersAndSymbolsNotAllowed =>
-      'Letters and symbols are not allowed';
+  String get lettersAndSymbolsNotAllowed => 'الحروف والرموز غير مسموح بها';
 
   @override
-  String get kardeIsLocked => 'Karde is Locked';
+  String get kardeIsLocked => 'Karde مقفل';
 
   @override
-  String get authenticateToAccess => 'Authenticate to access your vault.';
+  String get authenticateToAccess => 'تحقق من هويتك للوصول إلى خزنتك.';
 
   @override
-  String get authenticating => 'Authenticating...';
+  String get authenticating => 'جارٍ التحقق…';
 
   @override
-  String get unlockKarde => 'Unlock Karde';
+  String get unlockKarde => 'فتح Karde';
 
   @override
-  String get exitApp => 'Exit App';
+  String get exitApp => 'إغلاق التطبيق';
 
   @override
-  String get enterCurrentPin => 'Enter your current Karde PIN';
+  String get enterCurrentPin => 'أدخل رمز Karde الحالي';
 
   @override
-  String get createKardePin => 'Create Karde PIN';
+  String get createKardePin => 'إنشاء رمز Karde';
 
   @override
-  String get pinChangedSuccess => 'PIN Successfully Changed';
+  String get pinChangedSuccess => 'تم تغيير الرمز بنجاح';
 
   @override
-  String get done => 'Done';
+  String get done => 'تم';
 
   @override
-  String get addAnId => 'Add an ID';
+  String get addAnId => 'إضافة هوية';
 
   @override
-  String get idDetails => 'ID Details';
+  String get idDetails => 'تفاصيل الهوية';
 
   @override
-  String get documentType => 'Document Type';
+  String get documentType => 'نوع المستند';
 
   @override
-  String get documentNumber => 'Document Number';
+  String get documentNumber => 'رقم المستند';
 
   @override
-  String get fullName => 'Full Name';
+  String get fullName => 'الاسم الكامل';
 
   @override
-  String get dateOfBirth => 'Date of Birth';
+  String get dateOfBirth => 'تاريخ الميلاد';
 
   @override
-  String get sexGender => 'Sex / Gender';
+  String get sexGender => 'الجنس';
 
   @override
-  String get issuingAuthority => 'Issuing Country / Authority';
+  String get issuingAuthority => 'بلد أو جهة الإصدار';
 
   @override
-  String get issueDate => 'Issue Date';
+  String get issueDate => 'تاريخ الإصدار';
 
   @override
-  String get expiryDate => 'Expiry Date';
+  String get expiryDate => 'تاريخ الانتهاء';
 
   @override
-  String get placeOfBirth => 'Place of Birth';
+  String get placeOfBirth => 'مكان الميلاد';
 
   @override
-  String get personalId => 'Personal ID / SSN';
+  String get personalId => 'المعرّف الشخصي';
 
   @override
-  String get bloodGroup => 'Blood Group';
+  String get bloodGroup => 'فصيلة الدم';
 
   @override
-  String get tabAll => 'All';
+  String get tabAll => 'الكل';
 
   @override
-  String get tabCards => 'Cards';
+  String get tabCards => 'البطاقات';
 
   @override
-  String get tabIds => 'IDs';
+  String get tabIds => 'الهويات';
+
+  @override
+  String get idCardNotAvailable => 'غير متاح';
+
+  @override
+  String get idCardPassportTitle => 'جواز سفر دولي';
+
+  @override
+  String get idCardType => 'النوع';
+
+  @override
+  String get idCardCodeOfIssuingState => 'رمز الدولة المُصدِرة';
+
+  @override
+  String get idCardPassportNo => 'رقم جواز السفر';
+
+  @override
+  String get idCardSurname => 'اللقب';
+
+  @override
+  String get idCardGivenNames => 'الأسماء الشخصية';
+
+  @override
+  String get idCardNationalityUpper => 'الجنسية';
+
+  @override
+  String get idCardDobUpper => 'تاريخ الميلاد';
+
+  @override
+  String get idCardSexUpper => 'الجنس';
+
+  @override
+  String get idCardPlaceOfBirthUpper => 'مكان الميلاد';
+
+  @override
+  String get idCardAuthorityUpper => 'الجهة المُصدِرة';
+
+  @override
+  String get idCardDateOfIssueUpper => 'تاريخ الإصدار';
+
+  @override
+  String get idCardDateOfExpiryUpper => 'تاريخ الانتهاء';
+
+  @override
+  String get idCardHoldersSignature => 'توقيع حامل الوثيقة';
+
+  @override
+  String get idCardResidencePermitTitle => 'تصريح إقامة بيومتري';
+
+  @override
+  String get idCardName => 'الاسم';
+
+  @override
+  String get idCardGender => 'النوع';
+
+  @override
+  String get idCardNationality => 'الجنسية';
+
+  @override
+  String get idCardDocumentNo => 'رقم المستند';
+
+  @override
+  String get idCardNationalFallback => 'وطنية';
+
+  @override
+  String get idCardIdCard => 'بطاقة هوية';
+
+  @override
+  String get idCardNationalIdLogo => 'الهوية الوطنية';
+
+  @override
+  String get idCardEthiopianDigitalId => 'بطاقة الهوية الرقمية الإثيوبية';
+
+  @override
+  String get idCardEthiopianFullName => 'الاسم الأول والأوسط واللقب';
+
+  @override
+  String get idCardFullNameUpper => 'الاسم الكامل';
+
+  @override
+  String get idCardDateOfExpiry => 'تاريخ الانتهاء';
+
+  @override
+  String get idCardCountryOfCitizenship => 'بلد المواطنة (حسب التصريح الذاتي)';
+
+  @override
+  String get idCardIssuingAuthorityUpper => 'الجهة المُصدِرة';
+
+  @override
+  String get idCardIdNo => 'رقم الهوية';
+
+  @override
+  String get idCardDrivingLicenceTitle => 'رخصة قيادة';
+
+  @override
+  String get idCardNameUpper => 'الاسم';
+
+  @override
+  String get idCardPassportNoShort => 'رقم الجواز';
+
+  @override
+  String get idCardDlNo => 'رقم الرخصة';
+
+  @override
+  String get idCardDocNo => 'رقم المستند';
+
+  @override
+  String get idCardDocumentFallback => 'مستند';
+
+  @override
+  String get idCardDocumentHolder => 'حامل المستند';
+
+  @override
+  String get idCardDocumentNumberUpper => 'رقم المستند';
+
+  @override
+  String get idCardValidFrom => 'صالحة من';
+
+  @override
+  String get idCardExpires => 'تنتهي في';
+
+  @override
+  String get genericError => 'حدث خطأ ما. يرجى المحاولة مرة أخرى.';
+
+  @override
+  String get backupTitle => 'النسخ الاحتياطي والاستعادة';
+
+  @override
+  String get backupCouldNotReadVault =>
+      'تعذّرت قراءة خزنتك. يرجى المحاولة مرة أخرى.';
+
+  @override
+  String get backupVaultEmpty => 'لا يوجد شيء في خزنتك لنسخه احتياطياً بعد.';
+
+  @override
+  String backupConfirmTitle(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'نسخ $count عنصر احتياطياً',
+      many: 'نسخ $count عنصراً احتياطياً',
+      few: 'نسخ $count عناصر احتياطياً',
+      two: 'نسخ عنصرين احتياطياً',
+      one: 'نسخ عنصر واحد احتياطياً',
+      zero: 'نسخ $count عنصر احتياطياً',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get backupConfirmMessage =>
+      'سيطلب منك هاتفك تأكيد هويتك عدة مرات أثناء تنفيذ هذه العملية.\n\nبعد ذلك ستختار عبارة مرور ومكان حفظ الملف.';
+
+  @override
+  String get backupPreparing => 'جارٍ تجهيز النسخة الاحتياطية';
+
+  @override
+  String get backupUnlockingVault => 'جارٍ فتح خزنتك';
+
+  @override
+  String backupSavedAs(String fileName) {
+    return 'تم حفظ النسخة الاحتياطية باسم $fileName.';
+  }
+
+  @override
+  String get backupOpening => 'جارٍ فتح النسخة الاحتياطية';
+
+  @override
+  String get backupAllDuplicates =>
+      'كل ما في تلك النسخة الاحتياطية موجود بالفعل في خزنتك.';
+
+  @override
+  String get backupNoItems => 'لا تحتوي تلك النسخة الاحتياطية على أي عناصر.';
+
+  @override
+  String backupSkippedNote(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count عنصر موجود بالفعل في خزنتك وسيتم تخطيه.',
+      many: '$count عنصراً موجودة بالفعل في خزنتك وسيتم تخطيها.',
+      few: '$count عناصر موجودة بالفعل في خزنتك وسيتم تخطيها.',
+      two: 'عنصران موجودان بالفعل في خزنتك وسيتم تخطيهما.',
+      one: 'عنصر واحد موجود بالفعل في خزنتك وسيتم تخطيه.',
+      zero: '$count عنصر موجود بالفعل في خزنتك وسيتم تخطيه.',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String backupRestoreConfirmTitle(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'استعادة $count عنصر',
+      many: 'استعادة $count عنصراً',
+      few: 'استعادة $count عناصر',
+      two: 'استعادة عنصرين',
+      one: 'استعادة عنصر واحد',
+      zero: 'استعادة $count عنصر',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String backupRestoreConfirmMessage(String skipped) {
+    return 'سيطلب منك هاتفك تأكيد هويتك عدة مرات أثناء تنفيذ هذه العملية.$skipped\n\nلن يُحذف أو يُعدَّل أي شيء موجود بالفعل في خزنتك.';
+  }
+
+  @override
+  String get backupRestoreConfirmAction => 'استعادة';
+
+  @override
+  String get backupRestoring => 'جارٍ الاستعادة';
+
+  @override
+  String backupRestoredCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'تمت استعادة $count عنصر إلى خزنتك.',
+      many: 'تمت استعادة $count عنصراً إلى خزنتك.',
+      few: 'تمت استعادة $count عناصر إلى خزنتك.',
+      two: 'تمت استعادة عنصرين إلى خزنتك.',
+      one: 'تمت استعادة عنصر واحد إلى خزنتك.',
+      zero: 'تمت استعادة $count عنصر إلى خزنتك.',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get backupRestoreCancelled => 'تم إلغاء الاستعادة. لم يتغيّر أي شيء.';
+
+  @override
+  String get backupWrongPassphrase =>
+      'عبارة المرور هذه لا تفتح هذه النسخة الاحتياطية. تحقق منها وحاول مرة أخرى.';
+
+  @override
+  String get backupFileChooseAgain =>
+      'تعذّرت قراءة هذا الملف. حاول اختياره مرة أخرى.';
+
+  @override
+  String get backupNeedsScreenLock =>
+      'اضبط قفل شاشة على جهازك قبل النسخ الاحتياطي أو الاستعادة.';
+
+  @override
+  String get backupKeyInvalidated =>
+      'لم يعد مفتاح خزنتك صالحاً، لذا لا يمكن قراءة العناصر الموجودة. لا تزال الاستعادة من نسخة احتياطية تعمل.';
+
+  @override
+  String get backupExplainerPassphrase =>
+      'نسختك الاحتياطية مقفلة بعبارة مرور تختارها أنت. بدونها يصبح الملف غير قابل للقراءة — ولا يستطيع Karde استرجاعها لك، لذا احتفظ بها في مكان آمن.';
+
+  @override
+  String get backupExplainerOffline =>
+      'لا يُرفع أي شيء إلى الإنترنت. أنت تختار مكان الملف، ويمكن استعادته على هذا الهاتف أو على هاتف جديد.';
+
+  @override
+  String get backupCreateTitle => 'إنشاء نسخة احتياطية';
+
+  @override
+  String get backupCreateSubtitle =>
+      'احفظ نسخة مقفلة من كل ما في خزنتك، في المكان الذي تختاره.';
+
+  @override
+  String get backupCreateAction => 'انسخ احتياطياً الآن';
+
+  @override
+  String get backupRestoreCardTitle => 'استعادة نسخة احتياطية';
+
+  @override
+  String get backupRestoreCardSubtitle =>
+      'أضف العناصر من ملف نسخة احتياطية إلى هذه الخزنة. تبقى العناصر الموجودة كما هي، ويُتخطى كل ما هو موجود بالفعل.';
+
+  @override
+  String get backupRestoreCardAction => 'اختر ملفاً';
+
+  @override
+  String get backupKeepFileSafe =>
+      'احتفظ بملف النسخة الاحتياطية في مكان تثق به. فهو يحوي كل ما في خزنتك، ولا يحميه سوى عبارة المرور التي اخترتها.';
+
+  @override
+  String backupProgressCount(String label, int completed, int total) {
+    return '$label — $completed من $total';
+  }
+
+  @override
+  String get backupConfirmIdentityHint =>
+      'أكّد هويتك عندما يطلب منك هاتفك ذلك. يوقف الإلغاء كل شيء بأمان — ولا يتغيّر أي شيء.';
+
+  @override
+  String get backupProblemDamaged => 'محتويات النسخة الاحتياطية تالفة.';
+
+  @override
+  String get backupProblemNotKardeBackup =>
+      'هذا الملف ليس نسخة احتياطية لخزنة Karde.';
+
+  @override
+  String get backupProblemNewerVersion =>
+      'أُنشئت هذه النسخة الاحتياطية بإصدار أحدث من Karde. حدّث التطبيق وحاول مرة أخرى.';
+
+  @override
+  String get backupProblemPhotoDamaged =>
+      'إحدى الصور في النسخة الاحتياطية تالفة.';
+
+  @override
+  String backupProblemMissingValue(String key) {
+    return 'تفتقر النسخة الاحتياطية إلى القيمة \"$key\".';
+  }
+
+  @override
+  String backupProblemUnreadableValue(String key) {
+    return 'القيمة \"$key\" في النسخة الاحتياطية غير قابلة للقراءة.';
+  }
+
+  @override
+  String get backupProblemRecordUnreadable => 'تعذّرت قراءة أحد سجلات الخزنة.';
+
+  @override
+  String get backupProblemFileDamaged =>
+      'تعذّرت قراءة ملف النسخة الاحتياطية هذا. قد يكون تالفاً.';
 }

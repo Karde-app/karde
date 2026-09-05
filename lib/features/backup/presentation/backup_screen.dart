@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../l10n/app_localizations.dart';
 import '../../../core/platform/file_transfer_service.dart';
 import '../../../core/security/bundle_crypto_service.dart';
 import '../../../core/security/encryption_service.dart';
@@ -44,6 +45,9 @@ class _BackupScreenState extends ConsumerState<BackupScreen> {
   }
 
   Future<void> _export() async {
+    // Captured before the first await: this is plain data, so holding it avoids
+    // reaching back into `context` after every asynchronous gap.
+    final loc = AppLocalizations.of(context)!;
     final service = ref.read(backupServiceProvider);
 
     final int itemCount;
@@ -51,14 +55,14 @@ class _BackupScreenState extends ConsumerState<BackupScreen> {
       itemCount = await service.countExportableItems();
     } catch (_) {
       if (mounted) {
-        KardeFeedback.error(context, 'Could not read your vault. Please try again.');
+        KardeFeedback.error(context, loc.backupCouldNotReadVault);
       }
       return;
     }
 
     if (!mounted) return;
     if (itemCount == 0) {
-      KardeFeedback.info(context, 'There is nothing in your vault to back up yet.');
+      KardeFeedback.info(context, loc.backupVaultEmpty);
       return;
     }
 
@@ -68,11 +72,9 @@ class _BackupScreenState extends ConsumerState<BackupScreen> {
     // own payload.
     final proceed = await KardeConfirmDialog.show(
       context,
-      title: 'Back up $itemCount item${itemCount == 1 ? '' : 's'}',
-      message: 'Your phone will ask you to confirm your identity a few times '
-          'while this runs.\n\n'
-          'Next you will choose a passphrase and where to save the file.',
-      confirmLabel: 'Continue',
+      title: loc.backupConfirmTitle(itemCount),
+      message: loc.backupConfirmMessage,
+      confirmLabel: loc.continueBtn,
       isDestructive: false,
     );
     if (!proceed || !mounted) return;
@@ -80,30 +82,31 @@ class _BackupScreenState extends ConsumerState<BackupScreen> {
     final passphrase = await PassphraseDialog.show(context, isCreating: true);
     if (passphrase == null || !mounted) return;
 
-    _report('Preparing backup', 0, itemCount);
+    _report(loc.backupPreparing, 0, itemCount);
     try {
       final fileName = await service.exportVault(
         passphrase: passphrase,
-        onProgress: (completed, total) => _report('Unlocking your vault', completed, total),
+        onProgress: (completed, total) => _report(loc.backupUnlockingVault, completed, total),
       );
       if (!mounted) return;
-      KardeFeedback.success(context, 'Backup saved as $fileName.');
+      KardeFeedback.success(context, loc.backupSavedAs(fileName));
     } on VaultAuthCancelled {
       // A dismissed prompt is a decision. Nothing was written.
     } on FileTransferCancelled {
       // The user backed out of choosing a location. Nothing was written.
     } on BackupVaultEmpty {
       if (mounted) {
-        KardeFeedback.info(context, 'There is nothing in your vault to back up yet.');
+        KardeFeedback.info(context, loc.backupVaultEmpty);
       }
     } catch (e) {
-      if (mounted) KardeFeedback.error(context, _describe(e));
+      if (mounted) KardeFeedback.error(context, _describe(loc, e));
     } finally {
       _done();
     }
   }
 
   Future<void> _restore() async {
+    final loc = AppLocalizations.of(context)!;
     final service = ref.read(backupServiceProvider);
 
     final String envelope;
@@ -112,7 +115,7 @@ class _BackupScreenState extends ConsumerState<BackupScreen> {
     } on FileTransferCancelled {
       return;
     } catch (e) {
-      if (mounted) KardeFeedback.error(context, _describe(e));
+      if (mounted) KardeFeedback.error(context, _describe(loc, e));
       return;
     }
 
@@ -120,12 +123,12 @@ class _BackupScreenState extends ConsumerState<BackupScreen> {
     final passphrase = await PassphraseDialog.show(context, isCreating: false);
     if (passphrase == null || !mounted) return;
 
-    _report('Opening backup', 0, 0);
+    _report(loc.backupOpening, 0, 0);
     final ImportPlan plan;
     try {
       plan = await service.planImport(envelope: envelope, passphrase: passphrase);
     } catch (e) {
-      if (mounted) KardeFeedback.error(context, _describe(e));
+      if (mounted) KardeFeedback.error(context, _describe(loc, e));
       _done();
       return;
     }
@@ -136,47 +139,44 @@ class _BackupScreenState extends ConsumerState<BackupScreen> {
       KardeFeedback.info(
         context,
         plan.duplicateCount > 0
-            ? 'Everything in that backup is already in your vault.'
-            : 'That backup does not contain any items.',
+            ? loc.backupAllDuplicates
+            : loc.backupNoItems,
       );
       return;
     }
 
     final skipped = plan.duplicateCount > 0
-        ? '\n\n${plan.duplicateCount} item${plan.duplicateCount == 1 ? ' is' : 's are'} '
-            'already in your vault and will be skipped.'
+        ? '\n\n${loc.backupSkippedNote(plan.duplicateCount)}'
         : '';
 
     final proceed = await KardeConfirmDialog.show(
       context,
-      title: 'Restore ${plan.newItemCount} item${plan.newItemCount == 1 ? '' : 's'}',
-      message: 'Your phone will ask you to confirm your identity a few times '
-          'while this runs.$skipped\n\n'
-          'Nothing already in your vault is removed or changed.',
-      confirmLabel: 'Restore',
+      title: loc.backupRestoreConfirmTitle(plan.newItemCount),
+      message: loc.backupRestoreConfirmMessage(skipped),
+      confirmLabel: loc.backupRestoreConfirmAction,
       isDestructive: false,
     );
     if (!proceed || !mounted) return;
 
-    _report('Restoring', 0, plan.newItemCount);
+    _report(loc.backupRestoring, 0, plan.newItemCount);
     try {
       final restored = await service.restore(
         plan: plan,
-        onProgress: (completed, total) => _report('Restoring', completed, total),
+        onProgress: (completed, total) => _report(loc.backupRestoring, completed, total),
       );
       ref.invalidate(cardsProvider);
       ref.invalidate(idsProvider);
       if (!mounted) return;
       KardeFeedback.success(
         context,
-        'Restored $restored item${restored == 1 ? '' : 's'} to your vault.',
+        loc.backupRestoredCount(restored),
       );
     } on VaultAuthCancelled {
       if (mounted) {
-        KardeFeedback.info(context, 'Restore cancelled. Nothing was changed.');
+        KardeFeedback.info(context, loc.backupRestoreCancelled);
       }
     } catch (e) {
-      if (mounted) KardeFeedback.error(context, _describe(e));
+      if (mounted) KardeFeedback.error(context, _describe(loc, e));
     } finally {
       _done();
     }
@@ -185,31 +185,44 @@ class _BackupScreenState extends ConsumerState<BackupScreen> {
   /// Turns the typed failures into something a user can act on. Anything
   /// unrecognised gets a generic sentence rather than a raw exception
   /// (audit finding 4-2).
-  String _describe(Object error) {
-    if (error is BackupPassphraseIncorrect) {
-      return 'That passphrase does not open this backup. Check it and try again.';
+  String _describe(AppLocalizations loc, Object error) {
+    if (error is BackupPassphraseIncorrect) return loc.backupWrongPassphrase;
+    if (error is BackupFileUnreadable) return loc.backupProblemFileDamaged;
+    if (error is BackupContentInvalid) return _describeContent(loc, error);
+    if (error is FileTransferFailure) return loc.backupFileChooseAgain;
+    if (error is VaultUnavailable) return loc.backupNeedsScreenLock;
+    if (error is VaultKeyInvalidated) return loc.backupKeyInvalidated;
+    return loc.genericError;
+  }
+
+  /// Puts a sentence to a [BackupContentProblem]. The domain layer reports the
+  /// code; the wording only exists here, where there is a locale to pick it in.
+  String _describeContent(AppLocalizations loc, BackupContentInvalid error) {
+    switch (error.problem) {
+      case BackupContentProblem.damaged:
+        return loc.backupProblemDamaged;
+      case BackupContentProblem.notAKardeBackup:
+        return loc.backupProblemNotKardeBackup;
+      case BackupContentProblem.newerVersion:
+        return loc.backupProblemNewerVersion;
+      case BackupContentProblem.photoDamaged:
+        return loc.backupProblemPhotoDamaged;
+      case BackupContentProblem.recordUnreadable:
+        return loc.backupProblemRecordUnreadable;
+      case BackupContentProblem.missingValue:
+        return loc.backupProblemMissingValue(error.key ?? '');
+      case BackupContentProblem.unreadableValue:
+        return loc.backupProblemUnreadableValue(error.key ?? '');
     }
-    if (error is BackupFileUnreadable) return error.message;
-    if (error is BackupContentInvalid) return error.message;
-    if (error is FileTransferFailure) {
-      return 'That file could not be read. Try choosing it again.';
-    }
-    if (error is VaultUnavailable) {
-      return 'Set a screen lock on your device before backing up or restoring.';
-    }
-    if (error is VaultKeyInvalidated) {
-      return 'Your vault key is no longer valid, so existing items cannot be read. '
-          'Restoring from a backup will still work.';
-    }
-    return 'Something went wrong. Please try again.';
   }
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final loc = AppLocalizations.of(context)!;
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Backup & restore')),
+      appBar: AppBar(title: Text(loc.backupTitle)),
       body: AbsorbPointer(
         absorbing: _isBusy,
         child: ListView(
@@ -217,33 +230,28 @@ class _BackupScreenState extends ConsumerState<BackupScreen> {
           children: [
             _Explainer(
               icon: Icons.lock_outline,
-              text: 'Your backup is locked with a passphrase you choose. Without '
-                  'it the file is unreadable — and Karde cannot recover it for '
-                  'you, so keep it somewhere safe.',
+              text: loc.backupExplainerPassphrase,
             ),
             const SizedBox(height: 12),
             _Explainer(
               icon: Icons.cloud_off_outlined,
-              text: 'Nothing is uploaded. You pick where the file goes, and it can '
-                  'be restored on this phone or on a new one.',
+              text: loc.backupExplainerOffline,
             ),
             const SizedBox(height: 28),
             _ActionCard(
               icon: Icons.ios_share,
-              title: 'Create a backup',
-              subtitle: 'Save a locked copy of everything in your vault, '
-                  'wherever you choose.',
-              actionLabel: 'Back up now',
+              title: loc.backupCreateTitle,
+              subtitle: loc.backupCreateSubtitle,
+              actionLabel: loc.backupCreateAction,
               enabled: !_isBusy,
               onPressed: _export,
             ),
             const SizedBox(height: 16),
             _ActionCard(
               icon: Icons.settings_backup_restore,
-              title: 'Restore a backup',
-              subtitle: 'Add the items from a backup file to this vault. Existing '
-                  'items are kept, and anything already here is skipped.',
-              actionLabel: 'Choose a file',
+              title: loc.backupRestoreCardTitle,
+              subtitle: loc.backupRestoreCardSubtitle,
+              actionLabel: loc.backupRestoreCardAction,
               enabled: !_isBusy,
               onPressed: _restore,
             ),
@@ -253,8 +261,7 @@ class _BackupScreenState extends ConsumerState<BackupScreen> {
             ],
             const SizedBox(height: 28),
             Text(
-              'Keep the backup file somewhere you trust. It holds everything in '
-              'your vault, protected only by the passphrase you chose.',
+              loc.backupKeepFileSafe,
               style: theme.textTheme.bodyMedium?.copyWith(fontSize: 12.5, height: 1.5),
             ),
           ],
@@ -283,6 +290,7 @@ class _ProgressPanel extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final loc = AppLocalizations.of(context)!;
     final counted = progress.total > 0;
 
     return Container(
@@ -297,7 +305,7 @@ class _ProgressPanel extends StatelessWidget {
         children: [
           Text(
             counted
-                ? '${progress.label} — ${progress.completed} of ${progress.total}'
+                ? loc.backupProgressCount(progress.label, progress.completed, progress.total)
                 : progress.label,
             style: TextStyle(
               fontFamily: 'Inter',
@@ -317,8 +325,7 @@ class _ProgressPanel extends StatelessWidget {
           ),
           const SizedBox(height: 12),
           Text(
-            'Confirm your identity when your phone asks. Cancelling stops '
-            'everything safely — nothing is changed.',
+            loc.backupConfirmIdentityHint,
             style: theme.textTheme.bodyMedium?.copyWith(fontSize: 12, height: 1.4),
           ),
         ],
