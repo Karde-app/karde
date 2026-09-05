@@ -1,0 +1,224 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Karde — Privacy Policy</title>
+<meta name="description" content="Privacy policy for Karde, an offline encrypted wallet for cards and ID documents.">
+<style>
+  :root {
+    --ink: #14161a;
+    --muted: #5b6470;
+    --rule: #e3e6ea;
+    --accent: #9a7b3f;
+    --bg: #ffffff;
+    --panel: #f7f8f9;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --ink: #e9ecef; --muted: #a2abb6; --rule: #2a2f36;
+      --accent: #c9a961; --bg: #14161a; --panel: #1b1e23;
+    }
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--ink);
+    font: 16px/1.65 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    -webkit-text-size-adjust: 100%;
+  }
+  .wrap { max-width: 46rem; margin: 0 auto; padding: 3rem 1.25rem 5rem; }
+  header { border-bottom: 1px solid var(--rule); padding-bottom: 1.5rem; margin-bottom: 2rem; }
+  h1 { font-size: 1.9rem; line-height: 1.2; margin: 0 0 .4rem; letter-spacing: -.01em; }
+  .sub { color: var(--muted); margin: 0; font-size: .95rem; }
+  h2 {
+    font-size: 1.15rem; margin: 2.5rem 0 .6rem; letter-spacing: -.005em;
+    padding-top: .4rem;
+  }
+  p, li { color: var(--ink); }
+  ul { padding-left: 1.2rem; }
+  li { margin: .35rem 0; }
+  .lede {
+    background: var(--panel);
+    border-left: 3px solid var(--accent);
+    padding: 1rem 1.1rem;
+    border-radius: 0 8px 8px 0;
+    margin: 0 0 1rem;
+  }
+  .lede strong { color: var(--ink); }
+  table { border-collapse: collapse; width: 100%; margin: .8rem 0; font-size: .94rem; }
+  th, td { text-align: left; padding: .55rem .6rem; border-bottom: 1px solid var(--rule); vertical-align: top; }
+  th { color: var(--muted); font-weight: 600; }
+  code { background: var(--panel); padding: .1rem .35rem; border-radius: 4px; font-size: .9em; }
+  a { color: var(--accent); }
+  footer {
+    margin-top: 3.5rem; padding-top: 1.25rem; border-top: 1px solid var(--rule);
+    color: var(--muted); font-size: .9rem;
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+  <h1>Karde — Privacy Policy</h1>
+  <p class="sub">Last updated: 5 September 2026 · Applies to the Karde Android app (<code>com.karde.app</code>)</p>
+</header>
+
+<p class="lede">
+  <strong>Karde collects nothing.</strong> It has no account, no server, and no internet
+  permission. Everything you put into it is encrypted and stays on your phone. We — the
+  developers — cannot see your cards, your documents, your photos, your PIN, or anything
+  else you store, because none of it ever reaches us.
+</p>
+
+<h2>1. Who this policy is from</h2>
+<p>
+  Karde is published by Temesgen Tilahun. If you have a question about this policy or about
+  the app, write to <a href="mailto:support@getgubae.com">support@getgubae.com</a>.
+</p>
+
+<h2>2. What Karde collects</h2>
+<p>
+  Nothing. Karde does not collect, transmit, sell, share, or analyse any personal
+  information. There is no analytics SDK, no advertising SDK, no crash reporting service,
+  and no account system.
+</p>
+<p>
+  The app is built without the Android <code>INTERNET</code> permission. That is a
+  technical guarantee rather than a promise: the operating system will refuse any network
+  request the app attempts, so data cannot leave your device through Karde even if a bug
+  or a future dependency tried to send it.
+</p>
+
+<h2>3. What you store, and where it lives</h2>
+<p>
+  You may choose to enter card details, identity document details, private notes, and
+  photographs of your documents. All of it is written only to Karde's private storage area
+  on your own device.
+</p>
+<table>
+  <tr><th>What</th><th>Where it is kept</th></tr>
+  <tr><td>Card and document details, notes, photos</td><td>Encrypted in an app-private database on your phone</td></tr>
+  <tr><td>Your Karde PIN</td><td>Stored as a one-way hash, never in readable form</td></tr>
+  <tr><td>Security question answers</td><td>Stored as one-way hashes, never in readable form</td></tr>
+  <tr><td>Your settings</td><td>App-private preferences on your phone</td></tr>
+</table>
+
+<h2>4. Encryption</h2>
+<p>
+  Your entries are encrypted with AES-256-GCM. The encryption key is generated inside your
+  phone's hardware-backed Android Keystore and is marked so that it can never be exported
+  from the device.
+</p>
+<p>
+  Using that key requires you to confirm your identity — your fingerprint, face, or device
+  screen lock — every time. This is why Karde cannot open your vault unless your phone has
+  a screen lock set.
+</p>
+<p>
+  One consequence is worth stating plainly: <strong>if you remove or reset your phone's
+  screen lock, Android destroys that key.</strong> Your stored items become permanently
+  unreadable, and nobody — including us — can recover them. An encrypted backup is the
+  only thing that survives it.
+</p>
+
+<h2>5. Permissions Karde asks for</h2>
+<table>
+  <tr><th>Permission</th><th>Why</th></tr>
+  <tr>
+    <td><code>USE_BIOMETRIC</code></td>
+    <td>To ask for your fingerprint or face before unlocking the app or revealing an item. The biometric check happens inside Android; Karde never receives your fingerprint or face data.</td>
+  </tr>
+</table>
+<p>
+  That is the entire list. Karde does not request internet access, the camera permission,
+  contacts, location, or access to your photo library. When you attach a photograph, Karde
+  hands the job to the camera or gallery app you already have and receives only the single
+  picture you chose.
+</p>
+
+<h2>6. Photographs of documents</h2>
+<p>
+  A photograph you attach is encrypted together with the record it belongs to. Before it is
+  stored, Karde strips every EXIF tag the original carried — including the GPS coordinates
+  a phone normally writes into a picture, which on a photograph of an identity document
+  would otherwise record where its owner lives.
+</p>
+
+<h2>7. Backups</h2>
+<p>
+  Karde can export your whole vault to a single encrypted file. This happens only when you
+  ask for it. You choose the passphrase and you choose where the file is saved.
+</p>
+<p>
+  Nothing is uploaded anywhere. The passphrase is never stored and never leaves your
+  device, which also means we cannot recover it for you. If you lose the passphrase, the
+  backup file cannot be opened by anyone, including us.
+</p>
+<p>
+  Android's own automatic cloud backup is switched off for Karde
+  (<code>allowBackup="false"</code>), so your vault is never copied to Google Drive.
+</p>
+
+<h2>8. Screenshots</h2>
+<p>
+  Karde marks its windows as secure, so Android blocks screenshots and screen recording
+  inside the app and hides its contents from the recent-apps preview.
+</p>
+
+<h2>9. Deleting your data</h2>
+<p>
+  You are in full control and no request to us is necessary, because we hold nothing to
+  delete. You can:
+</p>
+<ul>
+  <li>delete any single card or document from within the app;</li>
+  <li>use <strong>Settings → Erase vault</strong> to permanently destroy every card,
+      document, photo, your PIN and your settings; or</li>
+  <li>uninstall Karde, which removes its private storage along with it.</li>
+</ul>
+<p>
+  Because nothing is stored in a cloud, any of these is final. Encrypted backup files you
+  saved yourself are not affected — delete those wherever you put them.
+</p>
+
+<h2>10. Children</h2>
+<p>
+  Karde is not directed at children and is not designed for or marketed to anyone under 13.
+  It collects no information from anyone, children included.
+</p>
+
+<h2>11. Third parties</h2>
+<p>
+  Karde contains no advertising, no analytics, and no third-party tracking of any kind. No
+  data is shared with any third party, because no data is gathered in the first place.
+</p>
+<p>
+  If you install Karde through Google Play, Google collects its own information about the
+  installation under Google's privacy policy. That is between you and Google; it is
+  outside Karde and outside our sight.
+</p>
+
+<h2>12. Changes to this policy</h2>
+<p>
+  If this policy changes, the new version will be posted at this address and the date at
+  the top will be updated. Substantive changes will also be noted in the app's release
+  notes on Google Play.
+</p>
+
+<h2>13. Contact</h2>
+<p>
+  Questions, concerns, or anything unclear:
+  <a href="mailto:support@getgubae.com">support@getgubae.com</a>.
+</p>
+
+<footer>
+  Karde · Offline encrypted wallet · This policy covers the Android application
+  <code>com.karde.app</code> and no other product.
+</footer>
+
+</div>
+</body>
+</html>

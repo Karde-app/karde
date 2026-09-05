@@ -1045,7 +1045,7 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String aboutDialogBody(String name, String version) {
-    return '$name Secure Wallet v$version\n\nخزنة مشفّرة لبطاقاتك، تعمل بالكامل دون اتصال بالإنترنت.';
+    return '$name v$version\n\nمحفظة تعمل دون اتصال بالإنترنت، للبطاقات والمستندات التي تفضّل ألا تحملها معك.\n\nكل ما تحفظه مشفّر على هذا الهاتف ويُفتح ببصمتك. لا يملك Karde حساباً ولا وصولاً إلى الإنترنت، لذا لا يمكن لأي شيء تخزّنه أن يغادر جهازك — لا إلينا ولا إلى أي جهة أخرى.\n\nولأنه لا يُحفظ شيء في أي مكان آخر، فإن النسخة الاحتياطية المشفّرة هي الطريقة الوحيدة لنقل خزنتك إلى هاتف جديد.';
   }
 
   @override
@@ -1463,4 +1463,18 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get cardholderPlaceholder => 'الاسم واللقب';
+
+  @override
+  String get privacySection7Title => '7. حافظ على قفل شاشتك';
+
+  @override
+  String get privacySection7Body =>
+      'يوجد مفتاح التشفير الخاص بـ Karde داخل شريحة الأمان في هاتفك وهو مرتبط بقفل شاشتك. وإذا أزلت أو أعدت ضبط رمز هاتفك أو نقشه أو كلمة مروره أو بصمته، فسيُدمَّر ذلك المفتاح ولن يعود بالإمكان فتح عناصرك المحفوظة — لا من قبل أحد، بمن فينا نحن. والنسخة الاحتياطية المشفّرة هي الشيء الوحيد الذي ينجو من ذلك، لذا أنشئ واحدة قبل تغيير طريقة فتح هاتفك.';
+
+  @override
+  String get privacySection8Title => '8. التواصل';
+
+  @override
+  String get privacySection8Body =>
+      'لأي أسئلة حول هذه السياسة أو أي نقطة غير واضحة: support@getgubae.com. السياسة الكاملة منشورة على getgubae.com/privacy.';
 }

@@ -1031,7 +1031,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String aboutDialogBody(String name, String version) {
-    return '$name Secure Wallet v$version\n\nA totally offline, encrypted secure vault for your cards.';
+    return '$name v$version\n\nAn offline wallet for the cards and documents you would rather not carry.\n\nEverything you save is encrypted on this phone and unlocked with your fingerprint. Karde has no account and no internet access, so nothing you store can leave your device — not to us, not to anyone.\n\nBecause nothing is kept anywhere else, an encrypted backup is the only way to move your vault to a new phone.';
   }
 
   @override
@@ -1451,4 +1451,18 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get cardholderPlaceholder => 'NAME SURNAME';
+
+  @override
+  String get privacySection7Title => '7. Keep Your Screen Lock';
+
+  @override
+  String get privacySection7Body =>
+      'Karde\'s encryption key lives in your phone\'s security chip and is tied to your screen lock. If you remove or reset your phone\'s PIN, pattern, password or fingerprint, that key is destroyed and your saved items can no longer be opened — by anyone, including us. An encrypted backup is the only thing that survives it, so make one before changing how your phone unlocks.';
+
+  @override
+  String get privacySection8Title => '8. Contact';
+
+  @override
+  String get privacySection8Body =>
+      'Questions about this policy, or anything unclear: support@getgubae.com. The full policy is published at getgubae.com/privacy.';
 }

@@ -1927,7 +1927,7 @@ abstract class AppLocalizations {
   /// No description provided for @aboutDialogBody.
   ///
   /// In en, this message translates to:
-  /// **'{name} Secure Wallet v{version}\n\nA totally offline, encrypted secure vault for your cards.'**
+  /// **'{name} v{version}\n\nAn offline wallet for the cards and documents you would rather not carry.\n\nEverything you save is encrypted on this phone and unlocked with your fingerprint. Karde has no account and no internet access, so nothing you store can leave your device — not to us, not to anyone.\n\nBecause nothing is kept anywhere else, an encrypted backup is the only way to move your vault to a new phone.'**
   String aboutDialogBody(String name, String version);
 
   /// No description provided for @zeroKnowledge.
@@ -2649,6 +2649,30 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'NAME SURNAME'**
   String get cardholderPlaceholder;
+
+  /// No description provided for @privacySection7Title.
+  ///
+  /// In en, this message translates to:
+  /// **'7. Keep Your Screen Lock'**
+  String get privacySection7Title;
+
+  /// No description provided for @privacySection7Body.
+  ///
+  /// In en, this message translates to:
+  /// **'Karde\'s encryption key lives in your phone\'s security chip and is tied to your screen lock. If you remove or reset your phone\'s PIN, pattern, password or fingerprint, that key is destroyed and your saved items can no longer be opened — by anyone, including us. An encrypted backup is the only thing that survives it, so make one before changing how your phone unlocks.'**
+  String get privacySection7Body;
+
+  /// No description provided for @privacySection8Title.
+  ///
+  /// In en, this message translates to:
+  /// **'8. Contact'**
+  String get privacySection8Title;
+
+  /// No description provided for @privacySection8Body.
+  ///
+  /// In en, this message translates to:
+  /// **'Questions about this policy, or anything unclear: support@getgubae.com. The full policy is published at getgubae.com/privacy.'**
+  String get privacySection8Body;
 }
 
 class _AppLocalizationsDelegate

@@ -1044,7 +1044,7 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String aboutDialogBody(String name, String version) {
-    return '$name Secure Wallet v$version\n\nUn coffre chiffré pour vos cartes, entièrement hors ligne.';
+    return '$name v$version\n\nUn portefeuille hors ligne pour les cartes et documents que vous préférez ne pas transporter.\n\nTout ce que vous enregistrez est chiffré sur ce téléphone et déverrouillé par votre empreinte. Karde n\'a ni compte ni accès à Internet : rien de ce que vous y mettez ne peut quitter votre appareil — ni vers nous, ni vers qui que ce soit.\n\nComme rien n\'est conservé ailleurs, une sauvegarde chiffrée est le seul moyen de transférer votre coffre vers un nouveau téléphone.';
   }
 
   @override
@@ -1475,4 +1475,18 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get cardholderPlaceholder => 'PRÉNOM NOM';
+
+  @override
+  String get privacySection7Title => '7. Conservez votre verrouillage d\'écran';
+
+  @override
+  String get privacySection7Body =>
+      'La clé de chiffrement de Karde réside dans la puce de sécurité de votre téléphone et dépend de votre verrouillage d\'écran. Si vous supprimez ou réinitialisez le code, le schéma, le mot de passe ou l\'empreinte de votre téléphone, cette clé est détruite et vos éléments enregistrés ne peuvent plus être ouverts — par personne, nous y compris. Une sauvegarde chiffrée est la seule chose qui y survive : créez-en une avant de modifier la façon dont votre téléphone se déverrouille.';
+
+  @override
+  String get privacySection8Title => '8. Nous contacter';
+
+  @override
+  String get privacySection8Body =>
+      'Questions sur cette politique, ou tout point qui vous semble flou : support@getgubae.com. La politique complète est publiée sur getgubae.com/privacy.';
 }
