@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../../l10n/app_localizations.dart';
+
 /// FIX 5-1: a single confirmation dialog for destructive actions.
 ///
 /// Deleting a card, deleting an ID and wiping the vault previously each used a
@@ -20,11 +22,14 @@ class KardeConfirmDialog extends StatelessWidget {
   final String title;
   final String message;
   final String confirmLabel;
-  final String cancelLabel;
 
   /// Optional third action, shown above the other two and styled as the safe
   /// suggestion rather than the destructive one.
   final String? alternativeLabel;
+
+  /// Null means "the standard Cancel", resolved against the active locale in
+  /// [build]. A default argument cannot do that, because it has no context.
+  final String? cancelLabel;
 
   /// Renders the confirm action in the error colour. Leave true for anything
   /// that destroys data.
@@ -35,7 +40,7 @@ class KardeConfirmDialog extends StatelessWidget {
     required this.title,
     required this.message,
     required this.confirmLabel,
-    this.cancelLabel = 'Cancel',
+    this.cancelLabel,
     this.alternativeLabel,
     this.isDestructive = true,
   });
@@ -47,7 +52,7 @@ class KardeConfirmDialog extends StatelessWidget {
     required String title,
     required String message,
     required String confirmLabel,
-    String cancelLabel = 'Cancel',
+    String? cancelLabel,
     bool isDestructive = true,
   }) async {
     final result = await showDialog<KardeConfirmChoice>(
@@ -74,7 +79,7 @@ class KardeConfirmDialog extends StatelessWidget {
     required String message,
     required String confirmLabel,
     required String alternativeLabel,
-    String cancelLabel = 'Cancel',
+    String? cancelLabel,
     bool isDestructive = true,
   }) async {
     final result = await showDialog<KardeConfirmChoice>(
@@ -148,7 +153,7 @@ class KardeConfirmDialog extends StatelessWidget {
               onPressed: () =>
                   Navigator.pop(context, KardeConfirmChoice.cancelled),
               child: Text(
-                cancelLabel,
+                cancelLabel ?? AppLocalizations.of(context)!.cancel,
                 style: TextStyle(
                     color: theme.colorScheme.onSurface.withValues(alpha: 0.8)),
               ),

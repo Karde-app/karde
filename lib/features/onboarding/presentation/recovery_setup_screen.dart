@@ -65,6 +65,7 @@ class _RecoverySetupScreenState extends ConsumerState<RecoverySetupScreen> {
   /// removed or reset, Android destroys the key and no security question can bring
   /// it back. The only thing that survives that is an encrypted backup.
   Widget _buildNoPinNote() {
+    final loc = AppLocalizations.of(context)!;
     return Container(
       margin: const EdgeInsets.only(bottom: 24),
       padding: const EdgeInsets.all(16),
@@ -73,22 +74,15 @@ class _RecoverySetupScreenState extends ConsumerState<RecoverySetupScreen> {
         borderRadius: BorderRadius.circular(14),
         border: Border.all(color: Colors.white12),
       ),
-      child: const Row(
+      child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Icon(Icons.info_outline, color: KardeColors.champagneGold, size: 20),
-          SizedBox(width: 12),
+          const Icon(Icons.info_outline, color: KardeColors.champagneGold, size: 20),
+          const SizedBox(width: 12),
           Expanded(
             child: Text(
-              "You chose to unlock Karde with your phone's own lock, so there is "
-              "no Karde PIN to recover yet. Setting this up now means a way back "
-              "in already exists if you ever add one.\n\n"
-              "Separately, and more importantly: your items are encrypted with a "
-              "key held in your phone's security chip. If you remove or reset "
-              "your phone's screen lock, that key is destroyed and nothing here "
-              "can bring your items back. An encrypted backup, from Settings, is "
-              "the only thing that survives it.",
-              style: TextStyle(
+              loc.recoveryNoPinNote,
+              style: const TextStyle(
                 fontFamily: 'Inter',
                 color: Colors.white70,
                 fontSize: 13,
@@ -119,7 +113,7 @@ class _RecoverySetupScreenState extends ConsumerState<RecoverySetupScreen> {
         builder: (context) => AlertDialog(
           backgroundColor: KardeColors.obsidian,
           title: Text(
-            'Are you sure?',
+            AppLocalizations.of(context)!.areYouSure,
             style: const TextStyle(color: Colors.white, fontFamily: 'Outfit'),
           ),
           content: Text(
@@ -133,7 +127,7 @@ class _RecoverySetupScreenState extends ConsumerState<RecoverySetupScreen> {
             ),
             TextButton(
               onPressed: () => Navigator.pop(context, true),
-              child: Text('Confirm', style: const TextStyle(color: Colors.redAccent)),
+              child: Text(AppLocalizations.of(context)!.confirm, style: const TextStyle(color: Colors.redAccent)),
             ),
           ],
         ),

@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import '../../../../l10n/app_localizations.dart';
 import '../../../../core/widgets/karde_feedback.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -155,27 +156,22 @@ class _DecryptableCardState extends ConsumerState<DecryptableCard> with WidgetsB
       // FIX 4-2: user dismissed the prompt. Stay masked, say nothing.
     } catch (e) {
       if (mounted) {
-        KardeFeedback.error(context, _revealErrorMessage(e));
+        KardeFeedback.error(context, _revealErrorMessage(AppLocalizations.of(context)!, e));
       }
     }
   }
 
   /// FIX 4-2: previously surfaced the raw exception text to the user.
-  String _revealErrorMessage(Object error) {
-    if (error is VaultUnavailable) {
-      return 'Set a screen lock on your device to unlock your vault.';
-    }
-    if (error is VaultKeyInvalidated) {
-      return 'Your device security settings changed, so this item can no longer '
-          'be decrypted.';
-    }
-    return 'Could not unlock this card. Please try again.';
+  String _revealErrorMessage(AppLocalizations loc, Object error) {
+    if (error is VaultUnavailable) return loc.unlockNeedsScreenLock;
+    if (error is VaultKeyInvalidated) return loc.itemNoLongerDecryptable;
+    return loc.couldNotUnlockCard;
   }
 
   void _copyToClipboard() {
     if (_cardNumber == null) return;
     Clipboard.setData(ClipboardData(text: _cardNumber!));
-    KardeFeedback.success(context, 'Card number copied. Clipboard clears in 60s.');
+    KardeFeedback.success(context, AppLocalizations.of(context)!.cardNumberCopied);
     
     // Clear clipboard after 60 seconds
     Timer(const Duration(seconds: 60), () async {

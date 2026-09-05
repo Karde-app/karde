@@ -61,6 +61,7 @@ class _LockSetupScreenState extends ConsumerState<LockSetupScreen>
   /// Onboarding previously said nothing, so a user with no screen lock completed
   /// setup, reached the home screen, and only hit the wall at "Add a card".
   Widget _buildNoDeviceLockWarning() {
+    final loc = AppLocalizations.of(context)!;
     return Container(
       margin: const EdgeInsets.only(bottom: 24),
       padding: const EdgeInsets.all(16),
@@ -74,16 +75,10 @@ class _LockSetupScreenState extends ConsumerState<LockSetupScreen>
         children: [
           const Icon(Icons.warning_amber_rounded, color: KardeColors.ember, size: 20),
           const SizedBox(width: 12),
-          const Expanded(
+          Expanded(
             child: Text(
-              "This phone has no screen lock.\n\n"
-              "Karde keeps your encryption key in the phone's security chip, and "
-              "that chip will not hold a key unless the phone itself is locked. "
-              "Until you set a PIN, pattern, password or fingerprint in your "
-              "phone's settings, Karde cannot save or open any items.\n\n"
-              "You can finish setting up now, then add a screen lock and come "
-              "back.",
-              style: TextStyle(
+              loc.noScreenLockWarning,
+              style: const TextStyle(
                 fontFamily: 'Inter',
                 color: Colors.white,
                 fontSize: 13,
@@ -117,7 +112,7 @@ class _LockSetupScreenState extends ConsumerState<LockSetupScreen>
                   alignment: Alignment.centerLeft,
                   child: IconButton(
                     icon: const Icon(Icons.arrow_back, color: Colors.white),
-                    tooltip: 'Back to language',
+                    tooltip: loc.backToLanguage,
                     onPressed: () => Navigator.pop(context),
                   ),
                 ),

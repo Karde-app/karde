@@ -1304,4 +1304,163 @@ class AppLocalizationsAr extends AppLocalizations {
   @override
   String get biometricVerificationUnavailable =>
       'التحقق بالقياسات الحيوية غير متاح حالياً. استخدم خيار استعادة آخر أدناه.';
+
+  @override
+  String get privacyPolicyHeading => 'سياسة الخصوصية لتطبيق Karde';
+
+  @override
+  String get privacyPolicyEffectiveDate => 'تاريخ السريان: سبتمبر 2026';
+
+  @override
+  String get privacySection1Title => '1. التخزين محلياً فقط';
+
+  @override
+  String get privacySection1Body =>
+      'جميع بياناتك، بما فيها أرقام البطاقات ورموز CVV والملاحظات، مشفّرة ومخزَّنة محلياً على جهازك. نحن لا ننقل بياناتك ولا ننسخها احتياطياً ولا نخزّنها على أي خوادم خارجية أو خدمات سحابية. تبقى السيطرة الكاملة على بياناتك بين يديك.';
+
+  @override
+  String get privacySection2Title => '2. التشفير';
+
+  @override
+  String get privacySection2Body =>
+      'بياناتك محمية بتشفير AES-256-GCM. تُنشأ مفاتيح التشفير وتُحفظ بشكل آمن داخل مخزن المفاتيح المدعوم بعتاد جهازك.';
+
+  @override
+  String get privacySection3Title => '3. التحقق من الهوية';
+
+  @override
+  String get privacySection3Body =>
+      'للوصول إلى بياناتك الحساسة، يطلب Karde تحققاً محلياً عبر القياسات الحيوية في جهازك (بصمة الوجه أو الإصبع) أو عبر رمز Karde الخاص بك. لا يمكننا الوصول إلى رمزك السري ولا إلى بياناتك الحيوية.';
+
+  @override
+  String get privacySection4Title => '4. حذف البيانات';
+
+  @override
+  String get privacySection4Body =>
+      'يمكنك حذف جميع بياناتك نهائياً في أي وقت باستخدام خاصية \"محو الخزنة\" في الإعدادات، أو بإلغاء تثبيت التطبيق. وبما أنه لا تُخزَّن أي بيانات في السحابة، فإن إلغاء التثبيت يعني حذف خزنتك نهائياً.';
+
+  @override
+  String get privacySection5Title => '5. الأذونات';
+
+  @override
+  String get privacySection5Body =>
+      'لا يطلب التطبيق سوى الأذونات اللازمة لوظائفه الأساسية، مثل التحقق بالقياسات الحيوية. وهو لا يطلب الوصول إلى الإنترنت، ما يضمن استحالة نقل بياناتك.';
+
+  @override
+  String get privacySection6Title => '6. التغييرات على هذه السياسة';
+
+  @override
+  String get privacySection6Body =>
+      'قد نحدّث هذه السياسة من حين لآخر. وستظهر أي تغييرات داخل التطبيق. وباستمرارك في استخدام التطبيق، فإنك توافق على السياسة المحدَّثة.';
+
+  @override
+  String get recoveryNoPinNote =>
+      'لقد اخترت فتح Karde باستخدام قفل هاتفك، لذا لا يوجد بعد رمز Karde يمكن استعادته. وإعداد هذا الآن يعني وجود طريق للعودة جاهز إن أضفت رمزاً لاحقاً.\n\nوبشكل منفصل، وهو الأهم: عناصرك مشفّرة بمفتاح محفوظ في شريحة الأمان داخل هاتفك. وإذا أزلت قفل شاشة هاتفك أو أعدت ضبطه، فسيُدمَّر ذلك المفتاح ولن يستطيع أي شيء هنا استرجاع عناصرك. والنسخة الاحتياطية المشفّرة، من الإعدادات، هي الشيء الوحيد الذي ينجو من ذلك.';
+
+  @override
+  String get areYouSure => 'هل أنت متأكد؟';
+
+  @override
+  String get confirm => 'تأكيد';
+
+  @override
+  String get noScreenLockWarning =>
+      'لا يحتوي هذا الهاتف على قفل شاشة.\n\nيحفظ Karde مفتاح التشفير الخاص بك في شريحة الأمان داخل الهاتف، وهذه الشريحة لا تحتفظ بأي مفتاح ما لم يكن الهاتف نفسه مقفلاً. وإلى أن تضبط رمزاً أو نقشاً أو كلمة مرور أو بصمة في إعدادات هاتفك، لن يستطيع Karde حفظ أي عنصر أو فتحه.\n\nيمكنك إكمال الإعداد الآن، ثم إضافة قفل شاشة والعودة.';
+
+  @override
+  String get backToLanguage => 'العودة إلى اللغة';
+
+  @override
+  String get imageNoSource =>
+      'لا يوجد على هذا الجهاز أي تطبيق يمكنه توفير صورة.';
+
+  @override
+  String get imageUnreadable => 'تعذّرت قراءة هذه الصورة. جرّب صورة أخرى.';
+
+  @override
+  String get imageNotAvailable => 'إضافة الصور غير متاحة على هذا الجهاز.';
+
+  @override
+  String get photoCouldNotBeAdded => 'تعذّرت إضافة هذه الصورة. جرّب صورة أخرى.';
+
+  @override
+  String get tapToViewFullSize => 'اضغط للعرض بالحجم الكامل';
+
+  @override
+  String get replacePhoto => 'استبدال';
+
+  @override
+  String get removePhoto => 'إزالة';
+
+  @override
+  String get addAPhoto => 'إضافة صورة';
+
+  @override
+  String get takeAPhoto => 'التقاط صورة';
+
+  @override
+  String get chooseFromGallery => 'الاختيار من المعرض';
+
+  @override
+  String get photoClosesAutomatically => 'يُغلق تلقائياً. لقطات الشاشة محظورة.';
+
+  @override
+  String get unlockNeedsScreenLock => 'اضبط قفل شاشة على جهازك لفتح خزنتك.';
+
+  @override
+  String get itemNoLongerDecryptable =>
+      'تغيّرت إعدادات الأمان في جهازك، لذا لم يعد بالإمكان فك تشفير هذا العنصر.';
+
+  @override
+  String get couldNotUnlockCard =>
+      'تعذّر فتح هذه البطاقة. يرجى المحاولة مرة أخرى.';
+
+  @override
+  String get couldNotUnlockDocument =>
+      'تعذّر فتح هذا المستند. يرجى المحاولة مرة أخرى.';
+
+  @override
+  String get cardNumberCopied =>
+      'تم نسخ رقم البطاقة. ستُمسح الحافظة خلال 60 ثانية.';
+
+  @override
+  String pinLockedTryAgainIn(int seconds) {
+    return 'محاولات فاشلة كثيرة. أعد المحاولة خلال $seconds ثانية.';
+  }
+
+  @override
+  String get pinLockedOut => 'محاولات فاشلة كثيرة. تم القفل لمدة 30 ثانية.';
+
+  @override
+  String pinInvalidAttemptsLeft(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'رمز غير صحيح. بقيت $count محاولة.',
+      many: 'رمز غير صحيح. بقيت $count محاولة.',
+      few: 'رمز غير صحيح. بقيت $count محاولات.',
+      two: 'رمز غير صحيح. بقيت محاولتان.',
+      one: 'رمز غير صحيح. بقيت محاولة واحدة.',
+      zero: 'رمز غير صحيح. بقيت $count محاولة.',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String pinDigitSemantic(String digit) {
+    return 'رقم $digit من الرمز السري';
+  }
+
+  @override
+  String get deleteLastDigit => 'حذف آخر رقم';
+
+  @override
+  String get vaultUpdatedWithNewPin =>
+      'تم تحديث خزنتك الآمنة بالرمز السري الجديد.';
+
+  @override
+  String get creditCard => 'بطاقة ائتمان';
+
+  @override
+  String get cardholderPlaceholder => 'الاسم واللقب';
 }

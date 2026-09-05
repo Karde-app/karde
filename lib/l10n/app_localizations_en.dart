@@ -1292,4 +1292,163 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get biometricVerificationUnavailable =>
       'Biometric verification is unavailable right now. Use another recovery option below.';
+
+  @override
+  String get privacyPolicyHeading => 'Privacy Policy for Karde';
+
+  @override
+  String get privacyPolicyEffectiveDate => 'Effective Date: September 2026';
+
+  @override
+  String get privacySection1Title => '1. Local Storage Only';
+
+  @override
+  String get privacySection1Body =>
+      'All your data, including card numbers, CVVs, and notes, is encrypted and stored locally on your device. We do not transmit, back up, or store your data on any external servers or cloud services. You have complete control over your data.';
+
+  @override
+  String get privacySection2Title => '2. Encryption';
+
+  @override
+  String get privacySection2Body =>
+      'Your data is secured using AES-256-GCM encryption. The encryption keys are securely generated and stored in your device\'s hardware-backed Keystore.';
+
+  @override
+  String get privacySection3Title => '3. Authentication';
+
+  @override
+  String get privacySection3Body =>
+      'To access your sensitive data, Karde requires local authentication via your device\'s Biometrics (Face ID/Fingerprint) or your custom Karde PIN. We do not have access to your PIN or biometric data.';
+
+  @override
+  String get privacySection4Title => '4. Data Deletion';
+
+  @override
+  String get privacySection4Body =>
+      'You can permanently delete all your data at any time using the \"Erase vault\" feature in Settings, or by uninstalling the application. Since no data is stored in the cloud, uninstallation results in permanent deletion of your vault.';
+
+  @override
+  String get privacySection5Title => '5. Permissions';
+
+  @override
+  String get privacySection5Body =>
+      'The app only requests permissions necessary for its core functionality, such as Biometric authentication. It does not request internet access, ensuring your data cannot be transmitted.';
+
+  @override
+  String get privacySection6Title => '6. Changes to this Policy';
+
+  @override
+  String get privacySection6Body =>
+      'We may update this policy occasionally. Any changes will be reflected in the app. By continuing to use the app, you agree to the updated policy.';
+
+  @override
+  String get recoveryNoPinNote =>
+      'You chose to unlock Karde with your phone\'s own lock, so there is no Karde PIN to recover yet. Setting this up now means a way back in already exists if you ever add one.\n\nSeparately, and more importantly: your items are encrypted with a key held in your phone\'s security chip. If you remove or reset your phone\'s screen lock, that key is destroyed and nothing here can bring your items back. An encrypted backup, from Settings, is the only thing that survives it.';
+
+  @override
+  String get areYouSure => 'Are you sure?';
+
+  @override
+  String get confirm => 'Confirm';
+
+  @override
+  String get noScreenLockWarning =>
+      'This phone has no screen lock.\n\nKarde keeps your encryption key in the phone\'s security chip, and that chip will not hold a key unless the phone itself is locked. Until you set a PIN, pattern, password or fingerprint in your phone\'s settings, Karde cannot save or open any items.\n\nYou can finish setting up now, then add a screen lock and come back.';
+
+  @override
+  String get backToLanguage => 'Back to language';
+
+  @override
+  String get imageNoSource => 'No app on this device can provide an image.';
+
+  @override
+  String get imageUnreadable =>
+      'That image could not be read. Try another one.';
+
+  @override
+  String get imageNotAvailable =>
+      'Adding photos is not available on this device.';
+
+  @override
+  String get photoCouldNotBeAdded =>
+      'That photo could not be added. Try another.';
+
+  @override
+  String get tapToViewFullSize => 'Tap to view full size';
+
+  @override
+  String get replacePhoto => 'Replace';
+
+  @override
+  String get removePhoto => 'Remove';
+
+  @override
+  String get addAPhoto => 'Add a photo';
+
+  @override
+  String get takeAPhoto => 'Take a photo';
+
+  @override
+  String get chooseFromGallery => 'Choose from gallery';
+
+  @override
+  String get photoClosesAutomatically =>
+      'Closes automatically. Screenshots are blocked.';
+
+  @override
+  String get unlockNeedsScreenLock =>
+      'Set a screen lock on your device to unlock your vault.';
+
+  @override
+  String get itemNoLongerDecryptable =>
+      'Your device security settings changed, so this item can no longer be decrypted.';
+
+  @override
+  String get couldNotUnlockCard =>
+      'Could not unlock this card. Please try again.';
+
+  @override
+  String get couldNotUnlockDocument =>
+      'Could not unlock this document. Please try again.';
+
+  @override
+  String get cardNumberCopied => 'Card number copied. Clipboard clears in 60s.';
+
+  @override
+  String pinLockedTryAgainIn(int seconds) {
+    return 'Too many failed attempts. Try again in ${seconds}s.';
+  }
+
+  @override
+  String get pinLockedOut =>
+      'Too many failed attempts. Locked out for 30 seconds.';
+
+  @override
+  String pinInvalidAttemptsLeft(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'Invalid PIN. $count attempts left.',
+      one: 'Invalid PIN. 1 attempt left.',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String pinDigitSemantic(String digit) {
+    return 'PIN digit $digit';
+  }
+
+  @override
+  String get deleteLastDigit => 'Delete last digit';
+
+  @override
+  String get vaultUpdatedWithNewPin =>
+      'Your secure vault has been updated with the new PIN.';
+
+  @override
+  String get creditCard => 'Credit Card';
+
+  @override
+  String get cardholderPlaceholder => 'NAME SURNAME';
 }

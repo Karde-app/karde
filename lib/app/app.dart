@@ -4,6 +4,7 @@ import '../l10n/app_localizations.dart';
 import '../features/home/presentation/main_scaffold.dart';
 import '../features/onboarding/presentation/language_screen.dart';
 import '../core/security/window_security_service.dart';
+import '../core/app_info.dart';
 import '../theme/theme.dart';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -19,7 +20,9 @@ class IBankApp extends ConsumerWidget {
     final isFirstLaunch = ref.read(settingsRepositoryProvider).getIsFirstLaunch();
 
     return MaterialApp(
-      title: 'iBank',
+      // The task switcher label. The project is still called ibank internally;
+      // the app has been Karde since well before this.
+      title: AppInfo.name,
       theme: AppTheme.lightTheme,
       darkTheme: AppTheme.darkTheme,
       themeMode: themeMode,

@@ -2391,6 +2391,264 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Biometric verification is unavailable right now. Use another recovery option below.'**
   String get biometricVerificationUnavailable;
+
+  /// No description provided for @privacyPolicyHeading.
+  ///
+  /// In en, this message translates to:
+  /// **'Privacy Policy for Karde'**
+  String get privacyPolicyHeading;
+
+  /// No description provided for @privacyPolicyEffectiveDate.
+  ///
+  /// In en, this message translates to:
+  /// **'Effective Date: September 2026'**
+  String get privacyPolicyEffectiveDate;
+
+  /// No description provided for @privacySection1Title.
+  ///
+  /// In en, this message translates to:
+  /// **'1. Local Storage Only'**
+  String get privacySection1Title;
+
+  /// No description provided for @privacySection1Body.
+  ///
+  /// In en, this message translates to:
+  /// **'All your data, including card numbers, CVVs, and notes, is encrypted and stored locally on your device. We do not transmit, back up, or store your data on any external servers or cloud services. You have complete control over your data.'**
+  String get privacySection1Body;
+
+  /// No description provided for @privacySection2Title.
+  ///
+  /// In en, this message translates to:
+  /// **'2. Encryption'**
+  String get privacySection2Title;
+
+  /// No description provided for @privacySection2Body.
+  ///
+  /// In en, this message translates to:
+  /// **'Your data is secured using AES-256-GCM encryption. The encryption keys are securely generated and stored in your device\'s hardware-backed Keystore.'**
+  String get privacySection2Body;
+
+  /// No description provided for @privacySection3Title.
+  ///
+  /// In en, this message translates to:
+  /// **'3. Authentication'**
+  String get privacySection3Title;
+
+  /// No description provided for @privacySection3Body.
+  ///
+  /// In en, this message translates to:
+  /// **'To access your sensitive data, Karde requires local authentication via your device\'s Biometrics (Face ID/Fingerprint) or your custom Karde PIN. We do not have access to your PIN or biometric data.'**
+  String get privacySection3Body;
+
+  /// No description provided for @privacySection4Title.
+  ///
+  /// In en, this message translates to:
+  /// **'4. Data Deletion'**
+  String get privacySection4Title;
+
+  /// No description provided for @privacySection4Body.
+  ///
+  /// In en, this message translates to:
+  /// **'You can permanently delete all your data at any time using the \"Erase vault\" feature in Settings, or by uninstalling the application. Since no data is stored in the cloud, uninstallation results in permanent deletion of your vault.'**
+  String get privacySection4Body;
+
+  /// No description provided for @privacySection5Title.
+  ///
+  /// In en, this message translates to:
+  /// **'5. Permissions'**
+  String get privacySection5Title;
+
+  /// No description provided for @privacySection5Body.
+  ///
+  /// In en, this message translates to:
+  /// **'The app only requests permissions necessary for its core functionality, such as Biometric authentication. It does not request internet access, ensuring your data cannot be transmitted.'**
+  String get privacySection5Body;
+
+  /// No description provided for @privacySection6Title.
+  ///
+  /// In en, this message translates to:
+  /// **'6. Changes to this Policy'**
+  String get privacySection6Title;
+
+  /// No description provided for @privacySection6Body.
+  ///
+  /// In en, this message translates to:
+  /// **'We may update this policy occasionally. Any changes will be reflected in the app. By continuing to use the app, you agree to the updated policy.'**
+  String get privacySection6Body;
+
+  /// No description provided for @recoveryNoPinNote.
+  ///
+  /// In en, this message translates to:
+  /// **'You chose to unlock Karde with your phone\'s own lock, so there is no Karde PIN to recover yet. Setting this up now means a way back in already exists if you ever add one.\n\nSeparately, and more importantly: your items are encrypted with a key held in your phone\'s security chip. If you remove or reset your phone\'s screen lock, that key is destroyed and nothing here can bring your items back. An encrypted backup, from Settings, is the only thing that survives it.'**
+  String get recoveryNoPinNote;
+
+  /// No description provided for @areYouSure.
+  ///
+  /// In en, this message translates to:
+  /// **'Are you sure?'**
+  String get areYouSure;
+
+  /// No description provided for @confirm.
+  ///
+  /// In en, this message translates to:
+  /// **'Confirm'**
+  String get confirm;
+
+  /// No description provided for @noScreenLockWarning.
+  ///
+  /// In en, this message translates to:
+  /// **'This phone has no screen lock.\n\nKarde keeps your encryption key in the phone\'s security chip, and that chip will not hold a key unless the phone itself is locked. Until you set a PIN, pattern, password or fingerprint in your phone\'s settings, Karde cannot save or open any items.\n\nYou can finish setting up now, then add a screen lock and come back.'**
+  String get noScreenLockWarning;
+
+  /// No description provided for @backToLanguage.
+  ///
+  /// In en, this message translates to:
+  /// **'Back to language'**
+  String get backToLanguage;
+
+  /// No description provided for @imageNoSource.
+  ///
+  /// In en, this message translates to:
+  /// **'No app on this device can provide an image.'**
+  String get imageNoSource;
+
+  /// No description provided for @imageUnreadable.
+  ///
+  /// In en, this message translates to:
+  /// **'That image could not be read. Try another one.'**
+  String get imageUnreadable;
+
+  /// No description provided for @imageNotAvailable.
+  ///
+  /// In en, this message translates to:
+  /// **'Adding photos is not available on this device.'**
+  String get imageNotAvailable;
+
+  /// No description provided for @photoCouldNotBeAdded.
+  ///
+  /// In en, this message translates to:
+  /// **'That photo could not be added. Try another.'**
+  String get photoCouldNotBeAdded;
+
+  /// No description provided for @tapToViewFullSize.
+  ///
+  /// In en, this message translates to:
+  /// **'Tap to view full size'**
+  String get tapToViewFullSize;
+
+  /// No description provided for @replacePhoto.
+  ///
+  /// In en, this message translates to:
+  /// **'Replace'**
+  String get replacePhoto;
+
+  /// No description provided for @removePhoto.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove'**
+  String get removePhoto;
+
+  /// No description provided for @addAPhoto.
+  ///
+  /// In en, this message translates to:
+  /// **'Add a photo'**
+  String get addAPhoto;
+
+  /// No description provided for @takeAPhoto.
+  ///
+  /// In en, this message translates to:
+  /// **'Take a photo'**
+  String get takeAPhoto;
+
+  /// No description provided for @chooseFromGallery.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose from gallery'**
+  String get chooseFromGallery;
+
+  /// No description provided for @photoClosesAutomatically.
+  ///
+  /// In en, this message translates to:
+  /// **'Closes automatically. Screenshots are blocked.'**
+  String get photoClosesAutomatically;
+
+  /// No description provided for @unlockNeedsScreenLock.
+  ///
+  /// In en, this message translates to:
+  /// **'Set a screen lock on your device to unlock your vault.'**
+  String get unlockNeedsScreenLock;
+
+  /// No description provided for @itemNoLongerDecryptable.
+  ///
+  /// In en, this message translates to:
+  /// **'Your device security settings changed, so this item can no longer be decrypted.'**
+  String get itemNoLongerDecryptable;
+
+  /// No description provided for @couldNotUnlockCard.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not unlock this card. Please try again.'**
+  String get couldNotUnlockCard;
+
+  /// No description provided for @couldNotUnlockDocument.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not unlock this document. Please try again.'**
+  String get couldNotUnlockDocument;
+
+  /// No description provided for @cardNumberCopied.
+  ///
+  /// In en, this message translates to:
+  /// **'Card number copied. Clipboard clears in 60s.'**
+  String get cardNumberCopied;
+
+  /// No description provided for @pinLockedTryAgainIn.
+  ///
+  /// In en, this message translates to:
+  /// **'Too many failed attempts. Try again in {seconds}s.'**
+  String pinLockedTryAgainIn(int seconds);
+
+  /// No description provided for @pinLockedOut.
+  ///
+  /// In en, this message translates to:
+  /// **'Too many failed attempts. Locked out for 30 seconds.'**
+  String get pinLockedOut;
+
+  /// No description provided for @pinInvalidAttemptsLeft.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{Invalid PIN. 1 attempt left.} other{Invalid PIN. {count} attempts left.}}'**
+  String pinInvalidAttemptsLeft(int count);
+
+  /// No description provided for @pinDigitSemantic.
+  ///
+  /// In en, this message translates to:
+  /// **'PIN digit {digit}'**
+  String pinDigitSemantic(String digit);
+
+  /// No description provided for @deleteLastDigit.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete last digit'**
+  String get deleteLastDigit;
+
+  /// No description provided for @vaultUpdatedWithNewPin.
+  ///
+  /// In en, this message translates to:
+  /// **'Your secure vault has been updated with the new PIN.'**
+  String get vaultUpdatedWithNewPin;
+
+  /// No description provided for @creditCard.
+  ///
+  /// In en, this message translates to:
+  /// **'Credit Card'**
+  String get creditCard;
+
+  /// No description provided for @cardholderPlaceholder.
+  ///
+  /// In en, this message translates to:
+  /// **'NAME SURNAME'**
+  String get cardholderPlaceholder;
 }
 
 class _AppLocalizationsDelegate

@@ -2,10 +2,29 @@ import 'package:flutter/services.dart';
 
 import 'system_interaction_guard.dart';
 
+/// Why a picked file could not be turned into an image.
+///
+/// A code, not a sentence: this class sits below the widget tree and has no
+/// locale, so the wording belongs to whichever field reports the failure.
+enum VaultImageProblem {
+  /// Nothing on the device can hand over a picture — no gallery app, or no
+  /// usable camera.
+  noSource,
+
+  /// A file came back but could not be decoded.
+  unreadable,
+
+  /// The platform channel is not there at all.
+  unsupported,
+}
+
 /// The picked file could not be turned into an image.
 class VaultImageUnreadable implements Exception {
-  final String message;
-  const VaultImageUnreadable(this.message);
+  final VaultImageProblem problem;
+  const VaultImageUnreadable(this.problem);
+
+  @override
+  String toString() => 'VaultImageUnreadable($problem)';
 }
 
 /// Gets a photo into the app, from the gallery or the camera.
@@ -45,13 +64,11 @@ class VaultImageService {
         if (e.code == 'IMAGE_CANCELLED') return null;
         throw VaultImageUnreadable(
           e.code == 'NO_IMAGE_SOURCE' || e.code == 'CAMERA_UNAVAILABLE'
-              ? e.message ?? 'No app on this device can provide an image'
-              : 'That image could not be read. Try another one.',
+              ? VaultImageProblem.noSource
+              : VaultImageProblem.unreadable,
         );
       } on MissingPluginException {
-        throw const VaultImageUnreadable(
-          'Adding photos is not available on this device.',
-        );
+        throw const VaultImageUnreadable(VaultImageProblem.unsupported);
       }
     });
   }

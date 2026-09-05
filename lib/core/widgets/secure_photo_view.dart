@@ -1,4 +1,5 @@
 import 'dart:async';
+import '../../l10n/app_localizations.dart';
 import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
@@ -105,12 +106,12 @@ class _SecurePhotoViewState extends ConsumerState<SecurePhotoView>
             widget.bytes,
             fit: BoxFit.contain,
             // A stored photo that will not decode is a damaged file, not a crash.
-            errorBuilder: (context, error, stack) => const Padding(
-              padding: EdgeInsets.all(32),
+            errorBuilder: (context, error, stack) => Padding(
+              padding: const EdgeInsets.all(32),
               child: Text(
-                'This photo could not be displayed.',
+                AppLocalizations.of(context)!.photoCouldNotBeDisplayed,
                 textAlign: TextAlign.center,
-                style: TextStyle(color: Colors.white70, fontFamily: 'Inter'),
+                style: const TextStyle(color: Colors.white70, fontFamily: 'Inter'),
               ),
             ),
           ),
@@ -120,7 +121,7 @@ class _SecurePhotoViewState extends ConsumerState<SecurePhotoView>
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
           child: Text(
-            'Closes automatically. Screenshots are blocked.',
+            AppLocalizations.of(context)!.photoClosesAutomatically,
             textAlign: TextAlign.center,
             style: TextStyle(
               fontFamily: 'Inter',

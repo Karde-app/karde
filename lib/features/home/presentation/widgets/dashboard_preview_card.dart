@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../../l10n/app_localizations.dart';
 import '../../../../theme/theme.dart';
 import '../../../cards/domain/virtual_card.dart';
 import '../../../cards/presentation/widgets/card_backgrounds.dart';
@@ -150,9 +151,9 @@ class _DashboardPreviewCardState extends State<DashboardPreviewCard> {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       if (widget.isFront && !isVisa && !isMastercard)
-                        const Text(
-                          'Credit Card',
-                          style: TextStyle(
+                        Text(
+                          AppLocalizations.of(context)!.creditCard,
+                          style: const TextStyle(
                             fontFamily: 'Inter',
                             color: Colors.white70,
                             fontSize: 12,

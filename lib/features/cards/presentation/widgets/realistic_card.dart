@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import '../../../../l10n/app_localizations.dart';
 import '../../domain/virtual_card.dart';
 import 'card_backgrounds.dart';
 
@@ -150,9 +151,9 @@ class RealisticCard extends StatelessWidget {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        const Text(
-                          'Credit Card',
-                          style: TextStyle(
+                        Text(
+                          AppLocalizations.of(context)!.creditCard,
+                          style: const TextStyle(
                             fontFamily: 'Inter',
                             color: Colors.white70,
                             fontSize: 14,
@@ -271,7 +272,7 @@ class RealisticCard extends StatelessWidget {
                                     child: Text(
                                       decryptedCardholderName?.isNotEmpty == true
                                           ? decryptedCardholderName!.toUpperCase()
-                                          : 'NAME SURNAME',
+                                          : AppLocalizations.of(context)!.cardholderPlaceholder,
                                       style: const TextStyle(
                                         fontFamily: 'Inter',
                                         color: Color(0xFFF4F1EA),

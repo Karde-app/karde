@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
+import '../../../../l10n/app_localizations.dart';
 import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import '../../../../core/widgets/karde_feedback.dart';
@@ -165,21 +166,16 @@ class _DecryptableIdCardState extends ConsumerState<DecryptableIdCard> with Widg
       // FIX 4-2: was 'Decryption failed: $e', which put a raw PlatformException
       // in front of the user.
       if (mounted) {
-        KardeFeedback.error(context, _revealErrorMessage(e));
+        KardeFeedback.error(context, _revealErrorMessage(AppLocalizations.of(context)!, e));
       }
     }
   }
 
   /// FIX 4-2: actionable message instead of the raw exception.
-  String _revealErrorMessage(Object error) {
-    if (error is VaultUnavailable) {
-      return 'Set a screen lock on your device to unlock your vault.';
-    }
-    if (error is VaultKeyInvalidated) {
-      return 'Your device security settings changed, so this item can no longer '
-          'be decrypted.';
-    }
-    return 'Could not unlock this document. Please try again.';
+  String _revealErrorMessage(AppLocalizations loc, Object error) {
+    if (error is VaultUnavailable) return loc.unlockNeedsScreenLock;
+    if (error is VaultKeyInvalidated) return loc.itemNoLongerDecryptable;
+    return loc.couldNotUnlockDocument;
   }
 
   void _navigateToDetails() {

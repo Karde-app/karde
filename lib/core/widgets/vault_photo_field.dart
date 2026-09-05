@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import '../../l10n/app_localizations.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
@@ -110,18 +111,30 @@ class _VaultPhotoFieldState extends State<VaultPhotoField> {
   bool get _interactive => widget.enabled && !_busy;
 
   Future<void> _choose(Future<Uint8List?> Function() source) async {
+    final loc = AppLocalizations.of(context)!;
     setState(() => _busy = true);
     try {
       final bytes = await source();
       if (bytes != null) widget.controller.select(bytes);
     } on VaultImageUnreadable catch (e) {
-      if (mounted) KardeFeedback.error(context, e.message);
+      if (mounted) KardeFeedback.error(context, _describeImageProblem(loc, e.problem));
     } catch (_) {
       if (mounted) {
-        KardeFeedback.error(context, 'That photo could not be added. Try another.');
+        KardeFeedback.error(context, loc.photoCouldNotBeAdded);
       }
     } finally {
       if (mounted) setState(() => _busy = false);
+    }
+  }
+
+  String _describeImageProblem(AppLocalizations loc, VaultImageProblem problem) {
+    switch (problem) {
+      case VaultImageProblem.noSource:
+        return loc.imageNoSource;
+      case VaultImageProblem.unreadable:
+        return loc.imageUnreadable;
+      case VaultImageProblem.unsupported:
+        return loc.imageNotAvailable;
     }
   }
 
@@ -191,7 +204,7 @@ class _VaultPhotoFieldState extends State<VaultPhotoField> {
                     fit: BoxFit.contain,
                     errorBuilder: (context, error, stack) => Center(
                       child: Text(
-                        'This photo could not be displayed.',
+                        AppLocalizations.of(context)!.photoCouldNotBeDisplayed,
                         style: theme.textTheme.bodyMedium?.copyWith(fontSize: 13),
                       ),
                     ),
@@ -210,15 +223,15 @@ class _VaultPhotoFieldState extends State<VaultPhotoField> {
                         borderRadius: BorderRadius.circular(20),
                         border: Border.all(color: Colors.white24),
                       ),
-                      child: const Row(
+                      child: Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          Icon(Icons.zoom_out_map,
+                          const Icon(Icons.zoom_out_map,
                               size: 14, color: Colors.white),
-                          SizedBox(width: 6),
+                          const SizedBox(width: 6),
                           Text(
-                            'Tap to view full size',
-                            style: TextStyle(
+                            AppLocalizations.of(context)!.tapToViewFullSize,
+                            style: const TextStyle(
                               fontFamily: 'Inter',
                               fontSize: 11.5,
                               fontWeight: FontWeight.w600,
@@ -235,8 +248,8 @@ class _VaultPhotoFieldState extends State<VaultPhotoField> {
           ),
         ),
         actions: [
-          _action(Icons.photo_library_outlined, 'Replace', _showSourceSheet),
-          _action(Icons.close, 'Remove', controller.clear),
+          _action(Icons.photo_library_outlined, AppLocalizations.of(context)!.replacePhoto, _showSourceSheet),
+          _action(Icons.close, AppLocalizations.of(context)!.removePhoto, controller.clear),
         ],
       );
     }
@@ -258,7 +271,7 @@ class _VaultPhotoFieldState extends State<VaultPhotoField> {
               ),
               const SizedBox(height: 10),
               Text(
-                'Add a photo',
+                AppLocalizations.of(context)!.addAPhoto,
                 style: TextStyle(
                   fontFamily: 'Inter',
                   fontSize: 13.5,
@@ -338,7 +351,7 @@ class _VaultPhotoFieldState extends State<VaultPhotoField> {
             const SizedBox(height: 8),
             ListTile(
               leading: const Icon(Icons.photo_camera_outlined),
-              title: const Text('Take a photo'),
+              title: Text(AppLocalizations.of(context)!.takeAPhoto),
               onTap: () {
                 Navigator.pop(sheetContext);
                 _choose(_images.captureWithCamera);
@@ -346,7 +359,7 @@ class _VaultPhotoFieldState extends State<VaultPhotoField> {
             ),
             ListTile(
               leading: const Icon(Icons.photo_library_outlined),
-              title: const Text('Choose from gallery'),
+              title: Text(AppLocalizations.of(context)!.chooseFromGallery),
               onTap: () {
                 Navigator.pop(sheetContext);
                 _choose(_images.pickFromGallery);

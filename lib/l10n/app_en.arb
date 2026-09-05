@@ -510,5 +510,69 @@
   "biometricAuthFailedUsePin": "Biometric authentication failed. Please use PIN.",
   "resetPinBiometricReason": "Scan your fingerprint (or face) to reset your PIN",
   "verificationNotCompleted": "Verification was not completed. Try again, or use another recovery option below.",
-  "biometricVerificationUnavailable": "Biometric verification is unavailable right now. Use another recovery option below."
+  "biometricVerificationUnavailable": "Biometric verification is unavailable right now. Use another recovery option below.",
+  "privacyPolicyHeading": "Privacy Policy for Karde",
+  "privacyPolicyEffectiveDate": "Effective Date: September 2026",
+  "privacySection1Title": "1. Local Storage Only",
+  "privacySection1Body": "All your data, including card numbers, CVVs, and notes, is encrypted and stored locally on your device. We do not transmit, back up, or store your data on any external servers or cloud services. You have complete control over your data.",
+  "privacySection2Title": "2. Encryption",
+  "privacySection2Body": "Your data is secured using AES-256-GCM encryption. The encryption keys are securely generated and stored in your device's hardware-backed Keystore.",
+  "privacySection3Title": "3. Authentication",
+  "privacySection3Body": "To access your sensitive data, Karde requires local authentication via your device's Biometrics (Face ID/Fingerprint) or your custom Karde PIN. We do not have access to your PIN or biometric data.",
+  "privacySection4Title": "4. Data Deletion",
+  "privacySection4Body": "You can permanently delete all your data at any time using the \"Erase vault\" feature in Settings, or by uninstalling the application. Since no data is stored in the cloud, uninstallation results in permanent deletion of your vault.",
+  "privacySection5Title": "5. Permissions",
+  "privacySection5Body": "The app only requests permissions necessary for its core functionality, such as Biometric authentication. It does not request internet access, ensuring your data cannot be transmitted.",
+  "privacySection6Title": "6. Changes to this Policy",
+  "privacySection6Body": "We may update this policy occasionally. Any changes will be reflected in the app. By continuing to use the app, you agree to the updated policy.",
+  "recoveryNoPinNote": "You chose to unlock Karde with your phone's own lock, so there is no Karde PIN to recover yet. Setting this up now means a way back in already exists if you ever add one.\n\nSeparately, and more importantly: your items are encrypted with a key held in your phone's security chip. If you remove or reset your phone's screen lock, that key is destroyed and nothing here can bring your items back. An encrypted backup, from Settings, is the only thing that survives it.",
+  "areYouSure": "Are you sure?",
+  "confirm": "Confirm",
+  "noScreenLockWarning": "This phone has no screen lock.\n\nKarde keeps your encryption key in the phone's security chip, and that chip will not hold a key unless the phone itself is locked. Until you set a PIN, pattern, password or fingerprint in your phone's settings, Karde cannot save or open any items.\n\nYou can finish setting up now, then add a screen lock and come back.",
+  "backToLanguage": "Back to language",
+  "imageNoSource": "No app on this device can provide an image.",
+  "imageUnreadable": "That image could not be read. Try another one.",
+  "imageNotAvailable": "Adding photos is not available on this device.",
+  "photoCouldNotBeAdded": "That photo could not be added. Try another.",
+  "tapToViewFullSize": "Tap to view full size",
+  "replacePhoto": "Replace",
+  "removePhoto": "Remove",
+  "addAPhoto": "Add a photo",
+  "takeAPhoto": "Take a photo",
+  "chooseFromGallery": "Choose from gallery",
+  "photoClosesAutomatically": "Closes automatically. Screenshots are blocked.",
+  "unlockNeedsScreenLock": "Set a screen lock on your device to unlock your vault.",
+  "itemNoLongerDecryptable": "Your device security settings changed, so this item can no longer be decrypted.",
+  "couldNotUnlockCard": "Could not unlock this card. Please try again.",
+  "couldNotUnlockDocument": "Could not unlock this document. Please try again.",
+  "cardNumberCopied": "Card number copied. Clipboard clears in 60s.",
+  "pinLockedTryAgainIn": "Too many failed attempts. Try again in {seconds}s.",
+  "@pinLockedTryAgainIn": {
+    "placeholders": {
+      "seconds": {
+        "type": "int"
+      }
+    }
+  },
+  "pinLockedOut": "Too many failed attempts. Locked out for 30 seconds.",
+  "pinInvalidAttemptsLeft": "{count, plural, =1{Invalid PIN. 1 attempt left.} other{Invalid PIN. {count} attempts left.}}",
+  "@pinInvalidAttemptsLeft": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "pinDigitSemantic": "PIN digit {digit}",
+  "@pinDigitSemantic": {
+    "placeholders": {
+      "digit": {
+        "type": "String"
+      }
+    }
+  },
+  "deleteLastDigit": "Delete last digit",
+  "vaultUpdatedWithNewPin": "Your secure vault has been updated with the new PIN.",
+  "creditCard": "Credit Card",
+  "cardholderPlaceholder": "NAME SURNAME"
 }

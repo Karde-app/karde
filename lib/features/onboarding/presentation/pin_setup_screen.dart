@@ -112,7 +112,7 @@ class _PinSetupScreenState extends ConsumerState<PinSetupScreen> {
                   ),
                   const SizedBox(height: 8),
                   Text(
-                    'Your secure vault has been updated with the new PIN.',
+                    AppLocalizations.of(context)!.vaultUpdatedWithNewPin,
                     textAlign: TextAlign.center,
                     style: TextStyle(
                       fontFamily: 'Inter',

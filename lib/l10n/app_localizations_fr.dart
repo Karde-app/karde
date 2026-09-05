@@ -1313,4 +1313,166 @@ class AppLocalizationsFr extends AppLocalizations {
   @override
   String get biometricVerificationUnavailable =>
       'La vérification biométrique est indisponible pour le moment. Utilisez une autre option de récupération ci-dessous.';
+
+  @override
+  String get privacyPolicyHeading => 'Politique de confidentialité de Karde';
+
+  @override
+  String get privacyPolicyEffectiveDate =>
+      'Date d\'entrée en vigueur : septembre 2026';
+
+  @override
+  String get privacySection1Title => '1. Stockage local uniquement';
+
+  @override
+  String get privacySection1Body =>
+      'Toutes vos données, y compris les numéros de carte, les CVV et les notes, sont chiffrées et stockées localement sur votre appareil. Nous ne transmettons, ne sauvegardons et ne stockons vos données sur aucun serveur externe ni service cloud. Vous gardez le contrôle total de vos données.';
+
+  @override
+  String get privacySection2Title => '2. Chiffrement';
+
+  @override
+  String get privacySection2Body =>
+      'Vos données sont protégées par un chiffrement AES-256-GCM. Les clés de chiffrement sont générées et conservées de façon sécurisée dans le Keystore matériel de votre appareil.';
+
+  @override
+  String get privacySection3Title => '3. Authentification';
+
+  @override
+  String get privacySection3Body =>
+      'Pour accéder à vos données sensibles, Karde exige une authentification locale par la biométrie de votre appareil (Face ID ou empreinte digitale) ou par votre code Karde. Nous n\'avons accès ni à votre code ni à vos données biométriques.';
+
+  @override
+  String get privacySection4Title => '4. Suppression des données';
+
+  @override
+  String get privacySection4Body =>
+      'Vous pouvez supprimer définitivement toutes vos données à tout moment via la fonction « Effacer le coffre » dans les Réglages, ou en désinstallant l\'application. Aucune donnée n\'étant stockée dans le cloud, la désinstallation entraîne la suppression définitive de votre coffre.';
+
+  @override
+  String get privacySection5Title => '5. Autorisations';
+
+  @override
+  String get privacySection5Body =>
+      'L\'application ne demande que les autorisations nécessaires à son fonctionnement, comme l\'authentification biométrique. Elle ne demande aucun accès à Internet, ce qui garantit que vos données ne peuvent pas être transmises.';
+
+  @override
+  String get privacySection6Title => '6. Modifications de cette politique';
+
+  @override
+  String get privacySection6Body =>
+      'Nous pouvons mettre cette politique à jour de temps à autre. Toute modification sera répercutée dans l\'application. En continuant à l\'utiliser, vous acceptez la politique mise à jour.';
+
+  @override
+  String get recoveryNoPinNote =>
+      'Vous avez choisi de déverrouiller Karde avec le verrouillage de votre téléphone : il n\'y a donc pas encore de code Karde à récupérer. Le configurer maintenant garantit qu\'une porte de secours existe déjà si vous en ajoutez un un jour.\n\nPar ailleurs, et c\'est plus important : vos éléments sont chiffrés avec une clé conservée dans la puce de sécurité de votre téléphone. Si vous supprimez ou réinitialisez le verrouillage d\'écran, cette clé est détruite et rien ici ne pourra récupérer vos éléments. Une sauvegarde chiffrée, depuis les Réglages, est la seule chose qui y survive.';
+
+  @override
+  String get areYouSure => 'Êtes-vous sûr(e) ?';
+
+  @override
+  String get confirm => 'Confirmer';
+
+  @override
+  String get noScreenLockWarning =>
+      'Ce téléphone n\'a aucun verrouillage d\'écran.\n\nKarde conserve votre clé de chiffrement dans la puce de sécurité du téléphone, et cette puce ne conserve une clé que si le téléphone lui-même est verrouillé. Tant que vous n\'aurez pas défini un code, un schéma, un mot de passe ou une empreinte dans les réglages de votre téléphone, Karde ne pourra ni enregistrer ni ouvrir le moindre élément.\n\nVous pouvez terminer la configuration maintenant, puis ajouter un verrouillage d\'écran et revenir.';
+
+  @override
+  String get backToLanguage => 'Retour à la langue';
+
+  @override
+  String get imageNoSource =>
+      'Aucune application de cet appareil ne peut fournir d\'image.';
+
+  @override
+  String get imageUnreadable =>
+      'Cette image n\'a pas pu être lue. Essayez-en une autre.';
+
+  @override
+  String get imageNotAvailable =>
+      'L\'ajout de photos n\'est pas disponible sur cet appareil.';
+
+  @override
+  String get photoCouldNotBeAdded =>
+      'Cette photo n\'a pas pu être ajoutée. Essayez-en une autre.';
+
+  @override
+  String get tapToViewFullSize => 'Touchez pour voir en grand';
+
+  @override
+  String get replacePhoto => 'Remplacer';
+
+  @override
+  String get removePhoto => 'Retirer';
+
+  @override
+  String get addAPhoto => 'Ajouter une photo';
+
+  @override
+  String get takeAPhoto => 'Prendre une photo';
+
+  @override
+  String get chooseFromGallery => 'Choisir dans la galerie';
+
+  @override
+  String get photoClosesAutomatically =>
+      'Se ferme automatiquement. Les captures d\'écran sont bloquées.';
+
+  @override
+  String get unlockNeedsScreenLock =>
+      'Définissez un verrouillage d\'écran sur votre appareil pour déverrouiller votre coffre.';
+
+  @override
+  String get itemNoLongerDecryptable =>
+      'Les réglages de sécurité de votre appareil ont changé : cet élément ne peut plus être déchiffré.';
+
+  @override
+  String get couldNotUnlockCard =>
+      'Impossible de déverrouiller cette carte. Veuillez réessayer.';
+
+  @override
+  String get couldNotUnlockDocument =>
+      'Impossible de déverrouiller ce document. Veuillez réessayer.';
+
+  @override
+  String get cardNumberCopied =>
+      'Numéro de carte copié. Le presse-papiers sera vidé dans 60 s.';
+
+  @override
+  String pinLockedTryAgainIn(int seconds) {
+    return 'Trop de tentatives échouées. Réessayez dans $seconds s.';
+  }
+
+  @override
+  String get pinLockedOut =>
+      'Trop de tentatives échouées. Verrouillé pendant 30 secondes.';
+
+  @override
+  String pinInvalidAttemptsLeft(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'Code incorrect. $count tentatives restantes.',
+      one: 'Code incorrect. 1 tentative restante.',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String pinDigitSemantic(String digit) {
+    return 'Chiffre $digit du code';
+  }
+
+  @override
+  String get deleteLastDigit => 'Supprimer le dernier chiffre';
+
+  @override
+  String get vaultUpdatedWithNewPin =>
+      'Votre coffre sécurisé a été mis à jour avec le nouveau code.';
+
+  @override
+  String get creditCard => 'Carte bancaire';
+
+  @override
+  String get cardholderPlaceholder => 'PRÉNOM NOM';
 }

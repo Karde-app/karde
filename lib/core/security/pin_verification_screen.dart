@@ -67,7 +67,7 @@ class _PinVerificationScreenState extends ConsumerState<PinVerificationScreen> {
         if (_lockoutUntil!.isAfter(now)) {
           setState(() {
             final secondsLeft = _lockoutUntil!.difference(now).inSeconds;
-            _errorMessage = 'Too many failed attempts. Try again in ${secondsLeft}s.';
+            _errorMessage = AppLocalizations.of(context)!.pinLockedTryAgainIn(secondsLeft);
           });
         } else {
           timer.cancel();
@@ -150,11 +150,11 @@ class _PinVerificationScreenState extends ConsumerState<PinVerificationScreen> {
         } else if (_failedAttempts == 3) {
           _lockoutUntil = DateTime.now().add(const Duration(seconds: 30));
           settings.setLockoutUntil(_lockoutUntil);
-          _errorMessage = 'Too many failed attempts. Locked out for 30 seconds.';
+          _errorMessage = AppLocalizations.of(context)!.pinLockedOut;
           _checkLockoutTimer();
         } else {
           final attemptsLeft = 5 - _failedAttempts;
-          _errorMessage = 'Invalid PIN. $attemptsLeft attempts left.';
+          _errorMessage = AppLocalizations.of(context)!.pinInvalidAttemptsLeft(attemptsLeft);
         }
         _pin = '';
       });
@@ -305,7 +305,7 @@ class _PinVerificationScreenState extends ConsumerState<PinVerificationScreen> {
     // FIX 6-1: the dial pad was an InkWell wrapping bare Text, so TalkBack read
     // out a floating digit with no indication it was a button or what it did.
     return Semantics(
-      label: 'PIN digit $digit',
+      label: AppLocalizations.of(context)!.pinDigitSemantic(digit),
       button: true,
       enabled: !isDisabled,
       excludeSemantics: true,
@@ -342,7 +342,7 @@ class _PinVerificationScreenState extends ConsumerState<PinVerificationScreen> {
     // FIX 6-1: the delete key had no semantic label at all — screen readers
     // announced nothing.
     return Semantics(
-      label: 'Delete last digit',
+      label: AppLocalizations.of(context)!.deleteLastDigit,
       button: true,
       enabled: !isDisabled,
       excludeSemantics: true,
