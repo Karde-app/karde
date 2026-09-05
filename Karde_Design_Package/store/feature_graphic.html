@@ -1,0 +1,160 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<style>
+  @font-face { font-family: 'Outfit'; src: url('file:///C:/development/projects/ibank/assets/fonts/Outfit-Bold.ttf'); font-weight: 700; }
+  @font-face { font-family: 'Outfit'; src: url('file:///C:/development/projects/ibank/assets/fonts/Outfit-SemiBold.ttf'); font-weight: 600; }
+  @font-face { font-family: 'Inter'; src: url('file:///C:/development/projects/ibank/assets/fonts/Inter-Regular.ttf'); font-weight: 400; }
+  @font-face { font-family: 'Inter'; src: url('file:///C:/development/projects/ibank/assets/fonts/Inter-Medium.ttf'); font-weight: 500; }
+  @font-face { font-family: 'Inter'; src: url('file:///C:/development/projects/ibank/assets/fonts/Inter-SemiBold.ttf'); font-weight: 600; }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body { width: 1024px; height: 500px; overflow: hidden; }
+
+  .canvas {
+    position: relative;
+    width: 1024px; height: 500px;
+    background:
+      radial-gradient(120% 150% at 78% 50%, rgba(201,169,97,.13) 0%, rgba(201,169,97,0) 55%),
+      linear-gradient(135deg, #161A23 0%, #0A0C11 62%);
+    overflow: hidden;
+  }
+
+  /* Brushed-metal micro-texture: fine diagonal rules, barely visible. */
+  .grain {
+    position: absolute; inset: 0;
+    background-image: repeating-linear-gradient(
+      115deg, rgba(255,255,255,.022) 0 1px, rgba(255,255,255,0) 1px 7px);
+  }
+
+  /* A soft vertical vignette so the edges stay dark if Play crops them. */
+  .vignette {
+    position: absolute; inset: 0;
+    background: linear-gradient(90deg, rgba(10,12,17,.55) 0%, rgba(10,12,17,0) 22%,
+                rgba(10,12,17,0) 78%, rgba(10,12,17,.45) 100%);
+  }
+
+  /* ---- left: the mark and the words ---- */
+  .content {
+    position: absolute; left: 84px; top: 50%; transform: translateY(-50%);
+    width: 560px;
+  }
+
+  .lockup { display: flex; align-items: center; gap: 22px; margin-bottom: 26px; }
+
+  .icon {
+    width: 92px; height: 92px; border-radius: 21px;
+    box-shadow: 0 10px 34px rgba(0,0,0,.55), 0 0 0 1px rgba(201,169,97,.22);
+  }
+
+  .word {
+    font-family: 'Outfit', sans-serif; font-weight: 700;
+    font-size: 76px; line-height: .9; letter-spacing: -.02em;
+    background: linear-gradient(180deg, #EBD9AC 0%, #C9A961 52%, #9E8244 100%);
+    -webkit-background-clip: text; background-clip: text; color: transparent;
+  }
+
+  .tagline {
+    font-family: 'Inter', sans-serif; font-weight: 500;
+    font-size: 27px; line-height: 1.32; color: #E8EAED;
+    letter-spacing: -.005em;
+  }
+  .tagline b { color: #fff; font-weight: 600; }
+
+  .trust {
+    margin-top: 30px; display: flex; align-items: center; gap: 13px;
+    font-family: 'Inter', sans-serif; font-weight: 500;
+    font-size: 15.5px; color: #8A93A0; letter-spacing: .01em;
+  }
+  .dot { width: 4px; height: 4px; border-radius: 50%; background: #4A515C; }
+  .teal { color: #2BD1C4; }
+
+  /* ---- right: the stacked-card motif (brand mark C) ---- */
+  /* Explicit size: the cards are positioned against this box, so without a
+     width and height they anchor to a zero-width point and fall off canvas. */
+  .stack {
+    position: absolute; right: 34px; top: 50%;
+    width: 330px; height: 208px; transform: translateY(-50%);
+  }
+
+  .card {
+    position: absolute; inset: 0; border-radius: 20px;
+    border: 1px solid rgba(201,169,97,.30);
+    background: linear-gradient(140deg, #202632 0%, #12161E 100%);
+    box-shadow: 0 26px 60px rgba(0,0,0,.55);
+  }
+  .card::after {
+    content: ''; position: absolute; inset: 0; border-radius: 20px;
+    background: linear-gradient(140deg, rgba(255,255,255,.06) 0%, rgba(255,255,255,0) 42%);
+  }
+
+  .c3 { transform: translate(-74px, -116px) rotate(-17deg); opacity: .30; }
+  .c2 { transform: translate(-39px, -59px) rotate(-10deg); opacity: .58; }
+  .c1 {
+    transform: rotate(-3deg);
+    border-color: rgba(201,169,97,.52);
+    background: linear-gradient(140deg, #29303E 0%, #161B25 100%);
+  }
+
+  /* Detail on the front card only — a chip, a masked number, a gold edge. */
+  .chip {
+    position: absolute; left: 26px; top: 30px; width: 40px; height: 30px;
+    border-radius: 6px;
+    background: linear-gradient(150deg, #E4CE93 0%, #C9A961 48%, #8E7538 100%);
+    opacity: .95;
+  }
+  .pan {
+    position: absolute; left: 27px; bottom: 62px;
+    font-family: 'Inter', sans-serif; font-weight: 600;
+    font-size: 19px; letter-spacing: .14em; color: rgba(232,234,237,.82);
+  }
+  .holder {
+    position: absolute; left: 28px; bottom: 30px;
+    font-family: 'Inter', sans-serif; font-weight: 500;
+    font-size: 12px; letter-spacing: .17em; color: rgba(232,234,237,.42);
+  }
+  .lock {
+    position: absolute; right: 26px; bottom: 28px;
+    width: 34px; height: 34px;
+  }
+</style>
+</head>
+<body>
+<div class="canvas">
+  <div class="grain"></div>
+
+  <div class="stack">
+    <div class="card c3"></div>
+    <div class="card c2"></div>
+    <div class="card c1">
+      <div class="chip"></div>
+      <div class="pan">•••• •••• •••• 4172</div>
+      <div class="holder">ENCRYPTED ON THIS DEVICE</div>
+      <svg class="lock" viewBox="0 0 24 24" fill="none">
+        <rect x="4.5" y="10.5" width="15" height="10.5" rx="2.6"
+              stroke="#2BD1C4" stroke-width="1.6"/>
+        <path d="M8 10.5V7.6a4 4 0 1 1 8 0v2.9" stroke="#2BD1C4" stroke-width="1.6"
+              stroke-linecap="round"/>
+        <circle cx="12" cy="15.7" r="1.5" fill="#2BD1C4"/>
+      </svg>
+    </div>
+  </div>
+
+  <div class="vignette"></div>
+
+  <div class="content">
+    <div class="lockup">
+      <img class="icon" src="file:///C:/development/projects/ibank/assets/icons/app_icon.png">
+      <div class="word">Karde</div>
+    </div>
+    <div class="tagline">Your cards and IDs,<br><b>locked to this phone.</b></div>
+    <div class="trust">
+      <span class="teal">●</span> No account
+      <span class="dot"></span> No internet
+      <span class="dot"></span> AES-256 encrypted
+    </div>
+  </div>
+</div>
+</body>
+</html>
