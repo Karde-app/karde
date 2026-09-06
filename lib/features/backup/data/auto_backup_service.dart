@@ -1,6 +1,9 @@
+import 'dart:convert';
+
 import '../../../core/platform/backup_folder_service.dart';
 import '../../../core/security/backup_identity_service.dart';
 import '../../../core/storage/settings_repository.dart';
+import '../domain/vault_backup.dart';
 import 'auto_backup_file.dart';
 
 /// How automatic backup is set up on this phone.
@@ -169,6 +172,42 @@ class AutoBackupService {
     final file = await _openOrStart(config);
     if (!file.remove(id)) return; // Nothing to write; nothing changed.
     await _writeCurrent(config, file);
+  }
+
+  /// Opens an automatic backup file into the same shape a manual one produces.
+  ///
+  /// Everything downstream — working out which items are already here, telling
+  /// the user what a restore would do, writing the rows — is then one piece of
+  /// code serving both kinds of file. A restore should not have to care how the
+  /// backup it is reading was taken.
+  ///
+  /// Costs one key derivation for the whole file rather than one per record,
+  /// which is why [BackupIdentityService.openAll] takes them all at once.
+  Future<VaultBackup> openBackupFile({
+    required String contents,
+    required String passphrase,
+  }) async {
+    final file = AutoBackupFile.decode(contents);
+    final entries = file.sealedEntries;
+
+    final opened = await identity.openAll(
+      sealedPrivateKey: file.sealedPrivateKey,
+      passphrase: passphrase,
+      records: entries.map((entry) => entry.value).toList(),
+    );
+
+    final cards = <BackupCard>[];
+    final documents = <BackupId>[];
+    for (var i = 0; i < entries.length; i++) {
+      final json = jsonDecode(opened[i]) as Map<String, dynamic>;
+      if (AutoBackupFile.isCardId(entries[i].key)) {
+        cards.add(BackupCard.fromJson(json));
+      } else {
+        documents.add(BackupId.fromJson(json));
+      }
+    }
+
+    return VaultBackup.now(cards: cards, ids: documents);
   }
 
   /// Whether the folder is still reachable and still holds the backup.

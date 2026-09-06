@@ -11,6 +11,9 @@ import '../../cards/domain/virtual_card.dart';
 import '../../ids/data/id_repository.dart';
 import '../../ids/domain/virtual_id.dart';
 import '../domain/vault_backup.dart';
+import 'auto_backup_file.dart';
+import 'auto_backup_recorder.dart';
+import 'auto_backup_service.dart';
 
 final backupServiceProvider = Provider<BackupService>((ref) {
   return BackupService(
@@ -20,6 +23,7 @@ final backupServiceProvider = Provider<BackupService>((ref) {
     vault: EncryptionService(),
     bundle: BundleCryptoService(),
     files: FileTransferService(),
+    auto: ref.watch(autoBackupServiceProvider),
   );
 });
 
@@ -68,6 +72,10 @@ class BackupService {
   final BundleCryptoService bundle;
   final FileTransferService files;
 
+  /// Reads the files Karde maintains by itself. See [planImport], which serves
+  /// both kinds of backup so the user never has to know which they are holding.
+  final AutoBackupService auto;
+
   const BackupService({
     required this.cards,
     required this.ids,
@@ -75,6 +83,7 @@ class BackupService {
     required this.vault,
     required this.bundle,
     required this.files,
+    required this.auto,
   });
 
   /// How many prompts an export will cost, so the user can be told before they
@@ -180,13 +189,41 @@ class BackupService {
   ///
   /// Costs no authentication prompts: duplicate detection compares nickname and
   /// creation time, both of which are stored unencrypted on the device.
+  /// Works out what restoring [envelope] would do, whichever kind of file it is.
+  ///
+  /// Karde now writes two: the one the user exports by hand, sealed as a single
+  /// bundle, and the one it keeps up to date by itself, holding each item sealed
+  /// separately. The user has no reason to know or care which they are holding —
+  /// both are "my Karde backup" — so the file says which it is and Karde reads it
+  /// accordingly, rather than making them choose the right button and be wrong.
   Future<ImportPlan> planImport({
     required String envelope,
     required String passphrase,
   }) async {
-    final plaintext = await bundle.open(envelope, passphrase);
-    final backup = VaultBackup.decode(plaintext);
+    final backup = _looksAutomatic(envelope)
+        ? await auto.openBackupFile(contents: envelope, passphrase: passphrase)
+        : VaultBackup.decode(await bundle.open(envelope, passphrase));
 
+    return _planFor(backup);
+  }
+
+  /// Whether this is one of the files Karde maintains automatically.
+  ///
+  /// Read from the file rather than guessed from its name, because the user is
+  /// free to rename it, and a dated copy from the history is a perfectly good
+  /// thing to restore from — which is the whole reason the history exists.
+  bool _looksAutomatic(String contents) {
+    try {
+      final json = jsonDecode(contents);
+      return json is Map && json['format'] == AutoBackupFile.formatName;
+    } catch (_) {
+      // Not JSON at all. Let the bundle path produce the error, which knows how
+      // to say "this is not a Karde backup" properly.
+      return false;
+    }
+  }
+
+  Future<ImportPlan> _planFor(VaultBackup backup) async {
     final existingCards = (await cards.getAllCards())
         .map((c) => '${c.nickname}|${c.createdAt.toIso8601String()}')
         .toSet();

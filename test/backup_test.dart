@@ -1,3 +1,5 @@
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:ibank/features/backup/data/auto_backup_service.dart';
 import 'dart:convert';
 import 'dart:typed_data';
 
@@ -20,6 +22,14 @@ import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 /// The real one raises an OS prompt per operation, which is exactly the property
 /// these tests need to model: [failOnCall] makes the Nth call behave as if the
 /// user dismissed that prompt, so the all-or-nothing guarantees can be checked.
+/// Automatic backup takes no part in these tests.
+///
+/// planImport only reaches it for a file that says it is an automatic backup,
+/// and every file here is a hand-exported bundle. A bare stand-in states that:
+/// if one of these tests ever does reach it, the failure names the surprise
+/// rather than quietly exercising a second code path.
+class UnusedAutoBackup extends Fake implements AutoBackupService {}
+
 class FakeVault implements EncryptionService {
   int encryptCalls = 0;
   int decryptCalls = 0;
@@ -347,6 +357,7 @@ void main() {
         vault: vault,
         bundle: bundle,
         files: files,
+        auto: UnusedAutoBackup(),
       );
     });
 

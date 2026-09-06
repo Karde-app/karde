@@ -48,6 +48,19 @@ class AutoBackupFile {
   List<String> get sealedRecords =>
       _records.values.map((record) => jsonEncode(record)).toList();
 
+  /// The same records, each still paired with its id.
+  ///
+  /// A restore needs the id: "card:12" and "id:3" are the only thing that says
+  /// whether an opened record is a card or a document. Pairing them here rather
+  /// than relying on [ids] and [sealedRecords] coming back in the same order,
+  /// which is true today and is not the kind of thing a restore should depend on.
+  List<MapEntry<String, String>> get sealedEntries => _records.entries
+      .map((entry) => MapEntry(entry.key, jsonEncode(entry.value)))
+      .toList();
+
+  /// Whether [id] names a card. Anything else in the file is a document.
+  static bool isCardId(String id) => id.startsWith('card:');
+
   /// Replaces one record, or adds it. [sealed] is what the platform returned.
   void put(String id, String sealed) {
     _records[id] = jsonDecode(sealed) as Map<String, dynamic>;

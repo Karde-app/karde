@@ -70,7 +70,23 @@ class FakeIdentity extends Fake implements BackupIdentityService {
     required String plaintext,
   }) async {
     seals++;
-    return '{"k":"$publicKey","iv":"IV","d":"${plaintext.replaceAll('"', "'")}"}';
+    return jsonEncode({'k': publicKey, 'iv': 'IV', 'd': plaintext});
+  }
+
+  /// Opens what [seal] wrote. Reversible rubbish, deliberately: what is under
+  /// test is which record comes back as what, not the cipher.
+  @override
+  Future<List<String>> openAll({
+    required String sealedPrivateKey,
+    required String passphrase,
+    required List<String> records,
+  }) async {
+    if (sealedPrivateKey != 'SEALED-PRIVATE') {
+      throw const BackupPassphraseIncorrect();
+    }
+    return records
+        .map((r) => (jsonDecode(r) as Map<String, dynamic>)['d'] as String)
+        .toList();
   }
 }
 
@@ -367,6 +383,118 @@ void main() {
         folder.files[AutoBackupService.currentFileName]!,
       );
       expect(file.ids, containsAll(['card:1', 'card:2']));
+    });
+  });
+
+  group('Reading a backup back', () {
+    // The only test that matters in the end. Everything else here checks that
+    // the file is written correctly; this checks that what was written can be
+    // turned back into a vault.
+    setUp(() async {
+      await service.configure(passphrase: 'p', folderChoice: chosenFolder);
+    });
+
+    test('a card written automatically comes back as a card', () async {
+      await service.recordSave(
+        id: 'card:1',
+        plaintext: jsonEncode({
+          'nickname': 'Horizon Bank',
+          'cardBrand': 'Visa',
+          'lastFourDigits': '1234',
+          'secrets': {'cardNumber': '4111111111111234'},
+          'createdAt': '2026-01-01T00:00:00.000Z',
+          'updatedAt': '2026-01-01T00:00:00.000Z',
+        }),
+      );
+
+      final backup = await service.openBackupFile(
+        contents: folder.files[AutoBackupService.currentFileName]!,
+        passphrase: 'p',
+      );
+
+      expect(backup.cards, hasLength(1));
+      expect(backup.ids, isEmpty);
+      expect(backup.cards.single.nickname, 'Horizon Bank');
+      expect(backup.cards.single.secrets['cardNumber'], '4111111111111234');
+    });
+
+    test('a document comes back as a document, not a card', () async {
+      // The record id is the only thing that says which is which, because both
+      // are just JSON once opened. Getting this wrong would restore someone's
+      // passport as a credit card.
+      await service.recordSave(
+        id: 'id:1',
+        plaintext: jsonEncode({
+          'nickname': 'My Passport',
+          'idType': 'Passport',
+          'fields': {'documentNumber': 'X1234567'},
+          'createdAt': '2026-01-01T00:00:00.000Z',
+          'updatedAt': '2026-01-01T00:00:00.000Z',
+        }),
+      );
+
+      final backup = await service.openBackupFile(
+        contents: folder.files[AutoBackupService.currentFileName]!,
+        passphrase: 'p',
+      );
+
+      expect(backup.cards, isEmpty);
+      expect(backup.ids, hasLength(1));
+      expect(backup.ids.single.nickname, 'My Passport');
+    });
+
+    test('cards and documents in one file are sorted correctly', () async {
+      await service.recordSave(
+        id: 'card:1',
+        plaintext: jsonEncode({
+          'nickname': 'A card',
+          'cardBrand': 'Visa',
+          'lastFourDigits': '1234',
+          'secrets': <String, dynamic>{},
+          'createdAt': '2026-01-01T00:00:00.000Z',
+          'updatedAt': '2026-01-01T00:00:00.000Z',
+        }),
+      );
+      await service.recordSave(
+        id: 'id:1',
+        plaintext: jsonEncode({
+          'nickname': 'A document',
+          'idType': 'Passport',
+          'fields': <String, dynamic>{},
+          'createdAt': '2026-01-01T00:00:00.000Z',
+          'updatedAt': '2026-01-01T00:00:00.000Z',
+        }),
+      );
+
+      final backup = await service.openBackupFile(
+        contents: folder.files[AutoBackupService.currentFileName]!,
+        passphrase: 'p',
+      );
+
+      expect(backup.cards.single.nickname, 'A card');
+      expect(backup.ids.single.nickname, 'A document');
+    });
+
+    test('a deleted card does not come back', () async {
+      await service.recordSave(
+        id: 'card:1',
+        plaintext: jsonEncode({
+          'nickname': 'Deleted',
+          'cardBrand': 'Visa',
+          'lastFourDigits': '1234',
+          'secrets': <String, dynamic>{},
+          'createdAt': '2026-01-01T00:00:00.000Z',
+          'updatedAt': '2026-01-01T00:00:00.000Z',
+        }),
+      );
+      await service.recordDelete('card:1');
+
+      final backup = await service.openBackupFile(
+        contents: folder.files[AutoBackupService.currentFileName]!,
+        passphrase: 'p',
+      );
+
+      expect(backup.cards, isEmpty);
     });
   });
 
