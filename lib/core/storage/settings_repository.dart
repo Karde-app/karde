@@ -87,7 +87,6 @@ class SettingsRepository {
   static const _firstLaunchKey = 'is_first_launch';
   static const _languageKey = 'app_language';
   static const _lastBackupKey = 'last_backup_at';
-  static const _lockTypeKey = 'lock_type'; // 'phone', 'dedicated', 'both'
   static const _hashedPinKey = 'hashed_pin';
   static const _failedAttemptsKey = 'failed_attempts';
   static const _lockoutUntilKey = 'lockout_until';
@@ -194,20 +193,24 @@ class SettingsRepository {
   }
 
   // Secure Storage - Lock Type & PIN
-  Future<String?> getLockType() async {
-    return await _secureStorage.read(key: _lockTypeKey);
-  }
-
-  Future<void> setLockType(String lockType) async {
-    await _secureStorage.write(key: _lockTypeKey, value: lockType);
-  }
-
   Future<String?> getHashedPin() async {
     return await _secureStorage.read(key: _hashedPinKey);
   }
 
   Future<void> setHashedPin(String hash) async {
     await _secureStorage.write(key: _hashedPinKey, value: hash);
+  }
+
+  /// Forgets the Karde PIN entirely.
+  ///
+  /// Switching "Ask for your Karde PIN" off used to leave the PIN sitting in
+  /// storage, unused and invisible. Switching it back on months later then
+  /// silently reinstated a PIN the user had every reason to have forgotten — and
+  /// five wrong guesses at it is the permanent lockout whose only escape is
+  /// erasing the vault. They are asked now, and this is the answer to "delete
+  /// it".
+  Future<void> deleteHashedPin() async {
+    await _secureStorage.delete(key: _hashedPinKey);
   }
 
   /// Whether a Karde PIN has actually been set.

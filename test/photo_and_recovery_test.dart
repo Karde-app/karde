@@ -38,6 +38,19 @@ class FakeSecureStorage extends Fake implements FlutterSecureStorage {
       values[key];
 
   @override
+  Future<void> delete({
+    required String key,
+    IOSOptions? iOptions,
+    AndroidOptions? aOptions,
+    LinuxOptions? lOptions,
+    WebOptions? webOptions,
+    MacOsOptions? mOptions,
+    WindowsOptions? wOptions,
+  }) async {
+    values.remove(key);
+  }
+
+  @override
   Future<void> write({
     required String key,
     required String? value,
@@ -425,6 +438,20 @@ void main() {
 
       expect(settings.getRequirePinLock(), isTrue);
       expect(await settings.hasKardePin(), isFalse);
+    });
+
+    test('a deleted PIN is really gone', () async {
+      // Switching "Ask for your Karde PIN" off used to leave the PIN in storage,
+      // so switching it back on months later silently reinstated a PIN the user
+      // had every reason to have forgotten — and five wrong guesses at it is the
+      // permanent lockout whose only escape is erasing the vault.
+      await settings.setHashedPin('a-hash');
+      expect(await settings.hasKardePin(), isTrue);
+
+      await settings.deleteHashedPin();
+
+      expect(await settings.hasKardePin(), isFalse);
+      expect(await settings.getHashedPin(), isNull);
     });
 
     test('a fresh install has no security questions', () async {

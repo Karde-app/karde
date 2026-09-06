@@ -321,17 +321,33 @@ class AppLocalizationsAr extends AppLocalizations {
   String get security => 'الأمان';
 
   @override
-  String get appPinLock => 'قفل التطبيق برمز سري';
+  String get appPinLock => 'طلب رمز Karde السري';
 
   @override
-  String get appPinLockDesc => 'طلب رمز سري لفتح Karde';
+  String get appPinLockDesc => 'لفتح Karde، وقبل تغيير إعدادات الأمان هذه';
 
   @override
-  String get biometricUnlockTitle => 'الفتح بالبصمة';
+  String get biometricUnlockTitle => 'الفتح بقفل الهاتف';
 
   @override
   String get biometricUnlockDesc =>
-      'افتح Karde ببصمة الوجه أو الإصبع أو رمز جهازك';
+      'استخدم بصمتك أو وجهك أو قفل الشاشة لفتح Karde';
+
+  @override
+  String get keepPinTitle => 'هل تريد الاحتفاظ برمز Karde السري؟';
+
+  @override
+  String get keepPinMessage =>
+      'سيتوقف Karde عن طلبه في الحالتين. إذا احتفظت به، فإن إعادة تفعيل هذا لاحقاً ستستخدم الرمز نفسه — لذا عليك تذكّره. وإذا حذفته، فستختار رمزاً جديداً في المرة القادمة.';
+
+  @override
+  String get keepPinKeep => 'الاحتفاظ به';
+
+  @override
+  String get keepPinDelete => 'حذفه';
+
+  @override
+  String get pinDeleted => 'تم حذف رمز Karde السري.';
 
   @override
   String get changePin => 'تغيير رمز Karde';

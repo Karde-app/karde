@@ -685,26 +685,56 @@ abstract class AppLocalizations {
   /// No description provided for @appPinLock.
   ///
   /// In en, this message translates to:
-  /// **'App PIN lock'**
+  /// **'Ask for your Karde PIN'**
   String get appPinLock;
 
   /// No description provided for @appPinLockDesc.
   ///
   /// In en, this message translates to:
-  /// **'Require a PIN to open Karde'**
+  /// **'To open Karde, and before changing these security settings'**
   String get appPinLockDesc;
 
   /// No description provided for @biometricUnlockTitle.
   ///
   /// In en, this message translates to:
-  /// **'Biometric unlock'**
+  /// **'Open with your phone\'s lock'**
   String get biometricUnlockTitle;
 
   /// No description provided for @biometricUnlockDesc.
   ///
   /// In en, this message translates to:
-  /// **'Open Karde with your device\'s Face ID, Touch ID or passcode'**
+  /// **'Use your fingerprint, face or screen lock to open Karde'**
   String get biometricUnlockDesc;
+
+  /// No description provided for @keepPinTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Keep your Karde PIN?'**
+  String get keepPinTitle;
+
+  /// No description provided for @keepPinMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Karde will stop asking for it either way. Keep it, and switching this back on later uses the same PIN — so you would need to remember it. Delete it, and you choose a new one next time.'**
+  String get keepPinMessage;
+
+  /// No description provided for @keepPinKeep.
+  ///
+  /// In en, this message translates to:
+  /// **'Keep it'**
+  String get keepPinKeep;
+
+  /// No description provided for @keepPinDelete.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete it'**
+  String get keepPinDelete;
+
+  /// No description provided for @pinDeleted.
+  ///
+  /// In en, this message translates to:
+  /// **'Your Karde PIN has been deleted.'**
+  String get pinDeleted;
 
   /// No description provided for @changePin.
   ///

@@ -319,17 +319,34 @@ class AppLocalizationsFr extends AppLocalizations {
   String get security => 'SÉCURITÉ';
 
   @override
-  String get appPinLock => 'Verrouillage par code PIN';
+  String get appPinLock => 'Demander votre code PIN Karde';
 
   @override
-  String get appPinLockDesc => 'Exiger un code PIN pour ouvrir Karde';
+  String get appPinLockDesc =>
+      'Pour ouvrir Karde, et avant de modifier ces réglages de sécurité';
 
   @override
-  String get biometricUnlockTitle => 'Déverrouillage biométrique';
+  String get biometricUnlockTitle => 'Ouvrir avec le verrouillage du téléphone';
 
   @override
   String get biometricUnlockDesc =>
-      'Ouvrir Karde avec Face ID, Touch ID ou le code de votre appareil';
+      'Utilisez votre empreinte, votre visage ou le verrouillage de l\'écran pour ouvrir Karde';
+
+  @override
+  String get keepPinTitle => 'Conserver votre code PIN Karde ?';
+
+  @override
+  String get keepPinMessage =>
+      'Dans les deux cas, Karde cessera de le demander. Si vous le conservez, le réactiver plus tard utilisera le même code — il faudra donc vous en souvenir. Si vous le supprimez, vous en choisirez un nouveau la prochaine fois.';
+
+  @override
+  String get keepPinKeep => 'Le conserver';
+
+  @override
+  String get keepPinDelete => 'Le supprimer';
+
+  @override
+  String get pinDeleted => 'Votre code PIN Karde a été supprimé.';
 
   @override
   String get changePin => 'Modifier le code PIN';

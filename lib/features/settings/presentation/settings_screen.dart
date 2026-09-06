@@ -119,6 +119,9 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                         if (!await settings.hasKardePin()) {
                           if (!await _manageKardePin()) return;
                         }
+                      } else {
+                        await _offerToForgetPin();
+                        if (!mounted) return;
                       }
 
                       ref.read(requirePinLockProvider.notifier).updateRequirePinLock(val);
@@ -286,6 +289,42 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
 
   /// Lets the user change their security questions after onboarding.
   ///
+  /// Asks what should happen to the PIN now that Karde will stop asking for it.
+  ///
+  /// Switching the PIN off used to leave it sitting in storage, unused and
+  /// invisible. Switching back on months later then silently reinstated a PIN
+  /// the user had every reason to have forgotten, and five wrong guesses at it
+  /// is the permanent lockout whose only escape is erasing the vault.
+  ///
+  /// Keeping is the safe answer and the one a dismissed dialog gives, because it
+  /// destroys nothing. Deleting is offered because "I am done with this PIN" is
+  /// a perfectly ordinary thing to mean, and leaving no way to say it is how the
+  /// forgotten PIN got there in the first place.
+  ///
+  /// Not gated behind authentication: the user has already authenticated to be
+  /// in Settings changing security, deleting a PIN reveals nothing, and the
+  /// vault's own protection does not depend on it.
+  Future<void> _offerToForgetPin() async {
+    final settings = ref.read(settingsRepositoryProvider);
+    if (!await settings.hasKardePin() || !mounted) return;
+
+    final loc = AppLocalizations.of(context)!;
+    final choice = await KardeConfirmDialog.showWithAlternative(
+      context,
+      title: loc.keepPinTitle,
+      message: loc.keepPinMessage,
+      confirmLabel: loc.keepPinKeep,
+      alternativeLabel: loc.keepPinDelete,
+      isDestructive: false,
+    );
+    if (choice != KardeConfirmChoice.alternative || !mounted) return;
+
+    await settings.deleteHashedPin();
+    if (!mounted) return;
+    ref.invalidate(hasKardePinProvider);
+    KardeFeedback.success(context, loc.pinDeleted);
+  }
+
   /// Sets the Karde PIN: creating a first one, or replacing the one there is.
   ///
   /// Shared by the "App PIN lock" switch and the PIN row, because both are the

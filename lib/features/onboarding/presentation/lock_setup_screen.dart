@@ -203,7 +203,11 @@ class _LockSetupScreenState extends ConsumerState<LockSetupScreen>
                 child: ElevatedButton(
                   onPressed: () async {
                     final settings = ref.read(settingsRepositoryProvider);
-                    await settings.setLockType(_selectedLock);
+
+                    // The choice is not stored as a setting of its own. It is
+                    // exactly the two switches below, and a third copy of it
+                    // that nothing ever read was one more thing that could
+                    // disagree with them.
                     
                     // Written through the notifiers, not straight to the
                     // repository. Each notifier reads its value from storage
