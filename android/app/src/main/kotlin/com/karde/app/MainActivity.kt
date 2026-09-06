@@ -65,6 +65,13 @@ class MainActivity : FlutterFragmentActivity() {
                         }
                     }
                     "canUseVaultKey" -> result.success(canUseVaultKey())
+                    // Called when the vault is erased or fully restored. Nothing
+                    // encrypted by the lost key remains, so the warning that
+                    // would otherwise attach itself to healthy new items goes too.
+                    "clearVaultKeyLoss" -> {
+                        vaultKeyPrefs.edit().putBoolean("keyReplaced", false).apply()
+                        result.success(true)
+                    }
                     "willPromptEveryUse" -> result.success(willPromptEveryUse())
                     "biometricsChanged" -> result.success(biometricsChanged())
                     else -> result.notImplemented()
@@ -325,11 +332,50 @@ class MainActivity : FlutterFragmentActivity() {
     }
 
 
-    private fun getSecretKey(): SecretKey {
+    /**
+     * The vault key is gone. Not "wrong" and not "locked" — destroyed.
+     *
+     * Android deletes every key created with setUserAuthenticationRequired the
+     * moment the owner removes the device's secure lock screen. Setting a new
+     * lock afterwards does not bring it back; it only allows a new key to be
+     * made, and a new key cannot read what the old one wrote.
+     */
+    class VaultKeyGoneException : Exception("The vault key no longer exists")
+
+    private val vaultKeyPrefs by lazy {
+        getSharedPreferences("karde_vault_key", MODE_PRIVATE)
+    }
+
+    /**
+     * Returns the vault key, creating one only when that is the right thing.
+     *
+     * [allowCreate] is false for decryption, and that is the entire point of this
+     * parameter. Reading the key and making one used to be the same call, so when
+     * Android destroyed the key — the user turns the screen lock off — the next
+     * decrypt silently minted a *replacement* and then failed the tag check on
+     * data the old key had written. Karde reported "Could not unlock this card,
+     * please try again", advice that could never work, for a card that no longer
+     * existed in any readable form. Reported from the device, and the message the
+     * user should have seen was already written and simply unreachable.
+     *
+     * Decryption therefore asks for the key and takes no for an answer.
+     */
+    private fun getSecretKey(allowCreate: Boolean = true): SecretKey {
         val keyStore = KeyStore.getInstance(ANDROID_KEYSTORE)
         keyStore.load(null)
 
         (keyStore.getKey(KEY_ALIAS, null) as? SecretKey)?.let { return it }
+
+        if (!allowCreate) throw VaultKeyGoneException()
+
+        // A key existed before and does not now. Remember that, because once a
+        // replacement has been made the absence is no longer visible: every later
+        // decrypt of older data fails its tag check with nothing to say why.
+        if (vaultKeyPrefs.getBoolean("keyEverCreated", false)) {
+            vaultKeyPrefs.edit().putBoolean("keyReplaced", true).apply()
+            Log.w("Karde", "Vault key was destroyed; a replacement is being created")
+        }
+        vaultKeyPrefs.edit().putBoolean("keyEverCreated", true).apply()
 
         val keyGenerator =
             KeyGenerator.getInstance(KeyProperties.KEY_ALGORITHM_AES, ANDROID_KEYSTORE)
@@ -393,7 +439,15 @@ class MainActivity : FlutterFragmentActivity() {
                     try {
                         onAuthorised(authorised)
                     } catch (e: Exception) {
-                        result.error("CRYPTO_ERROR", e.message, null)
+                        // Once a replacement key exists the loss is invisible at
+                        // init: the cipher builds happily and only fails here,
+                        // on data the old key wrote. Without this the user is
+                        // told to try again, forever.
+                        if (vaultKeyPrefs.getBoolean("keyReplaced", false)) {
+                            result.error("KEY_INVALIDATED", e.message, null)
+                        } else {
+                            result.error("CRYPTO_ERROR", e.message, null)
+                        }
                     }
                 }
 
@@ -454,9 +508,17 @@ class MainActivity : FlutterFragmentActivity() {
             if (iv == null) {
                 cipher.init(mode, getSecretKey())
             } else {
-                cipher.init(mode, getSecretKey(), GCMParameterSpec(128, iv))
+                // Decryption never creates a key. See getSecretKey.
+                cipher.init(
+                    mode,
+                    getSecretKey(allowCreate = false),
+                    GCMParameterSpec(128, iv),
+                )
             }
             cipher
+        } catch (e: VaultKeyGoneException) {
+            handleInvalidatedKey(result)
+            null
         } catch (e: KeyPermanentlyInvalidatedException) {
             handleInvalidatedKey(result)
             null
