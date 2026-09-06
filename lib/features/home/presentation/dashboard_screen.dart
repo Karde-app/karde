@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../l10n/app_localizations.dart';
+import '../../../core/storage/settings_repository.dart';
+import '../../backup/presentation/backup_screen.dart';
 import '../../cards/data/card_repository.dart';
 import '../../cards/presentation/add_card_screen.dart';
 import '../../cards/presentation/vault_screen.dart';
@@ -309,6 +311,17 @@ class DashboardScreen extends ConsumerWidget {
                     orElse: () => const SizedBox.shrink(),
                   ),
 
+              // Nothing backed up, and something to lose.
+              //
+              // Deliberately not dismissible: the moment it matters — a screen
+              // lock switched off, a lost phone — arrives without warning, and
+              // Android gives an app no chance to intervene at that point. The
+              // only useful time to say this is beforehand, every time.
+              if (totalItems > 0 && ref.watch(lastBackupProvider) == null) ...[
+                _buildNoBackupPrompt(context, loc, theme),
+                const SizedBox(height: 16),
+              ],
+
               // Vault Health Banner
               vaultHealthAsync.when(
                 data: (status) {
@@ -501,6 +514,66 @@ class DashboardScreen extends ConsumerWidget {
             ],
           ),
         ),
+      ),
+    );
+  }
+
+  /// The reminder shown to somebody with items and no backup.
+  ///
+  /// Says what it means for them, not how any of it works. "Only on this phone"
+  /// is the whole point; keys and lock screens are not the user's problem.
+  Widget _buildNoBackupPrompt(BuildContext context, AppLocalizations loc, ThemeData theme) {
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: KardeColors.champagneGold.withValues(alpha: 0.08),
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: KardeColors.champagneGold.withValues(alpha: 0.35)),
+      ),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Icon(Icons.cloud_off_outlined,
+              color: KardeColors.champagneGold, size: 22),
+          const SizedBox(width: 14),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  loc.noBackupTitle,
+                  style: TextStyle(
+                    fontFamily: 'Outfit',
+                    fontSize: 16,
+                    fontWeight: FontWeight.w600,
+                    color: theme.colorScheme.onSurface,
+                  ),
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  loc.noBackupBody,
+                  style: theme.textTheme.bodyMedium?.copyWith(fontSize: 13, height: 1.45),
+                ),
+                const SizedBox(height: 10),
+                GestureDetector(
+                  onTap: () => Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (_) => const BackupScreen()),
+                  ),
+                  child: Text(
+                    loc.backupCreateAction,
+                    style: const TextStyle(
+                      fontFamily: 'Inter',
+                      fontSize: 14,
+                      fontWeight: FontWeight.bold,
+                      color: KardeColors.champagneGold,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
       ),
     );
   }

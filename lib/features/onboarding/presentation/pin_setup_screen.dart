@@ -25,20 +25,31 @@ class _PinSetupScreenState extends ConsumerState<PinSetupScreen> {
   String? _errorMessage;
 
   void _onDigitPressed(String digit) {
-    setState(() {
-      _errorMessage = null;
-      if (!_isConfirming) {
-        if (_pin.length < 4) _pin += digit;
-        if (_pin.length == 4) {
-          _isConfirming = true;
-        }
-      } else {
-        if (_confirmPin.length < 4) _confirmPin += digit;
-        if (_confirmPin.length == 4) {
-          _validatePin();
-        }
+    // Same reason as the verification pad: the fourth dot has to be seen
+    // before anything acts on it, or the pad reads as unresponsive.
+    if (!_isConfirming) {
+      if (_pin.length >= 4) return;
+      setState(() {
+        _errorMessage = null;
+        _pin += digit;
+      });
+      if (_pin.length == 4) {
+        Future.delayed(const Duration(milliseconds: 180), () {
+          if (mounted) setState(() => _isConfirming = true);
+        });
       }
-    });
+    } else {
+      if (_confirmPin.length >= 4) return;
+      setState(() {
+        _errorMessage = null;
+        _confirmPin += digit;
+      });
+      if (_confirmPin.length == 4) {
+        Future.delayed(const Duration(milliseconds: 180), () {
+          if (mounted) _validatePin();
+        });
+      }
+    }
   }
 
   void _onDeletePressed() {

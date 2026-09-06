@@ -152,14 +152,13 @@ class AppLocalizationsFr extends AppLocalizations {
   String get setupLockTitle => 'Sécurisez votre coffre';
 
   @override
-  String get setupLockSubtitle =>
-      'Comment souhaitez-vous protéger vos secrets?';
+  String get setupLockSubtitle => 'Comment souhaitez-vous ouvrir Karde ?';
 
   @override
   String get phoneLock => 'Verrouillage du téléphone';
 
   @override
-  String get phoneLockDesc => 'Utilisez Face ID, Touch ID ou le code.';
+  String get phoneLockDesc => 'Face ID, Touch ID ou le code de votre appareil.';
 
   @override
   String get kardePin => 'Code Karde';
@@ -171,7 +170,8 @@ class AppLocalizationsFr extends AppLocalizations {
   String get bothLocks => 'Les deux';
 
   @override
-  String get bothLocksDesc => 'Téléphone pour l\'appli, Code pour les secrets.';
+  String get bothLocksDesc =>
+      'Le verrouillage du téléphone pour ouvrir Karde, et un code Karde pour les actions sensibles.';
 
   @override
   String get continueBtn => 'Continuer';
@@ -198,18 +198,18 @@ class AppLocalizationsFr extends AppLocalizations {
   String get unlockToReveal => 'Déverrouillez pour révéler';
 
   @override
-  String get recoverySetupTitle => 'Récupération du code PIN';
+  String get recoverySetupTitle => 'En cas de blocage';
 
   @override
   String get recoverySetupSubtitle =>
-      'Comment souhaitez-vous récupérer votre code PIN si vous l\'oubliez ?';
+      'Choisissez comment revenir si vous ne parvenez plus à déverrouiller Karde.';
 
   @override
   String get biometricRecovery => 'Verrouillage du téléphone';
 
   @override
   String get biometricRecoveryDesc =>
-      'Utilisez la méthode qui déverrouille votre téléphone — empreinte digitale, visage, schéma, code PIN ou mot de passe — pour réinitialiser votre code PIN Karde.';
+      'Face ID, Touch ID ou le code de votre appareil.';
 
   @override
   String get securityQuestions => 'Questions de sécurité';
@@ -324,7 +324,8 @@ class AppLocalizationsFr extends AppLocalizations {
   String get biometricUnlockTitle => 'Déverrouillage biométrique';
 
   @override
-  String get biometricUnlockDesc => 'Utiliser l\'empreinte digitale ou Face ID';
+  String get biometricUnlockDesc =>
+      'Ouvrir Karde avec Face ID, Touch ID ou le code de votre appareil';
 
   @override
   String get changePin => 'Modifier le code PIN';
@@ -1174,11 +1175,11 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get securityAnswersHashNoteChanging =>
-      'Vos réponses actuelles ne peuvent pas être affichées. Elles sont stockées sous forme d\'empreintes à sens unique : Karde ne peut pas les relire, seulement les remplacer. Enregistrer écrase les deux.';
+      'Vos réponses actuelles ne peuvent pas être affichées. Elles sont brouillées à l’enregistrement : Karde peut seulement les remplacer, jamais les lire. Enregistrer remplace les deux.';
 
   @override
   String get securityAnswersHashNoteNew =>
-      'Les réponses sont stockées sous forme d\'empreintes à sens unique : personne, pas même Karde, ne peut les relire. Les majuscules et les espaces n\'ont aucune importance.';
+      'Vos réponses sont brouillées avant d\'être enregistrées : personne ne peut les relire, pas même Karde. Les majuscules et les espaces n\'ont aucune importance.';
 
   @override
   String get alreadyUsedAbove => 'Déjà utilisée ci-dessus';
@@ -1361,7 +1362,7 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get recoveryNoPinNote =>
-      'Vous avez choisi de déverrouiller Karde avec le verrouillage de votre téléphone : il n\'y a donc pas encore de code Karde à récupérer. Le configurer maintenant garantit qu\'une porte de secours existe déjà si vous en ajoutez un un jour.\n\nPar ailleurs, et c\'est plus important : vos éléments sont chiffrés avec une clé conservée dans la puce de sécurité de votre téléphone. Si vous supprimez ou réinitialisez le verrouillage d\'écran, cette clé est détruite et rien ici ne pourra récupérer vos éléments. Une sauvegarde chiffrée, depuis les Réglages, est la seule chose qui y survive.';
+      'Vous avez choisi de déverrouiller Karde avec le verrouillage de votre téléphone : il n\'y a donc pas encore de code Karde à récupérer. Le configurer maintenant garantit qu\'une porte de secours existe déjà si vous en ajoutez un un jour.\n\nPar ailleurs, et c\'est bon à savoir : vos éléments sont chiffrés avec une clé conservée dans la puce de sécurité de votre téléphone. Changer votre code, votre schéma, votre mot de passe ou vos empreintes ne pose aucun problème — vos éléments restent lisibles. En revanche, si vous désactivez complètement le verrouillage d\'écran, cette clé est détruite et rien ici ne pourra récupérer vos éléments. Une sauvegarde chiffrée, depuis les Réglages, est la seule chose qui y survive.';
 
   @override
   String get areYouSure => 'Êtes-vous sûr(e) ?';
@@ -1477,7 +1478,7 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get privacySection7Body =>
-      'La clé de chiffrement de Karde réside dans la puce de sécurité de votre téléphone et dépend de votre verrouillage d\'écran. Si vous supprimez ou réinitialisez le code, le schéma, le mot de passe ou l\'empreinte de votre téléphone, cette clé est détruite et vos éléments enregistrés ne peuvent plus être ouverts — par personne, nous y compris. Une sauvegarde chiffrée est la seule chose qui y survive : créez-en une avant de modifier la façon dont votre téléphone se déverrouille.';
+      'La clé de chiffrement de Karde réside dans la puce de sécurité de votre téléphone et n\'existe que tant que celui-ci possède un verrouillage d\'écran. Changer votre code, votre schéma, votre mot de passe ou vos empreintes ne pose aucun problème — vos éléments restent lisibles. En revanche, si vous désactivez complètement le verrouillage d\'écran, cette clé est détruite et vos éléments ne peuvent plus être ouverts par personne, nous y compris. Une sauvegarde chiffrée est la seule chose qui y survive : créez-en une avant de retirer votre verrouillage d\'écran.';
 
   @override
   String get privacySection8Title => '8. Nous contacter';
@@ -1485,4 +1486,15 @@ class AppLocalizationsFr extends AppLocalizations {
   @override
   String get privacySection8Body =>
       'Questions sur cette politique, ou tout point qui vous semble flou : support@getgubae.com.';
+
+  @override
+  String get biometricCouldNotConfirm =>
+      'Impossible de confirmer votre identité. Réessayez.';
+
+  @override
+  String get noBackupTitle => 'Aucune sauvegarde';
+
+  @override
+  String get noBackupBody =>
+      'Tout ce que vous avez enregistré se trouve uniquement sur ce téléphone. Une sauvegarde vous permet de tout retrouver sur un nouveau téléphone.';
 }

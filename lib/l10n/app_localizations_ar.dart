@@ -156,14 +156,13 @@ class AppLocalizationsAr extends AppLocalizations {
   String get setupLockTitle => 'أمّن خزنتك';
 
   @override
-  String get setupLockSubtitle => 'كيف تود حماية أسرارك؟';
+  String get setupLockSubtitle => 'كيف تريد فتح Karde؟';
 
   @override
   String get phoneLock => 'قفل الهاتف';
 
   @override
-  String get phoneLockDesc =>
-      'استخدم بصمة الوجه أو الإصبع أو الرمز السري للهاتف.';
+  String get phoneLockDesc => 'بصمة الوجه أو الإصبع أو رمز جهازك.';
 
   @override
   String get kardePin => 'رمز Karde';
@@ -175,7 +174,8 @@ class AppLocalizationsAr extends AppLocalizations {
   String get bothLocks => 'كلاهما';
 
   @override
-  String get bothLocksDesc => 'قفل الهاتف للتطبيق، ورمز Karde للأسرار.';
+  String get bothLocksDesc =>
+      'قفل هاتفك لفتح Karde، ورمز Karde للإجراءات الحسّاسة.';
 
   @override
   String get continueBtn => 'متابعة';
@@ -202,18 +202,17 @@ class AppLocalizationsAr extends AppLocalizations {
   String get unlockToReveal => 'افتح القفل للكشف عن الأسرار';
 
   @override
-  String get recoverySetupTitle => 'استعادة رقم التعريف';
+  String get recoverySetupTitle => 'إذا تعذّر عليك الدخول';
 
   @override
   String get recoverySetupSubtitle =>
-      'كيف تود استعادة رقم التعريف الشخصي إذا نسيته؟';
+      'اختر طريقة العودة إذا لم تتمكن يوماً من فتح Karde.';
 
   @override
   String get biometricRecovery => 'قفل الهاتف';
 
   @override
-  String get biometricRecoveryDesc =>
-      'استخدم الطريقة التي تفتح بها هاتفك — بصمة الإصبع أو الوجه أو النمط أو رمز PIN أو كلمة المرور — لإعادة تعيين رمز Karde الخاص بك.';
+  String get biometricRecoveryDesc => 'بصمة الوجه أو الإصبع أو رمز جهازك.';
 
   @override
   String get securityQuestions => 'أسئلة الأمان';
@@ -327,7 +326,8 @@ class AppLocalizationsAr extends AppLocalizations {
   String get biometricUnlockTitle => 'الفتح بالبصمة';
 
   @override
-  String get biometricUnlockDesc => 'استخدم بصمة إصبعك لفتح Karde';
+  String get biometricUnlockDesc =>
+      'افتح Karde ببصمة الوجه أو الإصبع أو رمز جهازك';
 
   @override
   String get changePin => 'تغيير رمز Karde';
@@ -1169,11 +1169,11 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get securityAnswersHashNoteChanging =>
-      'لا يمكن عرض إجاباتك الحالية. فهي محفوظة كبصمات أحادية الاتجاه، لذا لا يستطيع Karde قراءتها — بل استبدالها فقط. الحفظ يستبدل كلتيهما.';
+      'لا يمكن عرض إجاباتك الحالية. فهي تُشفَّر عند الحفظ، لذا يستطيع Karde استبدالها فقط ولا يستطيع قراءتها. والحفظ يستبدل كلتيهما.';
 
   @override
   String get securityAnswersHashNoteNew =>
-      'تُحفظ الإجابات كبصمات أحادية الاتجاه، فلا يستطيع أحد — ولا حتى Karde — قراءتها. لا يهمّ استخدام الأحرف الكبيرة أو المسافات.';
+      'تُشفَّر إجاباتك قبل حفظها، فلا يستطيع أحد قراءتها — ولا حتى Karde. ولا يهمّ استخدام الأحرف الكبيرة أو المسافات.';
 
   @override
   String get alreadyUsedAbove => 'مستخدم بالفعل أعلاه';
@@ -1352,7 +1352,7 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get recoveryNoPinNote =>
-      'لقد اخترت فتح Karde باستخدام قفل هاتفك، لذا لا يوجد بعد رمز Karde يمكن استعادته. وإعداد هذا الآن يعني وجود طريق للعودة جاهز إن أضفت رمزاً لاحقاً.\n\nوبشكل منفصل، وهو الأهم: عناصرك مشفّرة بمفتاح محفوظ في شريحة الأمان داخل هاتفك. وإذا أزلت قفل شاشة هاتفك أو أعدت ضبطه، فسيُدمَّر ذلك المفتاح ولن يستطيع أي شيء هنا استرجاع عناصرك. والنسخة الاحتياطية المشفّرة، من الإعدادات، هي الشيء الوحيد الذي ينجو من ذلك.';
+      'لقد اخترت فتح Karde باستخدام قفل هاتفك، لذا لا يوجد بعد رمز Karde يمكن استعادته. وإعداد هذا الآن يعني وجود طريق للعودة جاهز إن أضفت رمزاً لاحقاً.\n\nومن المفيد أن تعرف أيضاً: عناصرك مشفّرة بمفتاح محفوظ في شريحة الأمان داخل هاتفك. تغيير رمزك أو نقشك أو كلمة مرورك أو بصماتك آمن تماماً — وتبقى عناصرك قابلة للقراءة. لكن إذا أوقفت قفل الشاشة تماماً، فسيُدمَّر ذلك المفتاح ولن يستطيع أي شيء هنا استرجاع عناصرك. والنسخة الاحتياطية المشفّرة، من الإعدادات، هي الشيء الوحيد الذي ينجو من ذلك.';
 
   @override
   String get areYouSure => 'هل أنت متأكد؟';
@@ -1466,7 +1466,7 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get privacySection7Body =>
-      'يوجد مفتاح التشفير الخاص بـ Karde داخل شريحة الأمان في هاتفك وهو مرتبط بقفل شاشتك. وإذا أزلت أو أعدت ضبط رمز هاتفك أو نقشه أو كلمة مروره أو بصمته، فسيُدمَّر ذلك المفتاح ولن يعود بالإمكان فتح عناصرك المحفوظة — لا من قبل أحد، بمن فينا نحن. والنسخة الاحتياطية المشفّرة هي الشيء الوحيد الذي ينجو من ذلك، لذا أنشئ واحدة قبل تغيير طريقة فتح هاتفك.';
+      'يوجد مفتاح التشفير الخاص بـ Karde في شريحة الأمان داخل هاتفك، وهو لا يبقى إلا ما دام لهاتفك قفل شاشة. تغيير رمزك أو نقشك أو كلمة مرورك أو بصماتك آمن — وتبقى عناصرك المحفوظة قابلة للقراءة. لكن إذا أوقفت قفل الشاشة تماماً، فسيُدمَّر ذلك المفتاح ولن يتمكن أحد من فتح عناصرك، بمن فينا نحن. والنسخة الاحتياطية المشفّرة هي الشيء الوحيد الذي ينجو من ذلك، لذا أنشئ واحدة قبل إزالة قفل شاشتك.';
 
   @override
   String get privacySection8Title => '8. التواصل';
@@ -1474,4 +1474,15 @@ class AppLocalizationsAr extends AppLocalizations {
   @override
   String get privacySection8Body =>
       'لأي أسئلة حول هذه السياسة أو أي نقطة غير واضحة: support@getgubae.com.';
+
+  @override
+  String get biometricCouldNotConfirm =>
+      'تعذّر التأكد من هويتك. حاول مرة أخرى.';
+
+  @override
+  String get noBackupTitle => 'لا توجد نسخة احتياطية';
+
+  @override
+  String get noBackupBody =>
+      'كل ما حفظته موجود على هذا الهاتف فقط. تتيح لك النسخة الاحتياطية استعادة كل شيء على هاتف جديد.';
 }

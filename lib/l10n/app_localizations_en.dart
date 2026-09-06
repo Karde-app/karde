@@ -152,14 +152,13 @@ class AppLocalizationsEn extends AppLocalizations {
   String get setupLockTitle => 'Secure Your Vault';
 
   @override
-  String get setupLockSubtitle => 'How would you like to protect your secrets?';
+  String get setupLockSubtitle => 'How would you like to open Karde?';
 
   @override
   String get phoneLock => 'Phone Lock';
 
   @override
-  String get phoneLockDesc =>
-      'Use your device\'s Face ID, Touch ID, or passcode.';
+  String get phoneLockDesc => 'Your device\'s Face ID, Touch ID or passcode.';
 
   @override
   String get kardePin => 'Karde PIN';
@@ -172,7 +171,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get bothLocksDesc =>
-      'Phone lock to open app, Karde PIN to view secrets.';
+      'Your phone\'s lock to open Karde, and a Karde PIN for sensitive actions.';
 
   @override
   String get continueBtn => 'Continue';
@@ -199,18 +198,18 @@ class AppLocalizationsEn extends AppLocalizations {
   String get unlockToReveal => 'Unlock to reveal secrets';
 
   @override
-  String get recoverySetupTitle => 'PIN Recovery';
+  String get recoverySetupTitle => 'If you get locked out';
 
   @override
   String get recoverySetupSubtitle =>
-      'How would you like to recover your PIN if you forget it?';
+      'Choose how to get back in if you ever cannot unlock Karde.';
 
   @override
   String get biometricRecovery => 'Phone Lock';
 
   @override
   String get biometricRecoveryDesc =>
-      'Use however you unlock your phone — fingerprint, face, pattern, PIN or password — to reset your Karde PIN.';
+      'Your device\'s Face ID, Touch ID or passcode.';
 
   @override
   String get securityQuestions => 'Security Questions';
@@ -324,7 +323,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get biometricUnlockTitle => 'Biometric unlock';
 
   @override
-  String get biometricUnlockDesc => 'Use fingerprint to open Karde';
+  String get biometricUnlockDesc =>
+      'Open Karde with your device\'s Face ID, Touch ID or passcode';
 
   @override
   String get changePin => 'Change Karde PIN';
@@ -1157,11 +1157,11 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get securityAnswersHashNoteChanging =>
-      'Your current answers cannot be shown. They are stored as one-way hashes, so Karde cannot read them back — only replace them. Saving overwrites both.';
+      'Your current answers cannot be shown. They are scrambled when saved, so Karde can only replace them, never read them. Saving replaces both.';
 
   @override
   String get securityAnswersHashNoteNew =>
-      'Answers are stored as one-way hashes, so nobody — including Karde — can read them back. Capitalisation and spacing do not matter.';
+      'Your answers are scrambled before they are saved, so nobody can read them back — not even Karde. Capitalisation and spacing do not matter.';
 
   @override
   String get alreadyUsedAbove => 'Already used above';
@@ -1340,7 +1340,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get recoveryNoPinNote =>
-      'You chose to unlock Karde with your phone\'s own lock, so there is no Karde PIN to recover yet. Setting this up now means a way back in already exists if you ever add one.\n\nSeparately, and more importantly: your items are encrypted with a key held in your phone\'s security chip. If you remove or reset your phone\'s screen lock, that key is destroyed and nothing here can bring your items back. An encrypted backup, from Settings, is the only thing that survives it.';
+      'You chose to unlock Karde with your phone\'s own lock, so there is no Karde PIN to recover yet. Setting this up now means a way back in already exists if you ever add one.\n\nSeparately, and worth knowing: your items are encrypted with a key held in your phone\'s security chip. Changing your PIN, pattern, password or fingerprints is safe — your items stay readable. But if you turn your screen lock off completely, that key is destroyed and nothing here can bring your items back. An encrypted backup, from Settings, is the only thing that survives it.';
 
   @override
   String get areYouSure => 'Are you sure?';
@@ -1454,7 +1454,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get privacySection7Body =>
-      'Karde\'s encryption key lives in your phone\'s security chip and is tied to your screen lock. If you remove or reset your phone\'s PIN, pattern, password or fingerprint, that key is destroyed and your saved items can no longer be opened — by anyone, including us. An encrypted backup is the only thing that survives it, so make one before changing how your phone unlocks.';
+      'Karde\'s encryption key lives in your phone\'s security chip, and it exists only while your phone has a screen lock. Changing your PIN, pattern, password or fingerprints is safe — your saved items stay readable. But if you turn your screen lock off completely, that key is destroyed and your items can no longer be opened by anyone, including us. An encrypted backup is the only thing that survives it, so make one before removing your screen lock.';
 
   @override
   String get privacySection8Title => '8. Contact';
@@ -1462,4 +1462,15 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get privacySection8Body =>
       'Questions about this policy, or anything unclear: support@getgubae.com.';
+
+  @override
+  String get biometricCouldNotConfirm =>
+      'Could not confirm it was you. Try again.';
+
+  @override
+  String get noBackupTitle => 'No backup yet';
+
+  @override
+  String get noBackupBody =>
+      'Everything you have saved is only on this phone. A backup lets you get it all back on a new phone.';
 }

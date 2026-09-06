@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../l10n/app_localizations.dart';
+import '../../../core/storage/settings_repository.dart';
 import '../../../core/platform/file_transfer_service.dart';
 import '../../../core/security/bundle_crypto_service.dart';
 import '../../../core/security/encryption_service.dart';
@@ -88,6 +89,7 @@ class _BackupScreenState extends ConsumerState<BackupScreen> {
         passphrase: passphrase,
         onProgress: (completed, total) => _report(loc.backupUnlockingVault, completed, total),
       );
+      await ref.read(lastBackupProvider.notifier).recordBackup();
       if (!mounted) return;
       KardeFeedback.success(context, loc.backupSavedAs(fileName));
     } on VaultAuthCancelled {

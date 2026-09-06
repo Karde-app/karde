@@ -92,13 +92,24 @@ class _PinVerificationScreenState extends ConsumerState<PinVerificationScreen> {
 
   void _onDigitPressed(String digit) {
     if (_lockoutUntil != null || _isPermanentlyLocked) return;
+    if (_pin.length >= 4) return;
+
     setState(() {
       _errorMessage = null;
-      if (_pin.length < 4) _pin += digit;
-      if (_pin.length == 4) {
-        _validatePin();
-      }
+      _pin += digit;
     });
+
+    // Let the fourth dot actually appear before the PIN is judged.
+    //
+    // Validating inside setState filled and cleared that dot in the same
+    // breath, so the pad looked unresponsive on the last digit — and the
+    // natural reaction, pressing it again, spends one of the five attempts
+    // before the permanent lockout.
+    if (_pin.length == 4) {
+      Future.delayed(const Duration(milliseconds: 180), () {
+        if (mounted) _validatePin();
+      });
+    }
   }
 
   void _onDeletePressed() {

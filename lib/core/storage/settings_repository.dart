@@ -20,6 +20,11 @@ final themeModeProvider = StateNotifierProvider<ThemeModeNotifier, ThemeMode>((r
   return ThemeModeNotifier(repository);
 });
 
+/// Null until the user has exported a backup at least once.
+final lastBackupProvider = StateNotifierProvider<LastBackupNotifier, DateTime?>((ref) {
+  return LastBackupNotifier(ref.watch(settingsRepositoryProvider));
+});
+
 final languageProvider = StateNotifierProvider<LanguageNotifier, String>((ref) {
   final repository = ref.watch(settingsRepositoryProvider);
   return LanguageNotifier(repository);
@@ -50,6 +55,7 @@ class SettingsRepository {
   static const _autoHideKey = 'auto_hide_duration';
   static const _firstLaunchKey = 'is_first_launch';
   static const _languageKey = 'app_language';
+  static const _lastBackupKey = 'last_backup_at';
   static const _lockTypeKey = 'lock_type'; // 'phone', 'dedicated', 'both'
   static const _hashedPinKey = 'hashed_pin';
   static const _failedAttemptsKey = 'failed_attempts';
@@ -123,6 +129,20 @@ class SettingsRepository {
 
   Future<void> setIsFirstLaunch(bool isFirstLaunch) async {
     await _prefs.setBool(_firstLaunchKey, isFirstLaunch);
+  }
+
+  /// When the user last exported a backup, or null if they never have.
+  ///
+  /// Karde previously had no idea, so it could not tell the one user who most
+  /// needs reminding — somebody with a full vault and no copy of it anywhere —
+  /// from somebody who is already safe.
+  DateTime? getLastBackupAt() {
+    final ms = _prefs.getInt(_lastBackupKey);
+    return ms == null ? null : DateTime.fromMillisecondsSinceEpoch(ms);
+  }
+
+  Future<void> setLastBackupAt(DateTime when) async {
+    await _prefs.setInt(_lastBackupKey, when.millisecondsSinceEpoch);
   }
 
   // Language
@@ -270,6 +290,18 @@ class AutoHideDurationNotifier extends StateNotifier<int> {
   Future<void> updateDuration(int seconds) async {
     state = seconds;
     await _repository.setAutoHideDuration(seconds);
+  }
+}
+
+class LastBackupNotifier extends StateNotifier<DateTime?> {
+  final SettingsRepository _repository;
+
+  LastBackupNotifier(this._repository) : super(_repository.getLastBackupAt());
+
+  Future<void> recordBackup() async {
+    final now = DateTime.now();
+    state = now;
+    await _repository.setLastBackupAt(now);
   }
 }
 

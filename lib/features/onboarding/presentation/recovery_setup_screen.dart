@@ -184,7 +184,20 @@ class _RecoverySetupScreenState extends ConsumerState<RecoverySetupScreen> {
           padding: const EdgeInsets.symmetric(horizontal: 24.0),
           child: ListView(
             children: [
-              const SizedBox(height: 60),
+              const SizedBox(height: 8),
+              // Onboarding had no way back from here, so a lock type chosen by
+              // mistake could not be undone. Shown only when there is in fact
+              // something behind this screen.
+              if (Navigator.canPop(context))
+                Align(
+                  alignment: Alignment.centerLeft,
+                  child: IconButton(
+                    icon: const Icon(Icons.arrow_back, color: Colors.white),
+                    tooltip: loc.goBack,
+                    onPressed: () => Navigator.pop(context),
+                  ),
+                ),
+              const SizedBox(height: 12),
               Text(
                 loc.recoverySetupTitle,
                 style: const TextStyle(
@@ -205,7 +218,7 @@ class _RecoverySetupScreenState extends ConsumerState<RecoverySetupScreen> {
               ),
               const SizedBox(height: 32),
               if (_hasNoKardePin) _buildNoPinNote(),
-              if (_canCheckBiometrics)
+              if (_canCheckBiometrics && !_hasNoKardePin)
                 _buildOptionCard(
                   title: loc.biometricRecovery,
                   description: loc.biometricRecoveryDesc,

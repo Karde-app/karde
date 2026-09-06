@@ -373,7 +373,7 @@ abstract class AppLocalizations {
   /// No description provided for @setupLockSubtitle.
   ///
   /// In en, this message translates to:
-  /// **'How would you like to protect your secrets?'**
+  /// **'How would you like to open Karde?'**
   String get setupLockSubtitle;
 
   /// No description provided for @phoneLock.
@@ -385,7 +385,7 @@ abstract class AppLocalizations {
   /// No description provided for @phoneLockDesc.
   ///
   /// In en, this message translates to:
-  /// **'Use your device\'s Face ID, Touch ID, or passcode.'**
+  /// **'Your device\'s Face ID, Touch ID or passcode.'**
   String get phoneLockDesc;
 
   /// No description provided for @kardePin.
@@ -409,7 +409,7 @@ abstract class AppLocalizations {
   /// No description provided for @bothLocksDesc.
   ///
   /// In en, this message translates to:
-  /// **'Phone lock to open app, Karde PIN to view secrets.'**
+  /// **'Your phone\'s lock to open Karde, and a Karde PIN for sensitive actions.'**
   String get bothLocksDesc;
 
   /// No description provided for @continueBtn.
@@ -463,13 +463,13 @@ abstract class AppLocalizations {
   /// No description provided for @recoverySetupTitle.
   ///
   /// In en, this message translates to:
-  /// **'PIN Recovery'**
+  /// **'If you get locked out'**
   String get recoverySetupTitle;
 
   /// No description provided for @recoverySetupSubtitle.
   ///
   /// In en, this message translates to:
-  /// **'How would you like to recover your PIN if you forget it?'**
+  /// **'Choose how to get back in if you ever cannot unlock Karde.'**
   String get recoverySetupSubtitle;
 
   /// No description provided for @biometricRecovery.
@@ -481,7 +481,7 @@ abstract class AppLocalizations {
   /// No description provided for @biometricRecoveryDesc.
   ///
   /// In en, this message translates to:
-  /// **'Use however you unlock your phone — fingerprint, face, pattern, PIN or password — to reset your Karde PIN.'**
+  /// **'Your device\'s Face ID, Touch ID or passcode.'**
   String get biometricRecoveryDesc;
 
   /// No description provided for @securityQuestions.
@@ -697,7 +697,7 @@ abstract class AppLocalizations {
   /// No description provided for @biometricUnlockDesc.
   ///
   /// In en, this message translates to:
-  /// **'Use fingerprint to open Karde'**
+  /// **'Open Karde with your device\'s Face ID, Touch ID or passcode'**
   String get biometricUnlockDesc;
 
   /// No description provided for @changePin.
@@ -2149,13 +2149,13 @@ abstract class AppLocalizations {
   /// No description provided for @securityAnswersHashNoteChanging.
   ///
   /// In en, this message translates to:
-  /// **'Your current answers cannot be shown. They are stored as one-way hashes, so Karde cannot read them back — only replace them. Saving overwrites both.'**
+  /// **'Your current answers cannot be shown. They are scrambled when saved, so Karde can only replace them, never read them. Saving replaces both.'**
   String get securityAnswersHashNoteChanging;
 
   /// No description provided for @securityAnswersHashNoteNew.
   ///
   /// In en, this message translates to:
-  /// **'Answers are stored as one-way hashes, so nobody — including Karde — can read them back. Capitalisation and spacing do not matter.'**
+  /// **'Your answers are scrambled before they are saved, so nobody can read them back — not even Karde. Capitalisation and spacing do not matter.'**
   String get securityAnswersHashNoteNew;
 
   /// No description provided for @alreadyUsedAbove.
@@ -2473,7 +2473,7 @@ abstract class AppLocalizations {
   /// No description provided for @recoveryNoPinNote.
   ///
   /// In en, this message translates to:
-  /// **'You chose to unlock Karde with your phone\'s own lock, so there is no Karde PIN to recover yet. Setting this up now means a way back in already exists if you ever add one.\n\nSeparately, and more importantly: your items are encrypted with a key held in your phone\'s security chip. If you remove or reset your phone\'s screen lock, that key is destroyed and nothing here can bring your items back. An encrypted backup, from Settings, is the only thing that survives it.'**
+  /// **'You chose to unlock Karde with your phone\'s own lock, so there is no Karde PIN to recover yet. Setting this up now means a way back in already exists if you ever add one.\n\nSeparately, and worth knowing: your items are encrypted with a key held in your phone\'s security chip. Changing your PIN, pattern, password or fingerprints is safe — your items stay readable. But if you turn your screen lock off completely, that key is destroyed and nothing here can bring your items back. An encrypted backup, from Settings, is the only thing that survives it.'**
   String get recoveryNoPinNote;
 
   /// No description provided for @areYouSure.
@@ -2653,7 +2653,7 @@ abstract class AppLocalizations {
   /// No description provided for @privacySection7Body.
   ///
   /// In en, this message translates to:
-  /// **'Karde\'s encryption key lives in your phone\'s security chip and is tied to your screen lock. If you remove or reset your phone\'s PIN, pattern, password or fingerprint, that key is destroyed and your saved items can no longer be opened — by anyone, including us. An encrypted backup is the only thing that survives it, so make one before changing how your phone unlocks.'**
+  /// **'Karde\'s encryption key lives in your phone\'s security chip, and it exists only while your phone has a screen lock. Changing your PIN, pattern, password or fingerprints is safe — your saved items stay readable. But if you turn your screen lock off completely, that key is destroyed and your items can no longer be opened by anyone, including us. An encrypted backup is the only thing that survives it, so make one before removing your screen lock.'**
   String get privacySection7Body;
 
   /// No description provided for @privacySection8Title.
@@ -2667,6 +2667,24 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Questions about this policy, or anything unclear: support@getgubae.com.'**
   String get privacySection8Body;
+
+  /// No description provided for @biometricCouldNotConfirm.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not confirm it was you. Try again.'**
+  String get biometricCouldNotConfirm;
+
+  /// No description provided for @noBackupTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'No backup yet'**
+  String get noBackupTitle;
+
+  /// No description provided for @noBackupBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Everything you have saved is only on this phone. A backup lets you get it all back on a new phone.'**
+  String get noBackupBody;
 }
 
 class _AppLocalizationsDelegate

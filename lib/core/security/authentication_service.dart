@@ -36,6 +36,7 @@ class AuthenticationService {
     final loc = AppLocalizations.of(context)!;
     final requirePinLock = settings.getRequirePinLock();
     final biometricUnlock = settings.getBiometricUnlock();
+    final hasKardePin = await _hasKardePin(settings);
 
     // A dedicated Karde PIN is the app-level factor for viewing secrets. Ask for
     // it first rather than treating it as a fallback after biometrics.
@@ -84,12 +85,22 @@ class AuthenticationService {
         }
       } catch (e) {
         if (context.mounted) {
-          KardeFeedback.error(context, loc.biometricAuthFailedUsePin);
+          KardeFeedback.error(
+            context,
+            hasKardePin ? loc.biometricAuthFailedUsePin : loc.biometricCouldNotConfirm,
+          );
         }
       }
     }
 
-    // Unconditional fallback: if biometrics failed/cancelled, or if both are somehow disabled, force PIN.
+    // Fall back to the Karde PIN — but only if there is one.
+    //
+    // Without this guard, somebody who chose "Phone Lock" and never set a Karde
+    // PIN could dismiss the fingerprint prompt, be offered the PIN screen, be
+    // sent to CREATE a PIN because none existed, and have that creation count as
+    // a successful authentication. Declining the only real factor became a way
+    // in. When there is no second factor to fall back to, the answer is no.
+    if (!hasKardePin) return false;
     if (!context.mounted) return false;
     final result = await Navigator.push<bool>(
       context,
@@ -99,6 +110,15 @@ class AuthenticationService {
       ),
     );
     return result ?? false;
+  }
+
+  /// Whether a Karde PIN has actually been set.
+  ///
+  /// `requirePinLock` only says the setting is on; it says nothing about whether
+  /// a PIN was ever created. The two disagree for anyone who chose Phone Lock.
+  Future<bool> _hasKardePin(SettingsRepository settings) async {
+    final stored = await settings.getHashedPin();
+    return stored != null && stored.isNotEmpty;
   }
 
 
@@ -124,6 +144,7 @@ class AuthenticationService {
 
   Future<bool> authenticateAppStartup(BuildContext context, SettingsRepository settings) async {
     final loc = AppLocalizations.of(context)!;
+    final hasKardePin = await _hasKardePin(settings);
     final requirePinLock = settings.getRequirePinLock();
     final biometricUnlock = settings.getBiometricUnlock();
 
