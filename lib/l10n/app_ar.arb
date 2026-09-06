@@ -201,6 +201,7 @@
   "backupSetupPassphraseTitle": "اختر عبارة مرور",
   "backupSetupPassphraseBody": "ستحتاج إليها لاستعادة بياناتك. لا يستطيع Karde معرفتها أو إعادة تعيينها، لذا اكتبها واحفظها في مكان آمن.",
   "backupSetupPassphraseDone": "تم اختيار عبارة المرور",
+  "passphraseTooWeakForBackup": "اختر عبارة مرور أطول أو أكثر تنوعاً. تُحدَّث هذه النسخة باستمرار، لذا يستحق الأمر بعض الوقت.",
   "backupSetupFolderTitle": "اختر مكان الحفظ",
   "backupSetupFolderBody": "اختر مجلداً على هاتفك. إذا اخترت مجلداً متزامناً مع التخزين السحابي، فستبقى نسختك سليمة حتى لو فقدت الهاتف.",
   "backupSetupFolderAction": "اختيار مجلد",

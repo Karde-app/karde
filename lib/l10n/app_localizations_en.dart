@@ -640,6 +640,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get backupSetupPassphraseDone => 'Passphrase chosen';
 
   @override
+  String get passphraseTooWeakForBackup =>
+      'Please choose a longer passphrase, or add some variety. This copy is kept up to date all the time, so it is worth a moment.';
+
+  @override
   String get backupSetupFolderTitle => 'Choose where it goes';
 
   @override

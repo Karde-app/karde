@@ -638,6 +638,10 @@ class AppLocalizationsAr extends AppLocalizations {
   String get backupSetupPassphraseDone => 'تم اختيار عبارة المرور';
 
   @override
+  String get passphraseTooWeakForBackup =>
+      'اختر عبارة مرور أطول أو أكثر تنوعاً. تُحدَّث هذه النسخة باستمرار، لذا يستحق الأمر بعض الوقت.';
+
+  @override
   String get backupSetupFolderTitle => 'اختر مكان الحفظ';
 
   @override

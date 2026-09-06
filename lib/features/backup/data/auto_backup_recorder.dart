@@ -20,6 +20,12 @@ final autoBackupConfiguredProvider = FutureProvider.autoDispose<bool>((ref) {
   return ref.watch(autoBackupServiceProvider).isConfigured;
 });
 
+/// How backup is set up, for screens that need to name the folder.
+final autoBackupSetupProvider =
+    FutureProvider.autoDispose<AutoBackupSetup?>((ref) {
+  return ref.watch(autoBackupServiceProvider).setup();
+});
+
 /// Whether the last attempt to write the backup failed.
 ///
 /// A plain flag rather than something derived, because the thing worth reporting

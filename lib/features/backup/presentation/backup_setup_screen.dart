@@ -48,7 +48,15 @@ class _BackupSetupScreenState extends ConsumerState<BackupSetupScreen> {
   bool get _ready => _passphrase != null && _folder != null;
 
   Future<void> _choosePassphrase() async {
-    final chosen = await PassphraseDialog.show(context, isCreating: true);
+    // Strength enforced here and not for the hand-taken export. That one is a
+    // deliberate act on a file the user then puts somewhere of their choosing;
+    // this one is complete, always current, and sits in a folder where somebody
+    // who obtains it can guess offline for as long as they like.
+    final chosen = await PassphraseDialog.show(
+      context,
+      isCreating: true,
+      requireStrong: true,
+    );
     if (chosen == null || !mounted) return;
     setState(() {
       _passphrase = chosen;

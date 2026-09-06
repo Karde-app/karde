@@ -645,6 +645,10 @@ class AppLocalizationsFr extends AppLocalizations {
   String get backupSetupPassphraseDone => 'Phrase secrète choisie';
 
   @override
+  String get passphraseTooWeakForBackup =>
+      'Choisissez une phrase secrète plus longue, ou plus variée. Cette copie est tenue à jour en permanence : cela vaut la peine d\'y consacrer un instant.';
+
+  @override
   String get backupSetupFolderTitle => 'Choisissez l\'emplacement';
 
   @override

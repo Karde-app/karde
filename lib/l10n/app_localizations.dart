@@ -1306,6 +1306,12 @@ abstract class AppLocalizations {
   /// **'Passphrase chosen'**
   String get backupSetupPassphraseDone;
 
+  /// No description provided for @passphraseTooWeakForBackup.
+  ///
+  /// In en, this message translates to:
+  /// **'Please choose a longer passphrase, or add some variety. This copy is kept up to date all the time, so it is worth a moment.'**
+  String get passphraseTooWeakForBackup;
+
   /// No description provided for @backupSetupFolderTitle.
   ///
   /// In en, this message translates to:

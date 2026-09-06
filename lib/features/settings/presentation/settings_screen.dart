@@ -15,6 +15,7 @@ import '../../onboarding/presentation/language_screen.dart';
 import '../../onboarding/presentation/recovery_setup_screen.dart';
 import '../../onboarding/presentation/security_questions_setup_screen.dart';
 import '../../backup/presentation/backup_screen.dart';
+import '../../backup/data/auto_backup_recorder.dart';
 import 'privacy_policy_screen.dart';
 
 class SettingsScreen extends ConsumerStatefulWidget {
@@ -214,6 +215,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
               },
             ),
           ),
+          _buildAutoBackupNote(context),
           const SizedBox(height: 24),
 
           // Kept apart from Security, and last before About, so a destructive
@@ -292,6 +294,46 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
 
   /// Lets the user change their security questions after onboarding.
   ///
+  /// Says what Karde is already doing about backups, and where.
+  ///
+  /// The durable home for this. The home screen used to nag about taking a
+  /// backup, which became a telling off for something the app now does by
+  /// itself; that reminder is gone, and this is what replaces it. It names the
+  /// folder because "your backup is safe somewhere" is not reassurance — knowing
+  /// which folder is what lets someone go and look.
+  ///
+  /// Shows nothing at all when backup has not been set up. The dashboard says
+  /// that, once, and saying it twice would be the nagging this replaced.
+  Widget _buildAutoBackupNote(BuildContext context) {
+    final loc = AppLocalizations.of(context)!;
+    final theme = Theme.of(context);
+    final setup = ref.watch(autoBackupSetupProvider).valueOrNull;
+    if (setup == null) return const SizedBox.shrink();
+
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(4, 12, 4, 0),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Icon(Icons.info_outline,
+              size: 17,
+              color: theme.colorScheme.onSurface.withValues(alpha: 0.45)),
+          const SizedBox(width: 10),
+          Expanded(
+            child: Text(
+              loc.settingsAutoBackupNote(setup.folderLabel),
+              style: theme.textTheme.bodyMedium?.copyWith(
+                fontSize: 12.5,
+                height: 1.45,
+                color: theme.colorScheme.onSurface.withValues(alpha: 0.55),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
   /// Asks what should happen to the PIN now that Karde will stop asking for it.
   ///
   /// Switching the PIN off used to leave it sitting in storage, unused and

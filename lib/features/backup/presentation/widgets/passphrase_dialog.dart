@@ -29,17 +29,35 @@ class PassphraseDialog extends StatefulWidget {
   /// authority on whether the passphrase is right.
   final bool isCreating;
 
-  const PassphraseDialog({super.key, required this.isCreating});
+  /// Refuse anything the meter still calls weak.
+  ///
+  /// Off for the export the user takes by hand, which is a deliberate act on a
+  /// file they then put somewhere of their choosing. On for the automatic
+  /// backup, where the reasoning changes: that copy is complete, always current,
+  /// and sits in a folder — possibly a cloud folder — where somebody who obtains
+  /// it can guess at the passphrase offline for as long as they like. The floor
+  /// is what stops a meter from being decorative.
+  final bool requireStrong;
+
+  const PassphraseDialog({
+    super.key,
+    required this.isCreating,
+    this.requireStrong = false,
+  });
 
   /// Returns the passphrase, or null if the user backed out.
   static Future<String?> show(
     BuildContext context, {
     required bool isCreating,
+    bool requireStrong = false,
   }) {
     return showDialog<String>(
       context: context,
       barrierDismissible: false,
-      builder: (_) => PassphraseDialog(isCreating: isCreating),
+      builder: (_) => PassphraseDialog(
+        isCreating: isCreating,
+        requireStrong: requireStrong,
+      ),
     );
   }
 
@@ -236,6 +254,14 @@ class _PassphraseDialogState extends State<PassphraseDialog> {
                 if (text.isEmpty) return loc.passphraseRequired;
                 if (widget.isCreating && text.length < PassphraseDialog.minimumLength) {
                   return loc.passphraseMinimumLength(PassphraseDialog.minimumLength);
+                }
+                // See PassphraseDialog.requireStrong. The meter already shows
+                // this; refusing is what stops it being decorative for the one
+                // copy that is always current and always sitting in a folder.
+                if (widget.isCreating &&
+                    widget.requireStrong &&
+                    PassphraseDialog.strengthOf(text).weak) {
+                  return loc.passphraseTooWeakForBackup;
                 }
                 return null;
               },
