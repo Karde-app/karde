@@ -256,7 +256,7 @@ class DashboardScreen extends ConsumerWidget {
               // render nothing at all in that case and each carried its own
               // spacing. The gap belongs here, where it does not depend on
               // whether anything else happens to be on screen.
-              const SizedBox(height: 20),
+              const SizedBox(height: 32),
 
               // Fingerprint-change notice. Informational only: it never blocks
               // anything and nothing in the vault is touched. See

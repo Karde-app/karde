@@ -685,25 +685,25 @@ abstract class AppLocalizations {
   /// No description provided for @appPinLock.
   ///
   /// In en, this message translates to:
-  /// **'Ask for your Karde PIN'**
+  /// **'Karde PIN'**
   String get appPinLock;
 
   /// No description provided for @appPinLockDesc.
   ///
   /// In en, this message translates to:
-  /// **'To open Karde, and before changing these security settings'**
+  /// **'Ask for it when opening Karde and changing these settings'**
   String get appPinLockDesc;
 
   /// No description provided for @biometricUnlockTitle.
   ///
   /// In en, this message translates to:
-  /// **'Open with your phone\'s lock'**
+  /// **'Phone lock'**
   String get biometricUnlockTitle;
 
   /// No description provided for @biometricUnlockDesc.
   ///
   /// In en, this message translates to:
-  /// **'Use your fingerprint, face or screen lock to open Karde'**
+  /// **'Open Karde with your fingerprint, face or screen lock'**
   String get biometricUnlockDesc;
 
   /// No description provided for @keepPinTitle.

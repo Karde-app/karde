@@ -258,6 +258,49 @@ class _VaultScreenState extends ConsumerState<VaultScreen> {
                           ),
                         ),
                       ),
+                      // Karde holds cards and IDs, and an empty vault offering
+                      // only one of them tells a new user the other does not
+                      // exist. Second rather than side by side because the gold
+                      // button is the page's one strong element and splitting it
+                      // in half would leave neither looking like the way in.
+                      const SizedBox(height: 12),
+                      SizedBox(
+                        width: 286,
+                        height: 52,
+                        child: OutlinedButton(
+                          onPressed: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(builder: (context) => const AddIdScreen()),
+                            );
+                          },
+                          style: OutlinedButton.styleFrom(
+                            side: BorderSide(
+                              color: KardeColors.champagneGold.withOpacity(0.55),
+                            ),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(18),
+                            ),
+                          ),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              const Icon(Icons.badge_outlined,
+                                  color: KardeColors.champagneGold, size: 20),
+                              const SizedBox(width: 8),
+                              Text(
+                                loc.addNewId,
+                                style: const TextStyle(
+                                  color: KardeColors.champagneGold,
+                                  fontSize: 15,
+                                  fontWeight: FontWeight.bold,
+                                  fontFamily: 'Inter',
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
                       const SizedBox(height: 16),
                       Text(
                         loc.offlineBadge,

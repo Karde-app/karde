@@ -40,6 +40,18 @@ class _MainScaffoldState extends ConsumerState<MainScaffold> with WidgetsBinding
   /// an answer the user has just given.
   bool _authDeclined = false;
 
+  /// Whether the first unlock attempt has finished.
+  ///
+  /// Karde starts unauthenticated and asks a frame later, so the lock screen —
+  /// "Karde is Locked", Unlock Karde, Exit app — was painted for the moment
+  /// before the PIN screen or the phone's prompt arrived on top of it. Reported
+  /// from the device as a blink, and it looked like a fault because a screen
+  /// offering two choices flashed past too fast to read either.
+  ///
+  /// Until the first attempt settles there is nothing to tell the user and
+  /// nothing for them to decide, so the app shows its own background and waits.
+  bool _firstAttemptSettled = false;
+
   /// The phone has no secure lock screen.
   ///
   /// Kept apart from every other reason the app is closed, because it is the one
@@ -222,6 +234,7 @@ class _MainScaffoldState extends ConsumerState<MainScaffold> with WidgetsBinding
     if (!vaultUsable) {
       setState(() {
         _isAuthenticating = false;
+        _firstAttemptSettled = true;
         _noScreenLock = true;
       });
       return;
@@ -233,7 +246,10 @@ class _MainScaffoldState extends ConsumerState<MainScaffold> with WidgetsBinding
     final result = await authService.authenticateAppStartup(context, settings);
 
     if (!mounted) return;
-    setState(() => _isAuthenticating = false);
+    setState(() {
+      _isAuthenticating = false;
+      _firstAttemptSettled = true;
+    });
 
     if (result) {
       setState(() => _isAppAuthenticated = true);
@@ -254,6 +270,11 @@ class _MainScaffoldState extends ConsumerState<MainScaffold> with WidgetsBinding
     ];
 
     if (_noScreenLock) return _buildNoScreenLock(context, loc);
+
+    // Nothing to say yet. See [_firstAttemptSettled].
+    if (!_isAppAuthenticated && !_firstAttemptSettled) {
+      return const Scaffold(backgroundColor: KardeColors.obsidian);
+    }
 
     if (!_isAppAuthenticated) {
       // FIX 4: Proper lock screen with "Try Again" instead of closing the app

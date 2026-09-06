@@ -120,7 +120,10 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                           if (!await _manageKardePin()) return;
                         }
                       } else {
-                        await _offerToForgetPin();
+                        // Cancel means cancel. Asking a question and then doing
+                        // the thing anyway makes the question a lie, and the
+                        // dialog's Cancel button an ornament.
+                        if (!await _offerToForgetPin()) return;
                         if (!mounted) return;
                       }
 
@@ -304,9 +307,15 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
   /// Not gated behind authentication: the user has already authenticated to be
   /// in Settings changing security, deleting a PIN reveals nothing, and the
   /// vault's own protection does not depend on it.
-  Future<void> _offerToForgetPin() async {
+  ///
+  /// Returns whether to go on and switch the PIN off. Cancel means cancel — the
+  /// switch stays as it was and nothing is deleted. A dialog whose Cancel button
+  /// still performs the action it asked about is worse than no dialog, because
+  /// it teaches the user that reading them is pointless.
+  Future<bool> _offerToForgetPin() async {
     final settings = ref.read(settingsRepositoryProvider);
-    if (!await settings.hasKardePin() || !mounted) return;
+    if (!await settings.hasKardePin()) return true;
+    if (!mounted) return false;
 
     final loc = AppLocalizations.of(context)!;
     final choice = await KardeConfirmDialog.showWithAlternative(
@@ -317,12 +326,15 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
       alternativeLabel: loc.keepPinDelete,
       isDestructive: false,
     );
-    if (choice != KardeConfirmChoice.alternative || !mounted) return;
+    if (!mounted) return false;
+    if (choice == KardeConfirmChoice.cancelled) return false;
+    if (choice == KardeConfirmChoice.confirmed) return true;
 
     await settings.deleteHashedPin();
-    if (!mounted) return;
+    if (!mounted) return true;
     ref.invalidate(hasKardePinProvider);
     KardeFeedback.success(context, loc.pinDeleted);
+    return true;
   }
 
   /// Sets the Karde PIN: creating a first one, or replacing the one there is.

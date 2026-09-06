@@ -302,6 +302,33 @@ void main() {
     });
   });
 
+  group("Cancel must mean cancel", () {
+    // Reported from the device: turning the Karde PIN off asks whether to keep
+    // or delete it, and pressing Cancel switched the PIN off anyway. A dialog
+    // whose Cancel button performs the action it asked about is worse than no
+    // dialog, because it teaches the user that reading them is pointless.
+    test("dismissing the keep-or-delete question changes nothing", () {
+      final source = File("lib/features/settings/presentation/settings_screen.dart")
+          .readAsLinesSync()
+          .where((line) => !line.trimLeft().startsWith("//"))
+          .join("\n")
+          .replaceAll(RegExp(r"\s+"), " ");
+
+      expect(
+        source.contains("if (!await _offerToForgetPin()) return;"),
+        isTrue,
+        reason: "The answer has to be able to stop the switch being flipped, "
+            "which means it cannot be a Future<void> that runs and is ignored.",
+      );
+      expect(
+        source.contains("if (choice == KardeConfirmChoice.cancelled) return false;"),
+        isTrue,
+        reason: "Cancelled is its own answer, distinct from both Keep and "
+            "Delete: it means the user changed their mind about the switch.",
+      );
+    });
+  });
+
   group("The lock switches must mean what they say", () {
     // Reported from the device: App PIN lock switched off, app restarted, still
     // asked for the Karde PIN. The switch was never consulted when opening the

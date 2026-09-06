@@ -318,18 +318,18 @@ class AppLocalizationsEn extends AppLocalizations {
   String get security => 'SECURITY';
 
   @override
-  String get appPinLock => 'Ask for your Karde PIN';
+  String get appPinLock => 'Karde PIN';
 
   @override
   String get appPinLockDesc =>
-      'To open Karde, and before changing these security settings';
+      'Ask for it when opening Karde and changing these settings';
 
   @override
-  String get biometricUnlockTitle => 'Open with your phone\'s lock';
+  String get biometricUnlockTitle => 'Phone lock';
 
   @override
   String get biometricUnlockDesc =>
-      'Use your fingerprint, face or screen lock to open Karde';
+      'Open Karde with your fingerprint, face or screen lock';
 
   @override
   String get keepPinTitle => 'Keep your Karde PIN?';
