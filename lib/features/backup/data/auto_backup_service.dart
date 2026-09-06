@@ -1,0 +1,180 @@
+import '../../../core/platform/backup_folder_service.dart';
+import '../../../core/security/backup_identity_service.dart';
+import '../../../core/storage/settings_repository.dart';
+import 'auto_backup_file.dart';
+
+/// How automatic backup is set up on this phone.
+class AutoBackupSetup {
+  const AutoBackupSetup({
+    required this.folderUri,
+    required this.folderLabel,
+    required this.publicKey,
+    required this.sealedPrivateKey,
+  });
+
+  final String folderUri;
+
+  /// Somewhere the user recognises, e.g. "Documents/Karde". Shown, never used.
+  final String folderLabel;
+
+  /// Seals new records. Cannot open anything, so it is safe to keep to hand.
+  final String publicKey;
+
+  /// Opens them, once the passphrase has unwrapped it. Only used on restore.
+  final String sealedPrivateKey;
+
+  Map<String, String> toStorage() => {
+        'folderUri': folderUri,
+        'folderLabel': folderLabel,
+        'publicKey': publicKey,
+        'sealedPrivateKey': sealedPrivateKey,
+      };
+
+  static AutoBackupSetup? fromStorage(Map<String, String>? stored) {
+    if (stored == null) return null;
+    final folderUri = stored['folderUri'];
+    final folderLabel = stored['folderLabel'];
+    final publicKey = stored['publicKey'];
+    final sealedPrivateKey = stored['sealedPrivateKey'];
+    // All four or none. Any missing piece leaves an arrangement that cannot
+    // work, and pretending otherwise means failing later with less to say.
+    if (folderUri == null ||
+        folderLabel == null ||
+        publicKey == null ||
+        sealedPrivateKey == null) {
+      return null;
+    }
+    return AutoBackupSetup(
+      folderUri: folderUri,
+      folderLabel: folderLabel,
+      publicKey: publicKey,
+      sealedPrivateKey: sealedPrivateKey,
+    );
+  }
+}
+
+/// Keeps the backup file in step with the vault, without ever asking the user.
+///
+/// The rule this exists to honour: a backup Karde takes for you is worth having
+/// only if it is current and only if you are told when it stops. Everything
+/// here follows from those two.
+///
+/// It is current because a save updates one record rather than rebuilding the
+/// file from the vault. Rebuilding would mean reading every item back, and the
+/// vault key demands an authentication prompt per item — so a single edit would
+/// cost as many fingerprint touches as you have cards. Sealing the one record
+/// the user just typed costs nothing at all.
+///
+/// You are told when it stops because [recordSave] and [recordDelete] let their
+/// failures out. Swallowing them would produce the worst outcome this feature
+/// has: a backup that quietly stopped working months ago, whose owner believes
+/// they are covered and has stopped thinking about it.
+class AutoBackupService {
+  AutoBackupService({
+    required this.settings,
+    BackupFolderService? folder,
+    BackupIdentityService? identity,
+  })  : folder = folder ?? BackupFolderService(),
+        identity = identity ?? BackupIdentityService();
+
+  final SettingsRepository settings;
+  final BackupFolderService folder;
+  final BackupIdentityService identity;
+
+  /// The file Karde keeps up to date. Dated copies live beside it.
+  static const String currentFileName = 'karde-backup.json';
+
+  Future<AutoBackupSetup?> setup() async =>
+      AutoBackupSetup.fromStorage(await settings.getAutoBackup());
+
+  Future<bool> get isConfigured async => (await setup()) != null;
+
+  /// Creates the key pair, remembers the folder, and writes an empty backup.
+  ///
+  /// The empty file matters. It proves, while the user is still standing here
+  /// and can do something about it, that the folder they picked can actually be
+  /// written to — rather than finding out on their first saved card, or worse,
+  /// never finding out.
+  Future<AutoBackupSetup> configure({
+    required String passphrase,
+    required BackupFolderChoice folderChoice,
+  }) async {
+    final pair = await identity.create(passphrase);
+    final created = AutoBackupSetup(
+      folderUri: folderChoice.uri,
+      folderLabel: folderChoice.label,
+      publicKey: pair.publicKey,
+      sealedPrivateKey: pair.sealedPrivateKey,
+    );
+
+    await folder.write(
+      created.folderUri,
+      currentFileName,
+      AutoBackupFile.empty(created.sealedPrivateKey).encode(),
+    );
+
+    await settings.setAutoBackup(created.toStorage());
+    return created;
+  }
+
+  /// Records one item, adding it or replacing it.
+  ///
+  /// [id] identifies the item within the file — "card:12", "id:3" — so a second
+  /// save of the same card replaces the first rather than leaving two copies for
+  /// a restore to bring back.
+  ///
+  /// Does nothing at all if automatic backup has not been set up, so callers can
+  /// call it unconditionally and stay readable.
+  Future<void> recordSave({
+    required String id,
+    required String plaintext,
+  }) async {
+    final config = await setup();
+    if (config == null) return;
+
+    final file = await _openOrStart(config);
+    file.put(
+      id,
+      await identity.seal(publicKey: config.publicKey, plaintext: plaintext),
+    );
+    await folder.write(config.folderUri, currentFileName, file.encode());
+  }
+
+  /// Forgets one item, because the user deleted it.
+  Future<void> recordDelete(String id) async {
+    final config = await setup();
+    if (config == null) return;
+
+    final file = await _openOrStart(config);
+    if (!file.remove(id)) return; // Nothing to write; nothing changed.
+    await folder.write(config.folderUri, currentFileName, file.encode());
+  }
+
+  /// Whether the folder is still reachable and still holds the backup.
+  ///
+  /// For the periodic check that decides whether to warn. Answers rather than
+  /// throwing, because it is asked when nobody is watching.
+  Future<bool> isHealthy() async {
+    final config = await setup();
+    if (config == null) return true; // Nothing set up is not a broken backup.
+    return folder.isUsable(config.folderUri);
+  }
+
+  /// Reads the current file, or starts a fresh one if it has gone.
+  ///
+  /// A missing file is not treated as a failure: it happens on the very first
+  /// save, and it happens if the user moves or deletes the file themselves. In
+  /// both cases the right answer is to write a new one rather than to refuse and
+  /// leave them with no backup at all.
+  ///
+  /// A file that is *there* but unreadable is a different matter and is allowed
+  /// to throw. Overwriting it would throw away whatever it holds, and it may be
+  /// the only copy of a vault this phone can no longer decrypt.
+  Future<AutoBackupFile> _openOrStart(AutoBackupSetup config) async {
+    final contents = await folder.read(config.folderUri, currentFileName);
+    if (contents == null || contents.trim().isEmpty) {
+      return AutoBackupFile.empty(config.sealedPrivateKey);
+    }
+    return AutoBackupFile.decode(contents);
+  }
+}

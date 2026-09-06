@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -88,6 +90,7 @@ class SettingsRepository {
   static const _languageKey = 'app_language';
   static const _lastBackupKey = 'last_backup_at';
   static const _hashedPinKey = 'hashed_pin';
+  static const _autoBackupKey = 'auto_backup_setup';
   static const _failedAttemptsKey = 'failed_attempts';
   static const _lockoutUntilKey = 'lockout_until';
   static const _isPermanentlyLockedKey = 'is_permanently_locked';
@@ -199,6 +202,38 @@ class SettingsRepository {
 
   Future<void> setHashedPin(String hash) async {
     await _secureStorage.write(key: _hashedPinKey, value: hash);
+  }
+
+  /// How automatic backup is set up, or null if it never has been.
+  ///
+  /// One value rather than four, because the four are meaningless apart: a
+  /// folder with no key seals nothing, and a key with no folder has nowhere to
+  /// write. Storing them together means they can only ever be set or unset as a
+  /// whole, and there is no half-configured state for anything to trip over.
+  ///
+  /// In secure storage rather than preferences. The public half is not a secret
+  /// and the sealed private half is already wrapped in the passphrase, but the
+  /// folder is a small fact about where this person keeps their vault copy, and
+  /// there is no reason to leave it lying in the clear.
+  Future<Map<String, String>?> getAutoBackup() async {
+    final raw = await _secureStorage.read(key: _autoBackupKey);
+    if (raw == null || raw.isEmpty) return null;
+    try {
+      final json = jsonDecode(raw) as Map<String, dynamic>;
+      return json.map((key, value) => MapEntry(key, value as String));
+    } catch (_) {
+      // Unreadable is the same as absent: the user is asked to set it up again
+      // rather than being handed a half-answer to work from.
+      return null;
+    }
+  }
+
+  Future<void> setAutoBackup(Map<String, String> setup) async {
+    await _secureStorage.write(key: _autoBackupKey, value: jsonEncode(setup));
+  }
+
+  Future<void> clearAutoBackup() async {
+    await _secureStorage.delete(key: _autoBackupKey);
   }
 
   /// Forgets the Karde PIN entirely.
