@@ -254,6 +254,52 @@ void main() {
     });
   });
 
+  group("Declining must land somewhere, not loop", () {
+    // Reported from the device. With Phone Lock alone, cancelling the phone's
+    // unlock prompt should leave the user on "Karde is Locked", with Unlock
+    // Karde and Exit app. It did not: dismissing the prompt resumes the
+    // activity, and resuming raised the prompt straight back, so the lock screen
+    // never got a chance to be seen.
+    //
+    // With Both it looked correct, but only by accident — the Karde PIN screen
+    // is a Flutter route that holds the flow open until the user closes it, so
+    // no resume ever arrived to restart anything.
+
+    test("a declined unlock is not retried automatically", () {
+      final source = File("lib/features/home/presentation/main_scaffold.dart")
+          .readAsLinesSync()
+          .where((line) => !line.trimLeft().startsWith("//"))
+          .join("\n")
+          .replaceAll(RegExp(r"\s+"), " ");
+
+      expect(
+        source.contains(
+          "if (!_isAppAuthenticated && !_isAuthenticating && !_authDeclined && mounted)",
+        ),
+        isTrue,
+        reason: "Coming back to the foreground must not re-raise the unlock "
+            "prompt after the user has just declined it. The resume that "
+            "arrives is usually Karde's own prompt closing.",
+      );
+    });
+
+    test("Karde's own prompts are declared as system UI", () {
+      // Unguarded, the activity going inactive behind a prompt Karde raised
+      // itself is indistinguishable from the user walking away, so a slow
+      // authentication arms the auto-lock timer behind the very prompt being
+      // answered. The vault's prompts were guarded; these two were missed.
+      final source = File("lib/core/security/authentication_service.dart")
+          .readAsStringSync();
+
+      expect(
+        "SystemInteractionGuard.run".allMatches(source).length,
+        2,
+        reason: "Both the sensitive-action prompt and the app-startup prompt "
+            "must suppress the auto-lock timer while they are on screen.",
+      );
+    });
+  });
+
   group("Changing your mind is not a failure", () {
     // Reported from the device twice, in two different places: raise the
     // fingerprint prompt, press the phone's Back button, and Karde answered

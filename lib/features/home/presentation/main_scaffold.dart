@@ -25,6 +25,20 @@ class _MainScaffoldState extends ConsumerState<MainScaffold> with WidgetsBinding
   bool _isAppAuthenticated = false;
   bool _isAuthenticating = false;
 
+  /// The user answered the unlock prompt with "no" and has not asked to try again.
+  ///
+  /// Dismissing the phone's own prompt resumes the activity, and resuming used to
+  /// raise the prompt straight back. For a Phone Lock user that was a loop with no
+  /// exit: cancel, prompt, cancel, prompt, and the "Karde is Locked" screen behind
+  /// it never got a chance to be seen. It looked correct with Both only because
+  /// the Karde PIN screen is a Flutter route that holds the flow open until the
+  /// user closes it, so no resume ever arrived to restart anything.
+  ///
+  /// So a decline is remembered, and Karde waits. The lock screen already offers
+  /// "Unlock Karde" and "Exit app" — asking again unprompted is Karde overriding
+  /// an answer the user has just given.
+  bool _authDeclined = false;
+
   final _windowSecurity = WindowSecurityService();
 
   @override
@@ -63,7 +77,13 @@ class _MainScaffoldState extends ConsumerState<MainScaffold> with WidgetsBinding
       ref.invalidate(vaultHealthProvider);
       ref.invalidate(biometricChangeNoticeProvider);
 
-      if (!_isAppAuthenticated && !_isAuthenticating && mounted) {
+      // Not after a decline. See [_authDeclined]: the resume that arrives here is
+      // usually Karde's own prompt closing, and re-raising it is how the user
+      // ended up unable to reach the lock screen at all.
+      if (!_isAppAuthenticated &&
+          !_isAuthenticating &&
+          !_authDeclined &&
+          mounted) {
         _authenticateStartup();
       }
     } else if (state == AppLifecycleState.paused || state == AppLifecycleState.inactive) {
@@ -91,7 +111,12 @@ class _MainScaffoldState extends ConsumerState<MainScaffold> with WidgetsBinding
 
   Future<void> _authenticateStartup() async {
     if (_isAuthenticating) return;
-    setState(() => _isAuthenticating = true);
+    // Reaching here at all is either the first attempt or the user tapping
+    // "Unlock Karde", and both are a request to be asked.
+    setState(() {
+      _isAuthenticating = true;
+      _authDeclined = false;
+    });
 
     final settings = ref.read(settingsRepositoryProvider);
     final authService = AuthenticationService();
@@ -102,6 +127,8 @@ class _MainScaffoldState extends ConsumerState<MainScaffold> with WidgetsBinding
 
     if (result) {
       setState(() => _isAppAuthenticated = true);
+    } else {
+      setState(() => _authDeclined = true);
     }
     // FIX 4: Do NOT call SystemNavigator.pop(). Stay on lock screen so user can retry.
   }

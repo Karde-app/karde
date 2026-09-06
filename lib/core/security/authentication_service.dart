@@ -7,6 +7,7 @@ import '../../l10n/app_localizations.dart';
 import '../storage/settings_repository.dart';
 import 'encryption_service.dart';
 import 'pin_verification_screen.dart';
+import 'system_interaction_guard.dart';
 
 /// What a biometric prompt's failure actually means for the user.
 ///
@@ -124,7 +125,14 @@ class AuthenticationService {
             canAuthenticateWithBiometrics || await _auth.isDeviceSupported();
 
         if (canAuthenticate) {
-          final authResult = await _auth.authenticate(
+          // Guarded for the reason SystemInteractionGuard exists: this prompt is
+          // system UI Karde raised on purpose, and the activity going inactive
+          // behind it is indistinguishable from the user walking away. Unguarded,
+          // a slow authentication arms the auto-lock timer behind the very prompt
+          // being answered. The vault's own prompts were fixed; this path was
+          // missed.
+          final authResult = await SystemInteractionGuard.run(
+            () => _auth.authenticate(
             localizedReason: loc.authReasonRevealCard,
             authMessages: <AuthMessages>[
               AndroidAuthMessages(
@@ -135,7 +143,8 @@ class AuthenticationService {
                 cancelButton: loc.cancel,
               ),
             ],
-            biometricOnly: false,
+              biometricOnly: false,
+            ),
           );
           if (authResult) return true;
         } else {
@@ -223,7 +232,8 @@ class AuthenticationService {
           // a Phone Lock user named a way in that does not exist, and the button
           // led nowhere.
           final cancelLabel = hasKardePin ? loc.useKardePin : loc.cancel;
-          final phoneAuthResult = await _auth.authenticate(
+          final phoneAuthResult = await SystemInteractionGuard.run(
+            () => _auth.authenticate(
             localizedReason: loc.authReasonOpenKarde,
             authMessages: <AuthMessages>[
               AndroidAuthMessages(
@@ -234,7 +244,8 @@ class AuthenticationService {
                 cancelButton: cancelLabel,
               ),
             ],
-            biometricOnly: false,
+              biometricOnly: false,
+            ),
           );
           if (phoneAuthResult) return true;
         } else {
