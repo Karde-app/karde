@@ -21,6 +21,31 @@ class WindowSecurityService {
     'KARDE_ALLOW_SCREENSHOTS',
   );
 
+  /// Hides the "SCREENSHOTS ON" banner in a capture build.
+  ///
+  ///   flutter build apk --dart-define=KARDE_ALLOW_SCREENSHOTS=true \
+  ///                     --dart-define=KARDE_STORE_SCREENSHOTS=true
+  ///
+  /// Exists for one job: taking the Play Store listing images, which the banner
+  /// would otherwise ruin. A second flag rather than deleting the banner, so the
+  /// ordinary development capture build keeps its warning and only a build made
+  /// deliberately for store images loses it.
+  ///
+  /// **This build is still unsecured.** FLAG_SECURE is off, screenshots and
+  /// screen recording work everywhere, and nothing on screen says so any more.
+  /// It must never be uploaded and never left on a phone holding real items.
+  /// Keep it under its own artifact name, and run the pre-upload check on the
+  /// compiled library before publishing anything.
+  ///
+  /// Has no effect on its own: with KARDE_ALLOW_SCREENSHOTS off there is no
+  /// banner to hide and FLAG_SECURE is applied as normal.
+  static const bool hideCaptureBanner = bool.fromEnvironment(
+    'KARDE_STORE_SCREENSHOTS',
+  );
+
+  /// Whether the warning banner should be painted.
+  static bool get showCaptureBanner => screenshotsAllowed && !hideCaptureBanner;
+
   Future<void> enableSecureMode() async {
     // In a capture-enabled dev build, actively clear the flag instead of setting
     // it, so screens that request secure mode remain capturable.

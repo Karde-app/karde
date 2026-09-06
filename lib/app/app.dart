@@ -42,7 +42,11 @@ class IBankApp extends ConsumerWidget {
       debugShowCheckedModeBanner: false,
       // Loudly mark builds where FLAG_SECURE has been disabled for development,
       // so a capture-enabled APK can never be mistaken for a shippable one.
-      builder: WindowSecurityService.screenshotsAllowed
+      //
+      // Suppressed only for the build used to take the Play Store listing
+      // images, where the banner would appear in every one of them. See
+      // WindowSecurityService.hideCaptureBanner for what that build still is.
+      builder: WindowSecurityService.showCaptureBanner
           ? (context, child) => Banner(
               message: 'SCREENSHOTS ON',
               location: BannerLocation.topEnd,
