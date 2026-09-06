@@ -165,6 +165,10 @@ class AppLocalizationsAr extends AppLocalizations {
   String get phoneLockDesc => 'بصمة الوجه أو الإصبع أو رمز جهازك.';
 
   @override
+  String get phoneLockPinHint =>
+      'يمكنك إضافة رمز سري خاص بـ Karde لاحقاً من الإعدادات إذا أردت طريقة ثانية لفتح Karde.';
+
+  @override
   String get kardePin => 'رمز Karde';
 
   @override
@@ -202,11 +206,11 @@ class AppLocalizationsAr extends AppLocalizations {
   String get unlockToReveal => 'افتح القفل للكشف عن الأسرار';
 
   @override
-  String get recoverySetupTitle => 'إذا تعذّر عليك الدخول';
+  String get recoverySetupTitle => 'إذا نسيت رمز Karde السري';
 
   @override
   String get recoverySetupSubtitle =>
-      'اختر طريقة العودة إذا لم تتمكن يوماً من فتح Karde.';
+      'اختر طريقة إعادة تعيينه للعودة إلى Karde.';
 
   @override
   String get biometricRecovery => 'قفل الهاتف';
@@ -333,7 +337,10 @@ class AppLocalizationsAr extends AppLocalizations {
   String get changePin => 'تغيير رمز Karde';
 
   @override
-  String get changePinDesc => 'تحديث رمزك الرئيسي';
+  String get changePinDesc => 'اختر رمزاً سرياً جديداً لفتح Karde';
+
+  @override
+  String get createKardePinDesc => 'اختر رمزاً سرياً خاصاً بك لفتح Karde';
 
   @override
   String get about => 'حول التطبيق';
@@ -407,6 +414,9 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get pinChangedSuccess => 'تم تغيير الرمز بنجاح';
+
+  @override
+  String get pinCreatedSuccess => 'تم إنشاء رمز Karde السري';
 
   @override
   String get done => 'تم';
@@ -1020,11 +1030,18 @@ class AppLocalizationsAr extends AppLocalizations {
   String get sortAlphabetical => 'أبجدياً (أ-ي)';
 
   @override
-  String get settingsSecurityQuestions => 'أسئلة الأمان';
+  String get settingsSecurityQuestions => 'تغيير أسئلة الأمان';
+
+  @override
+  String get settingsSecurityQuestionsAdd => 'إضافة أسئلة الأمان';
 
   @override
   String get settingsSecurityQuestionsDesc =>
       'غيّر الأسئلة المستخدمة لاستعادة رمزك السري';
+
+  @override
+  String get settingsSecurityQuestionsAddDesc =>
+      'أضف أسئلة تتيح لك إعادة تعيين رمزك السري في Karde';
 
   @override
   String get settingsBackupSection => 'النسخ الاحتياطي';
@@ -1153,6 +1170,9 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get securityQuestionsUpdated => 'تم تحديث أسئلة الأمان.';
+
+  @override
+  String get securityQuestionsSaved => 'تم حفظ أسئلة الأمان.';
 
   @override
   String get changeSecurityQuestionsTitle => 'تغيير أسئلة الأمان';
@@ -1454,6 +1474,9 @@ class AppLocalizationsAr extends AppLocalizations {
   @override
   String get vaultUpdatedWithNewPin =>
       'تم تحديث خزنتك الآمنة بالرمز السري الجديد.';
+
+  @override
+  String get vaultReadyWithNewPin => 'يمكنك الآن فتح Karde بهذا الرمز.';
 
   @override
   String get creditCard => 'بطاقة ائتمان';

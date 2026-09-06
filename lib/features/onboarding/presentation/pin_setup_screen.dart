@@ -24,6 +24,26 @@ class _PinSetupScreenState extends ConsumerState<PinSetupScreen> {
   bool _isConfirming = false;
   String? _errorMessage;
 
+  /// Whether a Karde PIN already existed when this screen opened.
+  ///
+  /// Read before anything is saved, because saving is what makes the answer
+  /// change. It decides one thing: whether the confirmation says the PIN was
+  /// created or changed. Settings reaches this screen for both, and telling
+  /// someone their PIN was "successfully changed" moments after they set their
+  /// first one describes something that did not happen.
+  bool _hadPin = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadHadPin();
+  }
+
+  Future<void> _loadHadPin() async {
+    final hadPin = await ref.read(settingsRepositoryProvider).hasKardePin();
+    if (mounted) setState(() => _hadPin = hadPin);
+  }
+
   void _onDigitPressed(String digit) {
     // Same reason as the verification pad: the fourth dot has to be seen
     // before anything acts on it, or the pad reads as unresponsive.
@@ -112,7 +132,9 @@ class _PinSetupScreenState extends ConsumerState<PinSetupScreen> {
                   ),
                   const SizedBox(height: 24),
                   Text(
-                    AppLocalizations.of(context)!.pinChangedSuccess,
+                    _hadPin
+                        ? AppLocalizations.of(context)!.pinChangedSuccess
+                        : AppLocalizations.of(context)!.pinCreatedSuccess,
                     textAlign: TextAlign.center,
                     style: TextStyle(
                       fontFamily: 'Outfit',
@@ -123,7 +145,9 @@ class _PinSetupScreenState extends ConsumerState<PinSetupScreen> {
                   ),
                   const SizedBox(height: 8),
                   Text(
-                    AppLocalizations.of(context)!.vaultUpdatedWithNewPin,
+                    _hadPin
+                        ? AppLocalizations.of(context)!.vaultUpdatedWithNewPin
+                        : AppLocalizations.of(context)!.vaultReadyWithNewPin,
                     textAlign: TextAlign.center,
                     style: TextStyle(
                       fontFamily: 'Inter',

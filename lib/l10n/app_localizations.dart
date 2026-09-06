@@ -388,6 +388,12 @@ abstract class AppLocalizations {
   /// **'Your device\'s Face ID, Touch ID or passcode.'**
   String get phoneLockDesc;
 
+  /// No description provided for @phoneLockPinHint.
+  ///
+  /// In en, this message translates to:
+  /// **'You can add a Karde PIN later in Settings if you would like a second way to open Karde.'**
+  String get phoneLockPinHint;
+
   /// No description provided for @kardePin.
   ///
   /// In en, this message translates to:
@@ -463,13 +469,13 @@ abstract class AppLocalizations {
   /// No description provided for @recoverySetupTitle.
   ///
   /// In en, this message translates to:
-  /// **'If you get locked out'**
+  /// **'If you forget your Karde PIN'**
   String get recoverySetupTitle;
 
   /// No description provided for @recoverySetupSubtitle.
   ///
   /// In en, this message translates to:
-  /// **'Choose how to get back in if you ever cannot unlock Karde.'**
+  /// **'Choose how you would reset it and get back into Karde.'**
   String get recoverySetupSubtitle;
 
   /// No description provided for @biometricRecovery.
@@ -709,8 +715,14 @@ abstract class AppLocalizations {
   /// No description provided for @changePinDesc.
   ///
   /// In en, this message translates to:
-  /// **'Update your master PIN'**
+  /// **'Choose a new PIN for opening Karde'**
   String get changePinDesc;
+
+  /// No description provided for @createKardePinDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Set a PIN of your own for opening Karde'**
+  String get createKardePinDesc;
 
   /// No description provided for @about.
   ///
@@ -855,6 +867,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'PIN Successfully Changed'**
   String get pinChangedSuccess;
+
+  /// No description provided for @pinCreatedSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Karde PIN Created'**
+  String get pinCreatedSuccess;
 
   /// No description provided for @done.
   ///
@@ -1885,14 +1903,26 @@ abstract class AppLocalizations {
   /// No description provided for @settingsSecurityQuestions.
   ///
   /// In en, this message translates to:
-  /// **'Security questions'**
+  /// **'Change security questions'**
   String get settingsSecurityQuestions;
+
+  /// No description provided for @settingsSecurityQuestionsAdd.
+  ///
+  /// In en, this message translates to:
+  /// **'Add security questions'**
+  String get settingsSecurityQuestionsAdd;
 
   /// No description provided for @settingsSecurityQuestionsDesc.
   ///
   /// In en, this message translates to:
   /// **'Change the questions used to recover your PIN'**
   String get settingsSecurityQuestionsDesc;
+
+  /// No description provided for @settingsSecurityQuestionsAddDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Set up questions that let you reset your Karde PIN'**
+  String get settingsSecurityQuestionsAddDesc;
 
   /// No description provided for @settingsBackupSection.
   ///
@@ -2121,6 +2151,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Security questions updated.'**
   String get securityQuestionsUpdated;
+
+  /// No description provided for @securityQuestionsSaved.
+  ///
+  /// In en, this message translates to:
+  /// **'Security questions saved.'**
+  String get securityQuestionsSaved;
 
   /// No description provided for @changeSecurityQuestionsTitle.
   ///
@@ -2631,6 +2667,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Your secure vault has been updated with the new PIN.'**
   String get vaultUpdatedWithNewPin;
+
+  /// No description provided for @vaultReadyWithNewPin.
+  ///
+  /// In en, this message translates to:
+  /// **'You can now use this PIN to open Karde.'**
+  String get vaultReadyWithNewPin;
 
   /// No description provided for @creditCard.
   ///

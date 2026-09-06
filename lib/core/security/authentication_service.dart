@@ -36,7 +36,7 @@ class AuthenticationService {
     final loc = AppLocalizations.of(context)!;
     final requirePinLock = settings.getRequirePinLock();
     final biometricUnlock = settings.getBiometricUnlock();
-    final hasKardePin = await _hasKardePin(settings);
+    final hasKardePin = await settings.hasKardePin();
 
     // A dedicated Karde PIN is the app-level factor for viewing secrets. Ask for
     // it first rather than treating it as a fallback after biometrics.
@@ -112,15 +112,6 @@ class AuthenticationService {
     return result ?? false;
   }
 
-  /// Whether a Karde PIN has actually been set.
-  ///
-  /// `requirePinLock` only says the setting is on; it says nothing about whether
-  /// a PIN was ever created. The two disagree for anyone who chose Phone Lock.
-  Future<bool> _hasKardePin(SettingsRepository settings) async {
-    final stored = await settings.getHashedPin();
-    return stored != null && stored.isNotEmpty;
-  }
-
 
 
   /// Whether the operation the caller is about to perform will itself be gated
@@ -144,8 +135,7 @@ class AuthenticationService {
 
   Future<bool> authenticateAppStartup(BuildContext context, SettingsRepository settings) async {
     final loc = AppLocalizations.of(context)!;
-    final hasKardePin = await _hasKardePin(settings);
-    final requirePinLock = settings.getRequirePinLock();
+    final hasKardePin = await settings.hasKardePin();
     final biometricUnlock = settings.getBiometricUnlock();
 
     if (biometricUnlock) {
@@ -155,15 +145,19 @@ class AuthenticationService {
             canAuthenticateWithBiometrics || await _auth.isDeviceSupported();
 
         if (canAuthenticate) {
+          // "Use Karde PIN" is only true for someone who has one. Offering it to
+          // a Phone Lock user named a way in that does not exist, and the button
+          // led nowhere.
+          final cancelLabel = hasKardePin ? loc.useKardePin : loc.cancel;
           final phoneAuthResult = await _auth.authenticate(
             localizedReason: loc.authReasonOpenKarde,
             authMessages: <AuthMessages>[
               AndroidAuthMessages(
                 signInTitle: loc.authRequiredTitle,
-                cancelButton: loc.useKardePin,
+                cancelButton: cancelLabel,
               ),
               IOSAuthMessages(
-                cancelButton: loc.useKardePin,
+                cancelButton: cancelLabel,
               ),
             ],
             biometricOnly: false,
@@ -176,12 +170,23 @@ class AuthenticationService {
         }
       } catch (e) {
         if (context.mounted) {
-          KardeFeedback.error(context, loc.biometricAuthFailedUsePin);
+          KardeFeedback.error(
+            context,
+            hasKardePin ? loc.biometricAuthFailedUsePin : loc.biometricCouldNotConfirm,
+          );
         }
       }
     }
-    
-    // Unconditional fallback: force PIN lock if biometrics failed/skipped, or both disabled.
+
+    // Fall back to the Karde PIN — but only if there is one, for the same reason
+    // spelled out in [authenticate].
+    //
+    // Someone who chose "Phone Lock" has no Karde PIN. Sending them to the PIN
+    // screen anyway found no stored hash, offered to CREATE a PIN, and let that
+    // creation open the app — so cancelling the fingerprint prompt was itself a
+    // way in. Returning false leaves them on Karde's own lock screen with "Try
+    // again", which is the honest answer: the one factor they have was declined.
+    if (!hasKardePin) return false;
     if (!context.mounted) return false;
     final result = await Navigator.push<bool>(
       context,

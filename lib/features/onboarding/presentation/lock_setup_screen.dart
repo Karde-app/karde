@@ -4,8 +4,8 @@ import '../../../l10n/app_localizations.dart';
 import '../../../core/security/encryption_service.dart';
 import '../../../core/storage/settings_repository.dart';
 import '../../../theme/theme.dart';
+import '../../home/presentation/main_scaffold.dart';
 import 'pin_setup_screen.dart';
-import 'recovery_setup_screen.dart';
 
 class LockSetupScreen extends ConsumerStatefulWidget {
   const LockSetupScreen({super.key});
@@ -91,6 +91,44 @@ class _LockSetupScreenState extends ConsumerState<LockSetupScreen>
     );
   }
 
+  /// Says, where the choice is actually being made, that a Karde PIN can still
+  /// be added later.
+  ///
+  /// Phone Lock now finishes onboarding on its own, so nothing else in the flow
+  /// mentions the Karde PIN again. Without this the option reads as a decision
+  /// that cannot be revisited, and a user who wanted both ends up picking "Both"
+  /// out of caution rather than because they want a second PIN today.
+  Widget _buildPinLaterNote() {
+    final loc = AppLocalizations.of(context)!;
+    return Container(
+      margin: const EdgeInsets.only(top: 12),
+      padding: const EdgeInsets.all(14),
+      decoration: BoxDecoration(
+        color: Colors.white.withValues(alpha: 0.05),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: Colors.white12),
+      ),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Icon(Icons.info_outline, color: KardeColors.champagneGold, size: 18),
+          const SizedBox(width: 10),
+          Expanded(
+            child: Text(
+              loc.phoneLockPinHint,
+              style: const TextStyle(
+                fontFamily: 'Inter',
+                color: Colors.white70,
+                fontSize: 12.5,
+                height: 1.45,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final loc = AppLocalizations.of(context)!;
@@ -149,6 +187,7 @@ class _LockSetupScreenState extends ConsumerState<LockSetupScreen>
                       // it is inoperable: there is no phone lock to defer to.
                       enabled: _deviceLockPresent != false,
                     ),
+                    if (_selectedLock == 'phone') _buildPinLaterNote(),
                     const SizedBox(height: 16),
                     _buildLockOption(
                       loc.kardePin,
@@ -173,39 +212,72 @@ class _LockSetupScreenState extends ConsumerState<LockSetupScreen>
                     final settings = ref.read(settingsRepositoryProvider);
                     await settings.setLockType(_selectedLock);
                     
+                    // Written through the notifiers, not straight to the
+                    // repository. Each notifier reads its value from storage
+                    // once, in its constructor, and holds it as state — so a
+                    // direct write updates storage and leaves the copy in memory
+                    // saying something else.
+                    //
+                    // Seen on the device: after erasing the vault and choosing
+                    // Phone Lock again, Settings showed "App PIN lock" on and
+                    // "Biometric unlock" off — the defaults the notifiers had
+                    // rebuilt from the wiped preferences, and the exact opposite
+                    // of what had just been chosen. Karde itself behaved
+                    // correctly, because authentication reads storage, but
+                    // Settings described a vault the user did not have.
+                    final requirePin = ref.read(requirePinLockProvider.notifier);
+                    final biometric = ref.read(biometricUnlockProvider.notifier);
                     if (_selectedLock == 'phone') {
-                      await settings.setRequirePinLock(false);
-                      await settings.setBiometricUnlock(true);
+                      await requirePin.updateRequirePinLock(false);
+                      await biometric.updateBiometricUnlock(true);
                     } else if (_selectedLock == 'dedicated') {
-                      await settings.setRequirePinLock(true);
-                      await settings.setBiometricUnlock(false);
+                      await requirePin.updateRequirePinLock(true);
+                      await biometric.updateBiometricUnlock(false);
                     } else {
-                      await settings.setRequirePinLock(true);
-                      await settings.setBiometricUnlock(true);
+                      await requirePin.updateRequirePinLock(true);
+                      await biometric.updateBiometricUnlock(true);
                     }
                     
                     if (!mounted) return;
 
                     if (_selectedLock == 'dedicated' || _selectedLock == 'both') {
+                      // Both of these create a Karde PIN, and the PIN screen
+                      // hands on to recovery setup afterwards — recovery there
+                      // means something, because there is a PIN to reset.
                       Navigator.pushReplacement(
                         context,
                         MaterialPageRoute(builder: (_) => const PinSetupScreen()),
                       );
                     } else {
-                      // "Phone Lock" used to end onboarding right here, skipping
-                      // PIN setup, recovery setup and security questions in one
-                      // step — so the user reached the app with no recovery
-                      // configured at all, and no screen ever offered to set one
-                      // up afterwards.
+                      // "Phone Lock" finishes onboarding here.
                       //
-                      // They still get no Karde PIN, which is the whole point of
-                      // the option. What they now also get is the recovery screen,
-                      // so a way back in exists before it is needed rather than
-                      // being discovered to be absent afterwards. That screen
-                      // finishes onboarding on whichever path the user takes.
-                      Navigator.pushReplacement(
+                      // It briefly went to the recovery screen instead. The
+                      // reasoning was that this user would otherwise reach the app
+                      // with no recovery configured and never be offered any. But
+                      // every option on that screen recovers a Karde PIN, and this
+                      // user has none: the questions would reset a PIN that does
+                      // not exist, and offering the phone's own lock as the way
+                      // back from the phone's own lock is circular. Karde does not
+                      // hold the device passcode or the fingerprints, so if those
+                      // are lost the way back is through Android, not through
+                      // anything Karde could have set up in advance.
+                      //
+                      // So the screen was premature rather than helpful. The offer
+                      // is made at the moment it starts to mean something instead:
+                      // Settings can add a Karde PIN at any time, and that path
+                      // goes on to recovery setup. _buildPinLaterNote says so here
+                      // so the possibility is not a secret.
+                      await settings.setIsFirstLaunch(false);
+                      if (!context.mounted) return;
+                      // Nothing may remain underneath: pushReplacement swaps only
+                      // the top route, leaving the language picker below the app
+                      // for the life of the install, where one stray pop puts the
+                      // user back at "Welcome to Karde" with their vault
+                      // apparently gone.
+                      Navigator.pushAndRemoveUntil(
                         context,
-                        MaterialPageRoute(builder: (_) => const RecoverySetupScreen()),
+                        MaterialPageRoute(builder: (_) => const MainScaffold()),
+                        (route) => false,
                       );
                     }
                   },

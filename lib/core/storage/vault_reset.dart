@@ -43,4 +43,16 @@ void resetAllVaultState(WidgetRef ref) {
   ref.invalidate(autoHideDurationProvider);
   ref.invalidate(requirePinLockProvider);
   ref.invalidate(biometricUnlockProvider);
+  // Holds the date of the last backup, so without this an erased vault claims a
+  // copy was taken of items it no longer has — and the dashboard prompt that
+  // would have told the user to make a real one stays hidden.
+  ref.invalidate(lastBackupProvider);
+
+  // Answers about what is actually configured, cached from secure storage.
+  //
+  // Seen on the device: after erasing the vault and walking onboarding again
+  // with Phone Lock, Settings still offered to "Change Karde PIN" — the answer
+  // cached before the wipe, describing a PIN that no longer existed.
+  ref.invalidate(hasKardePinProvider);
+  ref.invalidate(hasSecurityQuestionsProvider);
 }

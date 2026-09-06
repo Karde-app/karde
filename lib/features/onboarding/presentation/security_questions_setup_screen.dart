@@ -10,9 +10,16 @@ import '../../home/presentation/main_scaffold.dart';
 class SecurityQuestionsSetupScreen extends ConsumerStatefulWidget {
   /// True when reached from Settings rather than from onboarding.
   ///
-  /// Changes three things: the existing questions are pre-selected, finishing
-  /// returns to Settings instead of entering the app, and the screen follows the
-  /// app theme rather than onboarding's fixed dark palette.
+  /// Governs where the screen goes and how it looks: finishing returns to
+  /// Settings instead of entering the app, and the screen follows the app theme
+  /// rather than onboarding's fixed dark palette.
+  ///
+  /// It deliberately does *not* govern the wording. Settings can reach this
+  /// screen with no questions saved yet — a Phone Lock user adding a Karde PIN,
+  /// or anyone who chose Phone Lock or No Recovery at the recovery step — and
+  /// calling that "Change your security questions" describes something they have
+  /// never done. The wording follows [_hasExistingQuestions], which is read from
+  /// storage.
   final bool isChanging;
 
   const SecurityQuestionsSetupScreen({super.key, this.isChanging = false});
@@ -33,6 +40,13 @@ class _SecurityQuestionsSetupScreenState extends ConsumerState<SecurityQuestions
   bool _isSaving = false;
   bool _isLoading = false;
 
+  /// Whether questions were already saved before this screen opened.
+  ///
+  /// The one thing that decides "Add" wording from "Change" wording. Held
+  /// separately from [SecurityQuestionsSetupScreen.isChanging] because that flag
+  /// answers a different question — see its documentation.
+  bool _hasExistingQuestions = false;
+
   /// Stored question values, not sentences. A value from an older build is an
   /// English sentence rather than a code; `securityQuestionText` shows those
   /// verbatim, so a user keeps the question their answer was hashed against.
@@ -43,7 +57,7 @@ class _SecurityQuestionsSetupScreenState extends ConsumerState<SecurityQuestions
   @override
   void initState() {
     super.initState();
-    if (widget.isChanging) _loadExistingQuestions();
+    _loadExistingQuestions();
   }
 
   /// Pre-selects the questions already in use.
@@ -54,12 +68,19 @@ class _SecurityQuestionsSetupScreenState extends ConsumerState<SecurityQuestions
   /// the bottom of the screen says so, rather than leaving the user hunting for
   /// fields that were never going to fill themselves in.
   Future<void> _loadExistingQuestions() async {
-    setState(() => _isLoading = true);
+    // The spinner is only for the Settings path. Onboarding has nothing stored to
+    // wait for, and flashing a loading state at someone three screens into setup
+    // reads as the app stalling.
+    if (widget.isChanging) setState(() => _isLoading = true);
     final stored = await ref.read(settingsRepositoryProvider).getSecurityQuestions();
     if (!mounted) return;
     setState(() {
       final q1 = stored['q1'];
       final q2 = stored['q2'];
+      // Both, not either: recovery asks for the pair, so one alone is not a set
+      // of questions the user could be said to be "changing".
+      _hasExistingQuestions =
+          q1 != null && q1.isNotEmpty && q2 != null && q2.isNotEmpty;
       // A question saved by an older build might no longer be in the list. Adding
       // it back is better than silently dropping the user's own choice and
       // showing "Choose a question" as though they had never set one.
@@ -121,7 +142,12 @@ class _SecurityQuestionsSetupScreenState extends ConsumerState<SecurityQuestions
 
     if (widget.isChanging) {
       Navigator.pop(context);
-      KardeFeedback.success(context, AppLocalizations.of(context)!.securityQuestionsUpdated);
+      KardeFeedback.success(
+        context,
+        _hasExistingQuestions
+            ? AppLocalizations.of(context)!.securityQuestionsUpdated
+            : AppLocalizations.of(context)!.securityQuestionsSaved,
+      );
       return;
     }
 
@@ -181,7 +207,7 @@ class _SecurityQuestionsSetupScreenState extends ConsumerState<SecurityQuestions
                   padding: const EdgeInsets.fromLTRB(24, 8, 24, 32),
                   children: [
                     Text(
-                      widget.isChanging
+                      _hasExistingQuestions
                           ? loc.changeSecurityQuestionsTitle
                           : loc.setupQuestionsTitle,
                       style: TextStyle(
@@ -194,7 +220,7 @@ class _SecurityQuestionsSetupScreenState extends ConsumerState<SecurityQuestions
                     ),
                     const SizedBox(height: 10),
                     Text(
-                      widget.isChanging
+                      _hasExistingQuestions
                           ? loc.changeSecurityQuestionsSubtitle
                           : loc.setupQuestionsSubtitle,
                       style: TextStyle(
@@ -429,7 +455,7 @@ class _SecurityQuestionsSetupScreenState extends ConsumerState<SecurityQuestions
         const SizedBox(width: 10),
         Expanded(
           child: Text(
-            widget.isChanging
+            _hasExistingQuestions
                 ? loc.securityAnswersHashNoteChanging
                 : loc.securityAnswersHashNoteNew,
             style: TextStyle(
@@ -485,6 +511,21 @@ class _SecurityQuestionsSetupScreenState extends ConsumerState<SecurityQuestions
                   ),
                 ),
               ),
+              // Scrollable, because the list is taller than the sheet the moment
+              // any row grows — and rows do grow: picking the first question adds
+              // an "Already used above" line to it in the second picker, and a
+              // long question wraps to two lines.
+              //
+              // Without this the Column simply overflowed and Flutter clipped it,
+              // so the last question sat half-hidden behind the navigation bar,
+              // dimmed and unreachable. Reported from the device as "picking the
+              // first question greys out two questions": one of the two was the
+              // genuine "already used above", the other was this clipped row.
+              Flexible(
+                child: ListView(
+                  shrinkWrap: true,
+                  padding: EdgeInsets.zero,
+                  children: [
               ..._questions.map((question) {
                 final isSelected = question == selected;
                 // Greyed rather than hidden, so the list does not reshuffle
@@ -530,6 +571,9 @@ class _SecurityQuestionsSetupScreenState extends ConsumerState<SecurityQuestions
                   },
                 );
               }),
+                  ],
+                ),
+              ),
               const SizedBox(height: 18),
             ],
           ),

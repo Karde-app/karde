@@ -9,10 +9,10 @@ import '../../../theme/theme.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../../core/security/authentication_service.dart';
 import '../../../core/security/encryption_service.dart';
-import '../../../core/security/pin_verification_screen.dart';
 import '../../../core/widgets/karde_confirm_dialog.dart';
 import '../../onboarding/presentation/pin_setup_screen.dart';
 import '../../onboarding/presentation/language_screen.dart';
+import '../../onboarding/presentation/recovery_setup_screen.dart';
 import '../../onboarding/presentation/security_questions_setup_screen.dart';
 import '../../backup/presentation/backup_screen.dart';
 import 'privacy_policy_screen.dart';
@@ -33,6 +33,14 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
     final autoHideDuration = ref.watch(autoHideDurationProvider);
     final requirePinLock = ref.watch(requirePinLockProvider);
     final biometricUnlock = ref.watch(biometricUnlockProvider);
+    // What is actually configured, as opposed to what the switches above ask
+    // for. Both are read from storage, so the rows describe the vault the user
+    // really has. Until the read completes, assume the thing does not exist:
+    // "Create" and "Add" are the safe wordings to be briefly wrong about, where
+    // "Change" would name something that may not be there.
+    final hasKardePin = ref.watch(hasKardePinProvider).valueOrNull ?? false;
+    final hasSecurityQuestions =
+        ref.watch(hasSecurityQuestionsProvider).valueOrNull ?? false;
     final language = ref.watch(languageProvider);
     final loc = AppLocalizations.of(context)!;
 
@@ -103,22 +111,13 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                       // escape is wiping the vault. Users who chose "Phone Lock"
                       // at onboarding never set a PIN, so this was reachable from
                       // a single settings tap. Create the PIN first.
+                      //
+                      // Only the lock is turned on here. Creating the PIN, and
+                      // the recovery options that follow it, are _manageKardePin.
                       if (val) {
                         final settings = ref.read(settingsRepositoryProvider);
-                        final existingPin = await settings.getHashedPin();
-                        if (existingPin == null || existingPin.isEmpty) {
-                          if (!context.mounted) return;
-                          final created = await Navigator.push<bool>(
-                            context,
-                            MaterialPageRoute(
-                              builder: (_) => const PinSetupScreen(isChangingPin: true),
-                            ),
-                          );
-                          // Only enable the lock if a PIN now actually exists.
-                          final pinNow = await settings.getHashedPin();
-                          if (created != true && (pinNow == null || pinNow.isEmpty)) {
-                            return;
-                          }
+                        if (!await settings.hasKardePin()) {
+                          if (!await _manageKardePin()) return;
                         }
                       }
 
@@ -160,25 +159,30 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                     },
                   ),
                 ),
+                // "Change Karde PIN" offered someone who has never had one the
+                // chance to change a thing that does not exist. The row now says
+                // what it will actually do, and creating a PIN carries on to
+                // recovery setup — the first moment recovery means anything.
                 _buildNavigationRow(
                   context: context,
-                  title: loc.changePin,
-                  subtitle: loc.changePinDesc,
+                  title: hasKardePin ? loc.changePin : loc.createKardePin,
+                  subtitle:
+                      hasKardePin ? loc.changePinDesc : loc.createKardePinDesc,
                   leadingIcon: Icons.password,
-                  onTap: () async {
-                    if (requirePinLock) {
-                      final bool? verified = await Navigator.push(context, MaterialPageRoute(builder: (_) => PinVerificationScreen(customSubtitle: loc.enterCurrentPin)));
-                      if (verified != true) return;
-                    }
-                    if (context.mounted) {
-                      Navigator.push(context, MaterialPageRoute(builder: (_) => const PinSetupScreen(isChangingPin: true)));
-                    }
-                  },
+                  onTap: _manageKardePin,
                 ),
+                // "Change the questions" is equally wrong for someone who has
+                // none. That state is reachable from Phone Lock onboarding, and
+                // from anyone who chose Phone Lock or No Recovery at the recovery
+                // step.
                 _buildNavigationRow(
                   context: context,
-                  title: loc.settingsSecurityQuestions,
-                  subtitle: loc.settingsSecurityQuestionsDesc,
+                  title: hasSecurityQuestions
+                      ? loc.settingsSecurityQuestions
+                      : loc.settingsSecurityQuestionsAdd,
+                  subtitle: hasSecurityQuestions
+                      ? loc.settingsSecurityQuestionsDesc
+                      : loc.settingsSecurityQuestionsAddDesc,
                   leadingIcon: Icons.quiz_outlined,
                   onTap: _changeSecurityQuestions,
                 ),
@@ -282,6 +286,61 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
 
   /// Lets the user change their security questions after onboarding.
   ///
+  /// Sets the Karde PIN: creating a first one, or replacing the one there is.
+  ///
+  /// Shared by the "App PIN lock" switch and the PIN row, because both are the
+  /// same request arriving through different doors.
+  ///
+  /// Identity is checked first, with whatever the user is actually using today.
+  /// [AuthenticationService.authenticate] picks it: the Karde PIN where one is
+  /// required, the phone's own lock otherwise. Without that gate, anyone holding
+  /// an unlocked phone could set a PIN of their own and shut the owner out of
+  /// their own vault.
+  ///
+  /// Whether a PIN already existed is read here rather than taken from the row
+  /// that was tapped. The row is painted from a value that may still have been
+  /// loading, and this is the difference between changing a PIN and creating
+  /// one — which decides whether recovery options follow.
+  ///
+  /// They follow only a PIN that has just come into existence. Onboarding used to
+  /// show recovery to Phone Lock users who had no PIN to recover; this is the
+  /// moment a PIN exists and the question becomes a real one. For a PIN being
+  /// replaced, whatever recovery the user already chose still stands, and the
+  /// security questions row is where they change it.
+  ///
+  /// Returns whether a Karde PIN exists by the time it finishes.
+  Future<bool> _manageKardePin() async {
+    final settings = ref.read(settingsRepositoryProvider);
+    final hadPin = await settings.hasKardePin();
+    if (!mounted) return hadPin;
+
+    final authenticated =
+        await AuthenticationService().authenticate(context, settings);
+    if (!authenticated || !mounted) return hadPin;
+
+    await Navigator.push(
+      context,
+      MaterialPageRoute(builder: (_) => const PinSetupScreen(isChangingPin: true)),
+    );
+
+    // Ask storage, not the screen. The PIN screen can be backed out of, and its
+    // success dialog pops without returning anything that would tell the two
+    // apart.
+    final hasPin = await settings.hasKardePin();
+    if (!mounted) return hasPin;
+    ref.invalidate(hasKardePinProvider);
+    if (hadPin || !hasPin) return hasPin;
+
+    await Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (_) => const RecoverySetupScreen(fromSettings: true),
+      ),
+    );
+    if (mounted) ref.invalidate(hasSecurityQuestionsProvider);
+    return true;
+  }
+
   /// Previously there was no way to. The questions were set once during setup
   /// and could never be revisited — so a user who had forgotten their own
   /// answers, or who realised the answers were guessable by anyone who knew
@@ -304,6 +363,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
         builder: (_) => const SecurityQuestionsSetupScreen(isChanging: true),
       ),
     );
+    if (mounted) ref.invalidate(hasSecurityQuestionsProvider);
   }
 
   /// Erases everything and returns the app to a first-run state.

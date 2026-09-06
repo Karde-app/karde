@@ -161,6 +161,10 @@ class AppLocalizationsFr extends AppLocalizations {
   String get phoneLockDesc => 'Face ID, Touch ID ou le code de votre appareil.';
 
   @override
+  String get phoneLockPinHint =>
+      'Vous pourrez ajouter un code PIN Karde plus tard dans les Réglages si vous souhaitez une deuxième façon d\'ouvrir Karde.';
+
+  @override
   String get kardePin => 'Code Karde';
 
   @override
@@ -198,11 +202,11 @@ class AppLocalizationsFr extends AppLocalizations {
   String get unlockToReveal => 'Déverrouillez pour révéler';
 
   @override
-  String get recoverySetupTitle => 'En cas de blocage';
+  String get recoverySetupTitle => 'Si vous oubliez votre code PIN Karde';
 
   @override
   String get recoverySetupSubtitle =>
-      'Choisissez comment revenir si vous ne parvenez plus à déverrouiller Karde.';
+      'Choisissez comment le réinitialiser pour revenir dans Karde.';
 
   @override
   String get biometricRecovery => 'Verrouillage du téléphone';
@@ -331,7 +335,11 @@ class AppLocalizationsFr extends AppLocalizations {
   String get changePin => 'Modifier le code PIN';
 
   @override
-  String get changePinDesc => 'Mettre à jour votre code PIN principal';
+  String get changePinDesc => 'Choisir un nouveau code PIN pour ouvrir Karde';
+
+  @override
+  String get createKardePinDesc =>
+      'Définir un code PIN qui vous est propre pour ouvrir Karde';
 
   @override
   String get about => 'À PROPOS';
@@ -409,6 +417,9 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get pinChangedSuccess => 'Code modifié avec succès';
+
+  @override
+  String get pinCreatedSuccess => 'Code PIN Karde créé';
 
   @override
   String get done => 'Terminé';
@@ -1019,11 +1030,19 @@ class AppLocalizationsFr extends AppLocalizations {
   String get sortAlphabetical => 'Alphabétique (A-Z)';
 
   @override
-  String get settingsSecurityQuestions => 'Questions de sécurité';
+  String get settingsSecurityQuestions => 'Modifier les questions de sécurité';
+
+  @override
+  String get settingsSecurityQuestionsAdd =>
+      'Ajouter des questions de sécurité';
 
   @override
   String get settingsSecurityQuestionsDesc =>
       'Modifier les questions servant à récupérer votre code';
+
+  @override
+  String get settingsSecurityQuestionsAddDesc =>
+      'Créez des questions qui vous permettront de réinitialiser votre code PIN Karde';
 
   @override
   String get settingsBackupSection => 'SAUVEGARDE';
@@ -1158,6 +1177,9 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get securityQuestionsUpdated => 'Questions de sécurité mises à jour.';
+
+  @override
+  String get securityQuestionsSaved => 'Questions de sécurité enregistrées.';
 
   @override
   String get changeSecurityQuestionsTitle =>
@@ -1466,6 +1488,10 @@ class AppLocalizationsFr extends AppLocalizations {
   @override
   String get vaultUpdatedWithNewPin =>
       'Votre coffre sécurisé a été mis à jour avec le nouveau code.';
+
+  @override
+  String get vaultReadyWithNewPin =>
+      'Vous pouvez désormais ouvrir Karde avec ce code PIN.';
 
   @override
   String get creditCard => 'Carte bancaire';

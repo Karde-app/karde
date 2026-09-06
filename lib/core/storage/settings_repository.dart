@@ -45,6 +45,27 @@ final biometricUnlockProvider = StateNotifierProvider<BiometricUnlockNotifier, b
   return BiometricUnlockNotifier(repository);
 });
 
+/// Whether a Karde PIN has actually been created.
+///
+/// Deliberately separate from [requirePinLockProvider]. That one reports the
+/// *setting*; this one reports the fact. They disagree for anyone who chose
+/// Phone Lock at onboarding, and reading the setting as though it answered this
+/// question caused a real security hole — see [SettingsRepository.hasKardePin].
+///
+/// Invalidate it after any flow that creates a PIN, so wording that depends on
+/// it is not left describing the state before the change.
+final hasKardePinProvider = FutureProvider<bool>((ref) async {
+  return ref.watch(settingsRepositoryProvider).hasKardePin();
+});
+
+/// Whether both security questions have been answered.
+///
+/// Drives the difference between offering to *add* questions and offering to
+/// *change* them. Invalidate after saving questions.
+final hasSecurityQuestionsProvider = FutureProvider<bool>((ref) async {
+  return ref.watch(settingsRepositoryProvider).hasSecurityQuestions();
+});
+
 class SettingsRepository {
   final SharedPreferences _prefs;
   final FlutterSecureStorage _secureStorage;
@@ -179,6 +200,21 @@ class SettingsRepository {
     await _secureStorage.write(key: _hashedPinKey, value: hash);
   }
 
+  /// Whether a Karde PIN has actually been set.
+  ///
+  /// [getRequirePinLock] only says the setting is on; it says nothing about
+  /// whether a PIN was ever created. The two disagree for anyone who chose Phone
+  /// Lock, who has a lock but no PIN — and once, reading the setting as though it
+  /// answered this question let that user decline the fingerprint prompt, be
+  /// offered the PIN screen, be sent to CREATE a PIN because none existed, and
+  /// have that creation counted as a successful authentication.
+  ///
+  /// Whenever the question is "does a PIN exist", ask this, never the setting.
+  Future<bool> hasKardePin() async {
+    final stored = await getHashedPin();
+    return stored != null && stored.isNotEmpty;
+  }
+
   // Lockout State
   int getFailedAttempts() {
     return _prefs.getInt(_failedAttemptsKey) ?? 0;
@@ -256,6 +292,17 @@ class SettingsRepository {
       'q2': await _secureStorage.read(key: _securityQuestion2Key),
       'a2': await _secureStorage.read(key: _securityAnswer2Key),
     };
+  }
+
+  /// Whether both security questions are configured.
+  ///
+  /// Both, not either: recovery asks for the pair, so one on its own is not a way
+  /// back in and must not be described to the user as though it were.
+  Future<bool> hasSecurityQuestions() async {
+    final stored = await getSecurityQuestions();
+    final q1 = stored['q1'];
+    final q2 = stored['q2'];
+    return q1 != null && q1.isNotEmpty && q2 != null && q2.isNotEmpty;
   }
 
   /// Removes everything Karde holds: settings, the PIN and security answers, and

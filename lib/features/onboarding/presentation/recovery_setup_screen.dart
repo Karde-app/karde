@@ -8,7 +8,17 @@ import '../../home/presentation/main_scaffold.dart';
 import 'security_questions_setup_screen.dart';
 
 class RecoverySetupScreen extends ConsumerStatefulWidget {
-  const RecoverySetupScreen({super.key});
+  /// True when reached from Settings rather than from onboarding.
+  ///
+  /// Onboarding ends on this screen, so there it clears the stack and enters the
+  /// app. From Settings there is no onboarding to end: the user came here after
+  /// creating a Karde PIN, and finishing has to hand them back to the Settings
+  /// screen they started from. Entering a fresh MainScaffold instead would drop
+  /// them on the dashboard and make Karde ask them to authenticate all over
+  /// again.
+  final bool fromSettings;
+
+  const RecoverySetupScreen({super.key, this.fromSettings = false});
 
   @override
   ConsumerState<RecoverySetupScreen> createState() => _RecoverySetupScreenState();
@@ -19,11 +29,18 @@ class _RecoverySetupScreenState extends ConsumerState<RecoverySetupScreen> {
   bool _canCheckBiometrics = false;
   bool _isLoading = true;
 
-  /// True for a user who chose "Phone Lock" and therefore has no Karde PIN.
+  /// Whether the user has no Karde PIN.
   ///
-  /// They reach this screen too now, but what these options do for them is
-  /// different enough that saying nothing would be misleading — see
-  /// [_buildNoPinNote].
+  /// Every route into this screen now creates a PIN first — onboarding arrives
+  /// via PIN setup, and Settings arrives straight after a PIN is created — so in
+  /// practice this stays false. It is kept as a guard rather than an assumption
+  /// because the screen is pushable from anywhere, and getting here without a PIN
+  /// would otherwise offer the phone's own lock as the way to recover from the
+  /// phone's own lock, and offer to reset a PIN that does not exist. Neither is
+  /// something to show a user by accident.
+  ///
+  /// Read from [SettingsRepository.hasKardePin]. Never from the "App PIN lock"
+  /// setting, which reports an intention rather than a fact.
   bool _hasNoKardePin = false;
 
   @override
@@ -40,25 +57,25 @@ class _RecoverySetupScreenState extends ConsumerState<RecoverySetupScreen> {
       canCheck = false;
     }
 
-    final storedPin = await ref.read(settingsRepositoryProvider).getHashedPin();
+    final hasPin = await ref.read(settingsRepositoryProvider).hasKardePin();
 
     if (!mounted) return;
     setState(() {
       _canCheckBiometrics = canCheck;
-      _hasNoKardePin = storedPin == null || storedPin.isEmpty;
+      _hasNoKardePin = !hasPin;
       _isLoading = false;
     });
   }
 
   /// Explains what recovery does, and does not, mean without a Karde PIN.
   ///
+  /// The safety net for [_hasNoKardePin]; see that field for when it can show.
   /// Two honest points, because getting either wrong would leave the user with a
   /// false sense of safety.
   ///
   /// These options unlock a PIN reset. Somebody with no Karde PIN has nothing to
   /// reset today, so what they are really doing is arranging the way back in
-  /// against the day they turn App PIN Lock on in Settings — a real possibility,
-  /// and much easier to arrange now than after they are locked out.
+  /// against the day they turn App PIN Lock on in Settings.
   ///
   /// And none of them protect the vault contents. The encryption key lives in the
   /// phone's secure hardware, tied to the phone's own screen lock; if that lock is
@@ -102,10 +119,22 @@ class _RecoverySetupScreenState extends ConsumerState<RecoverySetupScreen> {
     if (!mounted) return;
 
     if (option == 'questions') {
-      Navigator.push(
+      // From Settings the questions screen returns here, and this screen has
+      // nothing left to say — send the user back where they came from rather
+      // than leaving them staring at the choice they just made.
+      await Navigator.push(
         context,
-        MaterialPageRoute(builder: (_) => const SecurityQuestionsSetupScreen()),
+        MaterialPageRoute(
+          builder: (_) => SecurityQuestionsSetupScreen(
+            isChanging: widget.fromSettings,
+          ),
+        ),
       );
+      if (!mounted) return;
+      if (widget.fromSettings && await settings.hasSecurityQuestions()) {
+        if (!mounted) return;
+        Navigator.pop(context);
+      }
     } else if (option == 'none') {
       // Show warning dialog
       final confirm = await showDialog<bool>(
@@ -134,6 +163,10 @@ class _RecoverySetupScreenState extends ConsumerState<RecoverySetupScreen> {
       );
 
       if (confirm == true && mounted) {
+        if (widget.fromSettings) {
+          Navigator.pop(context);
+          return;
+        }
         await settings.setIsFirstLaunch(false);
         if (!mounted) return;
         // Onboarding ends here, so nothing may remain underneath. pushReplacement
@@ -150,6 +183,10 @@ class _RecoverySetupScreenState extends ConsumerState<RecoverySetupScreen> {
       }
     } else {
       // biometrics
+      if (widget.fromSettings) {
+        Navigator.pop(context);
+        return;
+      }
       await settings.setIsFirstLaunch(false);
       if (!mounted) return;
       // Onboarding ends here, so nothing may remain underneath. pushReplacement

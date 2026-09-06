@@ -251,6 +251,168 @@ void main() {
     });
   });
 
+  group("Screens must describe the security the user actually has", () {
+    // The rule behind all of these: never show recovery for something Karde
+    // cannot recover, and never offer to "change" something never configured.
+    //
+    // Asserted against the source because each one is a property of how screens
+    // hand off to each other, which no widget test of a single screen would
+    // notice — the same reasoning as the navigator-stack group below.
+    //
+    // Line breaks in the source are not the subject of any of these rules, so
+    // they are collapsed before matching. Otherwise a reformat would fail a test
+    // about security wording, and the next person would learn to ignore it.
+    String flat(String source) => source.replaceAll(RegExp(r"\s+"), " ");
+
+    test("Phone Lock at onboarding does not lead to recovery options", () {
+      // Karde does not hold the device passcode or the fingerprints. If those
+      // are lost the way back is through Android, so a recovery screen offered
+      // to a Phone Lock user recovers nothing: its questions would reset a PIN
+      // that does not exist, and its "Phone Lock" option offered the phone's own
+      // lock as the way back from the phone's own lock.
+      final source =
+          File("lib/features/onboarding/presentation/lock_setup_screen.dart")
+              .readAsStringSync();
+
+      expect(
+        source.contains("RecoverySetupScreen"),
+        isFalse,
+        reason: "Phone Lock must finish onboarding, not hand off to recovery "
+            "setup. Karde PIN and Both still reach it, by way of PIN setup.",
+      );
+      expect(
+        source.contains("loc.phoneLockPinHint"),
+        isTrue,
+        reason: "Removing the recovery step leaves nothing in the flow that "
+            "mentions the Karde PIN again, so the option has to say a PIN can "
+            "still be added later.",
+      );
+    });
+
+    test("no PIN screen is raised for a PIN that does not exist", () {
+      // Both entry points, not one. Cancelling the fingerprint prompt used to
+      // hand a Phone Lock user the PIN screen, which found no stored hash,
+      // offered to CREATE a PIN, and counted that creation as a successful
+      // sign-in — so declining the only real factor was a way in.
+      final source =
+          File("lib/core/security/authentication_service.dart").readAsStringSync();
+
+      final guards =
+          "if (!hasKardePin) return false;".allMatches(flat(source)).length;
+      expect(
+        guards,
+        2,
+        reason: "authenticate() and authenticateAppStartup() must each refuse "
+            "to fall back to the PIN screen when no Karde PIN exists.",
+      );
+      expect(
+        source.contains("settings.hasKardePin()"),
+        isTrue,
+        reason: "PIN existence is a fact in storage. getRequirePinLock() "
+            "reports a setting, and the two disagree for exactly the Phone "
+            "Lock user this guard protects.",
+      );
+    });
+
+    test("Settings names what the tap will do", () {
+      final source =
+          File("lib/features/settings/presentation/settings_screen.dart")
+              .readAsStringSync();
+
+      expect(
+        source.contains("hasKardePinProvider"),
+        isTrue,
+        reason: "The PIN row's wording must follow whether a PIN exists.",
+      );
+      expect(
+        flat(source).contains("hasKardePin ? loc.changePin : loc.createKardePin"),
+        isTrue,
+        reason: '"Change Karde PIN" for someone who has never had one offers '
+            "to change a thing that does not exist.",
+      );
+      expect(
+        source.contains("loc.settingsSecurityQuestionsAdd"),
+        isTrue,
+        reason: "The questions row must say Add when there are none. That "
+            "state is reachable from Phone Lock onboarding, and from anyone "
+            "who chose Phone Lock or No Recovery at the recovery step.",
+      );
+      expect(
+        source.contains("RecoverySetupScreen(fromSettings: true)"),
+        isTrue,
+        reason: "Creating a PIN from Settings is the first moment recovery "
+            "means anything, so it has to be offered there.",
+      );
+    });
+
+    test("the questions screen takes its wording from storage", () {
+      // isChanging answers a different question: where the screen returns to and
+      // which palette it uses. Settings can reach it with nothing saved yet.
+      final source = File(
+        "lib/features/onboarding/presentation/security_questions_setup_screen.dart",
+      ).readAsStringSync();
+
+      expect(
+        flat(source).contains(
+          "widget.isChanging ? loc.changeSecurityQuestionsTitle",
+        ),
+        isFalse,
+        reason: "The title must not call it a change merely because the screen "
+            "was reached from Settings.",
+      );
+      expect(
+        flat(source).contains(
+          "_hasExistingQuestions ? loc.changeSecurityQuestionsTitle",
+        ),
+        isTrue,
+        reason: "Add-versus-change wording must follow the stored questions.",
+      );
+    });
+  });
+
+  group("Erasing the vault must drop every cached answer", () {
+    // Every provider in settings_repository.dart caches something read from
+    // storage — a StateNotifier reads it once in its constructor, a
+    // FutureProvider holds the resolved value for the life of the process.
+    // Wiping storage does nothing to any of them, so each has to be invalidated
+    // by hand, and one left out is invisible until someone erases their vault.
+    //
+    // Both of the ones added for Phase 10 were missed exactly that way. On the
+    // device, after an erase and a fresh Phone Lock onboarding, Settings still
+    // offered to "Change Karde PIN" — the answer cached before the wipe,
+    // describing a PIN that no longer existed.
+    //
+    // Listing the providers from the source rather than naming them here means a
+    // provider added later is covered without anyone remembering to come back.
+    test("resetAllVaultState covers every settings provider", () {
+      final repository =
+          File("lib/core/storage/settings_repository.dart").readAsStringSync();
+      final reset = File("lib/core/storage/vault_reset.dart").readAsStringSync();
+
+      // Not caches: one is overridden in main.dart, the other is a plain
+      // wrapper around it that holds no state of its own.
+      const stateless = {"sharedPreferencesProvider", "settingsRepositoryProvider"};
+
+      final providers = RegExp(r"^final (\w+Provider) =", multiLine: true)
+          .allMatches(repository)
+          .map((m) => m.group(1)!)
+          .where((name) => !stateless.contains(name))
+          .toList();
+
+      expect(providers, isNotEmpty, reason: "the regex should find providers");
+
+      for (final provider in providers) {
+        expect(
+          reset.contains("ref.invalidate($provider)"),
+          isTrue,
+          reason: "$provider caches state read from storage, so erasing the "
+              "vault must invalidate it. Without that, Settings and the "
+              "dashboard describe the vault the user had before the erase.",
+        );
+      }
+    });
+  });
+
   group("Onboarding must not leave routes underneath the app", () {
     // Regression guard for a bug the user hit on the device: editing a card and
     // saving dropped them onto the language picker, vault apparently gone.

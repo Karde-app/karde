@@ -382,4 +382,72 @@ void main() {
       expect(storage.values['security_question_1'], 'q1');
     });
   });
+
+  group('What is actually configured', () {
+    // Karde has to describe the user's real security state rather than its
+    // defaults: never offering to "change" something never set up, and never
+    // offering recovery for something it cannot recover. Two predicates carry
+    // that, and getting the first of them wrong once opened a real hole.
+    late SettingsRepository settings;
+
+    setUp(() async {
+      SharedPreferences.setMockInitialValues({});
+      settings = SettingsRepository(
+        await SharedPreferences.getInstance(),
+        FakeSecureStorage(),
+      );
+    });
+
+    test('a fresh install has no Karde PIN', () async {
+      expect(await settings.hasKardePin(), isFalse);
+    });
+
+    test('a PIN exists once one has been saved', () async {
+      await settings.setHashedPin('a-hash');
+      expect(await settings.hasKardePin(), isTrue);
+    });
+
+    test('an empty stored hash is not a PIN', () async {
+      await settings.setHashedPin('');
+      expect(await settings.hasKardePin(), isFalse);
+    });
+
+    test('the App PIN lock setting is not evidence of a PIN', () async {
+      // The whole point of the predicate. requirePinLock says the setting is on;
+      // it says nothing about whether a PIN was ever created, and the two
+      // disagree for exactly the user who chose Phone Lock at onboarding.
+      //
+      // Reading the setting as though it answered the question let that user
+      // cancel the fingerprint prompt, be handed the PIN screen, be sent to
+      // CREATE a PIN because none existed, and have that creation count as a
+      // successful sign-in. Declining the only real factor was a way in.
+      await settings.setRequirePinLock(true);
+
+      expect(settings.getRequirePinLock(), isTrue);
+      expect(await settings.hasKardePin(), isFalse);
+    });
+
+    test('a fresh install has no security questions', () async {
+      expect(await settings.hasSecurityQuestions(), isFalse);
+    });
+
+    test('both questions count as configured', () async {
+      await settings.setSecurityQuestions('q1', 'Rufus', 'q2', 'Dune');
+      expect(await settings.hasSecurityQuestions(), isTrue);
+    });
+
+    test('one question on its own is not a way back in', () async {
+      // Recovery asks for the pair, so a half-written set — an interrupted save,
+      // or storage from an older build — must not be described to the user as
+      // questions they could "change".
+      final storage = FakeSecureStorage();
+      final partial = SettingsRepository(
+        await SharedPreferences.getInstance(),
+        storage,
+      );
+      storage.values['security_question_1'] = 'q1';
+
+      expect(await partial.hasSecurityQuestions(), isFalse);
+    });
+  });
 }
