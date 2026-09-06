@@ -12,8 +12,26 @@ final autoBackupServiceProvider = Provider<AutoBackupService>((ref) {
   return AutoBackupService(settings: ref.watch(settingsRepositoryProvider));
 });
 
+/// Whether automatic backup is set up on this phone.
+///
+/// autoDispose so it is asked again on each fresh listen, since setup can happen
+/// while nothing is watching — during onboarding, most obviously.
+final autoBackupConfiguredProvider = FutureProvider.autoDispose<bool>((ref) {
+  return ref.watch(autoBackupServiceProvider).isConfigured;
+});
+
+/// Whether the last attempt to write the backup failed.
+///
+/// A plain flag rather than something derived, because the thing worth reporting
+/// is not "can the folder be reached right now" but "the copy on disk is older
+/// than the vault". Those differ in exactly the case that matters: the user adds
+/// a card with no signal, the write to their cloud folder fails, and by the time
+/// anyone asks about the folder again it is reachable and perfectly healthy —
+/// while the card that was added is still missing from the backup.
+final autoBackupFailingProvider = StateProvider<bool>((ref) => false);
+
 final autoBackupRecorderProvider = Provider<AutoBackupRecorder>((ref) {
-  return AutoBackupRecorder(ref.watch(autoBackupServiceProvider));
+  return AutoBackupRecorder(ref.watch(autoBackupServiceProvider), ref);
 });
 
 /// Turns a saved card or ID into the record the backup file holds.
@@ -29,9 +47,10 @@ final autoBackupRecorderProvider = Provider<AutoBackupRecorder>((ref) {
 /// an ID with the same row number cannot overwrite each other — which they would
 /// have, since the two tables number themselves independently.
 class AutoBackupRecorder {
-  AutoBackupRecorder(this._service);
+  AutoBackupRecorder(this._service, this._ref);
 
   final AutoBackupService _service;
+  final Ref _ref;
 
   bool _lastWriteFailed = false;
 
@@ -47,6 +66,11 @@ class AutoBackupRecorder {
     } catch (_) {
       _lastWriteFailed = true;
     }
+    // Published so the dashboard can say the backup has fallen behind. Only ever
+    // cleared by a write that succeeds, which is the point: a folder that comes
+    // back online has not thereby copied the card that was added while it was
+    // away.
+    _ref.read(autoBackupFailingProvider.notifier).state = _lastWriteFailed;
   }
 
   static String cardId(int id) => 'card:$id';

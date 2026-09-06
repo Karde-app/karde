@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../../core/storage/settings_repository.dart';
 import '../../backup/presentation/backup_screen.dart';
+import '../../backup/data/auto_backup_recorder.dart';
 import '../../cards/data/card_repository.dart';
 import '../../cards/presentation/add_card_screen.dart';
 import '../../cards/presentation/vault_screen.dart';
@@ -55,6 +56,15 @@ class DashboardScreen extends ConsumerWidget {
     final int cardsCount = cardsAsync.valueOrNull?.length ?? 0;
     final int idsCount = idsAsync.valueOrNull?.length ?? 0;
     final int totalItems = cardsCount + idsCount;
+
+    // Failing first: someone whose backup has stopped needs to know that more
+    // than someone who never started one needs to be asked.
+    final Widget? backupNeedsAttention = ref.watch(autoBackupFailingProvider)
+        ? _buildBackupFailing(context, loc, theme)
+        : (totalItems > 0 &&
+                !(ref.watch(autoBackupConfiguredProvider).valueOrNull ?? true))
+            ? _buildSetUpBackup(context, loc, theme)
+            : null;
 
     return Scaffold(
       body: SafeArea(
@@ -326,14 +336,19 @@ class DashboardScreen extends ConsumerWidget {
                     orElse: () => const SizedBox.shrink(),
                   ),
 
-              // Nothing backed up, and something to lose.
+              // The state of the copy Karde keeps.
               //
-              // Deliberately not dismissible: the moment it matters — a screen
+              // Not a nag any more. Karde now takes the backup itself, so the old
+              // "you have not backed up" reminder was telling the user off for
+              // something the app had already done for them. What is left is the
+              // two things it cannot do on its own: it has not been set up yet,
+              // or it has stopped working.
+              //
+              // Neither is dismissible. The moment either one matters — a screen
               // lock switched off, a lost phone — arrives without warning, and
-              // Android gives an app no chance to intervene at that point. The
-              // only useful time to say this is beforehand, every time.
-              if (totalItems > 0 && ref.watch(lastBackupProvider) == null) ...[
-                _buildNoBackupPrompt(context, loc, theme),
+              // Android gives an app no chance to intervene at that point.
+              if (backupNeedsAttention != null) ...[
+                backupNeedsAttention,
                 const SizedBox(height: 12),
               ],
 
@@ -528,19 +543,68 @@ class DashboardScreen extends ConsumerWidget {
     );
   }
 
-  /// The reminder shown to somebody with items and no backup.
+  /// Shown when the copy has fallen behind the vault.
   ///
-  /// Says what it means for them, not how any of it works. "Only on this phone"
-  /// is the whole point; keys and lock screens are not the user's problem.
+  /// The loud one, and the reason the whole feature needs a voice at all. A
+  /// backup that quietly stopped working months ago is worse than no backup,
+  /// because its owner believes they are covered and has stopped thinking about
+  /// it. The commonest cause is dull rather than dramatic: a cloud folder and no
+  /// signal at the moment a card was saved.
+  Widget _buildBackupFailing(
+      BuildContext context, AppLocalizations loc, ThemeData theme) {
+    return GestureDetector(
+      onTap: () => Navigator.push(
+        context,
+        MaterialPageRoute(builder: (_) => const BackupScreen()),
+      ),
+      child: Container(
+        padding: const EdgeInsets.all(14),
+        decoration: BoxDecoration(
+          color: KardeColors.ember.withValues(alpha: 0.12),
+          borderRadius: BorderRadius.circular(14),
+          border: Border.all(color: KardeColors.ember.withValues(alpha: 0.5)),
+        ),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Icon(Icons.cloud_off_outlined,
+                color: KardeColors.ember, size: 20),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    loc.backupFailedTitle,
+                    style: TextStyle(
+                      fontFamily: 'Outfit',
+                      fontSize: 15,
+                      fontWeight: FontWeight.w600,
+                      color: theme.colorScheme.onSurface,
+                    ),
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    loc.backupNotSavingShort,
+                    style: theme.textTheme.bodyMedium
+                        ?.copyWith(fontSize: 12.5, height: 1.4),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  /// Shown to somebody with items and no backup arranged.
   ///
-  /// One line, not a card. This reminder has no dismiss button and never expires
-  /// on its own — a vault with no backup does not stop being one — so it is
-  /// something the user sees on every single visit to the home screen. A title,
-  /// a paragraph and a button was too much furniture for that: it dominated the
-  /// page and, before the page could scroll, pushed the Add buttons off the
-  /// bottom of the screen. A single sentence with the action on the same row
-  /// says the same thing and leaves the page looking calm.
-  Widget _buildNoBackupPrompt(BuildContext context, AppLocalizations loc, ThemeData theme) {
+  /// Only reachable by a vault that predates automatic backup, since setup is
+  /// now part of onboarding. Kept short and calm: it is an offer, not a telling
+  /// off, and it is on screen every time they open the app.
+  Widget _buildSetUpBackup(
+      BuildContext context, AppLocalizations loc, ThemeData theme) {
     return GestureDetector(
       onTap: () => Navigator.push(
         context,
@@ -551,7 +615,8 @@ class DashboardScreen extends ConsumerWidget {
         decoration: BoxDecoration(
           color: KardeColors.champagneGold.withValues(alpha: 0.07),
           borderRadius: BorderRadius.circular(12),
-          border: Border.all(color: KardeColors.champagneGold.withValues(alpha: 0.28)),
+          border:
+              Border.all(color: KardeColors.champagneGold.withValues(alpha: 0.28)),
         ),
         child: Row(
           children: [
@@ -560,16 +625,14 @@ class DashboardScreen extends ConsumerWidget {
             const SizedBox(width: 10),
             Expanded(
               child: Text(
-                loc.noBackupShort,
-                style: theme.textTheme.bodyMedium?.copyWith(
-                  fontSize: 12.5,
-                  height: 1.3,
-                ),
+                loc.setUpBackupBody,
+                style: theme.textTheme.bodyMedium
+                    ?.copyWith(fontSize: 12.5, height: 1.3),
               ),
             ),
             const SizedBox(width: 10),
             Text(
-              loc.backupCreateAction,
+              loc.setUpBackupAction,
               style: const TextStyle(
                 fontFamily: 'Inter',
                 fontSize: 13,
@@ -582,4 +645,5 @@ class DashboardScreen extends ConsumerWidget {
       ),
     );
   }
+
 }

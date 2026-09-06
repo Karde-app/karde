@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import '../../../core/widgets/karde_feedback.dart';
+import '../../backup/presentation/backup_feedback.dart';
 import '../../../core/widgets/vault_photo_field.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../l10n/app_localizations.dart';
@@ -483,14 +484,15 @@ class _AddIdScreenState extends ConsumerState<AddIdScreen> {
       }
 
       if (mounted) {
+        final loc = AppLocalizations.of(context)!;
+        final saved = widget.existingId != null
+            ? loc.idUpdatedSecurely
+            : loc.idAddedSecurely;
+        // FIX 5-2: consistent success feedback, now also saying whether the
+        // copy kept up. See backupAwareMessage for why it is one sentence.
+        final message = backupAwareMessage(context, ref, saved);
         Navigator.pop(context, true);
-        // FIX 5-2: consistent success feedback.
-        KardeFeedback.success(
-          context,
-          widget.existingId != null
-              ? AppLocalizations.of(context)!.idUpdatedSecurely
-              : AppLocalizations.of(context)!.idAddedSecurely,
-        );
+        KardeFeedback.success(context, message);
       }
     } on VaultAuthCancelled {
       // FIX 4-2: dismissed prompt is not a failure.

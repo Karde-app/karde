@@ -1372,6 +1372,12 @@ abstract class AppLocalizations {
   /// **'Your backup is not being saved'**
   String get backupFailedTitle;
 
+  /// No description provided for @backupNotSavingShort.
+  ///
+  /// In en, this message translates to:
+  /// **'New changes are not being copied to your backup folder.'**
+  String get backupNotSavingShort;
+
   /// No description provided for @backupFailedBody.
   ///
   /// In en, this message translates to:
@@ -1857,6 +1863,60 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'ID document added securely.'**
   String get idAddedSecurely;
+
+  /// No description provided for @cardAddedSecurely.
+  ///
+  /// In en, this message translates to:
+  /// **'Card added securely.'**
+  String get cardAddedSecurely;
+
+  /// No description provided for @cardUpdatedSecurely.
+  ///
+  /// In en, this message translates to:
+  /// **'Card updated securely.'**
+  String get cardUpdatedSecurely;
+
+  /// No description provided for @cardRemoved.
+  ///
+  /// In en, this message translates to:
+  /// **'Card removed.'**
+  String get cardRemoved;
+
+  /// No description provided for @idRemoved.
+  ///
+  /// In en, this message translates to:
+  /// **'ID document removed.'**
+  String get idRemoved;
+
+  /// No description provided for @andBackedUp.
+  ///
+  /// In en, this message translates to:
+  /// **'{message} Backup updated.'**
+  String andBackedUp(String message);
+
+  /// No description provided for @savedButNotBackedUp.
+  ///
+  /// In en, this message translates to:
+  /// **'{message} It could not be copied to your backup folder yet.'**
+  String savedButNotBackedUp(String message);
+
+  /// No description provided for @setUpBackupTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'No backup yet'**
+  String get setUpBackupTitle;
+
+  /// No description provided for @setUpBackupBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Karde can keep a copy of everything, so nothing is lost with this phone.'**
+  String get setUpBackupBody;
+
+  /// No description provided for @setUpBackupAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Set up'**
+  String get setUpBackupAction;
 
   /// No description provided for @addIdNeedsScreenLock.
   ///

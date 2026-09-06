@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import '../../../core/widgets/karde_feedback.dart';
+import '../../backup/presentation/backup_feedback.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter/services.dart';
 import '../../../core/security/encryption_service.dart';
@@ -252,7 +253,13 @@ class _AddCardScreenState extends ConsumerState<AddCardScreen> {
       }
 
       if (mounted) {
+        final loc = AppLocalizations.of(context)!;
+        final saved = widget.existingCard != null
+            ? loc.cardUpdatedSecurely
+            : loc.cardAddedSecurely;
+        final message = backupAwareMessage(context, ref, saved);
         Navigator.pop(context, true);
+        KardeFeedback.success(context, message);
       }
     } on VaultAuthCancelled {
       // FIX 4-2: a dismissed auth prompt is a deliberate user action, not a

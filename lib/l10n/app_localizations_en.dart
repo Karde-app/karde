@@ -678,6 +678,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get backupFailedTitle => 'Your backup is not being saved';
 
   @override
+  String get backupNotSavingShort =>
+      'New changes are not being copied to your backup folder.';
+
+  @override
   String backupFailedBody(String folder) {
     return 'Karde could not save to $folder. The folder may have been moved, renamed or deleted. Until this is fixed, new changes are not being copied anywhere.';
   }
@@ -994,6 +998,38 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get idAddedSecurely => 'ID document added securely.';
+
+  @override
+  String get cardAddedSecurely => 'Card added securely.';
+
+  @override
+  String get cardUpdatedSecurely => 'Card updated securely.';
+
+  @override
+  String get cardRemoved => 'Card removed.';
+
+  @override
+  String get idRemoved => 'ID document removed.';
+
+  @override
+  String andBackedUp(String message) {
+    return '$message Backup updated.';
+  }
+
+  @override
+  String savedButNotBackedUp(String message) {
+    return '$message It could not be copied to your backup folder yet.';
+  }
+
+  @override
+  String get setUpBackupTitle => 'No backup yet';
+
+  @override
+  String get setUpBackupBody =>
+      'Karde can keep a copy of everything, so nothing is lost with this phone.';
+
+  @override
+  String get setUpBackupAction => 'Set up';
 
   @override
   String get addIdNeedsScreenLock =>

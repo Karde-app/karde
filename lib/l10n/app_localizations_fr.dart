@@ -683,6 +683,10 @@ class AppLocalizationsFr extends AppLocalizations {
   String get backupFailedTitle => 'Votre sauvegarde n\'est plus enregistrée';
 
   @override
+  String get backupNotSavingShort =>
+      'Les nouvelles modifications ne sont pas copiées dans votre dossier de sauvegarde.';
+
+  @override
   String backupFailedBody(String folder) {
     return 'Karde n\'a pas pu enregistrer dans $folder. Le dossier a peut-être été déplacé, renommé ou supprimé. Tant que ce n\'est pas corrigé, les nouvelles modifications ne sont copiées nulle part.';
   }
@@ -1009,6 +1013,38 @@ class AppLocalizationsFr extends AppLocalizations {
   @override
   String get idAddedSecurely =>
       'Document d\'identité ajouté en toute sécurité.';
+
+  @override
+  String get cardAddedSecurely => 'Carte ajoutée en toute sécurité.';
+
+  @override
+  String get cardUpdatedSecurely => 'Carte mise à jour en toute sécurité.';
+
+  @override
+  String get cardRemoved => 'Carte supprimée.';
+
+  @override
+  String get idRemoved => 'Document d\'identité supprimé.';
+
+  @override
+  String andBackedUp(String message) {
+    return '$message Sauvegarde mise à jour.';
+  }
+
+  @override
+  String savedButNotBackedUp(String message) {
+    return '$message La copie n\'a pas encore pu être enregistrée dans votre dossier de sauvegarde.';
+  }
+
+  @override
+  String get setUpBackupTitle => 'Aucune sauvegarde';
+
+  @override
+  String get setUpBackupBody =>
+      'Karde peut conserver une copie de tout, afin que rien ne disparaisse avec ce téléphone.';
+
+  @override
+  String get setUpBackupAction => 'Configurer';
 
   @override
   String get addIdNeedsScreenLock =>

@@ -676,6 +676,10 @@ class AppLocalizationsAr extends AppLocalizations {
   String get backupFailedTitle => 'لا يتم حفظ نسختك الاحتياطية';
 
   @override
+  String get backupNotSavingShort =>
+      'لا يتم نسخ التغييرات الجديدة إلى مجلد النسخ الاحتياطي.';
+
+  @override
   String backupFailedBody(String folder) {
     return 'لم يتمكن Karde من الحفظ في $folder. ربما نُقل المجلد أو أُعيدت تسميته أو حُذف. وإلى أن يُحل هذا، لا تُنسخ التغييرات الجديدة في أي مكان.';
   }
@@ -1007,6 +1011,38 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get idAddedSecurely => 'تمت إضافة مستند الهوية بأمان.';
+
+  @override
+  String get cardAddedSecurely => 'تمت إضافة البطاقة بأمان.';
+
+  @override
+  String get cardUpdatedSecurely => 'تم تحديث البطاقة بأمان.';
+
+  @override
+  String get cardRemoved => 'تم حذف البطاقة.';
+
+  @override
+  String get idRemoved => 'تم حذف وثيقة الهوية.';
+
+  @override
+  String andBackedUp(String message) {
+    return '$message تم تحديث النسخة الاحتياطية.';
+  }
+
+  @override
+  String savedButNotBackedUp(String message) {
+    return '$message لم يتم نسخها بعد إلى مجلد النسخ الاحتياطي.';
+  }
+
+  @override
+  String get setUpBackupTitle => 'لا توجد نسخة احتياطية';
+
+  @override
+  String get setUpBackupBody =>
+      'يمكن لـ Karde الاحتفاظ بنسخة من كل شيء، حتى لا يضيع شيء مع هذا الهاتف.';
+
+  @override
+  String get setUpBackupAction => 'إعداد';
 
   @override
   String get addIdNeedsScreenLock =>
