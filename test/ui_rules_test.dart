@@ -274,12 +274,14 @@ void main() {
 
       expect(
         source.contains(
-          "if (!_isAppAuthenticated && !_isAuthenticating && !_authDeclined && mounted)",
+          "if (!_isAppAuthenticated && !_isAuthenticating && (!_authDeclined || _noScreenLock) && mounted)",
         ),
         isTrue,
         reason: "Coming back to the foreground must not re-raise the unlock "
-            "prompt after the user has just declined it. The resume that "
-            "arrives is usually Karde's own prompt closing.",
+            "prompt after the user has just declined it — the resume that "
+            "arrives is usually Karde's own prompt closing. A missing screen "
+            "lock is the exception, and re-checked every time: the user has "
+            "most likely just come back from setting one.",
       );
     });
 
@@ -296,6 +298,63 @@ void main() {
         2,
         reason: "Both the sensitive-action prompt and the app-startup prompt "
             "must suppress the auto-lock timer while they are on screen.",
+      );
+    });
+  });
+
+  group("The lock switches must mean what they say", () {
+    // Reported from the device: App PIN lock switched off, app restarted, still
+    // asked for the Karde PIN. The switch was never consulted when opening the
+    // app — that path asked for the PIN whenever a PIN existed — so the one
+    // thing its label promises was the one thing it did not do.
+    String codeOf(String path) => File(path)
+        .readAsLinesSync()
+        .where((line) => !line.trimLeft().startsWith("//"))
+        .join("\n");
+
+    test("opening the app consults the App PIN lock switch", () {
+      final source = codeOf("lib/core/security/authentication_service.dart");
+      final startup = source.substring(source.indexOf("authenticateAppStartup"));
+
+      expect(
+        startup.contains("requirePinLock"),
+        isTrue,
+        reason: "Opening the app must honour the switch labelled "
+            "\"Require a PIN to open Karde\".",
+      );
+    });
+
+    test("a PIN screen is never raised for a PIN that does not exist", () {
+      // The third and last place still relying on this state being unreachable
+      // rather than on a guard. The verification screen finds no stored hash,
+      // offers to CREATE a PIN, and counts that creation as authentication.
+      final source = codeOf("lib/core/security/authentication_service.dart");
+
+      expect(
+        source.contains("if (requirePinLock && hasKardePin)"),
+        isTrue,
+        reason: "The sensitive-action gate must check that a PIN exists before "
+            "asking for one.",
+      );
+    });
+
+    test("a vault the phone cannot protect is not gated, it is explained", () {
+      // Asking for a Karde PIN with no screen lock takes a correct answer and
+      // opens a vault where nothing can be read and nothing can be saved.
+      final source =
+          codeOf("lib/features/home/presentation/main_scaffold.dart");
+
+      expect(
+        source.contains("canUseVault"),
+        isTrue,
+        reason: "Opening the app must check the phone can protect the vault "
+            "before asking the user for anything.",
+      );
+      expect(
+        source.contains("openSecuritySettings"),
+        isTrue,
+        reason: "Telling someone their phone needs a screen lock without "
+            "offering to take them there leaves them to go hunting.",
       );
     });
   });

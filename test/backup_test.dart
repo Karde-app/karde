@@ -31,6 +31,9 @@ class FakeVault implements EncryptionService {
   Future<bool> canUseVault() async => true;
 
   @override
+  Future<bool> openSecuritySettings() async => true;
+
+  @override
   Future<bool> willPromptEveryUse() async => true;
 
   @override

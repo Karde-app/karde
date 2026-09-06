@@ -65,6 +65,29 @@ class MainActivity : FlutterFragmentActivity() {
                         }
                     }
                     "canUseVaultKey" -> result.success(canUseVaultKey())
+                    // Every message about a missing screen lock told the user
+                    // to go and set one and then left them to find it.
+                    "openSecuritySettings" -> {
+                        try {
+                            startActivity(
+                                Intent(android.provider.Settings.ACTION_SECURITY_SETTINGS)
+                                    .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                            )
+                            result.success(true)
+                        } catch (e: Exception) {
+                            // Some devices bury or rename this screen. Falling back
+                            // to the settings root is better than doing nothing.
+                            try {
+                                startActivity(
+                                    Intent(android.provider.Settings.ACTION_SETTINGS)
+                                        .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                                )
+                                result.success(true)
+                            } catch (inner: Exception) {
+                                result.success(false)
+                            }
+                        }
+                    }
                     // Called when the vault is erased or fully restored. Nothing
                     // encrypted by the lost key remains, so the warning that
                     // would otherwise attach itself to healthy new items goes too.

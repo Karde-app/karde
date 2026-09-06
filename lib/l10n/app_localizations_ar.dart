@@ -395,6 +395,16 @@ class AppLocalizationsAr extends AppLocalizations {
   String get kardeIsLocked => 'Karde مقفل';
 
   @override
+  String get noScreenLockTitle => 'هاتفك بلا قفل شاشة';
+
+  @override
+  String get noScreenLockBody =>
+      'يحمي Karde كل شيء باستخدام أمان هاتفك، لذلك لا يمكنه فتح أي شيء أو حفظه بدون قفل شاشة. عيّن رمزاً أو نمطاً أو كلمة مرور أو بصمة من إعدادات هاتفك، ثم عُد.';
+
+  @override
+  String get openPhoneSettings => 'فتح إعدادات الهاتف';
+
+  @override
   String get authenticateToAccess => 'تحقق من هويتك للوصول إلى خزنتك.';
 
   @override

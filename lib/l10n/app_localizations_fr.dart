@@ -397,6 +397,17 @@ class AppLocalizationsFr extends AppLocalizations {
   String get kardeIsLocked => 'Karde est verrouillé';
 
   @override
+  String get noScreenLockTitle =>
+      'Votre téléphone n’a aucun verrouillage d’écran';
+
+  @override
+  String get noScreenLockBody =>
+      'Karde protège tout avec la sécurité de votre téléphone : sans verrouillage d’écran, il ne peut rien ouvrir ni enregistrer. Définissez un code, un schéma, un mot de passe ou une empreinte dans les réglages de votre téléphone, puis revenez.';
+
+  @override
+  String get openPhoneSettings => 'Ouvrir les réglages du téléphone';
+
+  @override
   String get authenticateToAccess =>
       'Authentifiez-vous pour accéder à votre coffre.';
 

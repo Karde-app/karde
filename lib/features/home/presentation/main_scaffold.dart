@@ -11,6 +11,7 @@ import '../../../core/security/system_interaction_guard.dart';
 import '../../../core/security/window_security_service.dart';
 import '../../../core/storage/settings_repository.dart';
 import '../../../core/security/vault_health_provider.dart';
+import '../../../core/security/encryption_service.dart';
 import '../../../theme/theme.dart';
 
 class MainScaffold extends ConsumerStatefulWidget {
@@ -38,6 +39,17 @@ class _MainScaffoldState extends ConsumerState<MainScaffold> with WidgetsBinding
   /// "Unlock Karde" and "Exit app" — asking again unprompted is Karde overriding
   /// an answer the user has just given.
   bool _authDeclined = false;
+
+  /// The phone has no secure lock screen.
+  ///
+  /// Kept apart from every other reason the app is closed, because it is the one
+  /// the user cannot answer. Asking for a Karde PIN here — which is what used to
+  /// happen, and was reported — takes a correct answer and opens a vault where
+  /// nothing can be read and nothing can be saved: Android destroys the key that
+  /// protects the items the moment the screen lock goes.
+  ///
+  /// So Karde says what is wrong and offers the one thing that fixes it.
+  bool _noScreenLock = false;
 
   final _windowSecurity = WindowSecurityService();
 
@@ -80,9 +92,13 @@ class _MainScaffoldState extends ConsumerState<MainScaffold> with WidgetsBinding
       // Not after a decline. See [_authDeclined]: the resume that arrives here is
       // usually Karde's own prompt closing, and re-raising it is how the user
       // ended up unable to reach the lock screen at all.
+      // A decline is remembered, but a missing screen lock is re-checked every
+      // time: the user has most likely just come back from setting one, and
+      // making them tap a button to be told the good news would be a poor
+      // welcome.
       if (!_isAppAuthenticated &&
           !_isAuthenticating &&
-          !_authDeclined &&
+          (!_authDeclined || _noScreenLock) &&
           mounted) {
         _authenticateStartup();
       }
@@ -109,6 +125,87 @@ class _MainScaffoldState extends ConsumerState<MainScaffold> with WidgetsBinding
     }
   }
 
+  /// Shown instead of the lock screen when the phone has no secure lock screen.
+  ///
+  /// Deliberately not a variant of "Karde is Locked" with a different sentence.
+  /// That screen offers to try again, and trying again is the one thing that
+  /// cannot help here — the answer is in the phone's settings, not in Karde. So
+  /// this screen offers the phone's settings instead, and nothing else.
+  Widget _buildNoScreenLock(BuildContext context, AppLocalizations loc) {
+    return Scaffold(
+      backgroundColor: KardeColors.obsidian,
+      body: SafeArea(
+        child: Center(
+          child: SingleChildScrollView(
+            padding: const EdgeInsets.symmetric(horizontal: 32),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Container(
+                  width: 80,
+                  height: 80,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: KardeColors.ember.withValues(alpha: 0.12),
+                    border: Border.all(
+                      color: KardeColors.ember.withValues(alpha: 0.45),
+                      width: 1.5,
+                    ),
+                  ),
+                  child: const Icon(Icons.lock_open_outlined,
+                      color: KardeColors.ember, size: 36),
+                ),
+                const SizedBox(height: 24),
+                Text(
+                  loc.noScreenLockTitle,
+                  textAlign: TextAlign.center,
+                  style: const TextStyle(
+                    fontFamily: 'Outfit',
+                    color: Colors.white,
+                    fontSize: 24,
+                    fontWeight: FontWeight.bold,
+                    height: 1.25,
+                  ),
+                ),
+                const SizedBox(height: 12),
+                Text(
+                  loc.noScreenLockBody,
+                  textAlign: TextAlign.center,
+                  style: const TextStyle(
+                    fontFamily: 'Inter',
+                    color: Colors.white70,
+                    fontSize: 14.5,
+                    height: 1.5,
+                  ),
+                ),
+                const SizedBox(height: 32),
+                SizedBox(
+                  width: 260,
+                  child: ElevatedButton.icon(
+                    onPressed: () => EncryptionService().openSecuritySettings(),
+                    icon: const Icon(Icons.settings_outlined),
+                    label: Text(loc.openPhoneSettings),
+                    style: ElevatedButton.styleFrom(
+                      padding: const EdgeInsets.symmetric(vertical: 14),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 16),
+                TextButton(
+                  onPressed: () => SystemNavigator.pop(),
+                  child: Text(
+                    loc.exitApp,
+                    style: const TextStyle(color: Colors.white30, fontSize: 14),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
   Future<void> _authenticateStartup() async {
     if (_isAuthenticating) return;
     // Reaching here at all is either the first attempt or the user tapping
@@ -117,6 +214,19 @@ class _MainScaffoldState extends ConsumerState<MainScaffold> with WidgetsBinding
       _isAuthenticating = true;
       _authDeclined = false;
     });
+
+    // Before anything else. Every gate below this line guards a vault that,
+    // without a screen lock, cannot be opened by any answer the user gives.
+    final vaultUsable = await EncryptionService().canUseVault();
+    if (!mounted) return;
+    if (!vaultUsable) {
+      setState(() {
+        _isAuthenticating = false;
+        _noScreenLock = true;
+      });
+      return;
+    }
+    if (_noScreenLock) setState(() => _noScreenLock = false);
 
     final settings = ref.read(settingsRepositoryProvider);
     final authService = AuthenticationService();
@@ -142,6 +252,8 @@ class _MainScaffoldState extends ConsumerState<MainScaffold> with WidgetsBinding
       const VaultScreen(),
       const SettingsScreen(),
     ];
+
+    if (_noScreenLock) return _buildNoScreenLock(context, loc);
 
     if (!_isAppAuthenticated) {
       // FIX 4: Proper lock screen with "Try Again" instead of closing the app

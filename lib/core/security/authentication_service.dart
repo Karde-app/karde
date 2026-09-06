@@ -101,7 +101,12 @@ class AuthenticationService {
 
     // A dedicated Karde PIN is the app-level factor for viewing secrets. Ask for
     // it first rather than treating it as a fallback after biometrics.
-    if (requirePinLock) {
+    // The same guard as the startup path, for the same reason. If the switch is
+    // ever on with no PIN stored, the verification screen finds no hash, offers
+    // to CREATE one, and counts that creation as having authenticated the user.
+    // That hole has been closed twice already elsewhere; this was the last place
+    // still relying on the state being unreachable rather than on a guard.
+    if (requirePinLock && hasKardePin) {
       if (await _osWillGate(cryptoWillPrompt)) return true;
 
       if (!context.mounted) return false;
@@ -220,6 +225,7 @@ class AuthenticationService {
     final loc = AppLocalizations.of(context)!;
     final hasKardePin = await settings.hasKardePin();
     final biometricUnlock = settings.getBiometricUnlock();
+    final requirePinLock = settings.getRequirePinLock();
 
     if (biometricUnlock) {
       try {
@@ -263,14 +269,24 @@ class AuthenticationService {
       }
     }
 
-    // Fall back to the Karde PIN — but only if there is one, for the same reason
-    // spelled out in [authenticate].
+    // Fall back to the Karde PIN — but only if the user asked for one, and only
+    // if there is one.
     //
-    // Someone who chose "Phone Lock" has no Karde PIN. Sending them to the PIN
+    // The switch used to be ignored here entirely. Opening the app asked for the
+    // PIN whenever a PIN existed, so turning "App PIN lock" off changed nothing
+    // about opening the app — the one thing its label promises. Reported from
+    // the device: switched off, restarted, still asked for the Karde PIN.
+    //
+    // And only if there is one, for the reason spelled out in [authenticate]:
+    // someone who chose Phone Lock has no Karde PIN, and sending them to the PIN
     // screen anyway found no stored hash, offered to CREATE a PIN, and let that
-    // creation open the app — so cancelling the fingerprint prompt was itself a
-    // way in. Returning false leaves them on Karde's own lock screen with "Try
-    // again", which is the honest answer: the one factor they have was declined.
+    // creation open the app. Cancelling the prompt was itself a way in.
+    //
+    // With neither switch on there is no app-level gate to apply, which is
+    // exactly what the two switches say. Nothing is exposed by honouring that:
+    // every item is still sealed by the Keystore and still demands
+    // authentication of its own before it can be read.
+    if (!requirePinLock) return !biometricUnlock;
     if (!hasKardePin) return false;
     if (!context.mounted) return false;
     final result = await Navigator.push<bool>(

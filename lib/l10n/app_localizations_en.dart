@@ -394,6 +394,16 @@ class AppLocalizationsEn extends AppLocalizations {
   String get kardeIsLocked => 'Karde is Locked';
 
   @override
+  String get noScreenLockTitle => 'Your phone has no screen lock';
+
+  @override
+  String get noScreenLockBody =>
+      'Karde keeps everything locked with your phone’s own security, so without a screen lock it cannot open or save anything. Set a PIN, pattern, password or fingerprint in your phone’s settings, then come back.';
+
+  @override
+  String get openPhoneSettings => 'Open phone settings';
+
+  @override
   String get authenticateToAccess => 'Authenticate to access your vault.';
 
   @override

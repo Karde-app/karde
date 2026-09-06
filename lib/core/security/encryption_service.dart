@@ -47,6 +47,20 @@ class EncryptionService {
   ///
   /// FIX 4-2: checked before the user fills in a form, so a device without a
   /// secure lock screen is told up front rather than after typing a full card.
+  /// Opens the phone's own security settings, where a screen lock is set.
+  ///
+  /// Karde has several places that tell the user their phone needs a screen
+  /// lock, and until now every one of them stopped at saying so. Returns false
+  /// if the phone has no such screen to open, so the caller can leave the button
+  /// out rather than offering one that does nothing.
+  Future<bool> openSecuritySettings() async {
+    try {
+      return await _channel.invokeMethod<bool>('openSecuritySettings') ?? false;
+    } on PlatformException {
+      return false;
+    }
+  }
+
   Future<bool> canUseVault() async {
     try {
       return await _channel.invokeMethod<bool>('canUseVaultKey') ?? false;

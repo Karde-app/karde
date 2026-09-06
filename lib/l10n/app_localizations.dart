@@ -826,6 +826,24 @@ abstract class AppLocalizations {
   /// **'Karde is Locked'**
   String get kardeIsLocked;
 
+  /// No description provided for @noScreenLockTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Your phone has no screen lock'**
+  String get noScreenLockTitle;
+
+  /// No description provided for @noScreenLockBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Karde keeps everything locked with your phone’s own security, so without a screen lock it cannot open or save anything. Set a PIN, pattern, password or fingerprint in your phone’s settings, then come back.'**
+  String get noScreenLockBody;
+
+  /// No description provided for @openPhoneSettings.
+  ///
+  /// In en, this message translates to:
+  /// **'Open phone settings'**
+  String get openPhoneSettings;
+
   /// No description provided for @authenticateToAccess.
   ///
   /// In en, this message translates to:
