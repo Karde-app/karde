@@ -1330,6 +1330,18 @@ abstract class AppLocalizations {
   /// **'Finish'**
   String get backupSetupFinish;
 
+  /// No description provided for @backupSetupLater.
+  ///
+  /// In en, this message translates to:
+  /// **'Set this up later'**
+  String get backupSetupLater;
+
+  /// No description provided for @backupSetupLaterNote.
+  ///
+  /// In en, this message translates to:
+  /// **'Karde could not open a folder picker on this phone. You can carry on and set your backup up from Settings, but nothing you save will be copied anywhere until you do.'**
+  String get backupSetupLaterNote;
+
   /// No description provided for @backupSetupWorking.
   ///
   /// In en, this message translates to:

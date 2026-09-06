@@ -212,6 +212,8 @@
   "backupSetupFolderBody": "Pick a folder on your phone. If you pick one that syncs to cloud storage, your copy survives losing the phone as well.",
   "backupSetupFolderAction": "Choose a folder",
   "backupSetupFinish": "Finish",
+  "backupSetupLater": "Set this up later",
+  "backupSetupLaterNote": "Karde could not open a folder picker on this phone. You can carry on and set your backup up from Settings, but nothing you save will be copied anywhere until you do.",
   "backupSetupWorking": "Setting up your backup…",
   "backupSetupDoneTitle": "Your backup is on",
   "backupSetupDoneBody": "Karde saves a copy every time you add, change or remove something. It goes to {folder}.",

@@ -205,6 +205,8 @@
   "backupSetupFolderBody": "Choisissez un dossier sur votre téléphone. Si vous en choisissez un synchronisé avec le cloud, votre copie survivra aussi à la perte du téléphone.",
   "backupSetupFolderAction": "Choisir un dossier",
   "backupSetupFinish": "Terminer",
+  "backupSetupLater": "Configurer plus tard",
+  "backupSetupLaterNote": "Karde n'a pas pu ouvrir de sélecteur de dossier sur ce téléphone. Vous pouvez continuer et configurer votre sauvegarde depuis les Réglages, mais rien de ce que vous enregistrez ne sera copié tant que ce ne sera pas fait.",
   "backupSetupWorking": "Configuration de votre sauvegarde…",
   "backupSetupDoneTitle": "Votre sauvegarde est active",
   "backupSetupDoneBody": "Karde enregistre une copie chaque fois que vous ajoutez, modifiez ou supprimez quelque chose. Elle va dans {folder}.",

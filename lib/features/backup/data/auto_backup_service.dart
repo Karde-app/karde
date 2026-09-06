@@ -5,6 +5,7 @@ import '../../../core/security/backup_identity_service.dart';
 import '../../../core/storage/settings_repository.dart';
 import '../domain/vault_backup.dart';
 import 'auto_backup_file.dart';
+import 'pending_backup_store.dart';
 
 /// How automatic backup is set up on this phone.
 class AutoBackupSetup {
@@ -77,12 +78,15 @@ class AutoBackupService {
     required this.settings,
     BackupFolderService? folder,
     BackupIdentityService? identity,
+    PendingBackupStore? pending,
   })  : folder = folder ?? BackupFolderService(),
-        identity = identity ?? BackupIdentityService();
+        identity = identity ?? BackupIdentityService(),
+        pending = pending ?? PendingBackupStore();
 
   final SettingsRepository settings;
   final BackupFolderService folder;
   final BackupIdentityService identity;
+  final PendingBackupStore pending;
 
   /// The file Karde keeps up to date. Dated copies live beside it.
   static const String currentFileName = 'karde-backup.json';
@@ -156,12 +160,15 @@ class AutoBackupService {
     final config = await setup();
     if (config == null) return;
 
-    final file = await _openOrStart(config);
-    file.put(
-      id,
-      await identity.seal(publicKey: config.publicKey, plaintext: plaintext),
-    );
-    await _writeCurrent(config, file);
+    // Sealed and queued first, and only then pushed. The sealing needs nothing
+    // but the phone, so it always succeeds; the pushing needs the folder, which
+    // for a cloud folder means a network. Queueing before pushing is what stops
+    // a save made with no signal from vanishing from the backup entirely.
+    final sealed =
+        await identity.seal(publicKey: config.publicKey, plaintext: plaintext);
+    await pending.write((await pending.read()).withSave(id, sealed));
+
+    await flushPending(config);
   }
 
   /// Forgets one item, because the user deleted it.
@@ -169,9 +176,46 @@ class AutoBackupService {
     final config = await setup();
     if (config == null) return;
 
+    await pending.write((await pending.read()).withDelete(id));
+    await flushPending(config);
+  }
+
+  /// Pushes everything queued to the folder, if it can be reached.
+  ///
+  /// Throws if it cannot, and leaves the queue alone so the next attempt carries
+  /// the same changes. Callers that are not the user's own save — a retry on
+  /// waking the app, say — should swallow that: nobody wants a message every
+  /// time a phone comes out of a pocket underground.
+  ///
+  /// The folder's file is read before it is written, and the queue is only
+  /// cleared once the write lands. Nothing is ever overwritten on the strength
+  /// of a copy Karde could not first confirm.
+  Future<void> flushPending([AutoBackupSetup? known]) async {
+    final config = known ?? await setup();
+    if (config == null) return;
+
+    final changes = await pending.read();
+    if (changes.isEmpty) return;
+
     final file = await _openOrStart(config);
-    if (!file.remove(id)) return; // Nothing to write; nothing changed.
-    await _writeCurrent(config, file);
+    var changed = changes.saved.isNotEmpty;
+    changes.saved.forEach(file.put);
+    for (final id in changes.deleted) {
+      if (file.remove(id)) changed = true;
+    }
+
+    // Deleting an item the backup never held — one saved before backup was set
+    // up — leaves the file exactly as it was. Writing it anyway would churn the
+    // folder and, worse, spend the day's history slot on a copy identical to the
+    // one already there.
+    if (changed) await _writeCurrent(config, file);
+    await pending.clear();
+  }
+
+  /// How long the backup has been behind, or null if it is up to date.
+  Future<Duration?> behindFor() async {
+    final changes = await pending.read();
+    return changes.isEmpty ? null : changes.behindFor;
   }
 
   /// Opens an automatic backup file into the same shape a manual one produces.

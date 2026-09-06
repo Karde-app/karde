@@ -140,6 +140,23 @@ class AutoBackupRecorder {
   Future<void> idDeleted(int id) =>
       _record(() => _service.recordDelete(idDocId(id)));
 
+  /// Pushes anything waiting, quietly.
+  ///
+  /// Called when Karde comes back to the foreground, which is the moment a phone
+  /// that was underground or on a plane is most likely to have a connection
+  /// again. Failure is swallowed on purpose: nobody wants a message every time a
+  /// phone comes out of a pocket, and the dashboard already says the backup is
+  /// behind for as long as it is.
+  Future<void> retryQuietly() async {
+    try {
+      await _service.flushPending();
+      _lastWriteFailed = false;
+    } catch (_) {
+      _lastWriteFailed = true;
+    }
+    _ref.read(autoBackupFailingProvider.notifier).state = _lastWriteFailed;
+  }
+
   /// Whether the last attempt to write the backup failed.
   ///
   /// The item is already safely in the vault by the time any of this runs, so a

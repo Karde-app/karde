@@ -12,6 +12,7 @@ import '../../../core/security/window_security_service.dart';
 import '../../../core/storage/settings_repository.dart';
 import '../../../core/security/vault_health_provider.dart';
 import '../../../core/security/encryption_service.dart';
+import '../../backup/data/auto_backup_recorder.dart';
 import '../../../theme/theme.dart';
 
 class MainScaffold extends ConsumerStatefulWidget {
@@ -100,6 +101,11 @@ class _MainScaffoldState extends ConsumerState<MainScaffold> with WidgetsBinding
       // off. Coming back to Karde is the only moment it can find out.
       ref.invalidate(vaultHealthProvider);
       ref.invalidate(biometricChangeNoticeProvider);
+
+      // Anything saved while the backup folder was out of reach — a cloud
+      // folder and no signal — goes now. Coming back to Karde is the moment a
+      // phone that was underground is most likely to have a connection again.
+      ref.read(autoBackupRecorderProvider).retryQuietly();
 
       // Not after a decline. See [_authDeclined]: the resume that arrives here is
       // usually Karde's own prompt closing, and re-raising it is how the user

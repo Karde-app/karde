@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -8,6 +9,7 @@ import 'package:ibank/core/security/bundle_crypto_service.dart';
 import 'package:ibank/core/storage/settings_repository.dart';
 import 'package:ibank/features/backup/data/auto_backup_file.dart';
 import 'package:ibank/features/backup/data/auto_backup_service.dart';
+import 'package:ibank/features/backup/data/pending_backup_store.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 /// In-memory stand-in for the user's chosen folder.
@@ -145,6 +147,10 @@ void main() {
   late FakeIdentity identity;
   late SettingsRepository settings;
 
+  /// The queue of changes waiting for the folder lives in a real file, so these
+  /// tests give it a real directory rather than the phone's.
+  late Directory queueDirectory;
+
   const chosenFolder = BackupFolderChoice(
     uri: 'content://tree/primary%3ADocuments',
     label: 'Documents',
@@ -152,6 +158,7 @@ void main() {
 
   setUp(() async {
     SharedPreferences.setMockInitialValues({});
+    queueDirectory = await Directory.systemTemp.createTemp('karde_queue');
     folder = FakeFolder();
     identity = FakeIdentity();
     settings = SettingsRepository(
@@ -162,7 +169,14 @@ void main() {
       settings: settings,
       folder: folder,
       identity: identity,
+      pending: PendingBackupStore(directory: queueDirectory),
     );
+  });
+
+  tearDown(() async {
+    if (await queueDirectory.exists()) {
+      await queueDirectory.delete(recursive: true);
+    }
   });
 
   group('Before it is set up', () {
@@ -519,6 +533,135 @@ void main() {
       folder.reachable = false;
 
       expect(await service.isHealthy(), isFalse);
+    });
+  });
+
+  group('Saving with no signal', () {
+    // The case the user found within minutes of first using this: a Google Drive
+    // folder and no connection. It used to fail silently AND lose the change —
+    // each save read the folder's file, added its record and wrote it back, so a
+    // save that never reached the folder left that card missing from the backup
+    // permanently, or until it happened to be edited again.
+    //
+    // For a cloud folder, offline is not an exception. It is a plane, a train, a
+    // basement, a country with no data.
+    setUp(() async {
+      await service.configure(passphrase: 'p', folderChoice: chosenFolder);
+    });
+
+    test('a card saved offline is not lost, it waits', () async {
+      folder.reachable = false;
+
+      await expectLater(
+        service.recordSave(id: 'card:1', plaintext: '{"a":1}'),
+        throwsA(isA<BackupFolderUnavailable>()),
+      );
+
+      expect(await service.behindFor(), isNotNull,
+          reason: 'the backup knows it is behind');
+    });
+
+    test('and it lands the moment the folder is reachable again', () async {
+      folder.reachable = false;
+      await service.recordSave(id: 'card:1', plaintext: '{"a":1}').catchError((_) {});
+
+      folder.reachable = true;
+      await service.flushPending();
+
+      final file = AutoBackupFile.decode(
+        folder.files[AutoBackupService.currentFileName]!,
+      );
+      expect(file.ids, ['card:1']);
+      expect(await service.behindFor(), isNull);
+    });
+
+    test('several offline changes all arrive together', () async {
+      folder.reachable = false;
+      for (final id in ['card:1', 'card:2', 'id:1']) {
+        await service.recordSave(id: id, plaintext: '{"a":1}').catchError((_) {});
+      }
+
+      folder.reachable = true;
+      await service.flushPending();
+
+      final file = AutoBackupFile.decode(
+        folder.files[AutoBackupService.currentFileName]!,
+      );
+      expect(file.ids, containsAll(['card:1', 'card:2', 'id:1']));
+    });
+
+    test('editing the same card twice offline arrives once', () async {
+      // Not five copies of one card for five edits on a train.
+      folder.reachable = false;
+      await service.recordSave(id: 'card:1', plaintext: '{"v":"first"}')
+          .catchError((_) {});
+      await service.recordSave(id: 'card:1', plaintext: '{"v":"second"}')
+          .catchError((_) {});
+
+      folder.reachable = true;
+      await service.flushPending();
+
+      final file = AutoBackupFile.decode(
+        folder.files[AutoBackupService.currentFileName]!,
+      );
+      expect(file.count, 1);
+      expect(file.sealedRecords.single, contains('second'));
+    });
+
+    test('a card added then deleted offline never reaches the backup', () async {
+      // What the backup should hold is whatever happened last, not a replay of
+      // every step that got there.
+      folder.reachable = false;
+      await service.recordSave(id: 'card:1', plaintext: '{"a":1}')
+          .catchError((_) {});
+      await service.recordDelete('card:1').catchError((_) {});
+
+      folder.reachable = true;
+      await service.flushPending();
+
+      final file = AutoBackupFile.decode(
+        folder.files[AutoBackupService.currentFileName]!,
+      );
+      expect(file.count, 0);
+    });
+
+    test('the wait is not restarted by each new change', () async {
+      // "Behind since" has to be when it FIRST fell behind, or a user editing
+      // daily on a broken folder would never be told, because the clock would
+      // keep resetting.
+      folder.reachable = false;
+      await service.recordSave(id: 'card:1', plaintext: '{"a":1}')
+          .catchError((_) {});
+      final first = await service.behindFor();
+
+      await Future<void>.delayed(const Duration(milliseconds: 20));
+      await service.recordSave(id: 'card:2', plaintext: '{"b":2}')
+          .catchError((_) {});
+      final second = await service.behindFor();
+
+      expect(second!, greaterThanOrEqualTo(first!));
+    });
+
+    test('a queued change survives Karde being closed', () async {
+      // The queue is a file, not memory. Someone who saves a card underground
+      // and closes the app has not thereby lost it from the backup.
+      folder.reachable = false;
+      await service.recordSave(id: 'card:1', plaintext: '{"a":1}')
+          .catchError((_) {});
+
+      final afterRestart = AutoBackupService(
+        settings: settings,
+        folder: folder,
+        identity: identity,
+        pending: PendingBackupStore(directory: queueDirectory),
+      );
+      folder.reachable = true;
+      await afterRestart.flushPending();
+
+      final file = AutoBackupFile.decode(
+        folder.files[AutoBackupService.currentFileName]!,
+      );
+      expect(file.ids, ['card:1']);
     });
   });
 

@@ -651,6 +651,13 @@ class AppLocalizationsAr extends AppLocalizations {
   String get backupSetupFinish => 'إنهاء';
 
   @override
+  String get backupSetupLater => 'الإعداد لاحقاً';
+
+  @override
+  String get backupSetupLaterNote =>
+      'لم يتمكن Karde من فتح أداة اختيار المجلدات على هذا الهاتف. يمكنك المتابعة وإعداد النسخ الاحتياطي من الإعدادات، لكن لن يُنسخ أي شيء تحفظه حتى تفعل ذلك.';
+
+  @override
   String get backupSetupWorking => 'يجري إعداد نسختك الاحتياطية…';
 
   @override

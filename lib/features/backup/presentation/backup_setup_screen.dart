@@ -36,6 +36,15 @@ class _BackupSetupScreenState extends ConsumerState<BackupSetupScreen> {
   bool _working = false;
   String? _error;
 
+  /// True once the phone has shown it cannot offer a folder picker.
+  ///
+  /// Setup is required, and it stays required — but a requirement nobody can
+  /// satisfy is not a requirement, it is a locked door. If the picker itself is
+  /// unavailable, the user is let through and told plainly what they are
+  /// carrying on without. It appears only after a genuine failure, so nobody
+  /// meets a skip button on the way past a working one.
+  bool _pickerUnavailable = false;
+
   bool get _ready => _passphrase != null && _folder != null;
 
   Future<void> _choosePassphrase() async {
@@ -59,8 +68,20 @@ class _BackupSetupScreenState extends ConsumerState<BackupSetupScreen> {
       // Closing the picker is not a failure and gets no message.
     } on BackupFolderUnavailable {
       if (!mounted) return;
-      setState(() => _error = AppLocalizations.of(context)!.backupSetupFolderFailed);
+      setState(() {
+        _error = AppLocalizations.of(context)!.backupSetupFolderFailed;
+        _pickerUnavailable = true;
+      });
     }
+  }
+
+  /// Lets someone past a picker that will not open.
+  ///
+  /// The vault is not left unprotected by this: the dashboard says so on every
+  /// visit until backup is set up, and Settings can do it at any time. What it
+  /// avoids is a phone on which Karde cannot be used at all.
+  void _continueWithout() {
+    widget.onDone();
   }
 
   Future<void> _finish() async {
@@ -209,7 +230,7 @@ class _BackupSetupScreenState extends ConsumerState<BackupSetupScreen> {
                             const SizedBox(width: 12),
                             Expanded(
                               child: Text(
-                                _error!,
+                                _pickerUnavailable ? loc.backupSetupLaterNote : _error!,
                                 style: const TextStyle(
                                   fontFamily: 'Inter',
                                   color: Colors.white,
@@ -264,6 +285,16 @@ class _BackupSetupScreenState extends ConsumerState<BackupSetupScreen> {
                         ),
                 ),
               ),
+              if (_pickerUnavailable) ...[
+                const SizedBox(height: 8),
+                TextButton(
+                  onPressed: _working ? null : _continueWithout,
+                  child: Text(
+                    loc.backupSetupLater,
+                    style: const TextStyle(color: Colors.white38, fontSize: 14),
+                  ),
+                ),
+              ],
               const SizedBox(height: 20),
             ],
           ),

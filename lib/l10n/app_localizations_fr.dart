@@ -658,6 +658,13 @@ class AppLocalizationsFr extends AppLocalizations {
   String get backupSetupFinish => 'Terminer';
 
   @override
+  String get backupSetupLater => 'Configurer plus tard';
+
+  @override
+  String get backupSetupLaterNote =>
+      'Karde n\'a pas pu ouvrir de sélecteur de dossier sur ce téléphone. Vous pouvez continuer et configurer votre sauvegarde depuis les Réglages, mais rien de ce que vous enregistrez ne sera copié tant que ce ne sera pas fait.';
+
+  @override
   String get backupSetupWorking => 'Configuration de votre sauvegarde…';
 
   @override

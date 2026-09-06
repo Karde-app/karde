@@ -653,6 +653,13 @@ class AppLocalizationsEn extends AppLocalizations {
   String get backupSetupFinish => 'Finish';
 
   @override
+  String get backupSetupLater => 'Set this up later';
+
+  @override
+  String get backupSetupLaterNote =>
+      'Karde could not open a folder picker on this phone. You can carry on and set your backup up from Settings, but nothing you save will be copied anywhere until you do.';
+
+  @override
   String get backupSetupWorking => 'Setting up your backup…';
 
   @override
