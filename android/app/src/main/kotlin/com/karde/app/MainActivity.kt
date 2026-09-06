@@ -114,6 +114,37 @@ class MainActivity : FlutterFragmentActivity() {
                             runBundleCrypto(result) { BackupCrypto.decrypt(data, passphrase) }
                         }
                     }
+                    // Automatic backup. See BackupIdentity for why the sealing
+                    // key and the opening key are different halves of a pair.
+                    "createBackupIdentity" -> {
+                        if (passphrase == null) {
+                            result.error("INVALID_ARGUMENT", "Missing passphrase", null)
+                        } else {
+                            runBundleCrypto(result) { BackupIdentity.create(passphrase) }
+                        }
+                    }
+                    "sealBackupRecord" -> {
+                        val publicKey = call.argument<String>("publicKey")
+                        if (data == null || publicKey == null) {
+                            result.error("INVALID_ARGUMENT", "Missing data or publicKey", null)
+                        } else {
+                            runBundleCrypto(result) { BackupIdentity.seal(publicKey, data) }
+                        }
+                    }
+                    "openBackupRecords" -> {
+                        val sealedPrivateKey = call.argument<String>("sealedPrivateKey")
+                        if (data == null || passphrase == null || sealedPrivateKey == null) {
+                            result.error(
+                                "INVALID_ARGUMENT",
+                                "Missing data, passphrase or sealedPrivateKey",
+                                null,
+                            )
+                        } else {
+                            runBundleCrypto(result) {
+                                BackupIdentity.open(sealedPrivateKey, passphrase, data)
+                            }
+                        }
+                    }
                     else -> result.notImplemented()
                 }
             }
@@ -151,6 +182,10 @@ class MainActivity : FlutterFragmentActivity() {
                 main.post { result.error("BAD_PASSPHRASE", e.message, null) }
             } catch (e: BackupCrypto.MalformedBackupException) {
                 main.post { result.error("MALFORMED_BACKUP", e.message, null) }
+            } catch (e: BackupIdentity.MalformedException) {
+                main.post { result.error("MALFORMED_BACKUP", e.message, null) }
+            } catch (e: BackupIdentity.SelfTestFailedException) {
+                main.post { result.error("BACKUP_SELF_TEST_FAILED", e.message, null) }
             } catch (e: Exception) {
                 main.post { result.error("BUNDLE_CRYPTO_ERROR", e.message, null) }
             }
