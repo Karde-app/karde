@@ -209,16 +209,16 @@ class _AddCardScreenState extends ConsumerState<AddCardScreen> {
       // secrets are encrypted as a single payload rather than field by field.
       // The photo rides in that same payload, so a photographed card still costs
       // exactly one prompt to save.
-      final encryptedData = await _encryptionService.encrypt(
-        CardSecrets(
-          cardNumber: rawCardNumber,
-          expiry: _expiryController.text,
-          cvv: _cvvController.text,
-          cardholderName: _cardholderNameController.text,
-          notes: _notesController.text,
-          image: _photo.imageBase64,
-        ).toJson(),
-      );
+      final secrets = CardSecrets(
+        cardNumber: rawCardNumber,
+        expiry: _expiryController.text,
+        cvv: _cvvController.text,
+        cardholderName: _cardholderNameController.text,
+        notes: _notesController.text,
+        image: _photo.imageBase64,
+      ).toJson();
+
+      final encryptedData = await _encryptionService.encrypt(secrets);
 
       final lastFourDigits = rawCardNumber.length >= 4
           ? rawCardNumber.substring(rawCardNumber.length - 4)
@@ -239,11 +239,16 @@ class _AddCardScreenState extends ConsumerState<AddCardScreen> {
         isPinnedToHomescreen: widget.existingCard?.isPinnedToHomescreen ?? false,
       );
 
+      // The payload goes with it, so the automatic backup can record this card
+      // without reading it back out of the vault — which would cost another
+      // authentication prompt, on every single save.
+      final payload = jsonDecode(secrets) as Map<String, dynamic>;
+
       // FIX 6: Use notifier methods instead of invalidate
       if (widget.existingCard != null) {
-        await ref.read(cardsProvider.notifier).updateCard(card);
+        await ref.read(cardsProvider.notifier).updateCard(card, secrets: payload);
       } else {
-        await ref.read(cardsProvider.notifier).addCard(card);
+        await ref.read(cardsProvider.notifier).addCard(card, secrets: payload);
       }
 
       if (mounted) {

@@ -452,9 +452,8 @@ class _AddIdScreenState extends ConsumerState<AddIdScreen> {
       // Fields and photo are encrypted together, as one payload and therefore one
       // authentication prompt. Saving a document with a picture costs exactly what
       // saving one without costs.
-      final jsonString = jsonEncode(
-        IdPayload.encode(fields: payload, image: _photo.imageBase64),
-      );
+      final encoded = IdPayload.encode(fields: payload, image: _photo.imageBase64);
+      final jsonString = jsonEncode(encoded);
       final encryptedData = await EncryptionService().encrypt(jsonString);
 
       final String finalIdType = (_isCustomType && _customTypeController.text.trim().isNotEmpty)
@@ -474,10 +473,13 @@ class _AddIdScreenState extends ConsumerState<AddIdScreen> {
         isPinnedToHomescreen: widget.existingId?.isPinnedToHomescreen ?? false,
       );
 
+      // The payload goes with it, so the automatic backup can record this
+      // document without reading it back out of the vault — which would cost
+      // another authentication prompt, on every single save.
       if (widget.existingId != null) {
-        await ref.read(idsProvider.notifier).updateId(newId);
+        await ref.read(idsProvider.notifier).updateId(newId, payload: encoded);
       } else {
-        await ref.read(idsProvider.notifier).addId(newId);
+        await ref.read(idsProvider.notifier).addId(newId, payload: encoded);
       }
 
       if (mounted) {

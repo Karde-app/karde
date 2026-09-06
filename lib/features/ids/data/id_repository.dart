@@ -1,6 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/storage/database.dart';
 import '../domain/virtual_id.dart';
+import '../../backup/data/auto_backup_recorder.dart';
 
 final idRepositoryProvider = Provider<IdRepository>((ref) {
   return IdRepository(DatabaseHelper.instance);
@@ -52,22 +53,33 @@ class IdsNotifier extends AsyncNotifier<List<VirtualId>> {
     return repository.getAllIds();
   }
 
-  Future<void> addId(VirtualId idDoc) async {
+  /// Saves an ID and records it in the automatic backup.
+  ///
+  /// [payload] is the record as it was before encryption. See
+  /// [CardsNotifier.addCard] for why it is handed in rather than read back.
+  Future<void> addId(VirtualId idDoc, {Map<String, dynamic>? payload}) async {
     final repository = ref.read(idRepositoryProvider);
-    await repository.insertId(idDoc);
+    final id = await repository.insertId(idDoc);
     ref.invalidateSelf();
+    if (payload == null) return;
+    await ref
+        .read(autoBackupRecorderProvider)
+        .idSaved(idDoc.copyWith(id: id), payload);
   }
 
-  Future<void> updateId(VirtualId idDoc) async {
+  Future<void> updateId(VirtualId idDoc, {Map<String, dynamic>? payload}) async {
     final repository = ref.read(idRepositoryProvider);
     await repository.updateId(idDoc);
     ref.invalidateSelf();
+    if (payload == null) return;
+    await ref.read(autoBackupRecorderProvider).idSaved(idDoc, payload);
   }
 
   Future<void> deleteId(int id) async {
     final repository = ref.read(idRepositoryProvider);
     await repository.deleteId(id);
     ref.invalidateSelf();
+    await ref.read(autoBackupRecorderProvider).idDeleted(id);
   }
 }
 

@@ -1,6 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/storage/database.dart';
 import '../domain/virtual_card.dart';
+import '../../backup/data/auto_backup_recorder.dart';
 
 final cardRepositoryProvider = Provider<CardRepository>((ref) {
   return CardRepository(DatabaseHelper.instance);
@@ -56,22 +57,42 @@ class CardsNotifier extends AsyncNotifier<List<VirtualCard>> {
     return repository.getAllCards();
   }
 
-  Future<void> addCard(VirtualCard card) async {
+  /// Saves a card and records it in the automatic backup.
+  ///
+  /// [secrets] is the payload as it was before encryption. It is passed in
+  /// rather than read back out of the vault because reading it back would cost
+  /// an authentication prompt, and one prompt per save is precisely what makes
+  /// an automatic backup unusable.
+  ///
+  /// Null means "do not touch the backup for this one" — for callers that have
+  /// no plaintext to give, such as a restore, which writes its own records.
+  ///
+  /// The backup is written after the vault, and its failure is allowed out. A
+  /// card that saved but did not reach the backup is a card the user believes is
+  /// safe in two places and is safe in one.
+  Future<void> addCard(VirtualCard card, {Map<String, dynamic>? secrets}) async {
     final repository = ref.read(cardRepositoryProvider);
-    await repository.insertCard(card);
+    final id = await repository.insertCard(card);
     ref.invalidateSelf();
+    if (secrets == null) return;
+    await ref
+        .read(autoBackupRecorderProvider)
+        .cardSaved(card.copyWith(id: id), secrets);
   }
 
-  Future<void> updateCard(VirtualCard card) async {
+  Future<void> updateCard(VirtualCard card, {Map<String, dynamic>? secrets}) async {
     final repository = ref.read(cardRepositoryProvider);
     await repository.updateCard(card);
     ref.invalidateSelf();
+    if (secrets == null) return;
+    await ref.read(autoBackupRecorderProvider).cardSaved(card, secrets);
   }
 
   Future<void> deleteCard(int id) async {
     final repository = ref.read(cardRepositoryProvider);
     await repository.deleteCard(id);
     ref.invalidateSelf();
+    await ref.read(autoBackupRecorderProvider).cardDeleted(id);
   }
 }
 
