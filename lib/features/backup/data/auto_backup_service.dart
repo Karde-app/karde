@@ -84,6 +84,27 @@ class AutoBackupService {
   /// The file Karde keeps up to date. Dated copies live beside it.
   static const String currentFileName = 'karde-backup.json';
 
+  /// How many days of older copies to keep beside the current file.
+  ///
+  /// An automatic backup is instant, and that is its one weakness: delete a card
+  /// by mistake and, with only a current file, the backup would agree with you a
+  /// second later and the card would be gone from both places at once. Yesterday's
+  /// copy is what makes that recoverable.
+  ///
+  /// Five days rather than five saves. Someone who notices a missing card notices
+  /// it days later, when they go looking for it — not within the next few edits.
+  static const int keepDays = 5;
+
+  static String snapshotNameFor(DateTime day) {
+    final d = day.toUtc();
+    final month = d.month.toString().padLeft(2, '0');
+    final dayOfMonth = d.day.toString().padLeft(2, '0');
+    return 'karde-backup-${d.year}-$month-$dayOfMonth.json';
+  }
+
+  static final RegExp _snapshotPattern =
+      RegExp(r'^karde-backup-\d{4}-\d{2}-\d{2}\.json$');
+
   Future<AutoBackupSetup?> setup() async =>
       AutoBackupSetup.fromStorage(await settings.getAutoBackup());
 
@@ -137,7 +158,7 @@ class AutoBackupService {
       id,
       await identity.seal(publicKey: config.publicKey, plaintext: plaintext),
     );
-    await folder.write(config.folderUri, currentFileName, file.encode());
+    await _writeCurrent(config, file);
   }
 
   /// Forgets one item, because the user deleted it.
@@ -147,7 +168,7 @@ class AutoBackupService {
 
     final file = await _openOrStart(config);
     if (!file.remove(id)) return; // Nothing to write; nothing changed.
-    await folder.write(config.folderUri, currentFileName, file.encode());
+    await _writeCurrent(config, file);
   }
 
   /// Whether the folder is still reachable and still holds the backup.
@@ -158,6 +179,49 @@ class AutoBackupService {
     final config = await setup();
     if (config == null) return true; // Nothing set up is not a broken backup.
     return folder.isUsable(config.folderUri);
+  }
+
+  /// Writes the current file, keeping a copy of the day it is replacing.
+  ///
+  /// The snapshot is taken *before* the overwrite and named after the day the
+  /// outgoing file was last written, so each dated copy is that day's final
+  /// state. Written once per day rather than once per save: the first change
+  /// after midnight preserves yesterday, and the rest of the day's edits cost
+  /// one write each, as they should.
+  ///
+  /// A snapshot that cannot be taken never stops the backup being written. The
+  /// current file is the thing that matters; history is a kindness on top of it,
+  /// and losing the kindness is no reason to lose the backup.
+  Future<void> _writeCurrent(AutoBackupSetup config, AutoBackupFile file) async {
+    await _keepYesterday(config, file);
+    await folder.write(config.folderUri, currentFileName, file.encode());
+  }
+
+  Future<void> _keepYesterday(AutoBackupSetup config, AutoBackupFile file) async {
+    try {
+      final name = snapshotNameFor(file.updatedAt);
+      if (name == snapshotNameFor(DateTime.now())) return; // Same day already.
+
+      final existing = await folder.read(config.folderUri, currentFileName);
+      if (existing == null || existing.trim().isEmpty) return;
+
+      final names = await folder.list(config.folderUri);
+      if (!names.contains(name)) {
+        await folder.write(config.folderUri, name, existing);
+      }
+      await _pruneSnapshots(config, await folder.list(config.folderUri));
+    } catch (_) {
+      // Deliberately swallowed. See the note above: the current file is what
+      // matters, and a folder that cannot hold history can still hold a backup.
+    }
+  }
+
+  Future<void> _pruneSnapshots(AutoBackupSetup config, List<String> names) async {
+    final snapshots = names.where(_snapshotPattern.hasMatch).toList()..sort();
+    if (snapshots.length <= keepDays) return;
+    for (final stale in snapshots.take(snapshots.length - keepDays)) {
+      await folder.delete(config.folderUri, stale);
+    }
   }
 
   /// Reads the current file, or starts a fresh one if it has gone.

@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:ibank/core/platform/backup_folder_service.dart';
@@ -12,6 +14,10 @@ import 'package:shared_preferences/shared_preferences.dart';
 class FakeFolder extends Fake implements BackupFolderService {
   final Map<String, String> files = {};
   bool reachable = true;
+
+  /// The folder accepts writes but will not enumerate itself. Some providers
+  /// really do behave this way, and history must not be a condition of backup.
+  bool failListing = false;
   int writes = 0;
 
   @override
@@ -28,6 +34,20 @@ class FakeFolder extends Fake implements BackupFolderService {
     if (!reachable) throw const BackupFolderUnavailable('folder is gone');
     writes++;
     files[name] = content;
+  }
+
+  @override
+  Future<List<String>> list(String treeUri) async {
+    if (!reachable || failListing) {
+      throw const BackupFolderUnavailable('folder is gone');
+    }
+    return files.keys.toList();
+  }
+
+  @override
+  Future<bool> delete(String treeUri, String name) async {
+    if (!reachable) throw const BackupFolderUnavailable('folder is gone');
+    return files.remove(name) != null;
   }
 }
 
@@ -249,6 +269,104 @@ void main() {
       await service.recordDelete('card:404');
 
       expect(folder.writes, 0);
+    });
+  });
+
+  group('Keeping a few days of history', () {
+    // An automatic backup is instant, and that is its one weakness: delete a
+    // card by mistake and, with only a current file, the backup agrees with you
+    // a second later and the card is gone from both places at once.
+
+    /// Puts a backup in the folder that was last written [daysAgo] days ago.
+    void seedBackupFrom(int daysAgo, {List<String> ids = const []}) {
+      final when = DateTime.now().toUtc().subtract(Duration(days: daysAgo));
+      final records = <String, dynamic>{
+        for (final id in ids) id: {'k': 'K', 'iv': 'IV', 'd': 'D'},
+      };
+      folder.files[AutoBackupService.currentFileName] = jsonEncode({
+        'format': 'karde.autobackup',
+        'version': 1,
+        'createdAt': when.toIso8601String(),
+        'updatedAt': when.toIso8601String(),
+        'sealedPrivateKey': 'SEALED-PRIVATE',
+        'records': records,
+      });
+    }
+
+    setUp(() async {
+      await service.configure(passphrase: 'p', folderChoice: chosenFolder);
+    });
+
+    test('the first change of the day preserves yesterday', () async {
+      seedBackupFrom(1, ids: ['card:1']);
+
+      await service.recordSave(id: 'card:2', plaintext: '{"a":1}');
+
+      final yesterday = AutoBackupService.snapshotNameFor(
+        DateTime.now().toUtc().subtract(const Duration(days: 1)),
+      );
+      expect(folder.files, contains(yesterday));
+      final kept = AutoBackupFile.decode(folder.files[yesterday]!);
+      expect(kept.ids, ['card:1'],
+          reason: 'the snapshot must hold what the day ended with, not what '
+              'the new save contains');
+    });
+
+    test('later changes the same day do not pile up copies', () async {
+      // One write per day, not one per save. The rest of the day's edits should
+      // cost a single write each, as they should.
+      seedBackupFrom(1, ids: ['card:1']);
+      await service.recordSave(id: 'card:2', plaintext: '{"a":1}');
+      final afterFirst = folder.files.keys.toSet();
+
+      await service.recordSave(id: 'card:3', plaintext: '{"b":2}');
+
+      expect(folder.files.keys.toSet(), afterFirst);
+    });
+
+    test('a change on the same day it was written keeps no copy', () async {
+      seedBackupFrom(0, ids: ['card:1']);
+
+      await service.recordSave(id: 'card:2', plaintext: '{"a":1}');
+
+      expect(folder.files.keys.where((n) => n != AutoBackupService.currentFileName),
+          isEmpty);
+    });
+
+    test('old copies are pruned, the newest kept', () async {
+      for (var day = 1; day <= AutoBackupService.keepDays + 3; day++) {
+        folder.files[AutoBackupService.snapshotNameFor(
+          DateTime.now().toUtc().subtract(Duration(days: day)),
+        )] = '{}';
+      }
+      seedBackupFrom(1, ids: ['card:1']);
+
+      await service.recordSave(id: 'card:2', plaintext: '{"a":1}');
+
+      final snapshots = folder.files.keys
+          .where((n) => n != AutoBackupService.currentFileName)
+          .toList();
+      expect(snapshots, hasLength(AutoBackupService.keepDays));
+      final oldest = AutoBackupService.snapshotNameFor(
+        DateTime.now().toUtc().subtract(
+              Duration(days: AutoBackupService.keepDays + 3),
+            ),
+      );
+      expect(snapshots, isNot(contains(oldest)));
+    });
+
+    test('a folder that cannot hold history can still hold a backup', () async {
+      // History is a kindness on top of the current file. Losing the kindness is
+      // no reason to lose the backup.
+      seedBackupFrom(1, ids: ['card:1']);
+      folder.failListing = true;
+
+      await service.recordSave(id: 'card:2', plaintext: '{"a":1}');
+
+      final file = AutoBackupFile.decode(
+        folder.files[AutoBackupService.currentFileName]!,
+      );
+      expect(file.ids, containsAll(['card:1', 'card:2']));
     });
   });
 
