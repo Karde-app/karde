@@ -4,7 +4,7 @@ import '../../../l10n/app_localizations.dart';
 import '../../../core/security/encryption_service.dart';
 import '../../../core/storage/settings_repository.dart';
 import '../../../theme/theme.dart';
-import '../../home/presentation/main_scaffold.dart';
+import 'onboarding_finish.dart';
 import 'pin_setup_screen.dart';
 
 class LockSetupScreen extends ConsumerStatefulWidget {
@@ -264,18 +264,7 @@ class _LockSetupScreenState extends ConsumerState<LockSetupScreen>
                       // Settings can add a Karde PIN at any time, and that path
                       // goes on to recovery setup. _buildPinLaterNote says so here
                       // so the possibility is not a secret.
-                      await settings.setIsFirstLaunch(false);
-                      if (!context.mounted) return;
-                      // Nothing may remain underneath: pushReplacement swaps only
-                      // the top route, leaving the language picker below the app
-                      // for the life of the install, where one stray pop puts the
-                      // user back at "Welcome to Karde" with their vault
-                      // apparently gone.
-                      Navigator.pushAndRemoveUntil(
-                        context,
-                        MaterialPageRoute(builder: (_) => const MainScaffold()),
-                        (route) => false,
-                      );
+                      await finishOnboarding(context, settings);
                     }
                   },
                   style: ElevatedButton.styleFrom(

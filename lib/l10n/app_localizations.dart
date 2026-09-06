@@ -1276,6 +1276,120 @@ abstract class AppLocalizations {
   /// **'Backup & restore'**
   String get backupTitle;
 
+  /// No description provided for @backupSetupTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Keeping a copy'**
+  String get backupSetupTitle;
+
+  /// No description provided for @backupSetupIntro.
+  ///
+  /// In en, this message translates to:
+  /// **'Karde saves a copy of everything you keep here, so you can get it all back if this phone is lost, broken or replaced. The copy goes where you choose. Nothing is ever sent to Karde or to anyone else.'**
+  String get backupSetupIntro;
+
+  /// No description provided for @backupSetupPassphraseTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose a passphrase'**
+  String get backupSetupPassphraseTitle;
+
+  /// No description provided for @backupSetupPassphraseBody.
+  ///
+  /// In en, this message translates to:
+  /// **'You will need it to get your things back. Karde cannot look it up or reset it for you, so write it down and keep it somewhere safe.'**
+  String get backupSetupPassphraseBody;
+
+  /// No description provided for @backupSetupPassphraseDone.
+  ///
+  /// In en, this message translates to:
+  /// **'Passphrase chosen'**
+  String get backupSetupPassphraseDone;
+
+  /// No description provided for @backupSetupFolderTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose where it goes'**
+  String get backupSetupFolderTitle;
+
+  /// No description provided for @backupSetupFolderBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Pick a folder on your phone. If you pick one that syncs to cloud storage, your copy survives losing the phone as well.'**
+  String get backupSetupFolderBody;
+
+  /// No description provided for @backupSetupFolderAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose a folder'**
+  String get backupSetupFolderAction;
+
+  /// No description provided for @backupSetupFinish.
+  ///
+  /// In en, this message translates to:
+  /// **'Finish'**
+  String get backupSetupFinish;
+
+  /// No description provided for @backupSetupWorking.
+  ///
+  /// In en, this message translates to:
+  /// **'Setting up your backup…'**
+  String get backupSetupWorking;
+
+  /// No description provided for @backupSetupDoneTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Your backup is on'**
+  String get backupSetupDoneTitle;
+
+  /// No description provided for @backupSetupDoneBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Karde saves a copy every time you add, change or remove something. It goes to {folder}.'**
+  String backupSetupDoneBody(String folder);
+
+  /// No description provided for @backupSetupFolderFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Karde could not save to that folder. Please choose another one.'**
+  String get backupSetupFolderFailed;
+
+  /// No description provided for @backupSelfTestFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'This phone could not read back the copy it had just saved, so Karde has not switched backup on. Please try again.'**
+  String get backupSelfTestFailed;
+
+  /// No description provided for @backupUpdated.
+  ///
+  /// In en, this message translates to:
+  /// **'Backup updated.'**
+  String get backupUpdated;
+
+  /// No description provided for @backupFailedTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Your backup is not being saved'**
+  String get backupFailedTitle;
+
+  /// No description provided for @backupFailedBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Karde could not save to {folder}. The folder may have been moved, renamed or deleted. Until this is fixed, new changes are not being copied anywhere.'**
+  String backupFailedBody(String folder);
+
+  /// No description provided for @backupFailedAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose a folder'**
+  String get backupFailedAction;
+
+  /// No description provided for @settingsAutoBackupNote.
+  ///
+  /// In en, this message translates to:
+  /// **'Karde saves a copy every time you add, change or remove something. It goes to {folder}. You can also save one yourself at any time.'**
+  String settingsAutoBackupNote(String folder);
+
   /// No description provided for @backupCouldNotReadVault.
   ///
   /// In en, this message translates to:

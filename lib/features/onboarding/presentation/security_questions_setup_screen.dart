@@ -5,7 +5,7 @@ import '../../../l10n/app_localizations.dart';
 import '../../../core/security/security_question_catalog.dart';
 import '../../../core/storage/settings_repository.dart';
 import '../../../theme/theme.dart';
-import '../../home/presentation/main_scaffold.dart';
+import 'onboarding_finish.dart';
 
 class SecurityQuestionsSetupScreen extends ConsumerStatefulWidget {
   /// True when reached from Settings rather than from onboarding.
@@ -151,19 +151,7 @@ class _SecurityQuestionsSetupScreenState extends ConsumerState<SecurityQuestions
       return;
     }
 
-    await settings.setIsFirstLaunch(false);
-    if (!mounted) return;
-    // Onboarding ends here, so nothing may remain underneath. pushReplacement
-    // swaps only the top route, which left the language, lock-setup and PIN
-    // screens sitting below MainScaffold for the life of the install — one
-    // stray pop and the user was back at "Welcome to Karde" with their vault
-    // intact but apparently gone. Clear the whole stack, as the PIN-reset path
-    // at pin_setup_screen.dart already does.
-    Navigator.pushAndRemoveUntil(
-      context,
-      MaterialPageRoute(builder: (_) => const MainScaffold()),
-      (route) => false,
-    );
+    await finishOnboarding(context, settings);
   }
 
   // Onboarding is fixed dark on every screen, so this one stays dark there. From

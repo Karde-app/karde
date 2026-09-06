@@ -621,6 +621,74 @@ class AppLocalizationsAr extends AppLocalizations {
   String get backupTitle => 'النسخ الاحتياطي والاستعادة';
 
   @override
+  String get backupSetupTitle => 'الاحتفاظ بنسخة';
+
+  @override
+  String get backupSetupIntro =>
+      'يحفظ Karde نسخة من كل ما تحتفظ به هنا، حتى تتمكن من استعادة كل شيء إذا فُقد هذا الهاتف أو تعطّل أو استبدلته. تذهب النسخة إلى المكان الذي تختاره. لا يُرسَل أي شيء إلى Karde أو إلى أي جهة أخرى.';
+
+  @override
+  String get backupSetupPassphraseTitle => 'اختر عبارة مرور';
+
+  @override
+  String get backupSetupPassphraseBody =>
+      'ستحتاج إليها لاستعادة بياناتك. لا يستطيع Karde معرفتها أو إعادة تعيينها، لذا اكتبها واحفظها في مكان آمن.';
+
+  @override
+  String get backupSetupPassphraseDone => 'تم اختيار عبارة المرور';
+
+  @override
+  String get backupSetupFolderTitle => 'اختر مكان الحفظ';
+
+  @override
+  String get backupSetupFolderBody =>
+      'اختر مجلداً على هاتفك. إذا اخترت مجلداً متزامناً مع التخزين السحابي، فستبقى نسختك سليمة حتى لو فقدت الهاتف.';
+
+  @override
+  String get backupSetupFolderAction => 'اختيار مجلد';
+
+  @override
+  String get backupSetupFinish => 'إنهاء';
+
+  @override
+  String get backupSetupWorking => 'يجري إعداد نسختك الاحتياطية…';
+
+  @override
+  String get backupSetupDoneTitle => 'نسختك الاحتياطية تعمل';
+
+  @override
+  String backupSetupDoneBody(String folder) {
+    return 'يحفظ Karde نسخة في كل مرة تضيف فيها شيئاً أو تغيّره أو تحذفه. وتذهب إلى $folder.';
+  }
+
+  @override
+  String get backupSetupFolderFailed =>
+      'لم يتمكن Karde من الحفظ في ذلك المجلد. اختر مجلداً آخر من فضلك.';
+
+  @override
+  String get backupSelfTestFailed =>
+      'لم يتمكن هذا الهاتف من قراءة النسخة التي حفظها للتو، لذلك لم يفعّل Karde النسخ الاحتياطي. حاول مرة أخرى من فضلك.';
+
+  @override
+  String get backupUpdated => 'تم تحديث النسخة الاحتياطية.';
+
+  @override
+  String get backupFailedTitle => 'لا يتم حفظ نسختك الاحتياطية';
+
+  @override
+  String backupFailedBody(String folder) {
+    return 'لم يتمكن Karde من الحفظ في $folder. ربما نُقل المجلد أو أُعيدت تسميته أو حُذف. وإلى أن يُحل هذا، لا تُنسخ التغييرات الجديدة في أي مكان.';
+  }
+
+  @override
+  String get backupFailedAction => 'اختيار مجلد';
+
+  @override
+  String settingsAutoBackupNote(String folder) {
+    return 'يحفظ Karde نسخة في كل مرة تضيف فيها شيئاً أو تغيّره أو تحذفه. وتذهب إلى $folder. ويمكنك أيضاً حفظ نسخة بنفسك في أي وقت.';
+  }
+
+  @override
   String get backupCouldNotReadVault =>
       'تعذّرت قراءة خزنتك. يرجى المحاولة مرة أخرى.';
 

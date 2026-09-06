@@ -623,6 +623,74 @@ class AppLocalizationsEn extends AppLocalizations {
   String get backupTitle => 'Backup & restore';
 
   @override
+  String get backupSetupTitle => 'Keeping a copy';
+
+  @override
+  String get backupSetupIntro =>
+      'Karde saves a copy of everything you keep here, so you can get it all back if this phone is lost, broken or replaced. The copy goes where you choose. Nothing is ever sent to Karde or to anyone else.';
+
+  @override
+  String get backupSetupPassphraseTitle => 'Choose a passphrase';
+
+  @override
+  String get backupSetupPassphraseBody =>
+      'You will need it to get your things back. Karde cannot look it up or reset it for you, so write it down and keep it somewhere safe.';
+
+  @override
+  String get backupSetupPassphraseDone => 'Passphrase chosen';
+
+  @override
+  String get backupSetupFolderTitle => 'Choose where it goes';
+
+  @override
+  String get backupSetupFolderBody =>
+      'Pick a folder on your phone. If you pick one that syncs to cloud storage, your copy survives losing the phone as well.';
+
+  @override
+  String get backupSetupFolderAction => 'Choose a folder';
+
+  @override
+  String get backupSetupFinish => 'Finish';
+
+  @override
+  String get backupSetupWorking => 'Setting up your backup…';
+
+  @override
+  String get backupSetupDoneTitle => 'Your backup is on';
+
+  @override
+  String backupSetupDoneBody(String folder) {
+    return 'Karde saves a copy every time you add, change or remove something. It goes to $folder.';
+  }
+
+  @override
+  String get backupSetupFolderFailed =>
+      'Karde could not save to that folder. Please choose another one.';
+
+  @override
+  String get backupSelfTestFailed =>
+      'This phone could not read back the copy it had just saved, so Karde has not switched backup on. Please try again.';
+
+  @override
+  String get backupUpdated => 'Backup updated.';
+
+  @override
+  String get backupFailedTitle => 'Your backup is not being saved';
+
+  @override
+  String backupFailedBody(String folder) {
+    return 'Karde could not save to $folder. The folder may have been moved, renamed or deleted. Until this is fixed, new changes are not being copied anywhere.';
+  }
+
+  @override
+  String get backupFailedAction => 'Choose a folder';
+
+  @override
+  String settingsAutoBackupNote(String folder) {
+    return 'Karde saves a copy every time you add, change or remove something. It goes to $folder. You can also save one yourself at any time.';
+  }
+
+  @override
   String get backupCouldNotReadVault =>
       'Could not read your vault. Please try again.';
 

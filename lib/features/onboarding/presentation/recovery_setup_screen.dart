@@ -4,7 +4,7 @@ import 'package:local_auth/local_auth.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../../core/storage/settings_repository.dart';
 import '../../../theme/theme.dart';
-import '../../home/presentation/main_scaffold.dart';
+import 'onboarding_finish.dart';
 import 'security_questions_setup_screen.dart';
 
 class RecoverySetupScreen extends ConsumerStatefulWidget {
@@ -167,19 +167,7 @@ class _RecoverySetupScreenState extends ConsumerState<RecoverySetupScreen> {
           Navigator.pop(context);
           return;
         }
-        await settings.setIsFirstLaunch(false);
-        if (!mounted) return;
-        // Onboarding ends here, so nothing may remain underneath. pushReplacement
-        // swaps only the top route, which left the language, lock-setup and PIN
-        // screens sitting below MainScaffold for the life of the install — one
-        // stray pop and the user was back at "Welcome to Karde" with their vault
-        // intact but apparently gone. Clear the whole stack, as the PIN-reset path
-        // at pin_setup_screen.dart already does.
-        Navigator.pushAndRemoveUntil(
-          context,
-          MaterialPageRoute(builder: (_) => const MainScaffold()),
-          (route) => false,
-        );
+        await finishOnboarding(context, settings);
       }
     } else {
       // biometrics
@@ -187,19 +175,7 @@ class _RecoverySetupScreenState extends ConsumerState<RecoverySetupScreen> {
         Navigator.pop(context);
         return;
       }
-      await settings.setIsFirstLaunch(false);
-      if (!mounted) return;
-      // Onboarding ends here, so nothing may remain underneath. pushReplacement
-      // swaps only the top route, which left the language, lock-setup and PIN
-      // screens sitting below MainScaffold for the life of the install — one
-      // stray pop and the user was back at "Welcome to Karde" with their vault
-      // intact but apparently gone. Clear the whole stack, as the PIN-reset path
-      // at pin_setup_screen.dart already does.
-      Navigator.pushAndRemoveUntil(
-        context,
-        MaterialPageRoute(builder: (_) => const MainScaffold()),
-        (route) => false,
-      );
+      await finishOnboarding(context, settings);
     }
   }
 

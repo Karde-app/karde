@@ -628,6 +628,74 @@ class AppLocalizationsFr extends AppLocalizations {
   String get backupTitle => 'Sauvegarde et restauration';
 
   @override
+  String get backupSetupTitle => 'Garder une copie';
+
+  @override
+  String get backupSetupIntro =>
+      'Karde enregistre une copie de tout ce que vous conservez ici, afin que vous puissiez tout récupérer si ce téléphone est perdu, cassé ou remplacé. La copie va là où vous le choisissez. Rien n\'est jamais envoyé à Karde ni à qui que ce soit.';
+
+  @override
+  String get backupSetupPassphraseTitle => 'Choisissez une phrase secrète';
+
+  @override
+  String get backupSetupPassphraseBody =>
+      'Vous en aurez besoin pour récupérer vos données. Karde ne peut ni la retrouver ni la réinitialiser : notez-la et gardez-la en lieu sûr.';
+
+  @override
+  String get backupSetupPassphraseDone => 'Phrase secrète choisie';
+
+  @override
+  String get backupSetupFolderTitle => 'Choisissez l\'emplacement';
+
+  @override
+  String get backupSetupFolderBody =>
+      'Choisissez un dossier sur votre téléphone. Si vous en choisissez un synchronisé avec le cloud, votre copie survivra aussi à la perte du téléphone.';
+
+  @override
+  String get backupSetupFolderAction => 'Choisir un dossier';
+
+  @override
+  String get backupSetupFinish => 'Terminer';
+
+  @override
+  String get backupSetupWorking => 'Configuration de votre sauvegarde…';
+
+  @override
+  String get backupSetupDoneTitle => 'Votre sauvegarde est active';
+
+  @override
+  String backupSetupDoneBody(String folder) {
+    return 'Karde enregistre une copie chaque fois que vous ajoutez, modifiez ou supprimez quelque chose. Elle va dans $folder.';
+  }
+
+  @override
+  String get backupSetupFolderFailed =>
+      'Karde n\'a pas pu enregistrer dans ce dossier. Veuillez en choisir un autre.';
+
+  @override
+  String get backupSelfTestFailed =>
+      'Ce téléphone n\'a pas pu relire la copie qu\'il venait d\'enregistrer ; Karde n\'a donc pas activé la sauvegarde. Veuillez réessayer.';
+
+  @override
+  String get backupUpdated => 'Sauvegarde mise à jour.';
+
+  @override
+  String get backupFailedTitle => 'Votre sauvegarde n\'est plus enregistrée';
+
+  @override
+  String backupFailedBody(String folder) {
+    return 'Karde n\'a pas pu enregistrer dans $folder. Le dossier a peut-être été déplacé, renommé ou supprimé. Tant que ce n\'est pas corrigé, les nouvelles modifications ne sont copiées nulle part.';
+  }
+
+  @override
+  String get backupFailedAction => 'Choisir un dossier';
+
+  @override
+  String settingsAutoBackupNote(String folder) {
+    return 'Karde enregistre une copie chaque fois que vous ajoutez, modifiez ou supprimez quelque chose. Elle va dans $folder. Vous pouvez aussi en enregistrer une vous-même à tout moment.';
+  }
+
+  @override
   String get backupCouldNotReadVault =>
       'Impossible de lire votre coffre. Veuillez réessayer.';
 

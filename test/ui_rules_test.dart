@@ -705,6 +705,54 @@ void main() {
     });
   });
 
+  group("Onboarding cannot end without arranging a backup", () {
+    // The backup is the only thing that survives losing the phone or turning off
+    // its screen lock. A screen lock or a PIN can be changed whenever the user
+    // likes; a backup arranged after the phone is gone protects nothing.
+    //
+    // So it is the last step of onboarding, and every route out of onboarding
+    // goes through the same handoff. Three routes reach the end — Phone Lock at
+    // the lock screen, Karde PIN and Both after recovery — and each used to
+    // enter the app on its own, which is exactly how one of three gets missed.
+    test("every path out of onboarding goes through finishOnboarding", () {
+      const endings = [
+        "lib/features/onboarding/presentation/lock_setup_screen.dart",
+        "lib/features/onboarding/presentation/recovery_setup_screen.dart",
+        "lib/features/onboarding/presentation/security_questions_setup_screen.dart",
+      ];
+
+      // Comments are stripped: recovery_setup_screen explains at length why it
+      // does *not* enter MainScaffold when reached from Settings, and a rule
+      // that read prose would fail on that explanation.
+      for (final path in endings) {
+        final source = File(path)
+            .readAsLinesSync()
+            .where((line) => !line.trimLeft().startsWith("//"))
+            .join("\n");
+        expect(
+          source.contains("finishOnboarding("),
+          isTrue,
+          reason: "$path ends onboarding, so it must hand off through the one "
+              "place that arranges the backup first.",
+        );
+        expect(
+          source.contains("MainScaffold"),
+          isFalse,
+          reason: "$path must not enter the app directly, which would skip "
+              "backup setup entirely.",
+        );
+      }
+    });
+
+    test("the handoff arranges the backup before entering the app", () {
+      final source =
+          File("lib/features/onboarding/presentation/onboarding_finish.dart")
+              .readAsStringSync();
+
+      expect(source.contains("BackupSetupScreen"), isTrue);
+    });
+  });
+
   group("Cached answers must not outlive what they describe", () {
     // resetAllVaultState covers the erase. It cannot cover the rest: a PIN is
     // created during onboarding, and questions are set at the recovery step,
@@ -748,11 +796,12 @@ void main() {
     // Every onboarding handoff must therefore clear the stack. Asserted against
     // the source because the failure is a navigator-stack property that no
     // widget test of a single screen would notice.
+    // The handoff now lives in one place. It used to be repeated at the end of
+    // every path, which is how a step added to the end of onboarding gets added
+    // twice and forgotten once.
     const onboardingFiles = [
-      "lib/features/onboarding/presentation/recovery_setup_screen.dart",
-      "lib/features/onboarding/presentation/security_questions_setup_screen.dart",
+      "lib/features/onboarding/presentation/onboarding_finish.dart",
       "lib/features/onboarding/presentation/pin_setup_screen.dart",
-      "lib/features/onboarding/presentation/lock_setup_screen.dart",
     ];
 
     for (final path in onboardingFiles) {
