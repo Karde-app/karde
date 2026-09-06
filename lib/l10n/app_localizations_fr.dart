@@ -1318,6 +1318,14 @@ class AppLocalizationsFr extends AppLocalizations {
       'La biométrie n\'est pas prise en charge ou n\'est pas configurée sur cet appareil.';
 
   @override
+  String get biometricLockedOut =>
+      'Votre téléphone a suspendu le déverrouillage par empreinte après trop de tentatives. Patientez un instant ou utilisez le verrouillage de votre écran.';
+
+  @override
+  String get biometricUnavailableNow =>
+      'Votre téléphone n\'a pas pu vérifier votre empreinte pour le moment.';
+
+  @override
   String get biometricAuthFailedUsePin =>
       'L\'authentification biométrique a échoué. Veuillez utiliser votre code.';
 
@@ -1519,6 +1527,10 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get noBackupTitle => 'Aucune sauvegarde';
+
+  @override
+  String get noBackupShort =>
+      'Aucune sauvegarde — tout se trouve uniquement sur ce téléphone.';
 
   @override
   String get noBackupBody =>

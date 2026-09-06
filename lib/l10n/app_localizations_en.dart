@@ -1295,6 +1295,14 @@ class AppLocalizationsEn extends AppLocalizations {
       'Biometrics not supported or not enrolled on this device.';
 
   @override
+  String get biometricLockedOut =>
+      'Your phone has paused fingerprint unlock after too many tries. Wait a moment, or use your screen lock.';
+
+  @override
+  String get biometricUnavailableNow =>
+      'Your phone could not check your fingerprint just now.';
+
+  @override
   String get biometricAuthFailedUsePin =>
       'Biometric authentication failed. Please use PIN.';
 
@@ -1492,6 +1500,10 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get noBackupTitle => 'No backup yet';
+
+  @override
+  String get noBackupShort =>
+      'No backup yet — everything is only on this phone.';
 
   @override
   String get noBackupBody =>

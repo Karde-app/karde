@@ -58,6 +58,14 @@ class DashboardScreen extends ConsumerWidget {
 
     return Scaffold(
       body: SafeArea(
+        // Scrollable, because this page grows. It was a fixed column that had to
+        // fit the screen exactly, so anything that appeared — a security warning,
+        // a fingerprint-change notice, the backup reminder — pushed the bottom of
+        // the page off the screen and Flutter simply clipped it. Reported from
+        // the device as the backup reminder "removing" the Add a card and Add an
+        // ID buttons: they were not removed, they were cut off, with no way to
+        // scroll to them. A large system font size would have done the same.
+        child: SingleChildScrollView(
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 16.0),
           child: Column(
@@ -319,7 +327,7 @@ class DashboardScreen extends ConsumerWidget {
               // only useful time to say this is beforehand, every time.
               if (totalItems > 0 && ref.watch(lastBackupProvider) == null) ...[
                 _buildNoBackupPrompt(context, loc, theme),
-                const SizedBox(height: 16),
+                const SizedBox(height: 12),
               ],
 
               // Vault Health Banner
@@ -514,6 +522,7 @@ class DashboardScreen extends ConsumerWidget {
             ],
           ),
         ),
+        ),
       ),
     );
   }
@@ -522,58 +531,53 @@ class DashboardScreen extends ConsumerWidget {
   ///
   /// Says what it means for them, not how any of it works. "Only on this phone"
   /// is the whole point; keys and lock screens are not the user's problem.
+  ///
+  /// One line, not a card. This reminder has no dismiss button and never expires
+  /// on its own — a vault with no backup does not stop being one — so it is
+  /// something the user sees on every single visit to the home screen. A title,
+  /// a paragraph and a button was too much furniture for that: it dominated the
+  /// page and, before the page could scroll, pushed the Add buttons off the
+  /// bottom of the screen. A single sentence with the action on the same row
+  /// says the same thing and leaves the page looking calm.
   Widget _buildNoBackupPrompt(BuildContext context, AppLocalizations loc, ThemeData theme) {
-    return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: KardeColors.champagneGold.withValues(alpha: 0.08),
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: KardeColors.champagneGold.withValues(alpha: 0.35)),
+    return GestureDetector(
+      onTap: () => Navigator.push(
+        context,
+        MaterialPageRoute(builder: (_) => const BackupScreen()),
       ),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const Icon(Icons.cloud_off_outlined,
-              color: KardeColors.champagneGold, size: 22),
-          const SizedBox(width: 14),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  loc.noBackupTitle,
-                  style: TextStyle(
-                    fontFamily: 'Outfit',
-                    fontSize: 16,
-                    fontWeight: FontWeight.w600,
-                    color: theme.colorScheme.onSurface,
-                  ),
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 11),
+        decoration: BoxDecoration(
+          color: KardeColors.champagneGold.withValues(alpha: 0.07),
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(color: KardeColors.champagneGold.withValues(alpha: 0.28)),
+        ),
+        child: Row(
+          children: [
+            const Icon(Icons.cloud_off_outlined,
+                color: KardeColors.champagneGold, size: 18),
+            const SizedBox(width: 10),
+            Expanded(
+              child: Text(
+                loc.noBackupShort,
+                style: theme.textTheme.bodyMedium?.copyWith(
+                  fontSize: 12.5,
+                  height: 1.3,
                 ),
-                const SizedBox(height: 4),
-                Text(
-                  loc.noBackupBody,
-                  style: theme.textTheme.bodyMedium?.copyWith(fontSize: 13, height: 1.45),
-                ),
-                const SizedBox(height: 10),
-                GestureDetector(
-                  onTap: () => Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (_) => const BackupScreen()),
-                  ),
-                  child: Text(
-                    loc.backupCreateAction,
-                    style: const TextStyle(
-                      fontFamily: 'Inter',
-                      fontSize: 14,
-                      fontWeight: FontWeight.bold,
-                      color: KardeColors.champagneGold,
-                    ),
-                  ),
-                ),
-              ],
+              ),
             ),
-          ),
-        ],
+            const SizedBox(width: 10),
+            Text(
+              loc.backupCreateAction,
+              style: const TextStyle(
+                fontFamily: 'Inter',
+                fontSize: 13,
+                fontWeight: FontWeight.bold,
+                color: KardeColors.champagneGold,
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

@@ -2398,6 +2398,18 @@ abstract class AppLocalizations {
   /// **'Biometrics not supported or not enrolled on this device.'**
   String get biometricsNotEnrolled;
 
+  /// No description provided for @biometricLockedOut.
+  ///
+  /// In en, this message translates to:
+  /// **'Your phone has paused fingerprint unlock after too many tries. Wait a moment, or use your screen lock.'**
+  String get biometricLockedOut;
+
+  /// No description provided for @biometricUnavailableNow.
+  ///
+  /// In en, this message translates to:
+  /// **'Your phone could not check your fingerprint just now.'**
+  String get biometricUnavailableNow;
+
   /// No description provided for @biometricAuthFailedUsePin.
   ///
   /// In en, this message translates to:
@@ -2721,6 +2733,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'No backup yet'**
   String get noBackupTitle;
+
+  /// No description provided for @noBackupShort.
+  ///
+  /// In en, this message translates to:
+  /// **'No backup yet — everything is only on this phone.'**
+  String get noBackupShort;
 
   /// No description provided for @noBackupBody.
   ///

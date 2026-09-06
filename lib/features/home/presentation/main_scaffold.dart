@@ -10,6 +10,7 @@ import '../../../core/security/authentication_service.dart';
 import '../../../core/security/system_interaction_guard.dart';
 import '../../../core/security/window_security_service.dart';
 import '../../../core/storage/settings_repository.dart';
+import '../../../core/security/vault_health_provider.dart';
 import '../../../theme/theme.dart';
 
 class MainScaffold extends ConsumerStatefulWidget {
@@ -52,6 +53,15 @@ class _MainScaffoldState extends ConsumerState<MainScaffold> with WidgetsBinding
     if (state == AppLifecycleState.resumed) {
       _lockTimer?.cancel();
       _lockTimer = null;
+
+      // Both of these describe the phone, not Karde, and the user changes the
+      // phone in Android's settings — with Karde sitting in the background.
+      // Neither was ever re-checked, so the dashboard went on showing whatever
+      // was true when Karde last started: a security warning already dealt with,
+      // or worse, a clean bill of health after the screen lock had been turned
+      // off. Coming back to Karde is the only moment it can find out.
+      ref.invalidate(vaultHealthProvider);
+      ref.invalidate(biometricChangeNoticeProvider);
 
       if (!_isAppAuthenticated && !_isAuthenticating && mounted) {
         _authenticateStartup();

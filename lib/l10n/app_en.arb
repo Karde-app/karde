@@ -512,6 +512,8 @@
   "authRequiredTitle": "Authentication Required",
   "useKardePin": "Use Karde PIN",
   "biometricsNotEnrolled": "Biometrics not supported or not enrolled on this device.",
+  "biometricLockedOut": "Your phone has paused fingerprint unlock after too many tries. Wait a moment, or use your screen lock.",
+  "biometricUnavailableNow": "Your phone could not check your fingerprint just now.",
   "biometricAuthFailedUsePin": "Biometric authentication failed. Please use PIN.",
   "resetPinBiometricReason": "Scan your fingerprint (or face) to reset your PIN",
   "verificationNotCompleted": "Verification was not completed. Try again, or use another recovery option below.",
@@ -587,5 +589,6 @@
   "privacySection8Body": "Questions about this policy, or anything unclear: support@getgubae.com.",
   "biometricCouldNotConfirm": "Could not confirm it was you. Try again.",
   "noBackupTitle": "No backup yet",
+  "noBackupShort": "No backup yet — everything is only on this phone.",
   "noBackupBody": "Everything you have saved is only on this phone. A backup lets you get it all back on a new phone."
 }

@@ -8,6 +8,66 @@ import '../storage/settings_repository.dart';
 import 'encryption_service.dart';
 import 'pin_verification_screen.dart';
 
+/// What a biometric prompt's failure actually means for the user.
+///
+/// Separate from the wording, and top-level, so the decision can be tested on
+/// its own — it is the kind of thing that regresses quietly and is only noticed
+/// when a user is accused of failing at something they chose not to do.
+enum BiometricFailure {
+  /// Say nothing. The user stopped on purpose, or the system stopped for them.
+  silent,
+
+  /// There is nothing on this phone to check a fingerprint against.
+  notEnrolled,
+
+  /// The phone has suspended fingerprint unlock for a while.
+  lockedOut,
+
+  /// Something else went wrong with the phone's own check.
+  unavailable,
+}
+
+/// Decides what a [LocalAuthExceptionCode] means for the person holding the phone.
+///
+/// Deciding to stop is not a failure. Pressing Back, tapping the prompt's own
+/// cancel button, or letting it time out all raise an exception exactly as a
+/// mismatched fingerprint would, and Karde used to answer every one of them with
+/// "Biometric authentication failed" or "Could not confirm it was you, try
+/// again". The user had not failed at anything; they had changed their mind, and
+/// Karde told them off for it. Those cases are [BiometricFailure.silent], and
+/// whatever happens next — the PIN screen, or simply staying put — is answer
+/// enough on its own.
+///
+/// The genuine faults are kept apart from each other rather than flattened into
+/// one message, because they call for different things from the user: enrol a
+/// fingerprint, wait, or try something else entirely.
+///
+/// Anything unrecognised is [BiometricFailure.unavailable], which blames the
+/// phone rather than the user. The plugin documents this enum as open to new
+/// values, and a wrong guess here becomes an accusation.
+BiometricFailure classifyBiometricFailure(LocalAuthExceptionCode code) {
+  switch (code) {
+    case LocalAuthExceptionCode.userCanceled:
+    case LocalAuthExceptionCode.systemCanceled:
+    case LocalAuthExceptionCode.userRequestedFallback:
+    case LocalAuthExceptionCode.timeout:
+    case LocalAuthExceptionCode.authInProgress:
+      return BiometricFailure.silent;
+
+    case LocalAuthExceptionCode.noBiometricsEnrolled:
+    case LocalAuthExceptionCode.noBiometricHardware:
+    case LocalAuthExceptionCode.noCredentialsSet:
+      return BiometricFailure.notEnrolled;
+
+    case LocalAuthExceptionCode.temporaryLockout:
+    case LocalAuthExceptionCode.biometricLockout:
+      return BiometricFailure.lockedOut;
+
+    default:
+      return BiometricFailure.unavailable;
+  }
+}
+
 class AuthenticationService {
   final LocalAuthentication _auth = LocalAuthentication();
 
@@ -83,13 +143,13 @@ class AuthenticationService {
             KardeFeedback.error(context, loc.biometricsNotEnrolled);
           }
         }
-      } catch (e) {
-        if (context.mounted) {
-          KardeFeedback.error(
-            context,
-            hasKardePin ? loc.biometricAuthFailedUsePin : loc.biometricCouldNotConfirm,
-          );
+      } on LocalAuthException catch (e) {
+        final message = _messageFor(e, loc);
+        if (message != null && context.mounted) {
+          KardeFeedback.error(context, message);
         }
+      } catch (e) {
+        if (context.mounted) KardeFeedback.error(context, loc.biometricUnavailableNow);
       }
     }
 
@@ -113,6 +173,20 @@ class AuthenticationService {
   }
 
 
+
+  /// The wording for [classifyBiometricFailure], or null to say nothing.
+  String? _messageFor(LocalAuthException e, AppLocalizations loc) {
+    switch (classifyBiometricFailure(e.code)) {
+      case BiometricFailure.silent:
+        return null;
+      case BiometricFailure.notEnrolled:
+        return loc.biometricsNotEnrolled;
+      case BiometricFailure.lockedOut:
+        return loc.biometricLockedOut;
+      case BiometricFailure.unavailable:
+        return loc.biometricUnavailableNow;
+    }
+  }
 
   /// Whether the operation the caller is about to perform will itself be gated
   /// by the operating system, making an app-level gate here redundant.
@@ -168,13 +242,13 @@ class AuthenticationService {
             KardeFeedback.error(context, loc.biometricsNotEnrolled);
           }
         }
-      } catch (e) {
-        if (context.mounted) {
-          KardeFeedback.error(
-            context,
-            hasKardePin ? loc.biometricAuthFailedUsePin : loc.biometricCouldNotConfirm,
-          );
+      } on LocalAuthException catch (e) {
+        final message = _messageFor(e, loc);
+        if (message != null && context.mounted) {
+          KardeFeedback.error(context, message);
         }
+      } catch (e) {
+        if (context.mounted) KardeFeedback.error(context, loc.biometricUnavailableNow);
       }
     }
 

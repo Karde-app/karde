@@ -52,17 +52,27 @@ final biometricUnlockProvider = StateNotifierProvider<BiometricUnlockNotifier, b
 /// Phone Lock at onboarding, and reading the setting as though it answered this
 /// question caused a real security hole — see [SettingsRepository.hasKardePin].
 ///
-/// Invalidate it after any flow that creates a PIN, so wording that depends on
-/// it is not left describing the state before the change.
-final hasKardePinProvider = FutureProvider<bool>((ref) async {
+/// autoDispose because the answer changes behind its back. Onboarding can create
+/// a PIN, and an erase can destroy one, while nothing is listening — and a
+/// FutureProvider that outlives its listeners keeps handing out the answer it
+/// worked out before any of that happened. Seen on the device: erase the vault,
+/// set up again with a Karde PIN, and Settings still offered to "Create" one.
+///
+/// Dropping the cache when the last listener goes means every fresh visit to
+/// Settings asks storage again. Still invalidate it explicitly after creating a
+/// PIN, because Settings stays listening throughout that flow and would
+/// otherwise keep the old answer on screen.
+final hasKardePinProvider = FutureProvider.autoDispose<bool>((ref) async {
   return ref.watch(settingsRepositoryProvider).hasKardePin();
 });
 
 /// Whether both security questions have been answered.
 ///
 /// Drives the difference between offering to *add* questions and offering to
-/// *change* them. Invalidate after saving questions.
-final hasSecurityQuestionsProvider = FutureProvider<bool>((ref) async {
+/// *change* them. autoDispose for the same reason as [hasKardePinProvider]:
+/// questions can be set from the recovery step during onboarding, with Settings
+/// nowhere on screen to notice.
+final hasSecurityQuestionsProvider = FutureProvider.autoDispose<bool>((ref) async {
   return ref.watch(settingsRepositoryProvider).hasSecurityQuestions();
 });
 

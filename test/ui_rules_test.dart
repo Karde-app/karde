@@ -1,5 +1,8 @@
 import 'dart:io';
 
+import 'package:local_auth/local_auth.dart';
+import 'package:ibank/core/security/authentication_service.dart';
+
 import 'package:flutter_test/flutter_test.dart';
 import 'package:ibank/features/backup/presentation/widgets/passphrase_dialog.dart';
 import 'package:ibank/features/cards/domain/virtual_card.dart';
@@ -251,6 +254,107 @@ void main() {
     });
   });
 
+  group("Changing your mind is not a failure", () {
+    // Reported from the device twice, in two different places: raise the
+    // fingerprint prompt, press the phone's Back button, and Karde answered
+    // "Could not confirm it was you, try again" — or, opening the app,
+    // "Biometric authentication failed, please use PIN". The user had not
+    // failed at anything. They had decided not to, which is their right, and
+    // Karde told them off for it.
+    //
+    // The cause was that the plugin raises an exception for a deliberate stop
+    // exactly as it does for a genuine fault, and Karde caught them all the same
+    // way. The information to tell them apart was always there in the code.
+
+    test("pressing Back or cancel says nothing at all", () {
+      for (final code in [
+        LocalAuthExceptionCode.userCanceled,
+        LocalAuthExceptionCode.systemCanceled,
+        LocalAuthExceptionCode.userRequestedFallback,
+        LocalAuthExceptionCode.timeout,
+        LocalAuthExceptionCode.authInProgress,
+      ]) {
+        expect(
+          classifyBiometricFailure(code),
+          BiometricFailure.silent,
+          reason: "$code is the user or the system stopping on purpose. "
+              "Whatever happens next — the PIN screen, or staying put — is "
+              "answer enough without an error message.",
+        );
+      }
+    });
+
+    test("a phone with nothing to check against says so", () {
+      for (final code in [
+        LocalAuthExceptionCode.noBiometricsEnrolled,
+        LocalAuthExceptionCode.noBiometricHardware,
+        LocalAuthExceptionCode.noCredentialsSet,
+      ]) {
+        expect(classifyBiometricFailure(code), BiometricFailure.notEnrolled);
+      }
+    });
+
+    test("a locked-out sensor is not an invitation to try again", () {
+      for (final code in [
+        LocalAuthExceptionCode.temporaryLockout,
+        LocalAuthExceptionCode.biometricLockout,
+      ]) {
+        expect(
+          classifyBiometricFailure(code),
+          BiometricFailure.lockedOut,
+          reason: "Trying again is precisely what will not work here.",
+        );
+      }
+    });
+
+    test("anything unrecognised blames the phone, not the user", () {
+      // The plugin documents this enum as open to new values, so there will be
+      // codes this build has never heard of. Guessing turns into an accusation.
+      expect(
+        classifyBiometricFailure(LocalAuthExceptionCode.deviceError),
+        BiometricFailure.unavailable,
+      );
+      expect(
+        classifyBiometricFailure(LocalAuthExceptionCode.uiUnavailable),
+        BiometricFailure.unavailable,
+      );
+    });
+  });
+
+  group("Pages that can grow must be able to scroll", () {
+    // Two device reports with one cause. The security-question picker was a
+    // Column that overflowed once a row gained an "Already used above" line, so
+    // the last question sat clipped behind the navigation bar and read as a
+    // second greyed-out option. The home screen was a Column that overflowed
+    // once the backup reminder appeared, so the Add a card and Add an ID buttons
+    // were cut off entirely — reported as the reminder "removing" them.
+    //
+    // Neither page had any way to scroll to what it was hiding, and a large
+    // system font size would have done the same to both without any of our
+    // widgets appearing at all.
+    const growingPages = {
+      "lib/features/home/presentation/dashboard_screen.dart":
+          "the security warning, the fingerprint-change notice and the backup "
+              "reminder all appear above the Add buttons",
+      "lib/features/onboarding/presentation/security_questions_setup_screen.dart":
+          "the question picker grows when a question is taken or wraps to two "
+              "lines",
+    };
+
+    growingPages.forEach((path, why) {
+      test("$path can scroll", () {
+        final source = File(path).readAsStringSync();
+        expect(
+          source.contains("SingleChildScrollView") ||
+              source.contains("ListView") ||
+              source.contains("CustomScrollView"),
+          isTrue,
+          reason: "$path must be scrollable: $why.",
+        );
+      });
+    });
+  });
+
   group("Screens must describe the security the user actually has", () {
     // The rule behind all of these: never show recovery for something Karde
     // cannot recover, and never offer to "change" something never configured.
@@ -408,6 +512,36 @@ void main() {
           reason: "$provider caches state read from storage, so erasing the "
               "vault must invalidate it. Without that, Settings and the "
               "dashboard describe the vault the user had before the erase.",
+        );
+      }
+    });
+  });
+
+  group("Cached answers must not outlive what they describe", () {
+    // resetAllVaultState covers the erase. It cannot cover the rest: a PIN is
+    // created during onboarding, and questions are set at the recovery step,
+    // both with Settings nowhere on screen to notice. A FutureProvider that
+    // outlives its listeners keeps handing out the answer it worked out before
+    // any of that happened.
+    //
+    // Seen on the device: erase the vault, set up again choosing Karde PIN, and
+    // Settings still offered to "Create Karde PIN" for the PIN that had just
+    // been made. autoDispose drops the answer when the last listener goes, so
+    // every fresh visit to Settings asks storage again.
+    test("the what-is-configured providers are autoDispose", () {
+      final source =
+          File("lib/core/storage/settings_repository.dart").readAsStringSync();
+
+      for (final provider in [
+        "hasKardePinProvider",
+        "hasSecurityQuestionsProvider",
+      ]) {
+        expect(
+          RegExp("final $provider = FutureProvider.autoDispose")
+              .hasMatch(source),
+          isTrue,
+          reason: "$provider answers a question that changes while nothing is "
+              "listening, so it must not cache across listeners.",
         );
       }
     });

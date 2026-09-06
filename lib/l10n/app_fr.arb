@@ -383,6 +383,8 @@
   "authRequiredTitle": "Authentification requise",
   "useKardePin": "Utiliser le code Karde",
   "biometricsNotEnrolled": "La biométrie n'est pas prise en charge ou n'est pas configurée sur cet appareil.",
+  "biometricLockedOut": "Votre téléphone a suspendu le déverrouillage par empreinte après trop de tentatives. Patientez un instant ou utilisez le verrouillage de votre écran.",
+  "biometricUnavailableNow": "Votre téléphone n'a pas pu vérifier votre empreinte pour le moment.",
   "biometricAuthFailedUsePin": "L'authentification biométrique a échoué. Veuillez utiliser votre code.",
   "resetPinBiometricReason": "Scannez votre empreinte (ou votre visage) pour réinitialiser votre code",
   "verificationNotCompleted": "La vérification n'a pas abouti. Réessayez, ou utilisez une autre option de récupération ci-dessous.",
@@ -437,5 +439,6 @@
   "privacySection8Body": "Questions sur cette politique, ou tout point qui vous semble flou : support@getgubae.com.",
   "biometricCouldNotConfirm": "Impossible de confirmer votre identité. Réessayez.",
   "noBackupTitle": "Aucune sauvegarde",
+  "noBackupShort": "Aucune sauvegarde — tout se trouve uniquement sur ce téléphone.",
   "noBackupBody": "Tout ce que vous avez enregistré se trouve uniquement sur ce téléphone. Une sauvegarde vous permet de tout retrouver sur un nouveau téléphone."
 }

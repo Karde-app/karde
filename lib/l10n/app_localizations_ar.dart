@@ -1307,6 +1307,14 @@ class AppLocalizationsAr extends AppLocalizations {
       'القياسات الحيوية غير مدعومة أو غير مسجّلة على هذا الجهاز.';
 
   @override
+  String get biometricLockedOut =>
+      'أوقف هاتفك مؤقتاً فتح القفل بالبصمة بعد محاولات كثيرة. انتظر قليلاً أو استخدم قفل الشاشة.';
+
+  @override
+  String get biometricUnavailableNow =>
+      'لم يتمكن هاتفك من التحقق من بصمتك الآن.';
+
+  @override
   String get biometricAuthFailedUsePin =>
       'فشل التحقق بالقياسات الحيوية. يرجى استخدام الرمز السري.';
 
@@ -1504,6 +1512,10 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get noBackupTitle => 'لا توجد نسخة احتياطية';
+
+  @override
+  String get noBackupShort =>
+      'لا توجد نسخة احتياطية — كل شيء موجود على هذا الهاتف فقط.';
 
   @override
   String get noBackupBody =>
