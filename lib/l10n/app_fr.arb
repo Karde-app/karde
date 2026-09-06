@@ -48,7 +48,7 @@
   "setupLockSubtitle": "Comment souhaitez-vous ouvrir Karde ?",
   "phoneLock": "Verrouillage du téléphone",
   "phoneLockDesc": "Face ID, Touch ID ou le code de votre appareil.",
-  "phoneLockPinHint": "Vous pourrez ajouter un code PIN Karde plus tard dans les Réglages si vous souhaitez une deuxième façon d'ouvrir Karde.",
+  "lockChoiceChangeableLater": "Vous pourrez modifier ce choix plus tard dans les Réglages.",
   "kardePin": "Code Karde",
   "kardePinDesc": "Créez un code PIN dédié.",
   "bothLocks": "Les deux",

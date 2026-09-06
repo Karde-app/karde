@@ -91,6 +91,37 @@ class _LockSetupScreenState extends ConsumerState<LockSetupScreen>
     );
   }
 
+  /// Says, once, that none of these choices are final.
+  ///
+  /// This began as a line under Phone Lock alone, promising that a Karde PIN
+  /// could be added later. Two things were wrong with that. It singled out one
+  /// option as the reversible one when all three are, which quietly implied the
+  /// others were harder to undo; and it made the option most people should pick
+  /// read as the incomplete one, needing something added to it.
+  ///
+  /// So it says the true thing instead, about all three, and says it once.
+  /// Deliberately plain text — no box, no border, no icon — because anything
+  /// with a container of its own sitting under a list of cards reads as another
+  /// card. That is exactly how the first version was reported.
+  ///
+  /// Discovering the Karde PIN is not this screen's job and never was. Settings
+  /// offers "Create Karde PIN" to precisely the user who has none, at the moment
+  /// they have gone looking.
+  Widget _buildChangeableLaterNote(AppLocalizations loc) {
+    return Padding(
+      padding: const EdgeInsets.only(top: 20, left: 4, right: 4),
+      child: Text(
+        loc.lockChoiceChangeableLater,
+        style: TextStyle(
+          fontFamily: 'Inter',
+          color: Colors.white.withOpacity(0.45),
+          fontSize: 12.5,
+          height: 1.4,
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final loc = AppLocalizations.of(context)!;
@@ -148,11 +179,6 @@ class _LockSetupScreenState extends ConsumerState<LockSetupScreen>
                       // Without a device lock this option is not merely weaker,
                       // it is inoperable: there is no phone lock to defer to.
                       enabled: _deviceLockPresent != false,
-                      // Shown inside the card, and only while this option is the
-                      // chosen one. As a box of its own below the card it was
-                      // the same width, the same corners and the same border as
-                      // the options themselves, and read as a fourth option.
-                      selectedNote: loc.phoneLockPinHint,
                     ),
                     const SizedBox(height: 16),
                     _buildLockOption(
@@ -168,6 +194,7 @@ class _LockSetupScreenState extends ConsumerState<LockSetupScreen>
                       Icons.security,
                       'both',
                     ),
+                    _buildChangeableLaterNote(loc),
                   ],
                 ),
               ),
@@ -278,7 +305,6 @@ class _LockSetupScreenState extends ConsumerState<LockSetupScreen>
     IconData icon,
     String value, {
     bool enabled = true,
-    String? selectedNote,
   }) {
     final isSelected = _selectedLock == value;
 
@@ -340,25 +366,6 @@ class _LockSetupScreenState extends ConsumerState<LockSetupScreen>
                       fontSize: 13,
                     ),
                   ),
-                  // The chosen option explains itself. Inside the card, below a
-                  // hairline, so it cannot be read as a choice of its own.
-                  if (selectedNote != null && isSelected) ...[
-                    const SizedBox(height: 12),
-                    Container(
-                      height: 1,
-                      color: KardeColors.champagneGold.withOpacity(0.25),
-                    ),
-                    const SizedBox(height: 10),
-                    Text(
-                      selectedNote,
-                      style: TextStyle(
-                        fontFamily: 'Inter',
-                        color: KardeColors.champagneGold.withOpacity(0.85),
-                        fontSize: 12.5,
-                        height: 1.4,
-                      ),
-                    ),
-                  ],
                   ],
                 ),
               ),

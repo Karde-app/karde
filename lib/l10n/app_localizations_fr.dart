@@ -161,8 +161,8 @@ class AppLocalizationsFr extends AppLocalizations {
   String get phoneLockDesc => 'Face ID, Touch ID ou le code de votre appareil.';
 
   @override
-  String get phoneLockPinHint =>
-      'Vous pourrez ajouter un code PIN Karde plus tard dans les Réglages si vous souhaitez une deuxième façon d\'ouvrir Karde.';
+  String get lockChoiceChangeableLater =>
+      'Vous pourrez modifier ce choix plus tard dans les Réglages.';
 
   @override
   String get kardePin => 'Code Karde';

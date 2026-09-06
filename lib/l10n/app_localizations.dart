@@ -388,11 +388,11 @@ abstract class AppLocalizations {
   /// **'Your device\'s Face ID, Touch ID or passcode.'**
   String get phoneLockDesc;
 
-  /// No description provided for @phoneLockPinHint.
+  /// No description provided for @lockChoiceChangeableLater.
   ///
   /// In en, this message translates to:
-  /// **'You can add a Karde PIN later in Settings if you would like a second way to open Karde.'**
-  String get phoneLockPinHint;
+  /// **'You can change this later in Settings.'**
+  String get lockChoiceChangeableLater;
 
   /// No description provided for @kardePin.
   ///

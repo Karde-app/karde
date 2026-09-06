@@ -55,7 +55,7 @@
   "setupLockSubtitle": "How would you like to open Karde?",
   "phoneLock": "Phone Lock",
   "phoneLockDesc": "Your device's Face ID, Touch ID or passcode.",
-  "phoneLockPinHint": "You can add a Karde PIN later in Settings if you would like a second way to open Karde.",
+  "lockChoiceChangeableLater": "You can change this later in Settings.",
   "kardePin": "Karde PIN",
   "kardePinDesc": "Create a dedicated PIN just for this app.",
   "bothLocks": "Both",

@@ -321,6 +321,61 @@ void main() {
     });
   });
 
+  group("Vault health must measure what protects the vault", () {
+    // Reported from the device: a phone with a PIN set and no fingerprint
+    // enrolled was shown "Security Warning — no biometrics enrolled". Nothing
+    // was at risk. The vault key is created with setUserAuthenticationRequired,
+    // which accepts a strong biometric OR the phone's PIN, pattern or password,
+    // so a PIN-only phone protects the vault completely. As the user put it,
+    // not every device has a face or fingerprint sensor.
+    //
+    // Frightening someone about a choice that costs them nothing teaches them to
+    // ignore the banner, which is the one thing a security banner cannot afford.
+    // Comments are stripped before matching. The file explains at length what it
+    // used to do wrongly and why, and a rule that reads prose would fail on its
+    // own explanation — which is how this test failed the first time it ran.
+    String codeOf(String path) => File(path)
+        .readAsLinesSync()
+        .where((line) => !line.trimLeft().startsWith("//"))
+        .join("\n");
+
+    test("health is not judged on enrolled biometrics", () {
+      final source = codeOf("lib/core/security/device_security_service.dart");
+
+      for (final biometricOnlyCheck in [
+        "getAvailableBiometrics",
+        "canCheckBiometrics",
+      ]) {
+        expect(
+          source.contains(biometricOnlyCheck),
+          isFalse,
+          reason: "$biometricOnlyCheck reports whether a finger or face is "
+              "enrolled, which says nothing about whether the vault is "
+              "protected. A PIN protects it just as well.",
+        );
+      }
+
+      expect(
+        source.contains("canUseVault"),
+        isTrue,
+        reason: "Health must ask the same question the vault itself depends "
+            "on: can the key exist and be used on this phone.",
+      );
+    });
+
+    test("there is no middle state to be vague with", () {
+      // Two honest answers: the phone can protect the vault, or it has no secure
+      // lock screen at all — in which case nothing can be saved and anything
+      // already saved is already gone. A third, softer state existed only to
+      // carry the biometric complaint.
+      final source = codeOf("lib/core/security/device_security_service.dart");
+
+      expect(source.contains("warning"), isFalse);
+      expect(source.contains("excellent"), isTrue);
+      expect(source.contains("atRisk"), isTrue);
+    });
+  });
+
   group("Pages that can grow must be able to scroll", () {
     // Two device reports with one cause. The security-question picker was a
     // Column that overflowed once a row gained an "Already used above" line, so
@@ -385,11 +440,12 @@ void main() {
             "setup. Karde PIN and Both still reach it, by way of PIN setup.",
       );
       expect(
-        source.contains("loc.phoneLockPinHint"),
+        source.contains("loc.lockChoiceChangeableLater"),
         isTrue,
-        reason: "Removing the recovery step leaves nothing in the flow that "
-            "mentions the Karde PIN again, so the option has to say a PIN can "
-            "still be added later.",
+        reason: "Nothing later in the Phone Lock flow revisits this decision, "
+            "so the screen has to say the choice is not final. It says it once, "
+            "about all three options — an earlier version said it under Phone "
+            "Lock alone, which implied the other two were harder to undo.",
       );
     });
 

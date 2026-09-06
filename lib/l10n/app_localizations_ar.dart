@@ -165,8 +165,8 @@ class AppLocalizationsAr extends AppLocalizations {
   String get phoneLockDesc => 'بصمة الوجه أو الإصبع أو رمز جهازك.';
 
   @override
-  String get phoneLockPinHint =>
-      'يمكنك إضافة رمز سري خاص بـ Karde لاحقاً من الإعدادات إذا أردت طريقة ثانية لفتح Karde.';
+  String get lockChoiceChangeableLater =>
+      'يمكنك تغيير هذا الاختيار لاحقاً من الإعدادات.';
 
   @override
   String get kardePin => 'رمز Karde';

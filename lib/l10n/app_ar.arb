@@ -48,7 +48,7 @@
   "setupLockSubtitle": "كيف تريد فتح Karde؟",
   "phoneLock": "قفل الهاتف",
   "phoneLockDesc": "بصمة الوجه أو الإصبع أو رمز جهازك.",
-  "phoneLockPinHint": "يمكنك إضافة رمز سري خاص بـ Karde لاحقاً من الإعدادات إذا أردت طريقة ثانية لفتح Karde.",
+  "lockChoiceChangeableLater": "يمكنك تغيير هذا الاختيار لاحقاً من الإعدادات.",
   "kardePin": "رمز Karde",
   "kardePinDesc": "أنشئ رمزاً سرياً خاصاً بهذا التطبيق.",
   "bothLocks": "كلاهما",

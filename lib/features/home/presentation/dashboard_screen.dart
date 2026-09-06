@@ -251,6 +251,13 @@ class DashboardScreen extends ConsumerWidget {
               
               const Spacer(),
               
+              // The banner below sat flush against the bottom of the card stack
+              // whenever neither notice was showing, because both of those
+              // render nothing at all in that case and each carried its own
+              // spacing. The gap belongs here, where it does not depend on
+              // whether anything else happens to be on screen.
+              const SizedBox(height: 20),
+
               // Fingerprint-change notice. Informational only: it never blocks
               // anything and nothing in the vault is touched. See
               // BiometricChangeNotice for why this is a message rather than a lock.
@@ -347,12 +354,6 @@ class DashboardScreen extends ConsumerWidget {
                       mainIconColor = KardeColors.champagneGold;
                       trailingIcon = Icons.check;
                       trailingIconColor = KardeColors.signalTeal;
-                      break;
-                    case VaultHealthStatus.warning:
-                      title = loc.securityWarning;
-                      mainIcon = Icons.warning_amber_rounded;
-                      mainIconColor = Colors.orange;
-                      subtitle = loc.noBiometricsEnrolled(subtitle);
                       break;
                     case VaultHealthStatus.atRisk:
                       title = loc.securityRisk;
