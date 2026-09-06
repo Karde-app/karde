@@ -30,6 +30,7 @@ class MainActivity : FlutterFragmentActivity() {
     private val IMAGES_CHANNEL = "com.ibank.security/images"
 
     private val fileTransfer by lazy { FileTransfer(this) }
+    private val backupFolder by lazy { BackupFolder(this) }
     private val imageCapture by lazy { ImageCapture(this) }
 
     // FIX 2-1: new alias. The previous key (v2) was created without per-use
@@ -161,6 +162,51 @@ class MainActivity : FlutterFragmentActivity() {
                             runBundleCrypto(result) { BackupIdentity.seal(publicKey, data) }
                         }
                     }
+                    "chooseBackupFolder" -> backupFolder.choose(result)
+                    "backupFolderUsable" -> {
+                        val treeUri = call.argument<String>("treeUri")
+                        result.success(treeUri != null && backupFolder.isUsable(treeUri))
+                    }
+                    "writeBackupFile" -> {
+                        val treeUri = call.argument<String>("treeUri")
+                        val name = call.argument<String>("name")
+                        if (treeUri == null || name == null || data == null) {
+                            result.error("INVALID_ARGUMENT", "Missing treeUri, name or data", null)
+                        } else {
+                            runBackupFolder(result) {
+                                backupFolder.write(treeUri, name, data)
+                                "true"
+                            }
+                        }
+                    }
+                    "readBackupFile" -> {
+                        val treeUri = call.argument<String>("treeUri")
+                        val name = call.argument<String>("name")
+                        if (treeUri == null || name == null) {
+                            result.error("INVALID_ARGUMENT", "Missing treeUri or name", null)
+                        } else {
+                            runBackupFolder(result) { backupFolder.read(treeUri, name) }
+                        }
+                    }
+                    "listBackupFiles" -> {
+                        val treeUri = call.argument<String>("treeUri")
+                        if (treeUri == null) {
+                            result.error("INVALID_ARGUMENT", "Missing treeUri", null)
+                        } else {
+                            runBackupFolder(result) { backupFolder.list(treeUri) }
+                        }
+                    }
+                    "deleteBackupFile" -> {
+                        val treeUri = call.argument<String>("treeUri")
+                        val name = call.argument<String>("name")
+                        if (treeUri == null || name == null) {
+                            result.error("INVALID_ARGUMENT", "Missing treeUri or name", null)
+                        } else {
+                            runBackupFolder(result) {
+                                backupFolder.delete(treeUri, name).toString()
+                            }
+                        }
+                    }
                     "openBackupRecords" -> {
                         val sealedPrivateKey = call.argument<String>("sealedPrivateKey")
                         if (data == null || passphrase == null || sealedPrivateKey == null) {
@@ -202,6 +248,27 @@ class MainActivity : FlutterFragmentActivity() {
      * thread. [MethodChannel.Result] must still be completed on it, so the outcome
      * is posted back once the work finishes.
      */
+    /**
+     * Runs folder work off the main thread and reports failure as one thing.
+     *
+     * The folder can be on a cloud provider, so a read or a write is not
+     * guaranteed to be quick. And every failure here means the same thing to the
+     * user — Karde cannot reach the place their backups go — so they arrive as
+     * one error code with the detail attached, rather than as a taxonomy nobody
+     * downstream would act on differently.
+     */
+    private fun runBackupFolder(result: MethodChannel.Result, work: () -> String?) {
+        val main = Handler(Looper.getMainLooper())
+        Thread {
+            try {
+                val value = work()
+                main.post { result.success(value) }
+            } catch (e: Exception) {
+                main.post { result.error("BACKUP_FOLDER_UNAVAILABLE", e.message, null) }
+            }
+        }.start()
+    }
+
     private fun runBundleCrypto(result: MethodChannel.Result, work: () -> String) {
         val main = Handler(Looper.getMainLooper())
         Thread {
@@ -228,6 +295,7 @@ class MainActivity : FlutterFragmentActivity() {
      */
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         if (fileTransfer.onActivityResult(requestCode, resultCode, data)) return
+        if (backupFolder.onActivityResult(requestCode, resultCode, data)) return
         if (imageCapture.onActivityResult(requestCode, resultCode, data)) return
         super.onActivityResult(requestCode, resultCode, data)
     }
