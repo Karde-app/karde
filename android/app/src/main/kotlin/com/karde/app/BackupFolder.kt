@@ -37,7 +37,15 @@ import org.json.JSONObject
 class BackupFolder(private val activity: Activity) {
 
     companion object {
-        private const val REQUEST_PICK_FOLDER = 0xBA03
+        /// Must be unique across every class that calls startActivityForResult.
+        ///
+        /// This was 0xBA03, which ImageCapture already used for the gallery
+        /// picker — and MainActivity offers each result to the backup folder
+        /// before the image capture, so picking a photo from the gallery was
+        /// silently swallowed here and never reached the code waiting for it.
+        /// In use elsewhere: 0xBA01 and 0xBA02 (FileTransfer), 0xBA03 and
+        /// 0xBA04 (ImageCapture).
+        private const val REQUEST_PICK_FOLDER = 0xBA05
     }
 
     private var pendingResult: MethodChannel.Result? = null

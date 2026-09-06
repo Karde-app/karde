@@ -705,6 +705,39 @@ void main() {
     });
   });
 
+  group("Two screens must not answer to the same knock", () {
+    // Android returns every picker's result to one method, tagged with the
+    // request code that started it, and MainActivity offers each result to its
+    // handlers in turn until one claims it. Two handlers sharing a code means
+    // the first one wins and the second never hears its own answer.
+    //
+    // That happened: the backup folder picker was given 0xBA03, which the
+    // gallery picker already used, and the folder is offered the result first —
+    // so choosing a photo from the gallery was silently swallowed. Nothing
+    // crashed and nothing was logged; the picture simply never arrived.
+    test("every startActivityForResult code is unique", () {
+      final codes = <String, String>{};
+      for (final file in Directory("android/app/src/main/kotlin/com/karde/app")
+          .listSync()
+          .whereType<File>()
+          .where((f) => f.path.endsWith(".kt"))) {
+        for (final match in RegExp(r"val (REQUEST_\w+) = (0x[0-9A-Fa-f]+)")
+            .allMatches(file.readAsStringSync())) {
+          final name = match.group(1)!;
+          final code = match.group(2)!.toUpperCase();
+          expect(
+            codes.containsKey(code),
+            isFalse,
+            reason: "$name shares $code with ${codes[code]}. Whichever handler "
+                "MainActivity asks first will swallow the other's result.",
+          );
+          codes[code] = name;
+        }
+      }
+      expect(codes, isNotEmpty, reason: "the regex should find request codes");
+    });
+  });
+
   group("Onboarding cannot end without arranging a backup", () {
     // The backup is the only thing that survives losing the phone or turning off
     // its screen lock. A screen lock or a PIN can be changed whenever the user
