@@ -1168,4 +1168,47 @@ void main() {
           isNot(contains("letter")));
     });
   });
+
+  group("The two Add buttons on the home screen", () {
+    // They sit side by side, so they are read as a pair. "Add a card" used a
+    // bare plus while "Add an ID" used an ID badge — one naming the action and
+    // the other naming the thing, which is why the pair looked unfinished. The
+    // word "Add" is already in both labels, so both icons name the thing.
+    String homeScreen() => File(
+          "lib/features/home/presentation/dashboard_screen.dart",
+        ).readAsLinesSync().where((l) => !l.trimLeft().startsWith("//")).join("\n");
+
+    test("neither icon names the action", () {
+      expect(
+        RegExp(r"Icon\(Icons\.add[,)]").hasMatch(homeScreen()),
+        isFalse,
+        reason: "a plus says nothing the label has not already said",
+      );
+    });
+
+    test("both name the thing, and match each other in weight", () {
+      expect(homeScreen(), contains("Icon(Icons.credit_card,"),
+          reason: "Add a card must show a card");
+      expect(homeScreen(), contains("Icon(Icons.badge,"),
+          reason: "Add an ID must show an ID");
+
+      // The pair is the point. One solid beside one hollow reads as one button
+      // mattering more than the other, which is the trap the Vault list avoids
+      // only because its two icons never appear next to each other.
+      expect(
+        homeScreen().contains("Icon(Icons.credit_card_outlined,") ||
+            homeScreen().contains("Icon(Icons.badge_outlined,"),
+        isFalse,
+        reason: "the two buttons must not mix an outlined icon with a solid one",
+      );
+    });
+
+    test("the card icon is the one the rest of the app already uses", () {
+      // Not a new word invented for the home screen. credit_card is Karde's
+      // card icon in the Vault list, its search results and its bottom bar.
+      final vault = File("lib/features/cards/presentation/vault_screen.dart")
+          .readAsStringSync();
+      expect(vault, contains("Icons.credit_card"));
+    });
+  });
 }

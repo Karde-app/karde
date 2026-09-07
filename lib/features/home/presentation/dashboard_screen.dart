@@ -473,7 +473,12 @@ class DashboardScreen extends ConsumerWidget {
                                 color: theme.brightness == Brightness.dark ? Colors.white.withOpacity(0.05) : KardeColors.champagneGold.withOpacity(0.1),
                                 shape: BoxShape.circle,
                               ),
-                              child: const Icon(Icons.add, color: KardeColors.champagneGold, size: 20),
+                              // Both of these buttons name the thing, not the
+                              // action — "Add" is already in the label, and a
+                              // plus beside an ID badge read as two different
+                              // kinds of word. Solid rather than outlined so the
+                              // pair matches in weight and holds at 20px.
+                              child: const Icon(Icons.credit_card, color: KardeColors.champagneGold, size: 20),
                             ),
                             const SizedBox(height: 8),
                             Text(
@@ -518,7 +523,7 @@ class DashboardScreen extends ConsumerWidget {
                                 color: theme.brightness == Brightness.dark ? Colors.white.withOpacity(0.05) : KardeColors.champagneGold.withOpacity(0.1),
                                 shape: BoxShape.circle,
                               ),
-                              child: const Icon(Icons.badge_outlined, color: KardeColors.champagneGold, size: 20),
+                              child: const Icon(Icons.badge, color: KardeColors.champagneGold, size: 20),
                             ),
                             const SizedBox(height: 8),
                             Text(
