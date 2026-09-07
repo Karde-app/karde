@@ -1936,16 +1936,25 @@ class AppLocalizationsAr extends AppLocalizations {
   }
 
   @override
-  String get onboardingWelcomeBody =>
-      'خزنة تعمل دون اتصال للبطاقات والمستندات التي تفضّل عدم حملها معك. وكل ما تحفظه يبقى على هذا الهاتف.';
+  String get cameraTitle => 'التقاط صورة';
 
   @override
-  String get onboardingReadPolicy => 'اقرأ سياسة الخصوصية';
+  String get cameraGuideHint => 'حاذِ البطاقة أو المستند داخل الإطار';
 
   @override
-  String get onboardingAgreeNote =>
-      'بالمتابعة، أنت توافق على سياسة خصوصية Karde. وسيطلب منك Karde الإذن بشكل منفصل لأي شيء يحتاجه من هاتفك، في الوقت الذي يحتاجه فيه.';
+  String get cameraRetake => 'إعادة الالتقاط';
 
   @override
-  String get onboardingAgreeContinue => 'أوافق وأتابع';
+  String get cameraUsePhoto => 'استخدام هذه الصورة';
+
+  @override
+  String get cameraCaptureFailed =>
+      'تعذّر التقاط هذه الصورة. يرجى المحاولة مرة أخرى.';
+
+  @override
+  String get cameraUnavailable =>
+      'ليس لدى Karde إذن باستخدام الكاميرا. يمكنك التقاط الصورة بتطبيق الكاميرا في هاتفك بدلاً من ذلك.';
+
+  @override
+  String get cameraUsePhoneCamera => 'استخدام كاميرا الهاتف';
 }

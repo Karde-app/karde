@@ -3,7 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../../core/storage/settings_repository.dart';
 import '../../../theme/theme.dart';
-import 'welcome_screen.dart';
+import 'lock_setup_screen.dart';
 
 class LanguageSelectionScreen extends ConsumerWidget {
   const LanguageSelectionScreen({super.key});
@@ -111,7 +111,7 @@ class LanguageSelectionScreen extends ConsumerWidget {
                     // return and change it.
                     Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (_) => const WelcomeScreen()),
+                      MaterialPageRoute(builder: (_) => const LockSetupScreen()),
                     );
                   },
                   style: ElevatedButton.styleFrom(

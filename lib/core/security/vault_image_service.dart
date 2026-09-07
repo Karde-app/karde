@@ -50,8 +50,43 @@ class VaultImageService {
   /// its owner lives.
   Future<Uint8List?> pickFromGallery() => _source('pickImage');
 
-  /// Opens the camera. Returns null if the user backed out.
+  /// Opens the phone's own camera app. Returns null if the user backed out.
+  ///
+  /// Still here, and still needed. It is what Karde falls back to when somebody
+  /// refuses the camera permission that [GuidedCameraScreen] asks for — an
+  /// `ACTION_IMAGE_CAPTURE` needs no permission from Karde at all, so refusing
+  /// costs the guide rectangle and nothing else.
   Future<Uint8List?> captureWithCamera() => _source('captureImage');
+
+  /// Keeps the framed part of a photo Karde's own camera screen just took.
+  ///
+  /// The rectangle is given as fractions of the picture, not pixels. Comes back
+  /// downscaled, re-compressed and stripped of EXIF like everything else here —
+  /// including the GPS coordinates a phone writes into a photo, which on a
+  /// picture of an ID document would record where its owner lives.
+  Future<Uint8List> cropCapture({
+    required String path,
+    required double left,
+    required double top,
+    required double width,
+    required double height,
+  }) async {
+    try {
+      final bytes = await _pickerChannel.invokeMethod<Uint8List>('cropCapture', {
+        'path': path,
+        'left': left,
+        'top': top,
+        'width': width,
+        'height': height,
+      });
+      if (bytes == null) {
+        throw const VaultImageUnreadable(VaultImageProblem.unreadable);
+      }
+      return bytes;
+    } on PlatformException {
+      throw const VaultImageUnreadable(VaultImageProblem.unreadable);
+    }
+  }
 
   Future<Uint8List?> _source(String method) {
     // The gallery and the camera are system windows on top of Karde, and the user

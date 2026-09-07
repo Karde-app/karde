@@ -3370,29 +3370,47 @@ abstract class AppLocalizations {
   /// **'You deleted the document {name}'**
   String activityDocumentRemoved(String name);
 
-  /// No description provided for @onboardingWelcomeBody.
+  /// No description provided for @cameraTitle.
   ///
   /// In en, this message translates to:
-  /// **'An offline vault for the cards and documents you would rather not carry. Everything you save stays on this phone.'**
-  String get onboardingWelcomeBody;
+  /// **'Take a photo'**
+  String get cameraTitle;
 
-  /// No description provided for @onboardingReadPolicy.
+  /// No description provided for @cameraGuideHint.
   ///
   /// In en, this message translates to:
-  /// **'Read the privacy policy'**
-  String get onboardingReadPolicy;
+  /// **'Line the card or document up inside the frame'**
+  String get cameraGuideHint;
 
-  /// No description provided for @onboardingAgreeNote.
+  /// No description provided for @cameraRetake.
   ///
   /// In en, this message translates to:
-  /// **'By continuing, you agree to Karde\'s privacy policy. Karde will ask your permission separately for anything it needs from your phone, at the moment it needs it.'**
-  String get onboardingAgreeNote;
+  /// **'Retake'**
+  String get cameraRetake;
 
-  /// No description provided for @onboardingAgreeContinue.
+  /// No description provided for @cameraUsePhoto.
   ///
   /// In en, this message translates to:
-  /// **'Agree and continue'**
-  String get onboardingAgreeContinue;
+  /// **'Use this photo'**
+  String get cameraUsePhoto;
+
+  /// No description provided for @cameraCaptureFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'That photo could not be taken. Please try again.'**
+  String get cameraCaptureFailed;
+
+  /// No description provided for @cameraUnavailable.
+  ///
+  /// In en, this message translates to:
+  /// **'Karde does not have permission to use the camera. You can take the photo with your phone\'s camera app instead.'**
+  String get cameraUnavailable;
+
+  /// No description provided for @cameraUsePhoneCamera.
+  ///
+  /// In en, this message translates to:
+  /// **'Use my phone\'s camera'**
+  String get cameraUsePhoneCamera;
 }
 
 class _AppLocalizationsDelegate

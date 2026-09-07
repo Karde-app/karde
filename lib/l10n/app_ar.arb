@@ -574,8 +574,11 @@
   "@activityDocumentChanged": { "placeholders": { "name": { "type": "String" } } },
   "activityDocumentRemoved": "حذفت المستند {name}",
   "@activityDocumentRemoved": { "placeholders": { "name": { "type": "String" } } },
-  "onboardingWelcomeBody": "خزنة تعمل دون اتصال للبطاقات والمستندات التي تفضّل عدم حملها معك. وكل ما تحفظه يبقى على هذا الهاتف.",
-  "onboardingReadPolicy": "اقرأ سياسة الخصوصية",
-  "onboardingAgreeNote": "بالمتابعة، أنت توافق على سياسة خصوصية Karde. وسيطلب منك Karde الإذن بشكل منفصل لأي شيء يحتاجه من هاتفك، في الوقت الذي يحتاجه فيه.",
-  "onboardingAgreeContinue": "أوافق وأتابع"
+  "cameraTitle": "التقاط صورة",
+  "cameraGuideHint": "حاذِ البطاقة أو المستند داخل الإطار",
+  "cameraRetake": "إعادة الالتقاط",
+  "cameraUsePhoto": "استخدام هذه الصورة",
+  "cameraCaptureFailed": "تعذّر التقاط هذه الصورة. يرجى المحاولة مرة أخرى.",
+  "cameraUnavailable": "ليس لدى Karde إذن باستخدام الكاميرا. يمكنك التقاط الصورة بتطبيق الكاميرا في هاتفك بدلاً من ذلك.",
+  "cameraUsePhoneCamera": "استخدام كاميرا الهاتف"
 }

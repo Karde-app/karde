@@ -1973,16 +1973,25 @@ class AppLocalizationsFr extends AppLocalizations {
   }
 
   @override
-  String get onboardingWelcomeBody =>
-      'Un coffre hors ligne pour les cartes et documents que vous préférez ne pas transporter. Tout ce que vous enregistrez reste sur ce téléphone.';
+  String get cameraTitle => 'Prendre une photo';
 
   @override
-  String get onboardingReadPolicy => 'Lire la politique de confidentialité';
+  String get cameraGuideHint => 'Alignez la carte ou le document dans le cadre';
 
   @override
-  String get onboardingAgreeNote =>
-      'En continuant, vous acceptez la politique de confidentialité de Karde. Karde vous demandera séparément l\'autorisation pour tout ce dont il a besoin sur votre téléphone, au moment où il en a besoin.';
+  String get cameraRetake => 'Reprendre';
 
   @override
-  String get onboardingAgreeContinue => 'Accepter et continuer';
+  String get cameraUsePhoto => 'Utiliser cette photo';
+
+  @override
+  String get cameraCaptureFailed =>
+      'Cette photo n\'a pas pu être prise. Veuillez réessayer.';
+
+  @override
+  String get cameraUnavailable =>
+      'Karde n\'a pas l\'autorisation d\'utiliser l\'appareil photo. Vous pouvez prendre la photo avec l\'application appareil photo de votre téléphone.';
+
+  @override
+  String get cameraUsePhoneCamera => 'Utiliser l\'appareil photo du téléphone';
 }

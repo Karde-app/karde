@@ -107,6 +107,14 @@ class MainActivity : FlutterFragmentActivity() {
                 when (call.method) {
                     "pickImage" -> imageCapture.pick(result)
                     "captureImage" -> imageCapture.capture(result)
+                    "cropCapture" -> imageCapture.cropCapture(
+                        call.argument<String>("path")!!,
+                        call.argument<Double>("left")!!,
+                        call.argument<Double>("top")!!,
+                        call.argument<Double>("width")!!,
+                        call.argument<Double>("height")!!,
+                        result,
+                    )
                     else -> result.notImplemented()
                 }
             }

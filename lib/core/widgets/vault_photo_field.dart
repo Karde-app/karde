@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 
 import '../security/vault_image_service.dart';
 import 'karde_feedback.dart';
+import 'guided_camera_screen.dart';
 import 'secure_photo_view.dart';
 
 /// The photo attached to the item being edited on an add/edit form.
@@ -354,7 +355,10 @@ class _VaultPhotoFieldState extends State<VaultPhotoField> {
               title: Text(AppLocalizations.of(context)!.takeAPhoto),
               onTap: () {
                 Navigator.pop(sheetContext);
-                _choose(_images.captureWithCamera);
+                // Karde's own camera, with the guide. It falls back to the
+                // phone's camera app by itself if the permission is refused,
+                // so there is nothing to decide here.
+                _choose(() => GuidedCameraScreen.open(context));
               },
             ),
             ListTile(

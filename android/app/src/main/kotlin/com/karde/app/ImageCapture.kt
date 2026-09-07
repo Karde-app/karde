@@ -200,6 +200,82 @@ class ImageCapture(private val activity: Activity) {
         }.start()
     }
 
+    /**
+     * Takes the photo Karde's own camera screen just captured and keeps the part
+     * the user framed.
+     *
+     * The rectangle arrives as fractions of the image rather than pixels, because
+     * the screen that drew it knows where it put it and this does not. The camera
+     * preview there is laid out at the sensor's exact aspect ratio, so what the
+     * guide covered on screen is the same fraction of the photo — which is the
+     * only reason a mapping this simple is correct.
+     *
+     * Order matters and is not the same as [loadScaledJpeg]'s. The rotation is
+     * baked in **first**, because the fractions describe the upright picture the
+     * user was looking at, and a portrait photo whose orientation had not yet
+     * been applied would be cropped ninety degrees out.
+     *
+     * The temporary file the camera wrote is deleted either way. It is a full
+     * resolution photograph of somebody's passport sitting in cache.
+     */
+    fun cropCapture(
+        path: String,
+        left: Double,
+        top: Double,
+        width: Double,
+        height: Double,
+        result: MethodChannel.Result,
+    ) {
+        val file = File(path)
+        try {
+            val uri = Uri.fromFile(file)
+
+            val bounds = BitmapFactory.Options().apply { inJustDecodeBounds = true }
+            activity.contentResolver.openInputStream(uri)?.use {
+                BitmapFactory.decodeStream(it, null, bounds)
+            } ?: throw IOException("Could not open the photo")
+            if (bounds.outWidth <= 0 || bounds.outHeight <= 0) {
+                throw IOException("That capture is not an image")
+            }
+
+            // Sampled against twice the final edge, not once. The crop throws
+            // away most of the frame, so decoding straight down to MAX_EDGE
+            // would leave the part actually kept softer than a photo taken the
+            // old way.
+            val options = BitmapFactory.Options().apply {
+                inSampleSize = sampleSizeFor(bounds.outWidth / 2, bounds.outHeight / 2)
+            }
+            var bitmap = activity.contentResolver.openInputStream(uri)?.use {
+                BitmapFactory.decodeStream(it, null, options)
+            } ?: throw IOException("Could not read the photo")
+
+            try {
+                bitmap = applyExifRotation(uri, bitmap)
+
+                val x = (left * bitmap.width).toInt().coerceIn(0, bitmap.width - 1)
+                val y = (top * bitmap.height).toInt().coerceIn(0, bitmap.height - 1)
+                val w = (width * bitmap.width).toInt().coerceIn(1, bitmap.width - x)
+                val h = (height * bitmap.height).toInt().coerceIn(1, bitmap.height - y)
+
+                val cropped = Bitmap.createBitmap(bitmap, x, y, w, h)
+                if (cropped != bitmap) {
+                    bitmap.recycle()
+                    bitmap = cropped
+                }
+
+                bitmap = scaleToMaxEdge(bitmap)
+                result.success(compress(bitmap))
+            } finally {
+                bitmap.recycle()
+            }
+        } catch (e: Exception) {
+            Log.w(TAG, "Could not crop the capture", e)
+            result.error("IMAGE_UNREADABLE", "That photo could not be read", null)
+        } finally {
+            runCatching { file.delete() }
+        }
+    }
+
     private fun loadScaledJpeg(uri: Uri): ByteArray {
         // Read the header first so the full-size bitmap is never decoded: a 50 MP
         // photo would be 200 MB in memory before any scaling could happen.

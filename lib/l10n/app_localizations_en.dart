@@ -1934,16 +1934,25 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String get onboardingWelcomeBody =>
-      'An offline vault for the cards and documents you would rather not carry. Everything you save stays on this phone.';
+  String get cameraTitle => 'Take a photo';
 
   @override
-  String get onboardingReadPolicy => 'Read the privacy policy';
+  String get cameraGuideHint => 'Line the card or document up inside the frame';
 
   @override
-  String get onboardingAgreeNote =>
-      'By continuing, you agree to Karde\'s privacy policy. Karde will ask your permission separately for anything it needs from your phone, at the moment it needs it.';
+  String get cameraRetake => 'Retake';
 
   @override
-  String get onboardingAgreeContinue => 'Agree and continue';
+  String get cameraUsePhoto => 'Use this photo';
+
+  @override
+  String get cameraCaptureFailed =>
+      'That photo could not be taken. Please try again.';
+
+  @override
+  String get cameraUnavailable =>
+      'Karde does not have permission to use the camera. You can take the photo with your phone\'s camera app instead.';
+
+  @override
+  String get cameraUsePhoneCamera => 'Use my phone\'s camera';
 }

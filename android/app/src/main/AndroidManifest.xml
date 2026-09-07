@@ -7,6 +7,11 @@
          received — the reminder is worked out here and shown here. -->
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS"/>
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
+    <!-- Karde's own camera screen, which draws a guide so a card or document
+         is framed square instead of at an angle. Asked for at the moment the
+         user taps "Take a photo" and never before. Anyone who refuses can still
+         use their phone's camera app, which needs no permission from Karde. -->
+    <uses-permission android:name="android.permission.CAMERA"/>
     <application
         android:label="Karde"
         android:name="${applicationName}"
