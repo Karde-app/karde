@@ -642,6 +642,10 @@ class AppLocalizationsAr extends AppLocalizations {
       'اختر عبارة مرور أطول أو أكثر تنوعاً. تُحدَّث هذه النسخة باستمرار، لذا يستحق الأمر بعض الوقت.';
 
   @override
+  String get passphraseNeedsMixForBackup =>
+      'لا تستخدم الأرقام وحدها — أضف حروفاً أو بضع كلمات. الأرقام وحدها هي أول ما يجربه أي شخص يحاول التخمين.';
+
+  @override
   String get backupSetupFolderTitle => 'اختر مكان الحفظ';
 
   @override

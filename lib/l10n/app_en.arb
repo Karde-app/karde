@@ -209,6 +209,7 @@
   "backupSetupPassphraseBody": "You will need it to get your things back. Karde cannot look it up or reset it for you, so write it down and keep it somewhere safe.",
   "backupSetupPassphraseDone": "Passphrase chosen",
   "passphraseTooWeakForBackup": "Please choose a longer passphrase, or add some variety. This copy is kept up to date all the time, so it is worth a moment.",
+  "passphraseNeedsMixForBackup": "Please use more than just numbers — add some letters, or a few words. Numbers alone are the first thing anyone guessing would try.",
   "backupSetupFolderTitle": "Choose where it goes",
   "backupSetupFolderBody": "Pick a folder on your phone. If you pick one that syncs to cloud storage, your copy survives losing the phone as well.",
   "backupSetupFolderAction": "Choose a folder",

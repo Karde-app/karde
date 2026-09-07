@@ -120,6 +120,10 @@ class _BackupSetupScreenState extends ConsumerState<BackupSetupScreen> {
           .read(autoBackupServiceProvider)
           .configure(passphrase: passphrase, folderChoice: folder);
       if (!mounted) return;
+      // Or the bell goes on saying "no backup yet" until the app is restarted,
+      // which is exactly when the user is looking for confirmation it worked.
+      ref.invalidate(autoBackupConfiguredProvider);
+      ref.invalidate(autoBackupSetupProvider);
       await _confirmItIsOn(loc, folder.label);
       if (mounted) _leave();
     } on BackupSelfTestFailed {

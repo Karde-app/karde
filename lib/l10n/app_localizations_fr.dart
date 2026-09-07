@@ -649,6 +649,10 @@ class AppLocalizationsFr extends AppLocalizations {
       'Choisissez une phrase secrète plus longue, ou plus variée. Cette copie est tenue à jour en permanence : cela vaut la peine d\'y consacrer un instant.';
 
   @override
+  String get passphraseNeedsMixForBackup =>
+      'N\'utilisez pas uniquement des chiffres : ajoutez des lettres ou quelques mots. Les chiffres seuls sont la première chose que testerait quiconque essaie de deviner.';
+
+  @override
   String get backupSetupFolderTitle => 'Choisissez l\'emplacement';
 
   @override

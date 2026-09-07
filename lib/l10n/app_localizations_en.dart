@@ -644,6 +644,10 @@ class AppLocalizationsEn extends AppLocalizations {
       'Please choose a longer passphrase, or add some variety. This copy is kept up to date all the time, so it is worth a moment.';
 
   @override
+  String get passphraseNeedsMixForBackup =>
+      'Please use more than just numbers — add some letters, or a few words. Numbers alone are the first thing anyone guessing would try.';
+
+  @override
   String get backupSetupFolderTitle => 'Choose where it goes';
 
   @override

@@ -1312,6 +1312,12 @@ abstract class AppLocalizations {
   /// **'Please choose a longer passphrase, or add some variety. This copy is kept up to date all the time, so it is worth a moment.'**
   String get passphraseTooWeakForBackup;
 
+  /// No description provided for @passphraseNeedsMixForBackup.
+  ///
+  /// In en, this message translates to:
+  /// **'Please use more than just numbers — add some letters, or a few words. Numbers alone are the first thing anyone guessing would try.'**
+  String get passphraseNeedsMixForBackup;
+
   /// No description provided for @backupSetupFolderTitle.
   ///
   /// In en, this message translates to:

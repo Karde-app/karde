@@ -8,6 +8,8 @@ import '../../../l10n/app_localizations.dart';
 import '../../../theme/theme.dart';
 import '../../backup/data/auto_backup_recorder.dart';
 import '../../backup/presentation/backup_setup_screen.dart';
+import '../../cards/data/card_repository.dart';
+import '../../ids/data/id_repository.dart';
 import '../domain/karde_alert.dart';
 
 /// Everything Karde currently wants to say, worst first.
@@ -48,8 +50,14 @@ final kardeAlertsProvider = Provider<List<KardeAlert>>((ref) {
     ));
   }
 
+  // Only once there is something to lose. An empty vault has nothing to back up,
+  // and a bell on a brand new install — before the user has added anything at
+  // all — is the app asking for work before it has done any.
+  final hasItems = (ref.watch(cardsProvider).valueOrNull?.length ?? 0) +
+          (ref.watch(idsProvider).valueOrNull?.length ?? 0) >
+      0;
   final configured = ref.watch(autoBackupConfiguredProvider).valueOrNull;
-  if (configured == false) {
+  if (hasItems && configured == false) {
     alerts.add(const KardeAlert(
       id: 'backup-not-set-up',
       severity: KardeAlertSeverity.notice,
@@ -269,14 +277,16 @@ class AlertsSheet extends ConsumerWidget {
           () => EncryptionService().openSecuritySettings(),
         );
       case 'backup-failing':
+        // Try again, rather than opening setup. Backup is already set up — that
+        // is why this alert exists — and sending someone to the setup screen
+        // invites them to configure it a second time over the top of a folder
+        // that already holds their backup. The commonest cause here is no
+        // signal, which needs nothing configured and only another attempt.
         return (
           loc.backupFailedTitle,
           loc.backupNotSavingShort,
           loc.alertsFix,
-          () => Navigator.push(
-                context,
-                MaterialPageRoute(builder: (_) => const BackupSetupScreen()),
-              ),
+          () => ref.read(autoBackupRecorderProvider).retryQuietly(),
         );
       case 'backup-not-set-up':
         return (

@@ -65,12 +65,35 @@ class AutoBackupRecorder {
   /// See [lastWriteFailed]. Every caller reaches here having already written to
   /// the vault, so nothing above this line can usefully treat a backup failure
   /// as a failed save — and treating it that way actively misled the user.
+  /// How long to wait before deciding a failed write really failed.
+  ///
+  /// A cloud folder is not a disk. The user reported the first card after setup
+  /// saying "could not be copied", the alert appearing with a Fix button, and
+  /// then the whole thing clearing itself a few seconds later with the file
+  /// correctly updated — the provider had simply not finished settling after
+  /// creating the folder's first file.
+  ///
+  /// Everything about that was working as designed, and all of it was wrong to
+  /// show. An alert that resolves itself before the user has finished reading it
+  /// teaches them that alerts are noise, which is expensive on the day one is
+  /// not. So a save waits and tries once more before saying anything.
+  ///
+  /// Only on the user's own save, where somebody is watching and a moment costs
+  /// nothing. The background retry does not wait: nobody is reading it.
+  static const Duration _settlePause = Duration(milliseconds: 1200);
+
   Future<void> _record(Future<void> Function() write) async {
     try {
       await write();
       _lastWriteFailed = false;
     } catch (_) {
-      _lastWriteFailed = true;
+      try {
+        await Future<void>.delayed(_settlePause);
+        await _service.flushPending();
+        _lastWriteFailed = false;
+      } catch (_) {
+        _lastWriteFailed = true;
+      }
     }
     // Published so the dashboard can say the backup has fallen behind. Only ever
     // cleared by a write that succeeds, which is the point: a folder that comes

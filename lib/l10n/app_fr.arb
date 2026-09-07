@@ -202,6 +202,7 @@
   "backupSetupPassphraseBody": "Vous en aurez besoin pour récupérer vos données. Karde ne peut ni la retrouver ni la réinitialiser : notez-la et gardez-la en lieu sûr.",
   "backupSetupPassphraseDone": "Phrase secrète choisie",
   "passphraseTooWeakForBackup": "Choisissez une phrase secrète plus longue, ou plus variée. Cette copie est tenue à jour en permanence : cela vaut la peine d'y consacrer un instant.",
+  "passphraseNeedsMixForBackup": "N'utilisez pas uniquement des chiffres : ajoutez des lettres ou quelques mots. Les chiffres seuls sont la première chose que testerait quiconque essaie de deviner.",
   "backupSetupFolderTitle": "Choisissez l'emplacement",
   "backupSetupFolderBody": "Choisissez un dossier sur votre téléphone. Si vous en choisissez un synchronisé avec le cloud, votre copie survivra aussi à la perte du téléphone.",
   "backupSetupFolderAction": "Choisir un dossier",

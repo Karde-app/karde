@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import '../../../l10n/app_localizations.dart';
+import '../../../core/widgets/karde_feedback.dart';
+import '../../backup/presentation/backup_feedback.dart';
 import '../../../core/widgets/karde_confirm_dialog.dart';
 import '../../../core/security/encryption_service.dart';
 import '../../../core/security/window_security_service.dart';
@@ -123,7 +125,14 @@ class _IdDetailsScreenState extends ConsumerState<IdDetailsScreen> {
         // The photo lives inside the row's payload, so deleting the row deletes
         // it too. Nothing else to clean up.
         await ref.read(idsProvider.notifier).deleteId(widget.idDoc.id!);
-        if (mounted) Navigator.pop(context);
+        if (!mounted) return;
+        final message = backupAwareMessage(
+          context,
+          ref,
+          AppLocalizations.of(context)!.idRemoved,
+        );
+        Navigator.pop(context);
+        KardeFeedback.success(context, message);
       }
     }
   }

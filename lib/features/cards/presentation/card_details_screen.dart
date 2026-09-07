@@ -7,6 +7,9 @@ import 'package:intl/intl.dart';
 import '../../../../core/security/authentication_service.dart';
 import '../../../../core/security/window_security_service.dart';
 import '../../../l10n/app_localizations.dart';
+import '../../../core/widgets/karde_feedback.dart';
+import '../../backup/presentation/backup_feedback.dart';
+import '../../backup/presentation/backup_feedback.dart';
 import '../../../core/widgets/karde_confirm_dialog.dart';
 import '../../../../core/storage/settings_repository.dart';
 import '../../../core/security/encryption_service.dart';
@@ -121,14 +124,23 @@ class _CardDetailsScreenState extends ConsumerState<CardDetailsScreen> {
       // Require Biometric Auth to actually delete
       final authService = AuthenticationService();
       final settings = ref.read(settingsRepositoryProvider);
+      final loc = AppLocalizations.of(context)!;
       final authenticated = await authService.authenticate(context, settings);
-      
+
       if (authenticated && mounted) {
+        // Through the notifier, not the repository. Going straight to the
+        // repository skipped the automatic backup entirely, so a deleted card
+        // stayed in the backup file and would have come back on the next
+        // restore — a card the user had deliberately got rid of, returning
+        // without explanation. The ID screen already went the right way.
+        //
         // The photo lives inside the row's payload, so deleting the row deletes
         // it too. Nothing else to clean up.
-        await ref.read(cardRepositoryProvider).deleteCard(widget.card.id!);
-        ref.invalidate(cardsProvider);
-        if (mounted) Navigator.pop(context); // Go back to Home
+        await ref.read(cardsProvider.notifier).deleteCard(widget.card.id!);
+        if (!mounted) return;
+        final message = backupAwareMessage(context, ref, loc.cardRemoved);
+        Navigator.pop(context); // Go back to Home
+        KardeFeedback.success(context, message);
       }
     }
   }

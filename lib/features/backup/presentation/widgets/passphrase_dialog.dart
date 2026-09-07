@@ -99,6 +99,27 @@ class PassphraseDialog extends StatefulWidget {
   ///
   /// So it is a nudge, not a verdict. What matters is that it stops saying yes
   /// to the things people reach for first.
+  /// How many kinds of character are in use: lower, upper, digits, everything
+  /// else.
+  ///
+  /// Separate from [strengthOf] because it answers a different question. Strength
+  /// asks how large the search space is, and by that measure nineteen digits is
+  /// enormous — larger than eight mixed characters. The trouble is that nobody
+  /// chooses nineteen random digits. They choose a phone number, a date, or a
+  /// walk down the keypad, and an attacker tries exactly those first.
+  ///
+  /// So the automatic backup asks for this as well: not because a mixture is
+  /// stronger in theory, but because "digits only" is a shape that reveals the
+  /// passphrase was not chosen at random, and the arithmetic cannot see that.
+  static int characterKindsIn(String value) {
+    var kinds = 0;
+    if (RegExp(r'[a-z]').hasMatch(value)) kinds++;
+    if (RegExp(r'[A-Z]').hasMatch(value)) kinds++;
+    if (RegExp(r'[0-9]').hasMatch(value)) kinds++;
+    if (RegExp(r'[^A-Za-z0-9]').hasMatch(value)) kinds++;
+    return kinds;
+  }
+
   static ({double fraction, PassphraseStrength band, bool weak}) strengthOf(String value) {
     if (value.isEmpty) {
       return (fraction: 0, band: PassphraseStrength.empty, weak: true);
@@ -288,6 +309,13 @@ class _PassphraseDialogState extends State<PassphraseDialog> {
                     widget.requireStrong &&
                     PassphraseDialog.strengthOf(text).weak) {
                   return loc.passphraseTooWeakForBackup;
+                }
+                // See characterKindsIn. Nineteen digits passes the arithmetic
+                // and fails the real world.
+                if (widget.isCreating &&
+                    widget.requireStrong &&
+                    PassphraseDialog.characterKindsIn(text) < 2) {
+                  return loc.passphraseNeedsMixForBackup;
                 }
                 return null;
               },
