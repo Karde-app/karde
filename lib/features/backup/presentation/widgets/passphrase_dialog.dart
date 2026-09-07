@@ -1,3 +1,5 @@
+import 'dart:math' as math;
+
 import 'package:flutter/material.dart';
 
 import '../../../../l10n/app_localizations.dart';
@@ -73,34 +75,58 @@ class PassphraseDialog extends StatefulWidget {
   /// past the floor rather than let them sit on it.
   static const int minimumLength = 8;
 
-  /// A rough, deliberately conservative strength read for the meter.
+  /// How much guessing a passphrase would actually cost, roughly.
   ///
-  /// Not an entropy calculation and not presented as one: it rewards length
-  /// first, because length dominates, and character variety second. Anything
-  /// clever here would only invite trusting it.
+  /// Length times the size of the alphabet it draws on, which is the shape of
+  /// the real answer: an attacker holding the file guesses offline, and what
+  /// slows them is how many possibilities there are.
+  ///
+  /// The previous version scored length and variety separately and added them
+  /// up, which let `12345678910` through as "reasonable". It is eleven
+  /// characters, so it scored well on length; the single point it lost for using
+  /// only digits was not enough to matter. But eleven digits is ten to the
+  /// eleventh, while eleven mixed characters is nearer ten to the twenty-first —
+  /// a difference of a hundred billion times, which no amount of arithmetic that
+  /// merely *adds* a penalty can express. Multiplying is the only way to say it,
+  /// which is what this does.
+  ///
+  /// Two honest limits. It assumes characters chosen at random, which nobody
+  /// does, so it flatters "Password1!" and would flatter a birthday. And it is
+  /// generous to a phrase of ordinary words — "correct horse battery staple" is
+  /// scored on its length rather than on there being only so many common words —
+  /// which is the right direction to be generous in, since such phrases are both
+  /// strong and memorable, but it is not a claim about that particular one.
+  ///
+  /// So it is a nudge, not a verdict. What matters is that it stops saying yes
+  /// to the things people reach for first.
   static ({double fraction, PassphraseStrength band, bool weak}) strengthOf(String value) {
     if (value.isEmpty) {
       return (fraction: 0, band: PassphraseStrength.empty, weak: true);
     }
 
-    var classes = 0;
-    if (RegExp(r'[a-z]').hasMatch(value)) classes++;
-    if (RegExp(r'[A-Z]').hasMatch(value)) classes++;
-    if (RegExp(r'[0-9]').hasMatch(value)) classes++;
-    if (RegExp(r'[^A-Za-z0-9]').hasMatch(value)) classes++;
+    // How many characters an attacker would have to try per position.
+    var alphabet = 0;
+    if (RegExp(r'[a-z]').hasMatch(value)) alphabet += 26;
+    if (RegExp(r'[A-Z]').hasMatch(value)) alphabet += 26;
+    if (RegExp(r'[0-9]').hasMatch(value)) alphabet += 10;
+    if (RegExp(r'[^A-Za-z0-9]').hasMatch(value)) alphabet += 33;
 
-    // Length is worth up to 0.7, variety up to 0.3.
-    final lengthScore = (value.length / 20).clamp(0.0, 1.0) * 0.7;
-    final varietyScore = (classes / 4) * 0.3;
-    final score = lengthScore + varietyScore;
+    final bits = value.length * (math.log(alphabet) / math.ln2);
+
+    // 90 bits is well past anything the bands below care about, so the meter
+    // fills before "strong" rather than only at some unreachable ideal.
+    final score = (bits / 90).clamp(0.0, 1.0);
 
     if (value.length < minimumLength) {
       return (fraction: score, band: PassphraseStrength.tooShort, weak: true);
     }
-    if (score < 0.45) {
+    // 45 bits against 600,000 rounds of key derivation is already a serious
+    // amount of compute; below it, an attacker with a graphics card and a
+    // weekend is a real prospect.
+    if (bits < 45) {
       return (fraction: score, band: PassphraseStrength.weak, weak: true);
     }
-    if (score < 0.7) {
+    if (bits < 70) {
       return (fraction: score, band: PassphraseStrength.reasonable, weak: false);
     }
     return (fraction: score, band: PassphraseStrength.strong, weak: false);

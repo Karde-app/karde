@@ -81,6 +81,52 @@ void main() {
     });
   });
 
+  group('Passphrases people actually reach for', () {
+    // Reported from the device: the automatic backup accepted "12345678910".
+    // Eleven characters scored well on length, and the single point lost for
+    // using only digits was not enough to matter — so a purely numeric
+    // passphrase passed a check meant to refuse weak ones.
+    //
+    // Eleven digits is ten to the eleventh. Eleven mixed characters is nearer
+    // ten to the twenty-first. No scheme that merely subtracts a penalty for
+    // low variety can express a difference of a hundred billion times.
+
+    test('digits only is weak however long it looks', () {
+      for (final digitsOnly in ['12345678', '12345678910', '0000000000000']) {
+        expect(
+          PassphraseDialog.strengthOf(digitsOnly).weak,
+          isTrue,
+          reason: '$digitsOnly draws on ten characters per position, which is '
+              'what an attacker guessing offline actually faces.',
+        );
+      }
+    });
+
+    test('so is a short run of one kind of letter', () {
+      expect(PassphraseDialog.strengthOf('password').weak, isTrue);
+      expect(PassphraseDialog.strengthOf('ABCDEFGH').weak, isTrue);
+    });
+
+    test('mixing kinds is what makes a short one workable', () {
+      // Eight characters is the floor, and it only clears the bar by using the
+      // whole keyboard.
+      expect(PassphraseDialog.strengthOf('Tr7!kQ2z').weak, isFalse);
+    });
+
+    test('a phrase of ordinary words is not punished for being lowercase', () {
+      // The check must not push people away from the one kind of passphrase
+      // that is both strong and memorable.
+      final phrase = PassphraseDialog.strengthOf('correct horse battery staple');
+      expect(phrase.weak, isFalse);
+      expect(phrase.band, PassphraseStrength.strong);
+    });
+
+    test('anything under the floor is refused before strength is discussed', () {
+      expect(PassphraseDialog.strengthOf('Tr7!kQ').band,
+          PassphraseStrength.tooShort);
+    });
+  });
+
   group('Backup passphrase strength', () {
     test('the minimum is enforced as a floor', () {
       expect(PassphraseDialog.minimumLength, 8);
@@ -738,7 +784,7 @@ void main() {
     });
   });
 
-  group("Onboarding cannot end without arranging a backup", () {
+  group("Where the backup is offered", () {
     // The backup is the only thing that survives losing the phone or turning off
     // its screen lock. A screen lock or a PIN can be changed whenever the user
     // likes; a backup arranged after the phone is gone protects nothing.
@@ -777,10 +823,23 @@ void main() {
       }
     });
 
-    test("the handoff arranges the backup before entering the app", () {
+    test("onboarding does not ask for a backup", () {
+      // It did, briefly. Asking someone who has not yet seen a single screen to
+      // invent a passphrase, write it down and choose a folder — for a copy of a
+      // vault that is still empty — is where people put the phone down. The
+      // offer belongs where there is something to lose.
       final source =
           File("lib/features/onboarding/presentation/onboarding_finish.dart")
-              .readAsStringSync();
+              .readAsLinesSync()
+              .where((line) => !line.trimLeft().startsWith("//"))
+              .join("\n");
+
+      expect(source.contains("BackupSetupScreen"), isFalse);
+    });
+
+    test("but the home screen offers one once there is something to lose", () {
+      final source = File("lib/features/home/presentation/dashboard_screen.dart")
+          .readAsStringSync();
 
       expect(source.contains("BackupSetupScreen"), isTrue);
     });

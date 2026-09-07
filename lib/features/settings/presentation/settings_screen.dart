@@ -15,6 +15,7 @@ import '../../onboarding/presentation/language_screen.dart';
 import '../../onboarding/presentation/recovery_setup_screen.dart';
 import '../../onboarding/presentation/security_questions_setup_screen.dart';
 import '../../backup/presentation/backup_screen.dart';
+import '../../backup/presentation/backup_setup_screen.dart';
 import '../../backup/data/auto_backup_recorder.dart';
 import 'privacy_policy_screen.dart';
 
@@ -215,6 +216,20 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
               },
             ),
           ),
+          if (ref.watch(autoBackupSetupProvider).valueOrNull == null)
+            _buildGlassContainer(
+              context: context,
+              child: _buildNavigationRow(
+                context: context,
+                title: loc.backupSetupTitle,
+                subtitle: loc.setUpBackupBody,
+                leadingIcon: Icons.cloud_upload_outlined,
+                onTap: () => Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (_) => const BackupSetupScreen()),
+                ),
+              ),
+            ),
           _buildAutoBackupNote(context),
           const SizedBox(height: 24),
 

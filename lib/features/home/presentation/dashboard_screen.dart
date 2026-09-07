@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../../core/storage/settings_repository.dart';
 import '../../backup/presentation/backup_screen.dart';
+import '../../backup/presentation/backup_setup_screen.dart';
 import '../../backup/data/auto_backup_recorder.dart';
 import '../../cards/data/card_repository.dart';
 import '../../cards/presentation/add_card_screen.dart';
@@ -600,15 +601,20 @@ class DashboardScreen extends ConsumerWidget {
 
   /// Shown to somebody with items and no backup arranged.
   ///
-  /// Only reachable by a vault that predates automatic backup, since setup is
-  /// now part of onboarding. Kept short and calm: it is an offer, not a telling
-  /// off, and it is on screen every time they open the app.
+  /// This is where backup is offered now. It was briefly the last step of
+  /// onboarding, which asked someone who had not yet seen a single screen to
+  /// invent a passphrase and choose a folder for a copy of an empty vault.
+  /// Here it appears once there is something to lose, which is both the honest
+  /// moment and the one where the offer makes sense.
+  ///
+  /// Kept short and calm: it is an offer, not a telling off, and it is on screen
+  /// every time they open the app until it is taken.
   Widget _buildSetUpBackup(
       BuildContext context, AppLocalizations loc, ThemeData theme) {
     return GestureDetector(
       onTap: () => Navigator.push(
         context,
-        MaterialPageRoute(builder: (_) => const BackupScreen()),
+        MaterialPageRoute(builder: (_) => const BackupSetupScreen()),
       ),
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 11),

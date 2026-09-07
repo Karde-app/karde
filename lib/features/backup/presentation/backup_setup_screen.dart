@@ -15,16 +15,19 @@ import 'widgets/passphrase_dialog.dart';
 /// people need a moment to think about, and burying it after a file picker is a
 /// good way to have it typed carelessly.
 ///
-/// Deliberately part of onboarding rather than something to find later. The
-/// backup is the only thing that survives losing the phone or turning off its
-/// screen lock, and a vault whose owner has not arranged one is a vault waiting
-/// to be lost. Everything else in setup can be changed afterwards; this one
-/// cannot be usefully added *after* the data it was meant to protect is gone.
+/// Reached from the home screen once there is something to lose, and from
+/// Settings at any time. It was briefly the last step of onboarding, on the
+/// reasoning that a backup cannot usefully be arranged after the thing it
+/// protects is gone — true, but it asked the wrong thing of the wrong moment.
+/// Someone who has not yet seen a single screen was being asked to invent a
+/// passphrase, write it down and go and choose a folder, for a copy of a vault
+/// that was still empty. That is where people put the phone down.
 class BackupSetupScreen extends ConsumerStatefulWidget {
-  const BackupSetupScreen({super.key, required this.onDone});
+  const BackupSetupScreen({super.key, this.onDone});
 
-  /// Called once the backup is on. Onboarding uses this to enter the app.
-  final VoidCallback onDone;
+  /// What to do once the backup is on. Null simply closes the screen, which is
+  /// what both of its callers want.
+  final VoidCallback? onDone;
 
   @override
   ConsumerState<BackupSetupScreen> createState() => _BackupSetupScreenState();
@@ -89,7 +92,16 @@ class _BackupSetupScreenState extends ConsumerState<BackupSetupScreen> {
   /// visit until backup is set up, and Settings can do it at any time. What it
   /// avoids is a phone on which Karde cannot be used at all.
   void _continueWithout() {
-    widget.onDone();
+    _leave();
+  }
+
+  void _leave() {
+    final onDone = widget.onDone;
+    if (onDone != null) {
+      onDone();
+    } else if (mounted) {
+      Navigator.pop(context);
+    }
   }
 
   Future<void> _finish() async {
@@ -109,7 +121,7 @@ class _BackupSetupScreenState extends ConsumerState<BackupSetupScreen> {
           .configure(passphrase: passphrase, folderChoice: folder);
       if (!mounted) return;
       await _confirmItIsOn(loc, folder.label);
-      if (mounted) widget.onDone();
+      if (mounted) _leave();
     } on BackupSelfTestFailed {
       // The phone wrote a backup it could not read back. Nothing here is the
       // user's doing and nothing they can fix, so the message says what happened
