@@ -595,8 +595,10 @@ class _AddCardScreenState extends ConsumerState<AddCardScreen> {
                 validator: (value) {
                   final req = Validators.validateRequired(context, value);
                   if (req != null) return req;
-                  if (value!.contains(RegExp(r'[0-9]'))) return AppLocalizations.of(context)!.lettersAndSymbolsNotAllowed;
-                  if (value.contains(RegExp(r"[^a-zA-Z\s\.\-']"))) return AppLocalizations.of(context)!.lettersAndSymbolsNotAllowed;
+                  // Named for what was actually typed. One message covering both read
+                  // as "letters are not allowed" in a field that can hold nothing else.
+                  if (value!.contains(RegExp(r'[0-9]'))) return loc.numbersNotAllowed;
+                  if (value.contains(RegExp(r"[^a-zA-Z\s\.\-']"))) return loc.symbolsNotAllowed;
                   return null;
                 },
               ),

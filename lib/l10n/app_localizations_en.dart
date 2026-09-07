@@ -400,8 +400,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get numbersOnly => 'Numbers only';
 
   @override
-  String get lettersAndSymbolsNotAllowed =>
-      'Letters and symbols are not allowed';
+  String get numbersNotAllowed => 'Numbers are not allowed';
+
+  @override
+  String get symbolsNotAllowed => 'Symbols are not allowed';
 
   @override
   String get kardeIsLocked => 'Karde is Locked';

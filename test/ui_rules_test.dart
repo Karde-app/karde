@@ -6,6 +6,7 @@ import 'package:ibank/core/security/authentication_service.dart';
 
 import 'package:flutter_test/flutter_test.dart';
 import 'package:ibank/features/backup/presentation/widgets/passphrase_dialog.dart';
+import 'package:ibank/core/widgets/guided_camera_screen.dart';
 import 'package:ibank/features/cards/domain/virtual_card.dart';
 import 'package:ibank/features/ids/domain/virtual_id.dart';
 import 'package:ibank/features/ids/presentation/add_id_screen.dart';
@@ -1029,6 +1030,142 @@ void main() {
         expect(line!.group(0), contains('tools:node="remove"'),
             reason: "$permission must be stripped from the merged manifest");
       }
+    });
+  });
+
+  group("Karde's camera", () {
+    // The guide is described in fractions of two different edges, so the two
+    // numbers are not interchangeable and the arithmetic is easy to get backwards
+    // — which is exactly what happened: the rectangle on the phone was nearly the
+    // full height of the screen and nothing like the shape of a card.
+    double shapeOnScreen(double previewAspect) {
+      final guide = GuidedCameraScreen.guideFor(previewAspect);
+      // The preview box is `1 / previewAspect` wide for every 1 tall, so the
+      // guide's real width in pixels is scaled by that and its height is not.
+      return (guide.width / previewAspect) / guide.height;
+    }
+
+    test("the guide is card-shaped on screen, whatever the preview's shape", () {
+      for (final previewAspect in [4 / 3, 16 / 9, 3 / 2, 1.0]) {
+        expect(
+          shapeOnScreen(previewAspect),
+          closeTo(GuidedCameraScreen.cardAspectRatio, 0.02),
+          reason: "a $previewAspect preview must still frame a card shape",
+        );
+      }
+    });
+
+    test("and is nowhere near the full height of the screen", () {
+      // The reported symptom. Multiplying by the preview aspect where the
+      // formula divides asked for 0.96 of the height on a 16:9 preview and got
+      // the clamp.
+      expect(GuidedCameraScreen.guideFor(16 / 9).height, lessThan(0.5));
+      expect(GuidedCameraScreen.guideFor(4 / 3).height, lessThan(0.5));
+    });
+
+    test("the guide stays centred", () {
+      for (final previewAspect in [4 / 3, 16 / 9]) {
+        final guide = GuidedCameraScreen.guideFor(previewAspect);
+        expect(guide.left + guide.width / 2, closeTo(0.5, 0.001));
+        expect(guide.top + guide.height / 2, closeTo(0.5, 0.001));
+      }
+    });
+
+    test("the crop is told the preview's shape", () {
+      // The still photograph need not be the same shape as the preview, and on
+      // this phone it is not. Without this the crop lands somewhere other than
+      // where the brackets were.
+      final dart = File("lib/core/security/vault_image_service.dart")
+          .readAsStringSync();
+      final screen = File("lib/core/widgets/guided_camera_screen.dart")
+          .readAsStringSync();
+      final kotlin =
+          File("android/app/src/main/kotlin/com/karde/app/MainActivity.kt")
+              .readAsStringSync();
+
+      expect(dart.contains("'previewAspect': previewAspect"), isTrue);
+      expect(screen.contains("previewAspect: _previewAspect"), isTrue);
+      expect(kotlin.contains('call.argument<Double>("previewAspect")'), isTrue,
+          reason: "the native side reads it with !!, so a missing argument "
+              "would crash at the shutter rather than misplace the crop");
+    });
+
+    test("a bounds-only decode never null-checks through ?.use", () {
+      // This bug has now shipped twice in the same file. In inJustDecodeBounds
+      // mode BitmapFactory.decodeStream returns null by contract, so
+      //
+      //   openInputStream(uri)?.use { decodeStream(it, null, bounds) } ?: throw
+      //
+      // reads as "throw if the photo could not be opened" and does not mean it:
+      // the elvis sees the decode result, not the stream, and fires every single
+      // time. The first time it made every photo fail; the second time it made
+      // every shutter press say "That photo could not be taken."
+      //
+      // The stream must be held in its own variable and null-checked there.
+      final source =
+          File("android/app/src/main/kotlin/com/karde/app/ImageCapture.kt")
+              .readAsLinesSync()
+              .where((line) => !line.trimLeft().startsWith("//"))
+              .where((line) => !line.trimLeft().startsWith("*"))
+              .join("\n");
+
+      final dangerous = RegExp(
+        r'\?\.use\s*\{[^}]*decodeStream\([^)]*bounds\s*\)',
+        dotAll: true,
+      );
+
+      expect(
+        dangerous.hasMatch(source),
+        isFalse,
+        reason: "a bounds-only decode inside ?.use makes the ?: test the decode "
+            "result instead of the stream, and it throws on every image",
+      );
+    });
+  });
+
+  group("form messages name what was typed", () {
+    test("the cardholder name rejects digits and symbols separately", () {
+      // "Letters and symbols are not allowed" was shown for both, in a field
+      // where letters are the only thing that can go.
+      final source = File("lib/features/cards/presentation/add_card_screen.dart")
+          .readAsStringSync();
+
+      expect(
+        source.contains(r"RegExp(r'[0-9]'))) return loc.numbersNotAllowed"),
+        isTrue,
+        reason: "typing a digit must say numbers are not allowed",
+      );
+      expect(
+        source.contains("return loc.symbolsNotAllowed"),
+        isTrue,
+        reason: "typing a symbol must say symbols are not allowed",
+      );
+      expect(
+        source.contains("lettersAndSymbolsNotAllowed"),
+        isFalse,
+        reason: "the combined message told the user letters were the problem",
+      );
+    });
+
+    test("no name-field message tells the user letters are not allowed", () {
+      for (final locale in ["en", "fr", "ar"]) {
+        final arb = jsonDecode(File("lib/l10n/app_$locale.arb").readAsStringSync())
+            as Map<String, dynamic>;
+
+        expect(arb.containsKey("numbersNotAllowed"), isTrue,
+            reason: "$locale is missing the digits message");
+        expect(arb.containsKey("symbolsNotAllowed"), isTrue,
+            reason: "$locale is missing the symbols message");
+        expect(arb.containsKey("lettersAndSymbolsNotAllowed"), isFalse,
+            reason: "$locale still carries the message that named letters");
+      }
+
+      final en = jsonDecode(File("lib/l10n/app_en.arb").readAsStringSync())
+          as Map<String, dynamic>;
+      expect(en["numbersNotAllowed"].toString().toLowerCase(),
+          isNot(contains("letter")));
+      expect(en["symbolsNotAllowed"].toString().toLowerCase(),
+          isNot(contains("letter")));
     });
   });
 }

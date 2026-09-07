@@ -70,6 +70,7 @@ class VaultImageService {
     required double top,
     required double width,
     required double height,
+    required double previewAspect,
   }) async {
     try {
       final bytes = await _pickerChannel.invokeMethod<Uint8List>('cropCapture', {
@@ -78,6 +79,7 @@ class VaultImageService {
         'top': top,
         'width': width,
         'height': height,
+        'previewAspect': previewAspect,
       });
       if (bytes == null) {
         throw const VaultImageUnreadable(VaultImageProblem.unreadable);

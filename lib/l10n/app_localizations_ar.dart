@@ -396,7 +396,10 @@ class AppLocalizationsAr extends AppLocalizations {
   String get numbersOnly => 'أرقام فقط';
 
   @override
-  String get lettersAndSymbolsNotAllowed => 'الحروف والرموز غير مسموح بها';
+  String get numbersNotAllowed => 'الأرقام غير مسموح بها';
+
+  @override
+  String get symbolsNotAllowed => 'الرموز غير مسموح بها';
 
   @override
   String get kardeIsLocked => 'Karde مقفل';

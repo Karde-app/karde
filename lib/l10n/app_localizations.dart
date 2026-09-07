@@ -838,11 +838,17 @@ abstract class AppLocalizations {
   /// **'Numbers only'**
   String get numbersOnly;
 
-  /// No description provided for @lettersAndSymbolsNotAllowed.
+  /// No description provided for @numbersNotAllowed.
   ///
   /// In en, this message translates to:
-  /// **'Letters and symbols are not allowed'**
-  String get lettersAndSymbolsNotAllowed;
+  /// **'Numbers are not allowed'**
+  String get numbersNotAllowed;
+
+  /// No description provided for @symbolsNotAllowed.
+  ///
+  /// In en, this message translates to:
+  /// **'Symbols are not allowed'**
+  String get symbolsNotAllowed;
 
   /// No description provided for @kardeIsLocked.
   ///

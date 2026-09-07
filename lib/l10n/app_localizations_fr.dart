@@ -403,8 +403,10 @@ class AppLocalizationsFr extends AppLocalizations {
   String get numbersOnly => 'Chiffres uniquement';
 
   @override
-  String get lettersAndSymbolsNotAllowed =>
-      'Les lettres et les symboles ne sont pas autorisés';
+  String get numbersNotAllowed => 'Les chiffres ne sont pas autorisés';
+
+  @override
+  String get symbolsNotAllowed => 'Les symboles ne sont pas autorisés';
 
   @override
   String get kardeIsLocked => 'Karde est verrouillé';

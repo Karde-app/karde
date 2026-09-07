@@ -113,6 +113,7 @@ class MainActivity : FlutterFragmentActivity() {
                         call.argument<Double>("top")!!,
                         call.argument<Double>("width")!!,
                         call.argument<Double>("height")!!,
+                        call.argument<Double>("previewAspect")!!,
                         result,
                     )
                     else -> result.notImplemented()

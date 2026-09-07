@@ -50,6 +50,29 @@ class GuidedCameraScreen extends StatefulWidget {
   /// the user which kind of rectangle they are holding.
   static const double cardAspectRatio = 85.6 / 53.98;
 
+  /// The guide as fractions of the preview box, sized so that it *looks* like a
+  /// card.
+  ///
+  /// Fractions rather than pixels because the crop happens on the full
+  /// resolution photograph, which is far larger than anything on screen.
+  ///
+  /// The two fractions are measured against different edges, so they are not
+  /// interchangeable. The preview box is `1 / previewAspect` wide for every 1
+  /// tall, so a guide `width` across and `height` down has an on-screen shape of
+  /// `width / (height * previewAspect)`. Setting that equal to the card's shape
+  /// gives the line below.
+  ///
+  /// Multiplying by `previewAspect` where this divides — which is what it did —
+  /// inflates the height by the square of the preview's aspect ratio. On a 16:9
+  /// preview it asked for 0.96 and got the clamp: a tall rectangle almost the
+  /// full height of the screen, which is what was on the phone.
+  static Rect guideFor(double previewAspect) {
+    const width = guideWidthFraction;
+    final height =
+        (width / (previewAspect * cardAspectRatio)).clamp(0.05, 0.9);
+    return Rect.fromLTWH((1 - width) / 2, (1 - height) / 2, width, height);
+  }
+
   @override
   State<GuidedCameraScreen> createState() => _GuidedCameraScreenState();
 }
@@ -127,23 +150,9 @@ class _GuidedCameraScreenState extends State<GuidedCameraScreen>
     }
   }
 
-  /// The guide rectangle, as fractions of the picture.
-  ///
-  /// Fractions rather than pixels because the crop happens on the full
-  /// resolution photograph, which is far larger than anything on screen. The
-  /// preview is laid out at the camera's own aspect ratio precisely so that this
-  /// arithmetic holds: what the guide covers on screen is the same fraction of
-  /// the sensor.
-  Rect get _guide {
-    const width = GuidedCameraScreen.guideWidthFraction;
-    // The preview box is the camera's aspect ratio laid on its side, so a guide
-    // that is `width` across is `width * previewAspect / cardAspect` tall as a
-    // fraction of the box's height.
-    final previewAspect = _controller?.value.aspectRatio ?? (4 / 3);
-    final height =
-        (width * previewAspect / GuidedCameraScreen.cardAspectRatio).clamp(0.1, 0.9);
-    return Rect.fromLTWH((1 - width) / 2, (1 - height) / 2, width, height);
-  }
+  double get _previewAspect => _controller?.value.aspectRatio ?? (4 / 3);
+
+  Rect get _guide => GuidedCameraScreen.guideFor(_previewAspect);
 
   Future<void> _capture() async {
     final controller = _controller;
@@ -159,6 +168,11 @@ class _GuidedCameraScreenState extends State<GuidedCameraScreen>
         top: guide.top,
         width: guide.width,
         height: guide.height,
+        // The fractions above are of the *preview*, and the still photograph is
+        // not obliged to be the same shape as it — many sensors preview 16:9 and
+        // photograph 4:3. Sent along so the crop can find the part of the photo
+        // the preview was actually showing instead of assuming they match.
+        previewAspect: _previewAspect,
       );
       if (mounted) setState(() => _pending = bytes);
     } catch (_) {
