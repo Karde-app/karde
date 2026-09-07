@@ -72,7 +72,6 @@ class _SecurityQuestionsVerificationScreenState extends ConsumerState<SecurityQu
         // Success
         final settings = ref.read(settingsRepositoryProvider);
         await settings.setFailedAttempts(0);
-        await settings.setIsPermanentlyLocked(false);
         await settings.setLockoutUntil(null);
 
         if (mounted) {

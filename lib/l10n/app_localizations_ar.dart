@@ -40,12 +40,8 @@ class AppLocalizationsAr extends AppLocalizations {
     String _temp0 = intl.Intl.pluralLogic(
       count,
       locale: localeName,
-      other: '$count عنصر مشفّر باستخدام AES-256-GCM',
-      many: '$count عنصراً مشفّراً باستخدام AES-256-GCM',
-      few: '$count عناصر مشفّرة باستخدام AES-256-GCM',
-      two: 'عنصران مشفّران باستخدام AES-256-GCM',
-      one: 'عنصر واحد مشفّر باستخدام AES-256-GCM',
-      zero: '$count عنصر مشفّر باستخدام AES-256-GCM',
+      other: '$count عناصر محفوظة بأمان',
+      one: 'عنصر واحد محفوظ بأمان',
     );
     return '$_temp0';
   }
@@ -293,10 +289,6 @@ class AppLocalizationsAr extends AppLocalizations {
       'تم التحقق بنجاح. يمكنك الآن تعيين رقم تعريف جديد.';
 
   @override
-  String get maxAttemptsReached =>
-      'تم الوصول إلى الحد الأقصى للمحاولات. يجب عليك إعادة تعيين رقم التعريف.';
-
-  @override
   String get appearance => 'المظهر';
 
   @override
@@ -337,7 +329,7 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get keepPinMessage =>
-      'سيتوقف Karde عن طلبه في الحالتين. إذا احتفظت به، فإن إعادة تفعيل هذا لاحقاً ستستخدم الرمز نفسه — لذا عليك تذكّره. وإذا حذفته، فستختار رمزاً جديداً في المرة القادمة.';
+      'سيتوقف Karde عن طلبه في الحالتين. إن احتفظت به، فإعادة التشغيل لاحقاً تستخدم الرمز نفسه. وإن حذفته، فستختار رمزاً جديداً في المرة القادمة.';
 
   @override
   String get keepPinKeep => 'الاحتفاظ به';
@@ -414,7 +406,7 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get noScreenLockBody =>
-      'يحمي Karde كل شيء باستخدام أمان هاتفك، لذلك لا يمكنه فتح أي شيء أو حفظه بدون قفل شاشة. عيّن رمزاً أو نمطاً أو كلمة مرور أو بصمة من إعدادات هاتفك، ثم عُد.';
+      'بدون قفل شاشة، لا يستطيع Karde فتح أي شيء أو حفظه. اضبط رمزاً أو نقشاً أو كلمة مرور أو بصمة في إعدادات هاتفك، ثم عد.';
 
   @override
   String get openPhoneSettings => 'فتح إعدادات الهاتف';
@@ -632,18 +624,18 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get backupSetupPassphraseBody =>
-      'ستحتاج إليها لاستعادة بياناتك على هاتف جديد. سيحتفظ Karde بنسخة منها على هذا الهاتف يمكنك مراجعتها ببصمتك، لكنه لا يستطيع إعادة تعيينها أبداً — وتلك النسخة تضيع بضياع الهاتف. اكتبها واحفظها في مكان آمن.';
+      'ستحتاج إليها لاستعادة بياناتك على هاتف جديد. ولا يستطيع Karde إعادة تعيينها، فاكتبها واحفظها في مكان آمن.';
 
   @override
   String get backupSetupPassphraseDone => 'تم اختيار عبارة المرور';
 
   @override
   String get passphraseTooWeakForBackup =>
-      'اختر عبارة مرور أطول أو أكثر تنوعاً. تُحدَّث هذه النسخة باستمرار، لذا يستحق الأمر بعض الوقت.';
+      'اختر عبارة مرور أطول، أو نوّع في الحروف قليلاً.';
 
   @override
   String get passphraseNeedsMixForBackup =>
-      'لا تستخدم الأرقام وحدها — أضف حروفاً أو بضع كلمات. الأرقام وحدها هي أول ما يجربه أي شخص يحاول التخمين.';
+      'استخدم أكثر من مجرد أرقام — أضف حروفاً أو بضع كلمات.';
 
   @override
   String get backupSetupFolderTitle => 'اختر مكان الحفظ';
@@ -849,11 +841,11 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get backupKeyInvalidated =>
-      'لم يعد مفتاح خزنتك صالحاً، لذا لا يمكن قراءة العناصر الموجودة. لا تزال الاستعادة من نسخة احتياطية تعمل.';
+      'لم يعد بالإمكان فتح العناصر الموجودة على هذا الهاتف. أما الاستعادة من نسخة احتياطية فما زالت تعمل.';
 
   @override
   String get backupExplainerPassphrase =>
-      'نسختك الاحتياطية مقفلة بعبارة مرور تختارها أنت. بدونها يصبح الملف غير قابل للقراءة — ولا يستطيع Karde استرجاعها لك، لذا احتفظ بها في مكان آمن.';
+      'نسختك الاحتياطية مقفلة بعبارة مرور تختارها. ولا يستطيع Karde استرجاعها، فاحفظها في مكان آمن.';
 
   @override
   String get backupExplainerOffline =>
@@ -881,7 +873,7 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get backupKeepFileSafe =>
-      'احتفظ بملف النسخة الاحتياطية في مكان تثق به. فهو يحوي كل ما في خزنتك، ولا يحميه سوى عبارة المرور التي اخترتها.';
+      'احفظ ملف النسخة الاحتياطية في مكان تثق به. فمن يملك الملف وعبارة المرور يستطيع فتحه.';
 
   @override
   String backupProgressCount(String label, int completed, int total) {
@@ -941,11 +933,11 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get screenLockExplainer =>
-      'يشفّر Karde كل عنصر بمفتاح محفوظ في العتاد الآمن داخل هاتفك، وهذا العتاد لا يحتفظ بأي مفتاح ما لم يكن الهاتف نفسه مقفلاً.\n\nأضف رمزاً أو نقشاً أو كلمة مرور أو بصمة في إعدادات هاتفك، ثم عد إلى هنا.';
+      'لا يستطيع Karde حفظ أي شيء أو فتحه ما لم يكن لهذا الهاتف قفل شاشة.\n\nأضف رمزاً أو نقشاً أو كلمة مرور أو بصمة في إعدادات هاتفك، ثم عد.';
 
   @override
   String get vaultKeyChangedItemsLost =>
-      'تغيّرت إعدادات الأمان في جهازك، لذا لم يعد مفتاح الخزنة صالحاً. لا يمكن استرجاع العناصر الموجودة.';
+      'تغيّرت إعدادات الأمان في هاتفك، ولم يعد بالإمكان فتح العناصر المحفوظة هنا. ولا يمكن استعادتها.';
 
   @override
   String get addCardDecryptFailed => 'تعذّر فك تشفير بيانات البطاقة الحالية.';
@@ -1102,7 +1094,7 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get idUnlockFailedWarning =>
-      'تعذّر فتح هذا المستند، لذا لا تظهر تفاصيله. تم تعطيل الحفظ لتفادي الكتابة فوق بياناتك. عد إلى الخلف وحاول مرة أخرى.';
+      'تعذّر فتح هذا المستند، لذا لا تظهر تفاصيله والحفظ معطّل. ارجع وحاول مرة أخرى.';
 
   @override
   String get customDocumentType => 'نوع مستند مخصّص';
@@ -1243,11 +1235,11 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get settingsLockExplainer =>
-      'تتحكم هذه الإعدادات في طريقة قفل Karde لنفسه. كما سيطلب منك هاتفك بصمتك أو قفل شاشتك في كل مرة تفتح فيها عنصراً، مهما كان اختيارك هنا.';
+      'سيطلب منك هاتفك أيضاً بصمتك أو قفل الشاشة كلما فتحت عنصراً.';
 
   @override
   String get settingsNoScreenLockWarning =>
-      'لا يحتوي هذا الهاتف على قفل شاشة، لذا لا يستطيع Karde حفظ عناصرك أو فتحها. أضف رمزاً أو نقشاً أو كلمة مرور أو بصمة في إعدادات هاتفك، ثم عد إلى هنا.';
+      'لا يوجد قفل شاشة على هذا الهاتف، لذا لا يستطيع Karde حفظ عناصرك أو فتحها. أضف رمزاً أو نقشاً أو كلمة مرور أو بصمة في إعدادات هاتفك، ثم عد.';
 
   @override
   String get passphraseTooShort => 'قصيرة جداً';
@@ -1274,7 +1266,7 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get passphraseCreateExplainer =>
-      'تشفّر عبارة المرور هذه ملف نسختك الاحتياطية. لا يستطيع Karde إعادة تعيينها ولا معرفتها؛ فإذا نُسيت ولم تُدوَّن في أي مكان، ضاعت النسخة الاحتياطية.';
+      'إذا نسيتها، لن يمكن فتح النسخة الاحتياطية. ولا يستطيع Karde إعادة تعيينها.';
 
   @override
   String get passphraseUnlockExplainer =>
@@ -1355,11 +1347,11 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get securityAnswersHashNoteChanging =>
-      'لا يمكن عرض إجاباتك الحالية. فهي تُشفَّر عند الحفظ، لذا يستطيع Karde استبدالها فقط ولا يستطيع قراءتها. والحفظ يستبدل كلتيهما.';
+      'لا يمكن إظهار إجاباتك الحالية، بل استبدالها فقط. والحفظ يستبدل كلتيهما.';
 
   @override
   String get securityAnswersHashNoteNew =>
-      'تُشفَّر إجاباتك قبل حفظها، فلا يستطيع أحد قراءتها — ولا حتى Karde. ولا يهمّ استخدام الأحرف الكبيرة أو المسافات.';
+      'لا فرق بين الأحرف الكبيرة والصغيرة ولا في المسافات.';
 
   @override
   String get alreadyUsedAbove => 'مستخدم بالفعل أعلاه';
@@ -1372,7 +1364,7 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get deleteCardMessage =>
-      'لا يمكن التراجع عن هذا. ستُحذف بيانات البطاقة نهائياً من الخزنة المشفّرة.';
+      'لا يمكن التراجع عن هذا. ستُحذف البطاقة نهائياً.';
 
   @override
   String get deletePermanently => 'حذف نهائي';
@@ -1409,7 +1401,7 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get deleteIdMessage =>
-      'لا يمكن التراجع عن هذا. ستُحذف بيانات الهوية نهائياً من الخزنة المشفّرة.';
+      'لا يمكن التراجع عن هذا. سيُحذف المستند نهائياً.';
 
   @override
   String get additionalDetails => 'تفاصيل إضافية';
@@ -1546,7 +1538,7 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get recoveryNoPinNote =>
-      'لقد اخترت فتح Karde باستخدام قفل هاتفك، لذا لا يوجد بعد رمز Karde يمكن استعادته. وإعداد هذا الآن يعني وجود طريق للعودة جاهز إن أضفت رمزاً لاحقاً.\n\nومن المفيد أن تعرف أيضاً: عناصرك مشفّرة بمفتاح محفوظ في شريحة الأمان داخل هاتفك. تغيير رمزك أو نقشك أو كلمة مرورك أو بصماتك آمن تماماً — وتبقى عناصرك قابلة للقراءة. لكن إذا أوقفت قفل الشاشة تماماً، فسيُدمَّر ذلك المفتاح ولن يستطيع أي شيء هنا استرجاع عناصرك. والنسخة الاحتياطية المشفّرة، من الإعدادات، هي الشيء الوحيد الذي ينجو من ذلك.';
+      'اخترت فتح Karde بقفل هاتفك، فلا يوجد بعد رمز Karde لاستعادته. وإعداد هذا الآن يعني أن طريق العودة جاهز إن أضفت رمزاً لاحقاً.';
 
   @override
   String get areYouSure => 'هل أنت متأكد؟';
@@ -1556,7 +1548,7 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get noScreenLockWarning =>
-      'لا يحتوي هذا الهاتف على قفل شاشة.\n\nيحفظ Karde مفتاح التشفير الخاص بك في شريحة الأمان داخل الهاتف، وهذه الشريحة لا تحتفظ بأي مفتاح ما لم يكن الهاتف نفسه مقفلاً. وإلى أن تضبط رمزاً أو نقشاً أو كلمة مرور أو بصمة في إعدادات هاتفك، لن يستطيع Karde حفظ أي عنصر أو فتحه.\n\nيمكنك إكمال الإعداد الآن، ثم إضافة قفل شاشة والعودة.';
+      'لا يوجد قفل شاشة على هذا الهاتف، لذا لا يستطيع Karde حفظ أي عناصر أو فتحها.\n\nأضف رمزاً أو نقشاً أو كلمة مرور أو بصمة في إعدادات هاتفك.\n\nيمكنك إكمال الإعداد الآن والعودة إلى ذلك لاحقاً.';
 
   @override
   String get backToLanguage => 'العودة إلى اللغة';
@@ -1616,26 +1608,28 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String pinLockedTryAgainIn(int seconds) {
-    return 'محاولات فاشلة كثيرة. أعد المحاولة خلال $seconds ثانية.';
-  }
-
-  @override
-  String get pinLockedOut => 'محاولات فاشلة كثيرة. تم القفل لمدة 30 ثانية.';
-
-  @override
-  String pinInvalidAttemptsLeft(int count) {
     String _temp0 = intl.Intl.pluralLogic(
-      count,
+      seconds,
       locale: localeName,
-      other: 'رمز غير صحيح. بقيت $count محاولة.',
-      many: 'رمز غير صحيح. بقيت $count محاولة.',
-      few: 'رمز غير صحيح. بقيت $count محاولات.',
-      two: 'رمز غير صحيح. بقيت محاولتان.',
-      one: 'رمز غير صحيح. بقيت محاولة واحدة.',
-      zero: 'رمز غير صحيح. بقيت $count محاولة.',
+      other: 'رمز غير صحيح. أعد المحاولة بعد $seconds ثانية.',
+      one: 'رمز غير صحيح. أعد المحاولة بعد ثانية واحدة.',
     );
     return '$_temp0';
   }
+
+  @override
+  String pinLockedTryAgainInMinutes(int minutes) {
+    String _temp0 = intl.Intl.pluralLogic(
+      minutes,
+      locale: localeName,
+      other: 'رمز غير صحيح. أعد المحاولة بعد $minutes دقيقة.',
+      one: 'رمز غير صحيح. أعد المحاولة بعد دقيقة واحدة.',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get pinInvalid => 'رمز غير صحيح.';
 
   @override
   String pinDigitSemantic(String digit) {
@@ -1743,7 +1737,7 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get passphraseRevealWarning =>
-      'هذه النسخة موجودة على هذا الهاتف فقط، فهي تضيع بضياعه — وهو تحديدًا الوقت الذي ستحتاجها فيه. دوّنها في مكان آخر أو احفظها في مدير كلمات مرور.';
+      'دوّنها في مكان غير هذا الهاتف، أو احفظها في مدير كلمات مرور. فإذا ضاع الهاتف ضاعت معه هذه النسخة.';
 
   @override
   String get passphraseCopied =>
@@ -1770,8 +1764,8 @@ class AppLocalizationsAr extends AppLocalizations {
     String _temp0 = intl.Intl.pluralLogic(
       count,
       locale: localeName,
-      other: 'حُفظت $count عناصر قبل تشغيل النسخ الاحتياطي، فلم تُنسخ قط.',
-      one: 'حُفظ عنصر واحد قبل تشغيل النسخ الاحتياطي، فلم يُنسخ قط.',
+      other: 'هناك $count عناصر ليست في نسختك الاحتياطية بعد.',
+      one: 'هناك عنصر واحد ليس في نسختك الاحتياطية بعد.',
     );
     return '$_temp0';
   }
@@ -1848,14 +1842,6 @@ class AppLocalizationsAr extends AppLocalizations {
   @override
   String get settingsExpiryRemindersDesc =>
       'نبّهني قبل انتهاء صلاحية بطاقة أو مستند';
-
-  @override
-  String get settingsExpiryRemindersNote =>
-      'تاريخ انتهاء الصلاحية ليس سرّاً — فهو مطبوع على وجه بطاقتك — لذا يحتفظ به Karde في مكان يستطيع قراءته، إلى جانب الاسم المستعار وآخر أربعة أرقام المحفوظة بالفعل هكذا. أما رقم البطاقة ورمز الأمان ورقم المستند والصورة فتبقى مشفّرة. وإيقاف التنبيهات يوقف التحذيرات فقط.';
-
-  @override
-  String get settingsExpiryRemindersShort =>
-      'يُحفظ تاريخ انتهاء الصلاحية في مكان يستطيع Karde قراءته، ليتمكن من تنبيهك.';
 
   @override
   String get notifyExpiringTitle => 'شيء في Karde أوشك على الانتهاء';

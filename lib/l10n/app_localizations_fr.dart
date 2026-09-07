@@ -40,8 +40,8 @@ class AppLocalizationsFr extends AppLocalizations {
     String _temp0 = intl.Intl.pluralLogic(
       count,
       locale: localeName,
-      other: '$count éléments chiffrés avec AES-256-GCM',
-      one: '1 élément chiffré avec AES-256-GCM',
+      other: '$count éléments, bien protégés',
+      one: '1 élément, bien protégé',
     );
     return '$_temp0';
   }
@@ -290,10 +290,6 @@ class AppLocalizationsFr extends AppLocalizations {
       'Vérification réussie. Vous pouvez maintenant définir un nouveau code PIN.';
 
   @override
-  String get maxAttemptsReached =>
-      'Nombre maximal de tentatives atteint. Vous devez réinitialiser votre code PIN.';
-
-  @override
   String get appearance => 'APPARENCE';
 
   @override
@@ -337,7 +333,7 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get keepPinMessage =>
-      'Dans les deux cas, Karde cessera de le demander. Si vous le conservez, le réactiver plus tard utilisera le même code — il faudra donc vous en souvenir. Si vous le supprimez, vous en choisirez un nouveau la prochaine fois.';
+      'Karde cessera de le demander dans les deux cas. Conservez-le, et le réactiver plus tard utilisera le même code. Supprimez-le, et vous en choisirez un nouveau la prochaine fois.';
 
   @override
   String get keepPinKeep => 'Le conserver';
@@ -419,7 +415,7 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get noScreenLockBody =>
-      'Karde protège tout avec la sécurité de votre téléphone : sans verrouillage d’écran, il ne peut rien ouvrir ni enregistrer. Définissez un code, un schéma, un mot de passe ou une empreinte dans les réglages de votre téléphone, puis revenez.';
+      'Sans verrouillage d\'écran, Karde ne peut rien ouvrir ni enregistrer. Définissez un code, un schéma, un mot de passe ou une empreinte dans les réglages de votre téléphone, puis revenez.';
 
   @override
   String get openPhoneSettings => 'Ouvrir les réglages du téléphone';
@@ -639,18 +635,18 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get backupSetupPassphraseBody =>
-      'Vous en aurez besoin pour récupérer vos données sur un nouveau téléphone. Karde en gardera une copie sur ce téléphone, consultable avec votre empreinte, mais il ne peut jamais réinitialiser la phrase secrète — et cette copie disparaît avec le téléphone. Notez-la et gardez-la en lieu sûr.';
+      'Vous en aurez besoin pour récupérer vos données sur un nouveau téléphone. Karde ne peut pas la réinitialiser : notez-la et gardez-la en lieu sûr.';
 
   @override
   String get backupSetupPassphraseDone => 'Phrase secrète choisie';
 
   @override
   String get passphraseTooWeakForBackup =>
-      'Choisissez une phrase secrète plus longue, ou plus variée. Cette copie est tenue à jour en permanence : cela vaut la peine d\'y consacrer un instant.';
+      'Choisissez une phrase secrète plus longue, ou variez un peu les caractères.';
 
   @override
   String get passphraseNeedsMixForBackup =>
-      'N\'utilisez pas uniquement des chiffres : ajoutez des lettres ou quelques mots. Les chiffres seuls sont la première chose que testerait quiconque essaie de deviner.';
+      'Utilisez autre chose que des chiffres — ajoutez des lettres ou quelques mots.';
 
   @override
   String get backupSetupFolderTitle => 'Choisissez l\'emplacement';
@@ -843,11 +839,11 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get backupKeyInvalidated =>
-      'La clé de votre coffre n\'est plus valide, les éléments existants ne peuvent donc pas être lus. La restauration à partir d\'une sauvegarde fonctionne toujours.';
+      'Les éléments déjà présents sur ce téléphone ne peuvent plus être ouverts. La restauration depuis une sauvegarde fonctionne toujours.';
 
   @override
   String get backupExplainerPassphrase =>
-      'Votre sauvegarde est verrouillée par une phrase secrète que vous choisissez. Sans elle, le fichier est illisible — et Karde ne peut pas la récupérer pour vous, alors conservez-la en lieu sûr.';
+      'Votre sauvegarde est verrouillée par une phrase secrète que vous choisissez. Karde ne peut pas la récupérer : gardez-la en lieu sûr.';
 
   @override
   String get backupExplainerOffline =>
@@ -875,7 +871,7 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get backupKeepFileSafe =>
-      'Conservez le fichier de sauvegarde dans un endroit sûr. Il contient tout ce que renferme votre coffre, protégé uniquement par la phrase secrète que vous avez choisie.';
+      'Conservez le fichier de sauvegarde dans un endroit de confiance. Toute personne disposant du fichier et de la phrase secrète peut l\'ouvrir.';
 
   @override
   String backupProgressCount(String label, int completed, int total) {
@@ -938,11 +934,11 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get screenLockExplainer =>
-      'Karde chiffre chaque élément avec une clé conservée dans le matériel sécurisé de votre téléphone, et ce matériel ne conserve une clé que si le téléphone lui-même est verrouillé.\n\nAjoutez un code, un schéma, un mot de passe ou une empreinte digitale dans les réglages de votre téléphone, puis revenez.';
+      'Karde ne peut rien enregistrer ni ouvrir tant que ce téléphone n\'a pas de verrouillage d\'écran.\n\nAjoutez un code, un schéma, un mot de passe ou une empreinte dans les réglages de votre téléphone, puis revenez.';
 
   @override
   String get vaultKeyChangedItemsLost =>
-      'Les réglages de sécurité de votre appareil ont changé, la clé du coffre n\'est donc plus valide. Les éléments existants ne peuvent pas être récupérés.';
+      'Les réglages de sécurité de votre téléphone ont changé, et les éléments enregistrés ici ne peuvent plus être ouverts. Ils sont irrécupérables.';
 
   @override
   String get addCardDecryptFailed =>
@@ -1105,7 +1101,7 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get idUnlockFailedWarning =>
-      'Ce document n\'a pas pu être déverrouillé, ses détails ne sont donc pas affichés. L\'enregistrement est désactivé pour éviter d\'écraser vos données. Revenez en arrière et réessayez.';
+      'Ce document n\'a pas pu être déverrouillé : ses détails ne sont pas affichés et l\'enregistrement est désactivé. Revenez en arrière et réessayez.';
 
   @override
   String get customDocumentType => 'Type de document personnalisé';
@@ -1247,11 +1243,11 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get settingsLockExplainer =>
-      'Ces réglages déterminent la façon dont Karde se verrouille. Votre téléphone vous demandera aussi votre empreinte ou votre verrouillage d\'écran chaque fois que vous ouvrez un élément, quel que soit votre choix ici.';
+      'Votre téléphone vous demandera aussi votre empreinte ou le verrouillage de l\'écran chaque fois que vous ouvrez un élément.';
 
   @override
   String get settingsNoScreenLockWarning =>
-      'Ce téléphone n\'a aucun verrouillage d\'écran, Karde ne peut donc ni enregistrer ni ouvrir vos éléments. Ajoutez un code, un schéma, un mot de passe ou une empreinte dans les réglages de votre téléphone, puis revenez.';
+      'Ce téléphone n\'a pas de verrouillage d\'écran, Karde ne peut donc ni enregistrer ni ouvrir vos éléments. Ajoutez un code, un schéma, un mot de passe ou une empreinte dans les réglages de votre téléphone, puis revenez.';
 
   @override
   String get passphraseTooShort => 'Trop courte';
@@ -1278,7 +1274,7 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get passphraseCreateExplainer =>
-      'Cette phrase secrète chiffre votre fichier de sauvegarde. Karde ne peut ni la réinitialiser ni la deviner : si elle est oubliée et notée nulle part, la sauvegarde est perdue.';
+      'Si vous l\'oubliez, la sauvegarde ne pourra pas être ouverte. Karde ne peut pas la réinitialiser.';
 
   @override
   String get passphraseUnlockExplainer =>
@@ -1366,11 +1362,11 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get securityAnswersHashNoteChanging =>
-      'Vos réponses actuelles ne peuvent pas être affichées. Elles sont brouillées à l’enregistrement : Karde peut seulement les remplacer, jamais les lire. Enregistrer remplace les deux.';
+      'Vos réponses actuelles ne peuvent pas être affichées, seulement remplacées. L\'enregistrement remplace les deux.';
 
   @override
   String get securityAnswersHashNoteNew =>
-      'Vos réponses sont brouillées avant d\'être enregistrées : personne ne peut les relire, pas même Karde. Les majuscules et les espaces n\'ont aucune importance.';
+      'Les majuscules et les espaces n\'ont pas d\'importance.';
 
   @override
   String get alreadyUsedAbove => 'Déjà utilisée ci-dessus';
@@ -1383,7 +1379,7 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get deleteCardMessage =>
-      'Cette action est irréversible. Les données de la carte seront définitivement supprimées du coffre chiffré.';
+      'Cette action est irréversible. La carte sera définitivement supprimée.';
 
   @override
   String get deletePermanently => 'Supprimer définitivement';
@@ -1421,7 +1417,7 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get deleteIdMessage =>
-      'Cette action est irréversible. Les données du document seront définitivement supprimées du coffre chiffré.';
+      'Cette action est irréversible. Le document sera définitivement supprimé.';
 
   @override
   String get additionalDetails => 'DÉTAILS SUPPLÉMENTAIRES';
@@ -1561,7 +1557,7 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get recoveryNoPinNote =>
-      'Vous avez choisi de déverrouiller Karde avec le verrouillage de votre téléphone : il n\'y a donc pas encore de code Karde à récupérer. Le configurer maintenant garantit qu\'une porte de secours existe déjà si vous en ajoutez un un jour.\n\nPar ailleurs, et c\'est bon à savoir : vos éléments sont chiffrés avec une clé conservée dans la puce de sécurité de votre téléphone. Changer votre code, votre schéma, votre mot de passe ou vos empreintes ne pose aucun problème — vos éléments restent lisibles. En revanche, si vous désactivez complètement le verrouillage d\'écran, cette clé est détruite et rien ici ne pourra récupérer vos éléments. Une sauvegarde chiffrée, depuis les Réglages, est la seule chose qui y survive.';
+      'Vous avez choisi de déverrouiller Karde avec le verrouillage de votre téléphone : il n\'y a donc pas encore de code Karde à récupérer. Le configurer maintenant garantit qu\'un moyen de revenir existe déjà si vous en ajoutez un.';
 
   @override
   String get areYouSure => 'Êtes-vous sûr(e) ?';
@@ -1571,7 +1567,7 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get noScreenLockWarning =>
-      'Ce téléphone n\'a aucun verrouillage d\'écran.\n\nKarde conserve votre clé de chiffrement dans la puce de sécurité du téléphone, et cette puce ne conserve une clé que si le téléphone lui-même est verrouillé. Tant que vous n\'aurez pas défini un code, un schéma, un mot de passe ou une empreinte dans les réglages de votre téléphone, Karde ne pourra ni enregistrer ni ouvrir le moindre élément.\n\nVous pouvez terminer la configuration maintenant, puis ajouter un verrouillage d\'écran et revenir.';
+      'Ce téléphone n\'a pas de verrouillage d\'écran, Karde ne peut donc ni enregistrer ni ouvrir d\'éléments.\n\nAjoutez un code, un schéma, un mot de passe ou une empreinte dans les réglages de votre téléphone.\n\nVous pouvez terminer la configuration maintenant et y revenir ensuite.';
 
   @override
   String get backToLanguage => 'Retour à la langue';
@@ -1636,23 +1632,28 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String pinLockedTryAgainIn(int seconds) {
-    return 'Trop de tentatives échouées. Réessayez dans $seconds s.';
-  }
-
-  @override
-  String get pinLockedOut =>
-      'Trop de tentatives échouées. Verrouillé pendant 30 secondes.';
-
-  @override
-  String pinInvalidAttemptsLeft(int count) {
     String _temp0 = intl.Intl.pluralLogic(
-      count,
+      seconds,
       locale: localeName,
-      other: 'Code incorrect. $count tentatives restantes.',
-      one: 'Code incorrect. 1 tentative restante.',
+      other: 'Code incorrect. Réessayez dans $seconds secondes.',
+      one: 'Code incorrect. Réessayez dans 1 seconde.',
     );
     return '$_temp0';
   }
+
+  @override
+  String pinLockedTryAgainInMinutes(int minutes) {
+    String _temp0 = intl.Intl.pluralLogic(
+      minutes,
+      locale: localeName,
+      other: 'Code incorrect. Réessayez dans $minutes minutes.',
+      one: 'Code incorrect. Réessayez dans 1 minute.',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get pinInvalid => 'Code incorrect.';
 
   @override
   String pinDigitSemantic(String digit) {
@@ -1765,7 +1766,7 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get passphraseRevealWarning =>
-      'Cette copie n\'existe que sur ce téléphone : elle disparaît avec lui, c\'est-à-dire précisément au moment où vous en auriez besoin. Notez-la ailleurs ou conservez-la dans un gestionnaire de mots de passe.';
+      'Notez-la ailleurs que sur ce téléphone, ou conservez-la dans un gestionnaire de mots de passe. Si le téléphone disparaît, cette copie disparaît avec lui.';
 
   @override
   String get passphraseCopied =>
@@ -1794,10 +1795,8 @@ class AppLocalizationsFr extends AppLocalizations {
     String _temp0 = intl.Intl.pluralLogic(
       count,
       locale: localeName,
-      other:
-          '$count éléments ont été enregistrés avant l\'activation de la sauvegarde : ils n\'ont donc jamais été copiés.',
-      one:
-          'Un élément a été enregistré avant l\'activation de la sauvegarde : il n\'a donc jamais été copié.',
+      other: '$count éléments ne sont pas encore dans votre sauvegarde.',
+      one: 'Un élément n\'est pas encore dans votre sauvegarde.',
     );
     return '$_temp0';
   }
@@ -1876,14 +1875,6 @@ class AppLocalizationsFr extends AppLocalizations {
   @override
   String get settingsExpiryRemindersDesc =>
       'Me prévenir avant qu\'une carte ou un document n\'expire';
-
-  @override
-  String get settingsExpiryRemindersNote =>
-      'Une date d\'expiration n\'est pas un secret — elle est imprimée au recto de votre carte — alors Karde la conserve là où il peut la lire, à côté du surnom et des quatre derniers chiffres déjà enregistrés ainsi. Le numéro de carte, le code de sécurité, le numéro du document et la photo restent chiffrés. Désactiver les rappels ne fait qu\'arrêter les avertissements.';
-
-  @override
-  String get settingsExpiryRemindersShort =>
-      'La date d\'expiration est conservée là où Karde peut la lire, afin de vous prévenir.';
 
   @override
   String get notifyExpiringTitle =>

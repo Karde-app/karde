@@ -40,8 +40,8 @@ class AppLocalizationsEn extends AppLocalizations {
     String _temp0 = intl.Intl.pluralLogic(
       count,
       locale: localeName,
-      other: '$count items encrypted with AES-256-GCM',
-      one: '1 item encrypted with AES-256-GCM',
+      other: '$count items, safely locked',
+      one: '1 item, safely locked',
     );
     return '$_temp0';
   }
@@ -290,10 +290,6 @@ class AppLocalizationsEn extends AppLocalizations {
       'Verification successful. You can now set a new PIN.';
 
   @override
-  String get maxAttemptsReached =>
-      'Maximum attempts reached. You must reset your PIN.';
-
-  @override
   String get appearance => 'APPEARANCE';
 
   @override
@@ -336,7 +332,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get keepPinMessage =>
-      'Karde will stop asking for it either way. Keep it, and switching this back on later uses the same PIN — so you would need to remember it. Delete it, and you choose a new one next time.';
+      'Karde will stop asking for it either way. Keep it, and switching this back on later uses the same PIN. Delete it, and you choose a new one next time.';
 
   @override
   String get keepPinKeep => 'Keep it';
@@ -415,7 +411,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get noScreenLockBody =>
-      'Karde keeps everything locked with your phone’s own security, so without a screen lock it cannot open or save anything. Set a PIN, pattern, password or fingerprint in your phone’s settings, then come back.';
+      'Without a screen lock, Karde cannot open or save anything. Set a PIN, pattern, password or fingerprint in your phone\'s settings, then come back.';
 
   @override
   String get openPhoneSettings => 'Open phone settings';
@@ -634,18 +630,18 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get backupSetupPassphraseBody =>
-      'You will need it to get your things back on a new phone. Karde will keep a copy on this phone that you can look up with your fingerprint, but it can never reset the passphrase — and that copy goes when the phone does. Write it down and keep it somewhere safe.';
+      'You will need it to get your things back on a new phone. Karde cannot reset it, so write it down and keep it somewhere safe.';
 
   @override
   String get backupSetupPassphraseDone => 'Passphrase chosen';
 
   @override
   String get passphraseTooWeakForBackup =>
-      'Please choose a longer passphrase, or add some variety. This copy is kept up to date all the time, so it is worth a moment.';
+      'Please choose a longer passphrase, or add some variety.';
 
   @override
   String get passphraseNeedsMixForBackup =>
-      'Please use more than just numbers — add some letters, or a few words. Numbers alone are the first thing anyone guessing would try.';
+      'Please use more than just numbers — add some letters, or a few words.';
 
   @override
   String get backupSetupFolderTitle => 'Choose where it goes';
@@ -837,11 +833,11 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get backupKeyInvalidated =>
-      'Your vault key is no longer valid, so existing items cannot be read. Restoring from a backup will still work.';
+      'The items already on this phone can no longer be opened. Restoring from a backup will still work.';
 
   @override
   String get backupExplainerPassphrase =>
-      'Your backup is locked with a passphrase you choose. Without it the file is unreadable — and Karde cannot recover it for you, so keep it somewhere safe.';
+      'Your backup is locked with a passphrase you choose. Karde cannot recover it, so keep it somewhere safe.';
 
   @override
   String get backupExplainerOffline =>
@@ -869,7 +865,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get backupKeepFileSafe =>
-      'Keep the backup file somewhere you trust. It holds everything in your vault, protected only by the passphrase you chose.';
+      'Keep the backup file somewhere you trust. Anyone with the file and the passphrase can open it.';
 
   @override
   String backupProgressCount(String label, int completed, int total) {
@@ -929,11 +925,11 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get screenLockExplainer =>
-      'Karde encrypts every item with a key held in your phone\'s secure hardware, and that hardware will not hold a key unless the phone itself is locked.\n\nAdd a PIN, pattern, password or fingerprint in your phone\'s settings, then come back.';
+      'Karde cannot save or open anything until this phone has a screen lock.\n\nAdd a PIN, pattern, password or fingerprint in your phone\'s settings, then come back.';
 
   @override
   String get vaultKeyChangedItemsLost =>
-      'Your device security settings changed, so the vault key is no longer valid. Existing items cannot be recovered.';
+      'Your phone\'s security settings changed, and the items saved here can no longer be opened. They cannot be recovered.';
 
   @override
   String get addCardDecryptFailed => 'Failed to decrypt existing card data.';
@@ -1090,7 +1086,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get idUnlockFailedWarning =>
-      'This document could not be unlocked, so its details are not shown. Saving is disabled to avoid overwriting your data. Go back and try again.';
+      'This document could not be unlocked, so its details are not shown and saving is turned off. Go back and try again.';
 
   @override
   String get customDocumentType => 'Custom Document Type';
@@ -1231,11 +1227,11 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get settingsLockExplainer =>
-      'These settings control how Karde locks itself. Your phone will also ask for your fingerprint or screen lock whenever you open an item, whichever of these you choose.';
+      'Your phone will also ask for your fingerprint or screen lock whenever you open an item.';
 
   @override
   String get settingsNoScreenLockWarning =>
-      'This phone has no screen lock, so Karde cannot store or open your items. Add a PIN, pattern, password or fingerprint in your phone\'s settings, then come back.';
+      'This phone has no screen lock, so Karde cannot save or open your items. Add a PIN, pattern, password or fingerprint in your phone\'s settings, then come back.';
 
   @override
   String get passphraseTooShort => 'Too short';
@@ -1262,7 +1258,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get passphraseCreateExplainer =>
-      'This passphrase encrypts your backup file. Karde cannot reset it or work it out — if it is forgotten and written down nowhere, the backup is gone.';
+      'If you forget this, the backup cannot be opened. Karde cannot reset it for you.';
 
   @override
   String get passphraseUnlockExplainer =>
@@ -1345,11 +1341,11 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get securityAnswersHashNoteChanging =>
-      'Your current answers cannot be shown. They are scrambled when saved, so Karde can only replace them, never read them. Saving replaces both.';
+      'Your current answers cannot be shown, only replaced. Saving replaces both.';
 
   @override
   String get securityAnswersHashNoteNew =>
-      'Your answers are scrambled before they are saved, so nobody can read them back — not even Karde. Capitalisation and spacing do not matter.';
+      'Capitalisation and spacing do not matter.';
 
   @override
   String get alreadyUsedAbove => 'Already used above';
@@ -1362,7 +1358,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get deleteCardMessage =>
-      'This cannot be undone. The card data will be permanently deleted from the encrypted vault.';
+      'This cannot be undone. The card will be permanently deleted.';
 
   @override
   String get deletePermanently => 'Delete Permanently';
@@ -1399,7 +1395,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get deleteIdMessage =>
-      'This cannot be undone. The ID data will be permanently deleted from the encrypted vault.';
+      'This cannot be undone. The document will be permanently deleted.';
 
   @override
   String get additionalDetails => 'ADDITIONAL DETAILS';
@@ -1536,7 +1532,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get recoveryNoPinNote =>
-      'You chose to unlock Karde with your phone\'s own lock, so there is no Karde PIN to recover yet. Setting this up now means a way back in already exists if you ever add one.\n\nSeparately, and worth knowing: your items are encrypted with a key held in your phone\'s security chip. Changing your PIN, pattern, password or fingerprints is safe — your items stay readable. But if you turn your screen lock off completely, that key is destroyed and nothing here can bring your items back. An encrypted backup, from Settings, is the only thing that survives it.';
+      'You chose to unlock Karde with your phone\'s own lock, so there is no Karde PIN to recover yet. Setting this up now means a way back in already exists if you ever add one.';
 
   @override
   String get areYouSure => 'Are you sure?';
@@ -1546,7 +1542,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get noScreenLockWarning =>
-      'This phone has no screen lock.\n\nKarde keeps your encryption key in the phone\'s security chip, and that chip will not hold a key unless the phone itself is locked. Until you set a PIN, pattern, password or fingerprint in your phone\'s settings, Karde cannot save or open any items.\n\nYou can finish setting up now, then add a screen lock and come back.';
+      'This phone has no screen lock, so Karde cannot save or open any items.\n\nAdd a PIN, pattern, password or fingerprint in your phone\'s settings.\n\nYou can finish setting up now and come back to it.';
 
   @override
   String get backToLanguage => 'Back to language';
@@ -1609,23 +1605,28 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String pinLockedTryAgainIn(int seconds) {
-    return 'Too many failed attempts. Try again in ${seconds}s.';
-  }
-
-  @override
-  String get pinLockedOut =>
-      'Too many failed attempts. Locked out for 30 seconds.';
-
-  @override
-  String pinInvalidAttemptsLeft(int count) {
     String _temp0 = intl.Intl.pluralLogic(
-      count,
+      seconds,
       locale: localeName,
-      other: 'Invalid PIN. $count attempts left.',
-      one: 'Invalid PIN. 1 attempt left.',
+      other: 'Wrong PIN. Try again in $seconds seconds.',
+      one: 'Wrong PIN. Try again in 1 second.',
     );
     return '$_temp0';
   }
+
+  @override
+  String pinLockedTryAgainInMinutes(int minutes) {
+    String _temp0 = intl.Intl.pluralLogic(
+      minutes,
+      locale: localeName,
+      other: 'Wrong PIN. Try again in $minutes minutes.',
+      one: 'Wrong PIN. Try again in 1 minute.',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get pinInvalid => 'Wrong PIN.';
 
   @override
   String pinDigitSemantic(String digit) {
@@ -1735,7 +1736,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get passphraseRevealWarning =>
-      'This copy only exists on this phone, so it goes when the phone does — which is exactly when you would need it. Write it down somewhere else, or keep it in a password manager.';
+      'Write it down somewhere other than this phone, or keep it in a password manager. If the phone goes, this copy goes with it.';
 
   @override
   String get passphraseCopied => 'Passphrase copied. Clipboard clears in 60s.';
@@ -1761,10 +1762,8 @@ class AppLocalizationsEn extends AppLocalizations {
     String _temp0 = intl.Intl.pluralLogic(
       count,
       locale: localeName,
-      other:
-          '$count items were saved before backup was switched on, so they were never copied.',
-      one:
-          'One item was saved before backup was switched on, so it was never copied.',
+      other: '$count items are not in your backup yet.',
+      one: 'One item is not in your backup yet.',
     );
     return '$_temp0';
   }
@@ -1841,14 +1840,6 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get settingsExpiryRemindersDesc =>
       'Tell me before a card or document runs out';
-
-  @override
-  String get settingsExpiryRemindersNote =>
-      'An expiry date is not a secret — it is printed on the front of your card — so Karde keeps it where it can read it, next to the nickname and last four digits already stored that way. The card number, security code, document number and photo stay encrypted. Turning reminders off just stops the warnings.';
-
-  @override
-  String get settingsExpiryRemindersShort =>
-      'The expiry date is kept where Karde can read it, so it can warn you.';
 
   @override
   String get notifyExpiringTitle => 'Something in Karde is running out';

@@ -362,12 +362,19 @@ class SettingsRepository {
     }
   }
 
-  bool getIsPermanentlyLocked() {
-    return _prefs.getBool(_isPermanentlyLockedKey) ?? false;
-  }
-
-  Future<void> setIsPermanentlyLocked(bool locked) async {
-    await _prefs.setBool(_isPermanentlyLockedKey, locked);
+  /// Clears the permanent lock a previous version of Karde could set.
+  ///
+  /// There is no permanent lock any more — wrong PINs now cost a wait that grows
+  /// and never a locked-out vault; see `PinVerificationScreen`. But a phone that
+  /// ran the old build may have the flag set in storage, and the person holding
+  /// it is currently locked out of their own cards for good. Clearing it on
+  /// startup is the whole of the fix for them.
+  Future<void> releaseAnyPermanentLock() async {
+    if (_prefs.getBool(_isPermanentlyLockedKey) ?? false) {
+      await _prefs.remove(_isPermanentlyLockedKey);
+      await _prefs.setInt(_failedAttemptsKey, 0);
+      await _prefs.remove(_lockoutUntilKey);
+    }
   }
 
   // Recovery Preference

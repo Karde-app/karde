@@ -157,7 +157,7 @@ abstract class AppLocalizations {
   /// No description provided for @vaultHealthItems.
   ///
   /// In en, this message translates to:
-  /// **'{count, plural, =1{1 item encrypted with AES-256-GCM} other{{count} items encrypted with AES-256-GCM}}'**
+  /// **'{count, plural, =1{1 item, safely locked} other{{count} items, safely locked}}'**
   String vaultHealthItems(int count);
 
   /// No description provided for @homeTab.
@@ -628,12 +628,6 @@ abstract class AppLocalizations {
   /// **'Verification successful. You can now set a new PIN.'**
   String get resetPinSuccess;
 
-  /// No description provided for @maxAttemptsReached.
-  ///
-  /// In en, this message translates to:
-  /// **'Maximum attempts reached. You must reset your PIN.'**
-  String get maxAttemptsReached;
-
   /// No description provided for @appearance.
   ///
   /// In en, this message translates to:
@@ -715,7 +709,7 @@ abstract class AppLocalizations {
   /// No description provided for @keepPinMessage.
   ///
   /// In en, this message translates to:
-  /// **'Karde will stop asking for it either way. Keep it, and switching this back on later uses the same PIN — so you would need to remember it. Delete it, and you choose a new one next time.'**
+  /// **'Karde will stop asking for it either way. Keep it, and switching this back on later uses the same PIN. Delete it, and you choose a new one next time.'**
   String get keepPinMessage;
 
   /// No description provided for @keepPinKeep.
@@ -865,7 +859,7 @@ abstract class AppLocalizations {
   /// No description provided for @noScreenLockBody.
   ///
   /// In en, this message translates to:
-  /// **'Karde keeps everything locked with your phone’s own security, so without a screen lock it cannot open or save anything. Set a PIN, pattern, password or fingerprint in your phone’s settings, then come back.'**
+  /// **'Without a screen lock, Karde cannot open or save anything. Set a PIN, pattern, password or fingerprint in your phone\'s settings, then come back.'**
   String get noScreenLockBody;
 
   /// No description provided for @openPhoneSettings.
@@ -1297,7 +1291,7 @@ abstract class AppLocalizations {
   /// No description provided for @backupSetupPassphraseBody.
   ///
   /// In en, this message translates to:
-  /// **'You will need it to get your things back on a new phone. Karde will keep a copy on this phone that you can look up with your fingerprint, but it can never reset the passphrase — and that copy goes when the phone does. Write it down and keep it somewhere safe.'**
+  /// **'You will need it to get your things back on a new phone. Karde cannot reset it, so write it down and keep it somewhere safe.'**
   String get backupSetupPassphraseBody;
 
   /// No description provided for @backupSetupPassphraseDone.
@@ -1309,13 +1303,13 @@ abstract class AppLocalizations {
   /// No description provided for @passphraseTooWeakForBackup.
   ///
   /// In en, this message translates to:
-  /// **'Please choose a longer passphrase, or add some variety. This copy is kept up to date all the time, so it is worth a moment.'**
+  /// **'Please choose a longer passphrase, or add some variety.'**
   String get passphraseTooWeakForBackup;
 
   /// No description provided for @passphraseNeedsMixForBackup.
   ///
   /// In en, this message translates to:
-  /// **'Please use more than just numbers — add some letters, or a few words. Numbers alone are the first thing anyone guessing would try.'**
+  /// **'Please use more than just numbers — add some letters, or a few words.'**
   String get passphraseNeedsMixForBackup;
 
   /// No description provided for @backupSetupFolderTitle.
@@ -1585,13 +1579,13 @@ abstract class AppLocalizations {
   /// No description provided for @backupKeyInvalidated.
   ///
   /// In en, this message translates to:
-  /// **'Your vault key is no longer valid, so existing items cannot be read. Restoring from a backup will still work.'**
+  /// **'The items already on this phone can no longer be opened. Restoring from a backup will still work.'**
   String get backupKeyInvalidated;
 
   /// No description provided for @backupExplainerPassphrase.
   ///
   /// In en, this message translates to:
-  /// **'Your backup is locked with a passphrase you choose. Without it the file is unreadable — and Karde cannot recover it for you, so keep it somewhere safe.'**
+  /// **'Your backup is locked with a passphrase you choose. Karde cannot recover it, so keep it somewhere safe.'**
   String get backupExplainerPassphrase;
 
   /// No description provided for @backupExplainerOffline.
@@ -1639,7 +1633,7 @@ abstract class AppLocalizations {
   /// No description provided for @backupKeepFileSafe.
   ///
   /// In en, this message translates to:
-  /// **'Keep the backup file somewhere you trust. It holds everything in your vault, protected only by the passphrase you chose.'**
+  /// **'Keep the backup file somewhere you trust. Anyone with the file and the passphrase can open it.'**
   String get backupKeepFileSafe;
 
   /// No description provided for @backupProgressCount.
@@ -1735,13 +1729,13 @@ abstract class AppLocalizations {
   /// No description provided for @screenLockExplainer.
   ///
   /// In en, this message translates to:
-  /// **'Karde encrypts every item with a key held in your phone\'s secure hardware, and that hardware will not hold a key unless the phone itself is locked.\n\nAdd a PIN, pattern, password or fingerprint in your phone\'s settings, then come back.'**
+  /// **'Karde cannot save or open anything until this phone has a screen lock.\n\nAdd a PIN, pattern, password or fingerprint in your phone\'s settings, then come back.'**
   String get screenLockExplainer;
 
   /// No description provided for @vaultKeyChangedItemsLost.
   ///
   /// In en, this message translates to:
-  /// **'Your device security settings changed, so the vault key is no longer valid. Existing items cannot be recovered.'**
+  /// **'Your phone\'s security settings changed, and the items saved here can no longer be opened. They cannot be recovered.'**
   String get vaultKeyChangedItemsLost;
 
   /// No description provided for @addCardDecryptFailed.
@@ -2017,7 +2011,7 @@ abstract class AppLocalizations {
   /// No description provided for @idUnlockFailedWarning.
   ///
   /// In en, this message translates to:
-  /// **'This document could not be unlocked, so its details are not shown. Saving is disabled to avoid overwriting your data. Go back and try again.'**
+  /// **'This document could not be unlocked, so its details are not shown and saving is turned off. Go back and try again.'**
   String get idUnlockFailedWarning;
 
   /// No description provided for @customDocumentType.
@@ -2269,13 +2263,13 @@ abstract class AppLocalizations {
   /// No description provided for @settingsLockExplainer.
   ///
   /// In en, this message translates to:
-  /// **'These settings control how Karde locks itself. Your phone will also ask for your fingerprint or screen lock whenever you open an item, whichever of these you choose.'**
+  /// **'Your phone will also ask for your fingerprint or screen lock whenever you open an item.'**
   String get settingsLockExplainer;
 
   /// No description provided for @settingsNoScreenLockWarning.
   ///
   /// In en, this message translates to:
-  /// **'This phone has no screen lock, so Karde cannot store or open your items. Add a PIN, pattern, password or fingerprint in your phone\'s settings, then come back.'**
+  /// **'This phone has no screen lock, so Karde cannot save or open your items. Add a PIN, pattern, password or fingerprint in your phone\'s settings, then come back.'**
   String get settingsNoScreenLockWarning;
 
   /// No description provided for @passphraseTooShort.
@@ -2323,7 +2317,7 @@ abstract class AppLocalizations {
   /// No description provided for @passphraseCreateExplainer.
   ///
   /// In en, this message translates to:
-  /// **'This passphrase encrypts your backup file. Karde cannot reset it or work it out — if it is forgotten and written down nowhere, the backup is gone.'**
+  /// **'If you forget this, the backup cannot be opened. Karde cannot reset it for you.'**
   String get passphraseCreateExplainer;
 
   /// No description provided for @passphraseUnlockExplainer.
@@ -2473,13 +2467,13 @@ abstract class AppLocalizations {
   /// No description provided for @securityAnswersHashNoteChanging.
   ///
   /// In en, this message translates to:
-  /// **'Your current answers cannot be shown. They are scrambled when saved, so Karde can only replace them, never read them. Saving replaces both.'**
+  /// **'Your current answers cannot be shown, only replaced. Saving replaces both.'**
   String get securityAnswersHashNoteChanging;
 
   /// No description provided for @securityAnswersHashNoteNew.
   ///
   /// In en, this message translates to:
-  /// **'Your answers are scrambled before they are saved, so nobody can read them back — not even Karde. Capitalisation and spacing do not matter.'**
+  /// **'Capitalisation and spacing do not matter.'**
   String get securityAnswersHashNoteNew;
 
   /// No description provided for @alreadyUsedAbove.
@@ -2503,7 +2497,7 @@ abstract class AppLocalizations {
   /// No description provided for @deleteCardMessage.
   ///
   /// In en, this message translates to:
-  /// **'This cannot be undone. The card data will be permanently deleted from the encrypted vault.'**
+  /// **'This cannot be undone. The card will be permanently deleted.'**
   String get deleteCardMessage;
 
   /// No description provided for @deletePermanently.
@@ -2575,7 +2569,7 @@ abstract class AppLocalizations {
   /// No description provided for @deleteIdMessage.
   ///
   /// In en, this message translates to:
-  /// **'This cannot be undone. The ID data will be permanently deleted from the encrypted vault.'**
+  /// **'This cannot be undone. The document will be permanently deleted.'**
   String get deleteIdMessage;
 
   /// No description provided for @additionalDetails.
@@ -2809,7 +2803,7 @@ abstract class AppLocalizations {
   /// No description provided for @recoveryNoPinNote.
   ///
   /// In en, this message translates to:
-  /// **'You chose to unlock Karde with your phone\'s own lock, so there is no Karde PIN to recover yet. Setting this up now means a way back in already exists if you ever add one.\n\nSeparately, and worth knowing: your items are encrypted with a key held in your phone\'s security chip. Changing your PIN, pattern, password or fingerprints is safe — your items stay readable. But if you turn your screen lock off completely, that key is destroyed and nothing here can bring your items back. An encrypted backup, from Settings, is the only thing that survives it.'**
+  /// **'You chose to unlock Karde with your phone\'s own lock, so there is no Karde PIN to recover yet. Setting this up now means a way back in already exists if you ever add one.'**
   String get recoveryNoPinNote;
 
   /// No description provided for @areYouSure.
@@ -2827,7 +2821,7 @@ abstract class AppLocalizations {
   /// No description provided for @noScreenLockWarning.
   ///
   /// In en, this message translates to:
-  /// **'This phone has no screen lock.\n\nKarde keeps your encryption key in the phone\'s security chip, and that chip will not hold a key unless the phone itself is locked. Until you set a PIN, pattern, password or fingerprint in your phone\'s settings, Karde cannot save or open any items.\n\nYou can finish setting up now, then add a screen lock and come back.'**
+  /// **'This phone has no screen lock, so Karde cannot save or open any items.\n\nAdd a PIN, pattern, password or fingerprint in your phone\'s settings.\n\nYou can finish setting up now and come back to it.'**
   String get noScreenLockWarning;
 
   /// No description provided for @backToLanguage.
@@ -2935,20 +2929,20 @@ abstract class AppLocalizations {
   /// No description provided for @pinLockedTryAgainIn.
   ///
   /// In en, this message translates to:
-  /// **'Too many failed attempts. Try again in {seconds}s.'**
+  /// **'{seconds, plural, =1{Wrong PIN. Try again in 1 second.} other{Wrong PIN. Try again in {seconds} seconds.}}'**
   String pinLockedTryAgainIn(int seconds);
 
-  /// No description provided for @pinLockedOut.
+  /// No description provided for @pinLockedTryAgainInMinutes.
   ///
   /// In en, this message translates to:
-  /// **'Too many failed attempts. Locked out for 30 seconds.'**
-  String get pinLockedOut;
+  /// **'{minutes, plural, =1{Wrong PIN. Try again in 1 minute.} other{Wrong PIN. Try again in {minutes} minutes.}}'**
+  String pinLockedTryAgainInMinutes(int minutes);
 
-  /// No description provided for @pinInvalidAttemptsLeft.
+  /// No description provided for @pinInvalid.
   ///
   /// In en, this message translates to:
-  /// **'{count, plural, =1{Invalid PIN. 1 attempt left.} other{Invalid PIN. {count} attempts left.}}'**
-  String pinInvalidAttemptsLeft(int count);
+  /// **'Wrong PIN.'**
+  String get pinInvalid;
 
   /// No description provided for @pinDigitSemantic.
   ///
@@ -3133,7 +3127,7 @@ abstract class AppLocalizations {
   /// No description provided for @passphraseRevealWarning.
   ///
   /// In en, this message translates to:
-  /// **'This copy only exists on this phone, so it goes when the phone does — which is exactly when you would need it. Write it down somewhere else, or keep it in a password manager.'**
+  /// **'Write it down somewhere other than this phone, or keep it in a password manager. If the phone goes, this copy goes with it.'**
   String get passphraseRevealWarning;
 
   /// No description provided for @passphraseCopied.
@@ -3175,7 +3169,7 @@ abstract class AppLocalizations {
   /// No description provided for @backupIncompleteBody.
   ///
   /// In en, this message translates to:
-  /// **'{count, plural, =1{One item was saved before backup was switched on, so it was never copied.} other{{count} items were saved before backup was switched on, so they were never copied.}}'**
+  /// **'{count, plural, =1{One item is not in your backup yet.} other{{count} items are not in your backup yet.}}'**
   String backupIncompleteBody(int count);
 
   /// No description provided for @backupCopyExistingTitle.
@@ -3255,18 +3249,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Tell me before a card or document runs out'**
   String get settingsExpiryRemindersDesc;
-
-  /// No description provided for @settingsExpiryRemindersNote.
-  ///
-  /// In en, this message translates to:
-  /// **'An expiry date is not a secret — it is printed on the front of your card — so Karde keeps it where it can read it, next to the nickname and last four digits already stored that way. The card number, security code, document number and photo stay encrypted. Turning reminders off just stops the warnings.'**
-  String get settingsExpiryRemindersNote;
-
-  /// No description provided for @settingsExpiryRemindersShort.
-  ///
-  /// In en, this message translates to:
-  /// **'The expiry date is kept where Karde can read it, so it can warn you.'**
-  String get settingsExpiryRemindersShort;
 
   /// No description provided for @notifyExpiringTitle.
   ///

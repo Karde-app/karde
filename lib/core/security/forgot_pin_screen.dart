@@ -52,7 +52,6 @@ class _ForgotPinScreenState extends ConsumerState<ForgotPinScreen> {
         // Unlock
         final settings = ref.read(settingsRepositoryProvider);
         await settings.setFailedAttempts(0);
-        await settings.setIsPermanentlyLocked(false);
         await settings.setLockoutUntil(null);
 
         if (mounted) {

@@ -24,7 +24,7 @@ class _PinVerificationScreenState extends ConsumerState<PinVerificationScreen> {
   int _failedAttempts = 0;
   DateTime? _lockoutUntil;
   Timer? _lockoutTimer;
-  bool _isPermanentlyLocked = false;
+
 
   @override
   void initState() {
@@ -39,20 +39,39 @@ class _PinVerificationScreenState extends ConsumerState<PinVerificationScreen> {
     setState(() {
       _failedAttempts = settings.getFailedAttempts();
       _lockoutUntil = settings.getLockoutUntil();
-      _isPermanentlyLocked = settings.getIsPermanentlyLocked();
     });
-    
-    if (_isPermanentlyLocked && mounted) {
-      // Must wait for context to get AppLocalizations
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        if (!mounted) return;
-        setState(() {
-          _errorMessage = AppLocalizations.of(context)!.maxAttemptsReached;
-        });
-      });
-    }
 
     _checkLockoutTimer();
+  }
+
+  /// How long to wait after [attempts] wrong PINs.
+  ///
+  /// Karde used to lock itself **permanently** after five, and the only way past
+  /// that was to erase the vault. It was reachable by accident: the count was
+  /// only cleared when a lockout timer ran down, so closing the app during a
+  /// thirty-second wait carried three failures forward, and two more mistyped
+  /// PINs destroyed the way in to somebody's own cards. Anyone who had chosen no
+  /// recovery method at onboarding had nothing to fall back on.
+  ///
+  /// It also bought very little. The Karde PIN guards a screen; it does not
+  /// guard the items, which each need the phone's own fingerprint or screen lock
+  /// to open, every single time. Waiting an hour between guesses already makes a
+  /// four-digit PIN impractical to work through by hand, and it cannot lose
+  /// anybody their vault.
+  static Duration? _waitAfter(int attempts) {
+    if (attempts < 3) return null;
+    switch (attempts) {
+      case 3:
+        return const Duration(seconds: 30);
+      case 4:
+        return const Duration(minutes: 2);
+      case 5:
+        return const Duration(minutes: 10);
+      case 6:
+        return const Duration(minutes: 30);
+      default:
+        return const Duration(hours: 1);
+    }
   }
 
   void _checkLockoutTimer() {
@@ -65,23 +84,34 @@ class _PinVerificationScreenState extends ConsumerState<PinVerificationScreen> {
         }
         final now = DateTime.now();
         if (_lockoutUntil!.isAfter(now)) {
-          setState(() {
-            final secondsLeft = _lockoutUntil!.difference(now).inSeconds;
-            _errorMessage = AppLocalizations.of(context)!.pinLockedTryAgainIn(secondsLeft);
-          });
+          setState(() => _errorMessage = _waitMessage(_lockoutUntil!.difference(now)));
         } else {
           timer.cancel();
           setState(() {
             _lockoutUntil = null;
-            _failedAttempts = 0;
             _errorMessage = null;
           });
-          final settings = ref.read(settingsRepositoryProvider);
-          settings.setFailedAttempts(0);
-          settings.setLockoutUntil(null);
+          // The count deliberately survives the wait. Clearing it here is what
+          // made the escalation above impossible and the permanent lock
+          // reachable: every wait reset the tally, so the app could only ever
+          // count to three, and the leftover state did the rest. Only a correct
+          // PIN clears it now.
+          ref.read(settingsRepositoryProvider).setLockoutUntil(null);
         }
       });
     }
+  }
+
+  /// "Try again in 20 seconds" or "Try again in 5 minutes".
+  ///
+  /// Seconds are unreadable past a minute — nobody counts down from 3600 — so
+  /// anything longer is rounded up to whole minutes.
+  String _waitMessage(Duration left) {
+    final loc = AppLocalizations.of(context)!;
+    if (left.inSeconds < 60) {
+      return loc.pinLockedTryAgainIn(left.inSeconds);
+    }
+    return loc.pinLockedTryAgainInMinutes((left.inSeconds / 60).ceil());
   }
 
   @override
@@ -91,7 +121,7 @@ class _PinVerificationScreenState extends ConsumerState<PinVerificationScreen> {
   }
 
   void _onDigitPressed(String digit) {
-    if (_lockoutUntil != null || _isPermanentlyLocked) return;
+    if (_lockoutUntil != null) return;
     if (_pin.length >= 4) return;
 
     setState(() {
@@ -113,7 +143,7 @@ class _PinVerificationScreenState extends ConsumerState<PinVerificationScreen> {
   }
 
   void _onDeletePressed() {
-    if (_lockoutUntil != null || _isPermanentlyLocked) return;
+    if (_lockoutUntil != null) return;
     setState(() {
       _errorMessage = null;
       if (_pin.isNotEmpty) _pin = _pin.substring(0, _pin.length - 1);
@@ -121,7 +151,7 @@ class _PinVerificationScreenState extends ConsumerState<PinVerificationScreen> {
   }
 
   Future<void> _validatePin() async {
-    if (_lockoutUntil != null || _isPermanentlyLocked) return;
+    if (_lockoutUntil != null) return;
 
     final settings = ref.read(settingsRepositoryProvider);
     final storedHash = await settings.getHashedPin();
@@ -152,20 +182,18 @@ class _PinVerificationScreenState extends ConsumerState<PinVerificationScreen> {
     } else {
       _failedAttempts++;
       await settings.setFailedAttempts(_failedAttempts);
-      
+
+      final wait = _waitAfter(_failedAttempts);
       setState(() {
-        if (_failedAttempts >= 5) {
-          _isPermanentlyLocked = true;
-          settings.setIsPermanentlyLocked(true);
-          _errorMessage = AppLocalizations.of(context)!.maxAttemptsReached;
-        } else if (_failedAttempts == 3) {
-          _lockoutUntil = DateTime.now().add(const Duration(seconds: 30));
+        if (wait != null) {
+          _lockoutUntil = DateTime.now().add(wait);
           settings.setLockoutUntil(_lockoutUntil);
-          _errorMessage = AppLocalizations.of(context)!.pinLockedOut;
+          _errorMessage = _waitMessage(wait);
           _checkLockoutTimer();
         } else {
-          final attemptsLeft = 5 - _failedAttempts;
-          _errorMessage = AppLocalizations.of(context)!.pinInvalidAttemptsLeft(attemptsLeft);
+          // No countdown of remaining attempts any more, because there is no
+          // longer a number to count down to. "Wrong PIN" is the whole truth.
+          _errorMessage = AppLocalizations.of(context)!.pinInvalid;
         }
         _pin = '';
       });
@@ -312,7 +340,7 @@ class _PinVerificationScreenState extends ConsumerState<PinVerificationScreen> {
   }
 
   Widget _buildDialButton(String digit) {
-    final isDisabled = _lockoutUntil != null || _isPermanentlyLocked;
+    final isDisabled = _lockoutUntil != null;
     // FIX 6-1: the dial pad was an InkWell wrapping bare Text, so TalkBack read
     // out a floating digit with no indication it was a button or what it did.
     return Semantics(
@@ -349,7 +377,7 @@ class _PinVerificationScreenState extends ConsumerState<PinVerificationScreen> {
   }
 
   Widget _buildDeleteButton() {
-    final isDisabled = _lockoutUntil != null || _isPermanentlyLocked;
+    final isDisabled = _lockoutUntil != null;
     // FIX 6-1: the delete key had no semantic label at all — screen readers
     // announced nothing.
     return Semantics(

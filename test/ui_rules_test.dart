@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:local_auth/local_auth.dart';
@@ -937,5 +938,65 @@ void main() {
         }
       });
     }
+  });
+
+  group("What the app says must help the user decide, not explain the app", () {
+    // The rule, in the user's words: "user doesn't need to know the maths, how
+    // Karde works... The only thing we need to tell user is if he doesn't know
+    // what the label means or what it does. Not the engineering."
+    //
+    // Karde had accumulated a lot of the other kind — "encrypted with
+    // AES-256-GCM", "a key held in your phone's secure hardware", "your answers
+    // are scrambled before they are saved". All true, none of it anything a
+    // person can act on, and all of it crowding out the sentences that matter.
+    //
+    // Two strings are deliberately exempt. The About dialog is the one place
+    // where describing the app is the whole point, and the offline badge is a
+    // two-word reassurance rather than an explanation.
+    // The privacy policy is exempt for the same reason About is: describing how
+    // the app protects things is the entire purpose of that document, and it is
+    // where the user said this material belongs.
+    const exempt = {"aboutDialogBody", "offlineBadge"};
+    bool isPolicy(String key) => key.startsWith("privacy");
+
+    // Words that only make sense to somebody who has read the source.
+    final jargon = RegExp(
+      r"AES-256|AES\b|secure hardware|security chip|vault key|encryption key|"
+      r"scrambled|hashed|ciphertext|key derivation|payload|Keystore",
+      caseSensitive: false,
+    );
+
+    test("no user-facing string explains the mechanism", () {
+      final arb = jsonDecode(
+        File("lib/l10n/app_en.arb").readAsStringSync(),
+      ) as Map<String, dynamic>;
+
+      final offenders = <String>[];
+      arb.forEach((key, value) {
+        if (key.startsWith("@") || value is! String) return;
+        if (exempt.contains(key) || isPolicy(key)) return;
+        if (jargon.hasMatch(value)) offenders.add('$key: "$value"');
+      });
+
+      expect(offenders, isEmpty,
+          reason: "these tell the user how Karde works rather than what to do:"
+              "\n${offenders.join('\n')}");
+    });
+
+    test("nothing threatens a permanent lockout", () {
+      // The Karde PIN used to lock the app for good after five wrong tries, and
+      // the only way past it was erasing the vault. It is gone — wrong PINs now
+      // cost a wait that grows — and no wording should survive that promised
+      // otherwise.
+      final arb = File("lib/l10n/app_en.arb").readAsStringSync();
+
+      expect(arb.contains("maxAttemptsReached"), isFalse,
+          reason: "the permanent lockout is gone; its message should be too");
+
+      final screen =
+          File("lib/core/security/pin_verification_screen.dart").readAsStringSync();
+      expect(screen.contains("setIsPermanentlyLocked"), isFalse,
+          reason: "nothing may set a permanent lock any more");
+    });
   });
 }

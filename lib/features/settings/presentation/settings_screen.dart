@@ -106,7 +106,6 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
               ],
             ),
           ),
-          _buildExpiryNote(context),
           const SizedBox(height: 24),
 
           _buildSectionHeader(loc.security, context),
@@ -398,63 +397,6 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
     if (!allowed && mounted) {
       KardeFeedback.info(context, loc.settingsExpiryNotifyBlocked);
     }
-  }
-
-  /// One line, with the rest a tap away.
-  ///
-  /// This was a five-line paragraph about what the vault stores and what it does
-  /// not. All of it was true and almost none of it was wanted in a settings list
-  /// — the user's words were "the warning under the option is unnecessary, or
-  /// make it short and put a mark so the user can read more". Anyone who does
-  /// want the detail is one tap from all of it.
-  Widget _buildExpiryNote(BuildContext context) {
-    final loc = AppLocalizations.of(context)!;
-    final theme = Theme.of(context);
-
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(4, 10, 4, 0),
-      child: InkWell(
-        onTap: _showExpiryDetail,
-        borderRadius: BorderRadius.circular(8),
-        child: Padding(
-          padding: const EdgeInsets.symmetric(vertical: 4),
-          child: Row(
-            children: [
-              Expanded(
-                child: Text(
-                  loc.settingsExpiryRemindersShort,
-                  style: theme.textTheme.bodyMedium?.copyWith(
-                    fontSize: 12.5,
-                    height: 1.4,
-                    color: theme.colorScheme.onSurface.withValues(alpha: 0.55),
-                  ),
-                ),
-              ),
-              const SizedBox(width: 8),
-              Icon(Icons.info_outline,
-                  size: 17, color: KardeColors.champagneGold),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-
-  void _showExpiryDetail() {
-    final loc = AppLocalizations.of(context)!;
-    showDialog<void>(
-      context: context,
-      builder: (_) => AlertDialog(
-        title: Text(loc.settingsExpiryReminders),
-        content: Text(loc.settingsExpiryRemindersNote),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: Text(loc.done),
-          ),
-        ],
-      ),
-    );
   }
 
   /// Says what Karde is already doing about backups, and where.

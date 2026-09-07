@@ -9,7 +9,7 @@
   "addACard": "Add a card",
   "openVault": "Open Vault",
   "vaultHealthExcellent": "Vault health: excellent",
-  "vaultHealthItems": "{count, plural, =1{1 item encrypted with AES-256-GCM} other{{count} items encrypted with AES-256-GCM}}",
+  "vaultHealthItems": "{count, plural, =1{1 item, safely locked} other{{count} items, safely locked}}",
   "@vaultHealthItems": {
     "placeholders": {
       "count": {
@@ -95,7 +95,6 @@
   "verifyBtn": "Verify",
   "wrongAnswers": "One or both answers are incorrect.",
   "resetPinSuccess": "Verification successful. You can now set a new PIN.",
-  "maxAttemptsReached": "Maximum attempts reached. You must reset your PIN.",
   "appearance": "APPEARANCE",
   "theme": "Theme",
   "themeDesc": "System, Light or Dark",
@@ -109,7 +108,7 @@
   "biometricUnlockTitle": "Phone lock",
   "biometricUnlockDesc": "Open Karde with your fingerprint, face or screen lock",
   "keepPinTitle": "Keep your Karde PIN?",
-  "keepPinMessage": "Karde will stop asking for it either way. Keep it, and switching this back on later uses the same PIN — so you would need to remember it. Delete it, and you choose a new one next time.",
+  "keepPinMessage": "Karde will stop asking for it either way. Keep it, and switching this back on later uses the same PIN. Delete it, and you choose a new one next time.",
   "keepPinKeep": "Keep it",
   "keepPinDelete": "Delete it",
   "pinDeleted": "Your Karde PIN has been deleted.",
@@ -134,7 +133,7 @@
   "lettersAndSymbolsNotAllowed": "Letters and symbols are not allowed",
   "kardeIsLocked": "Karde is Locked",
   "noScreenLockTitle": "Your phone has no screen lock",
-  "noScreenLockBody": "Karde keeps everything locked with your phone’s own security, so without a screen lock it cannot open or save anything. Set a PIN, pattern, password or fingerprint in your phone’s settings, then come back.",
+  "noScreenLockBody": "Without a screen lock, Karde cannot open or save anything. Set a PIN, pattern, password or fingerprint in your phone's settings, then come back.",
   "openPhoneSettings": "Open phone settings",
   "authenticateToAccess": "Authenticate to access your vault.",
   "authenticating": "Authenticating...",
@@ -206,10 +205,10 @@
   "backupSetupTitle": "Keeping a copy",
   "backupSetupIntro": "Karde saves a copy of everything you keep here, so you can get it all back if this phone is lost, broken or replaced. The copy goes where you choose. Nothing is ever sent to Karde or to anyone else.",
   "backupSetupPassphraseTitle": "Choose a passphrase",
-  "backupSetupPassphraseBody": "You will need it to get your things back on a new phone. Karde will keep a copy on this phone that you can look up with your fingerprint, but it can never reset the passphrase — and that copy goes when the phone does. Write it down and keep it somewhere safe.",
+  "backupSetupPassphraseBody": "You will need it to get your things back on a new phone. Karde cannot reset it, so write it down and keep it somewhere safe.",
   "backupSetupPassphraseDone": "Passphrase chosen",
-  "passphraseTooWeakForBackup": "Please choose a longer passphrase, or add some variety. This copy is kept up to date all the time, so it is worth a moment.",
-  "passphraseNeedsMixForBackup": "Please use more than just numbers — add some letters, or a few words. Numbers alone are the first thing anyone guessing would try.",
+  "passphraseTooWeakForBackup": "Please choose a longer passphrase, or add some variety.",
+  "passphraseNeedsMixForBackup": "Please use more than just numbers — add some letters, or a few words.",
   "backupSetupFolderTitle": "Choose where it goes",
   "backupSetupFolderBody": "Pick a folder on your phone. If you pick one that syncs to cloud storage, your copy survives losing the phone as well.",
   "backupSetupFolderAction": "Choose a folder",
@@ -299,8 +298,8 @@
   "backupWrongPassphrase": "That passphrase does not open this backup. Check it and try again.",
   "backupFileChooseAgain": "That file could not be read. Try choosing it again.",
   "backupNeedsScreenLock": "Set a screen lock on your device before backing up or restoring.",
-  "backupKeyInvalidated": "Your vault key is no longer valid, so existing items cannot be read. Restoring from a backup will still work.",
-  "backupExplainerPassphrase": "Your backup is locked with a passphrase you choose. Without it the file is unreadable — and Karde cannot recover it for you, so keep it somewhere safe.",
+  "backupKeyInvalidated": "The items already on this phone can no longer be opened. Restoring from a backup will still work.",
+  "backupExplainerPassphrase": "Your backup is locked with a passphrase you choose. Karde cannot recover it, so keep it somewhere safe.",
   "backupExplainerOffline": "Nothing is uploaded. You pick where the file goes, and it can be restored on this phone or on a new one.",
   "backupCreateTitle": "Create a backup",
   "backupCreateSubtitle": "Save a locked copy of everything in your vault, wherever you choose.",
@@ -308,7 +307,7 @@
   "backupRestoreCardTitle": "Restore a backup",
   "backupRestoreCardSubtitle": "Add the items from a backup file to this vault. Existing items are kept, and anything already here is skipped.",
   "backupRestoreCardAction": "Choose a file",
-  "backupKeepFileSafe": "Keep the backup file somewhere you trust. It holds everything in your vault, protected only by the passphrase you chose.",
+  "backupKeepFileSafe": "Keep the backup file somewhere you trust. Anyone with the file and the passphrase can open it.",
   "backupProgressCount": "{label} — {completed} of {total}",
   "@backupProgressCount": {
     "placeholders": {
@@ -351,8 +350,8 @@
   "saving": "Saving...",
   "loadingDetails": "Loading Details",
   "setScreenLockFirst": "Set a screen lock first",
-  "screenLockExplainer": "Karde encrypts every item with a key held in your phone's secure hardware, and that hardware will not hold a key unless the phone itself is locked.\n\nAdd a PIN, pattern, password or fingerprint in your phone's settings, then come back.",
-  "vaultKeyChangedItemsLost": "Your device security settings changed, so the vault key is no longer valid. Existing items cannot be recovered.",
+  "screenLockExplainer": "Karde cannot save or open anything until this phone has a screen lock.\n\nAdd a PIN, pattern, password or fingerprint in your phone's settings, then come back.",
+  "vaultKeyChangedItemsLost": "Your phone's security settings changed, and the items saved here can no longer be opened. They cannot be recovered.",
   "addCardDecryptFailed": "Failed to decrypt existing card data.",
   "addCardNeedsScreenLock": "Set a screen lock (PIN, pattern, or biometrics) on your device to save cards securely.",
   "addCardSaveFailed": "Something went wrong saving this card. Please try again.",
@@ -408,7 +407,7 @@
   "issuingAuthorityTooltip": "The organization, state, or country that issued the ID.\n\nExample: State of California",
   "personalIdTooltip": "A secondary personal identifier.\n\nExample: 123-45-6789",
   "idNotesTooltip": "Any additional details or address information from the ID.\n\nExample: Organ donor, Class C driver",
-  "idUnlockFailedWarning": "This document could not be unlocked, so its details are not shown. Saving is disabled to avoid overwriting your data. Go back and try again.",
+  "idUnlockFailedWarning": "This document could not be unlocked, so its details are not shown and saving is turned off. Go back and try again.",
   "customDocumentType": "Custom Document Type",
   "customDocumentTypeHint": "e.g., Student ID",
   "customDocumentTypeTooltip": "The specific name of this custom document type.\n\nExample: Gym Pass",
@@ -467,8 +466,8 @@
   "eraseEverythingTitle": "Erase everything?",
   "eraseEverythingMessage": "Every card, ID document and photo will be permanently deleted, along with your PIN and settings. This cannot be undone, and Karde keeps no copy anywhere.",
   "backUpFirst": "Back up first",
-  "settingsLockExplainer": "These settings control how Karde locks itself. Your phone will also ask for your fingerprint or screen lock whenever you open an item, whichever of these you choose.",
-  "settingsNoScreenLockWarning": "This phone has no screen lock, so Karde cannot store or open your items. Add a PIN, pattern, password or fingerprint in your phone's settings, then come back.",
+  "settingsLockExplainer": "Your phone will also ask for your fingerprint or screen lock whenever you open an item.",
+  "settingsNoScreenLockWarning": "This phone has no screen lock, so Karde cannot save or open your items. Add a PIN, pattern, password or fingerprint in your phone's settings, then come back.",
   "passphraseTooShort": "Too short",
   "passphraseWeak": "Weak",
   "passphraseReasonable": "Reasonable",
@@ -483,7 +482,7 @@
   },
   "passphraseChooseTitle": "Choose a passphrase",
   "passphraseEnterTitle": "Enter the passphrase",
-  "passphraseCreateExplainer": "This passphrase encrypts your backup file. Karde cannot reset it or work it out — if it is forgotten and written down nowhere, the backup is gone.",
+  "passphraseCreateExplainer": "If you forget this, the backup cannot be opened. Karde cannot reset it for you.",
   "passphraseUnlockExplainer": "Enter the passphrase you chose when this backup was created.",
   "passphraseFieldLabel": "Passphrase",
   "passphraseShow": "Show passphrase",
@@ -515,12 +514,12 @@
   "changeSecurityQuestionsSubtitle": "These let you back in if you forget your Karde PIN.",
   "saveQuestions": "Save questions",
   "chooseAQuestion": "Choose a question",
-  "securityAnswersHashNoteChanging": "Your current answers cannot be shown. They are scrambled when saved, so Karde can only replace them, never read them. Saving replaces both.",
-  "securityAnswersHashNoteNew": "Your answers are scrambled before they are saved, so nobody can read them back — not even Karde. Capitalisation and spacing do not matter.",
+  "securityAnswersHashNoteChanging": "Your current answers cannot be shown, only replaced. Saving replaces both.",
+  "securityAnswersHashNoteNew": "Capitalisation and spacing do not matter.",
   "alreadyUsedAbove": "Already used above",
   "notesDecryptError": "Error decrypting notes.",
   "deleteCardTitle": "Delete this card?",
-  "deleteCardMessage": "This cannot be undone. The card data will be permanently deleted from the encrypted vault.",
+  "deleteCardMessage": "This cannot be undone. The card will be permanently deleted.",
   "deletePermanently": "Delete Permanently",
   "privateNotesAndPhoto": "PRIVATE NOTES & PHOTO",
   "cardMetadata": "CARD METADATA",
@@ -532,7 +531,7 @@
   "lastUpdated": "Last Updated",
   "idOpenFailed": "Could not open this document. Try again.",
   "deleteIdTitle": "Delete this ID?",
-  "deleteIdMessage": "This cannot be undone. The ID data will be permanently deleted from the encrypted vault.",
+  "deleteIdMessage": "This cannot be undone. The document will be permanently deleted.",
   "additionalDetails": "ADDITIONAL DETAILS",
   "detailsSection": "DETAILS",
   "deleteId": "Delete ID",
@@ -585,10 +584,10 @@
   "privacySection5Body": "The app only requests permissions necessary for its core functionality, such as Biometric authentication. It does not request internet access, ensuring your data cannot be transmitted.",
   "privacySection6Title": "6. Changes to this Policy",
   "privacySection6Body": "We may update this policy occasionally. Any changes will be reflected in the app. By continuing to use the app, you agree to the updated policy.",
-  "recoveryNoPinNote": "You chose to unlock Karde with your phone's own lock, so there is no Karde PIN to recover yet. Setting this up now means a way back in already exists if you ever add one.\n\nSeparately, and worth knowing: your items are encrypted with a key held in your phone's security chip. Changing your PIN, pattern, password or fingerprints is safe — your items stay readable. But if you turn your screen lock off completely, that key is destroyed and nothing here can bring your items back. An encrypted backup, from Settings, is the only thing that survives it.",
+  "recoveryNoPinNote": "You chose to unlock Karde with your phone's own lock, so there is no Karde PIN to recover yet. Setting this up now means a way back in already exists if you ever add one.",
   "areYouSure": "Are you sure?",
   "confirm": "Confirm",
-  "noScreenLockWarning": "This phone has no screen lock.\n\nKarde keeps your encryption key in the phone's security chip, and that chip will not hold a key unless the phone itself is locked. Until you set a PIN, pattern, password or fingerprint in your phone's settings, Karde cannot save or open any items.\n\nYou can finish setting up now, then add a screen lock and come back.",
+  "noScreenLockWarning": "This phone has no screen lock, so Karde cannot save or open any items.\n\nAdd a PIN, pattern, password or fingerprint in your phone's settings.\n\nYou can finish setting up now and come back to it.",
   "backToLanguage": "Back to language",
   "imageNoSource": "No app on this device can provide an image.",
   "imageUnreadable": "That image could not be read. Try another one.",
@@ -606,7 +605,9 @@
   "couldNotUnlockCard": "Could not unlock this card. Please try again.",
   "couldNotUnlockDocument": "Could not unlock this document. Please try again.",
   "cardNumberCopied": "Card number copied. Clipboard clears in 60s.",
-  "pinLockedTryAgainIn": "Too many failed attempts. Try again in {seconds}s.",
+  "pinLockedTryAgainIn": "{seconds, plural, =1{Wrong PIN. Try again in 1 second.} other{Wrong PIN. Try again in {seconds} seconds.}}",
+  "pinLockedTryAgainInMinutes": "{minutes, plural, =1{Wrong PIN. Try again in 1 minute.} other{Wrong PIN. Try again in {minutes} minutes.}}",
+  "@pinLockedTryAgainInMinutes": { "placeholders": { "minutes": { "type": "int" } } },
   "@pinLockedTryAgainIn": {
     "placeholders": {
       "seconds": {
@@ -614,15 +615,7 @@
       }
     }
   },
-  "pinLockedOut": "Too many failed attempts. Locked out for 30 seconds.",
-  "pinInvalidAttemptsLeft": "{count, plural, =1{Invalid PIN. 1 attempt left.} other{Invalid PIN. {count} attempts left.}}",
-  "@pinInvalidAttemptsLeft": {
-    "placeholders": {
-      "count": {
-        "type": "int"
-      }
-    }
-  },
+  "pinInvalid": "Wrong PIN.",
   "pinDigitSemantic": "PIN digit {digit}",
   "@pinDigitSemantic": {
     "placeholders": {
@@ -643,8 +636,7 @@
   "biometricCouldNotConfirm": "Could not confirm it was you. Try again.",
   "noBackupTitle": "No backup yet",
   "noBackupShort": "No backup yet — everything is only on this phone.",
-  "noBackupBody": "Everything you have saved is only on this phone. A backup lets you get it all back on a new phone."
-,
+  "noBackupBody": "Everything you have saved is only on this phone. A backup lets you get it all back on a new phone.",
   "copyLabel": "Copy",
   "passphraseSectionTitle": "Your backup passphrase",
   "passphraseSectionBody": "This is the only thing that opens your backup on a new phone. Karde cannot reset it for you.",
@@ -661,15 +653,14 @@
   "passphraseCouldNotSave": "Karde could not keep a copy on this phone. Your backup itself is fine.",
   "passphraseSavedOnPhone": "Saved. You can look it up on this screen whenever you need it.",
   "passphraseRevealTitle": "Your backup passphrase",
-  "passphraseRevealWarning": "This copy only exists on this phone, so it goes when the phone does — which is exactly when you would need it. Write it down somewhere else, or keep it in a password manager.",
+  "passphraseRevealWarning": "Write it down somewhere other than this phone, or keep it in a password manager. If the phone goes, this copy goes with it.",
   "passphraseCopied": "Passphrase copied. Clipboard clears in 60s.",
   "passphraseReuseTitle": "Use your backup passphrase?",
   "passphraseReuseMessage": "Karde can lock this file with the same passphrase your automatic backup already uses, so there is only one for you to remember.",
   "passphraseReuseConfirm": "Use it",
-  "passphraseReuseAlternative": "Type a different one"
-,
+  "passphraseReuseAlternative": "Type a different one",
   "backupIncompleteTitle": "Your backup is missing things",
-  "backupIncompleteBody": "{count, plural, =1{One item was saved before backup was switched on, so it was never copied.} other{{count} items were saved before backup was switched on, so they were never copied.}}",
+  "backupIncompleteBody": "{count, plural, =1{One item is not in your backup yet.} other{{count} items are not in your backup yet.}}",
   "@backupIncompleteBody": {
     "placeholders": { "count": { "type": "int" } }
   },
@@ -688,8 +679,7 @@
   "backupCopyDone": "{count, plural, =1{1 item added to your backup.} other{{count} items added to your backup.}}",
   "@backupCopyDone": {
     "placeholders": { "count": { "type": "int" } }
-  }
-,
+  },
   "expiryCardSoon": "This card expires in {when}.",
   "@expiryCardSoon": { "placeholders": { "when": { "type": "String" } } },
   "expiryCardPast": "This card expired in {when}.",
@@ -700,23 +690,18 @@
   "@expiryDocumentPast": { "placeholders": { "when": { "type": "String" } } },
   "settingsExpiryReminders": "Expiry reminders",
   "settingsExpiryRemindersDesc": "Tell me before a card or document runs out",
-  "settingsExpiryRemindersNote": "An expiry date is not a secret — it is printed on the front of your card — so Karde keeps it where it can read it, next to the nickname and last four digits already stored that way. The card number, security code, document number and photo stay encrypted. Turning reminders off just stops the warnings.",
-  "settingsExpiryRemindersShort": "The expiry date is kept where Karde can read it, so it can warn you."
-,
   "notifyExpiringTitle": "Something in Karde is running out",
   "notifyExpiringBody": "{count, plural, =1{1 card or document expires soon. Open Karde to see which.} other{{count} cards or documents expire soon. Open Karde to see which.}}",
   "@notifyExpiringBody": { "placeholders": { "count": { "type": "int" } } },
   "notifyExpiredTitle": "Something in Karde has expired",
   "notifyExpiredBody": "{count, plural, =1{1 card or document has expired. Open Karde to see which.} other{{count} cards or documents have expired. Open Karde to see which.}}",
   "@notifyExpiredBody": { "placeholders": { "count": { "type": "int" } } },
-  "settingsExpiryNotifyBlocked": "Karde cannot send reminders until notifications are allowed for it in your phone's settings."
-,
+  "settingsExpiryNotifyBlocked": "Karde cannot send reminders until notifications are allowed for it in your phone's settings.",
   "settingsAutoBackupTitle": "Automatic backup",
   "settingsAutoBackupDesc": "Keep a copy up to date every time something changes",
   "settingsAutoBackupOffTitle": "Turn off automatic backup?",
   "settingsAutoBackupOffMessage": "Karde will stop keeping your backup up to date. The file already in your folder is left exactly as it is — nothing is deleted.",
-  "settingsAutoBackupOffConfirm": "Turn off"
-,
+  "settingsAutoBackupOffConfirm": "Turn off",
   "notificationsTitle": "Notifications",
   "activityTitle": "Recent activity",
   "activityEmpty": "Nothing yet. Adding, changing or removing a card or document will show up here.",
