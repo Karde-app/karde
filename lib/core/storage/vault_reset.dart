@@ -2,6 +2,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../security/vault_health_provider.dart';
 import '../../features/cards/data/card_repository.dart';
+import '../../features/home/data/activity_log.dart';
 import '../../features/home/data/alerts_providers.dart';
 import '../../features/ids/data/id_repository.dart';
 import 'settings_repository.dart';
@@ -45,6 +46,7 @@ void resetAllVaultState(WidgetRef ref) {
   ref.invalidate(requirePinLockProvider);
   ref.invalidate(biometricUnlockProvider);
   ref.invalidate(expiryRemindersProvider);
+  ref.invalidate(activityLogProvider);
   ref.invalidate(seenAlertsProvider);
   // Holds the date of the last backup, so without this an erased vault claims a
   // copy was taken of items it no longer has — and the dashboard prompt that

@@ -393,6 +393,11 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
     await ref.read(expiryRemindersProvider.notifier).updateExpiryReminders(value);
     if (!value) return;
 
+    // Deliberately asked again here even if it was asked once before. Flipping
+    // the switch on is a clear request for these reminders, and if the answer
+    // last time was no, this is the moment somebody has changed their mind.
+    await ref.read(settingsRepositoryProvider).setAskedNotificationPermission(true);
+
     final allowed = await ExpiryNotifications.instance.requestPermission();
     if (!allowed && mounted) {
       KardeFeedback.info(context, loc.settingsExpiryNotifyBlocked);

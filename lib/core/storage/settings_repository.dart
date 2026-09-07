@@ -106,6 +106,7 @@ class SettingsRepository {
   static const _expiryRemindersKey = 'expiry_reminders';
   static const _seenAlertsKey = 'seen_alert_ids';
   static const _activityLogKey = 'activity_log';
+  static const _askedNotificationsKey = 'asked_notification_permission';
   
   static const _recoveryPreferenceKey = 'recovery_preference'; // 'biometrics', 'questions', 'none'
 
@@ -187,6 +188,20 @@ class SettingsRepository {
 
   Future<void> setActivityLog(String json) async {
     await _prefs.setString(_activityLogKey, json);
+  }
+
+  /// Whether Android's notification permission has been asked for yet.
+  ///
+  /// Asked once, at the first moment Karde actually has a reminder to schedule —
+  /// not at first launch, where a permission request arrives before the user
+  /// knows what it is for and gets refused by reflex. Android gives no second
+  /// chance, so the moment matters more than the wording.
+  bool getAskedNotificationPermission() {
+    return _prefs.getBool(_askedNotificationsKey) ?? false;
+  }
+
+  Future<void> setAskedNotificationPermission(bool asked) async {
+    await _prefs.setBool(_askedNotificationsKey, asked);
   }
 
   bool getBiometricUnlock() {

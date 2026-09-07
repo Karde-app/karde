@@ -74,6 +74,7 @@ class _ExpiryScheduleKeeperState extends ConsumerState<ExpiryScheduleKeeper> {
 
       if (signature != _lastSignature) {
         _lastSignature = signature;
+        _askOnceIfThereIsSomethingToSay(enabled, things.length + documents.length);
         // Deliberately not awaited. Nothing on screen depends on it, and making
         // the first frame wait on the notification plugin would delay the vault
         // for a reminder that is months away.
@@ -90,5 +91,32 @@ class _ExpiryScheduleKeeperState extends ConsumerState<ExpiryScheduleKeeper> {
     }
 
     return widget.child;
+  }
+
+  /// Asks Android for permission to post notifications, once, at the first
+  /// moment there is genuinely something to remind the user about.
+  ///
+  /// This is the fix for a hole the user found. Expiry reminders are on by
+  /// default, but permission was only requested when the switch was *toggled* —
+  /// so somebody who simply left it on, which is everybody, was never asked, and
+  /// the reminders quietly never arrived. Turning the switch off and on again was
+  /// the only way to trigger it, and nobody would think to.
+  ///
+  /// Asked here rather than at first launch because Android gives one chance: a
+  /// permission request that arrives before the user has any idea what it is for
+  /// is refused by reflex, and the system then stops asking. Waiting until there
+  /// is a card with a real expiry date in the vault means the request lands when
+  /// the answer is obvious.
+  ///
+  /// Never asked twice. If it was refused, Settings still offers the switch, and
+  /// flipping it deliberately is a clear enough signal to ask again.
+  void _askOnceIfThereIsSomethingToSay(bool enabled, int thingsToRemindAbout) {
+    if (!enabled || thingsToRemindAbout == 0) return;
+
+    final settings = ref.read(settingsRepositoryProvider);
+    if (settings.getAskedNotificationPermission()) return;
+
+    settings.setAskedNotificationPermission(true);
+    ExpiryNotifications.instance.requestPermission();
   }
 }
