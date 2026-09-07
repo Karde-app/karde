@@ -20,6 +20,10 @@ class FakeFolder extends Fake implements BackupFolderService {
   /// The folder accepts writes but will not enumerate itself. Some providers
   /// really do behave this way, and history must not be a condition of backup.
   bool failListing = false;
+
+  /// Files whose names match this cannot be written. Used to prove setup stops
+  /// rather than destroying a backup it could not first move to safety.
+  RegExp? failWritesTo;
   int writes = 0;
 
   @override
@@ -34,6 +38,9 @@ class FakeFolder extends Fake implements BackupFolderService {
   @override
   Future<void> write(String treeUri, String name, String content) async {
     if (!reachable) throw const BackupFolderUnavailable('folder is gone');
+    if (failWritesTo?.hasMatch(name) ?? false) {
+      throw const BackupFolderUnavailable('cannot write that file');
+    }
     writes++;
     files[name] = content;
   }
@@ -232,6 +239,103 @@ void main() {
 
       expect(setup.folderLabel, 'Documents');
       expect((await service.setup())!.folderLabel, 'Documents');
+    });
+  });
+
+  group('Setting up over a folder that already holds a backup', () {
+    // The single worst bug this feature had, found by the user re-onboarding
+    // onto yesterday's folder and noticing the file had been modified.
+    //
+    // Setting up wrote an empty backup over karde-backup.json without looking.
+    // So the exact sequence a person follows on a new phone — install Karde,
+    // walk onboarding, point it at the folder holding their backup — destroyed
+    // that backup before they ever reached the screen that would have restored
+    // it. Nothing warned them, and nothing could be undone.
+
+    /// A backup already sitting in the folder, holding one card.
+    String existingBackup() {
+      final file = AutoBackupFile.empty('SOMEONE-ELSES-KEY');
+      file.put('card:1', jsonEncode({'k': 'K', 'iv': 'IV', 'd': 'precious'}));
+      return file.encode();
+    }
+
+    test('the existing backup is kept, not overwritten', () async {
+      folder.files[AutoBackupService.currentFileName] = existingBackup();
+
+      await service.configure(passphrase: 'p', folderChoice: chosenFolder);
+
+      final displaced = folder.files.entries.where(
+        (e) => e.key.startsWith('karde-backup-replaced-'),
+      );
+      expect(displaced, hasLength(1),
+          reason: 'the old backup must still exist somewhere');
+      final kept = AutoBackupFile.decode(displaced.single.value);
+      expect(kept.ids, ['card:1']);
+      expect(kept.sealedPrivateKey, 'SOMEONE-ELSES-KEY',
+          reason: 'it must still be openable with the passphrase it was made '
+              'with, which is not the one just chosen');
+    });
+
+    test('and the new backup starts empty, under the usual name', () async {
+      folder.files[AutoBackupService.currentFileName] = existingBackup();
+
+      await service.configure(passphrase: 'p', folderChoice: chosenFolder);
+
+      final current = AutoBackupFile.decode(
+        folder.files[AutoBackupService.currentFileName]!,
+      );
+      expect(current.count, 0);
+      expect(current.sealedPrivateKey, 'SEALED-PRIVATE');
+    });
+
+    test('the displaced copy is never pruned as a daily snapshot', () async {
+      // Five-day pruning is for routine copies. A backup displaced by a new
+      // setup may be the only copy of a vault nothing on this phone can open.
+      final name = AutoBackupService.displacedNameFor(DateTime.now());
+      expect(
+        RegExp(r'^karde-backup-\d{4}-\d{2}-\d{2}\.json$').hasMatch(name),
+        isFalse,
+      );
+    });
+
+    test('an empty folder is set up without leaving stray files', () async {
+      await service.configure(passphrase: 'p', folderChoice: chosenFolder);
+
+      expect(folder.files.keys, [AutoBackupService.currentFileName]);
+    });
+
+    test('setup stops rather than destroying what it could not move', () async {
+      // If the old backup cannot be copied to safety, carrying on is exactly
+      // the case that destroys somebody's only copy.
+      final original = existingBackup();
+      folder.files[AutoBackupService.currentFileName] = original;
+      folder.failWritesTo = RegExp('^karde-backup-replaced-');
+
+      await expectLater(
+        service.configure(passphrase: 'p', folderChoice: chosenFolder),
+        throwsA(isA<BackupFolderUnavailable>()),
+      );
+
+      expect(
+        folder.files[AutoBackupService.currentFileName],
+        original,
+        reason: 'the original is untouched',
+      );
+      expect(await service.isConfigured, isFalse);
+    });
+
+    test('Karde can say a backup is already there before writing', () async {
+      // So the setup screen can offer to restore instead of quietly starting
+      // over. Reads only; changes nothing.
+      final original = existingBackup();
+      folder.files[AutoBackupService.currentFileName] = original;
+
+      expect(await service.existingBackupChangedAt(chosenFolder.uri), isNotNull);
+      expect(folder.files[AutoBackupService.currentFileName], original);
+    });
+
+    test('and says there is none when the folder is empty', () async {
+      expect(await service.existingBackupChangedAt(chosenFolder.uri), isNull);
     });
   });
 

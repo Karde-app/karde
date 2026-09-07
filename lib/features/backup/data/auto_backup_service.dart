@@ -117,12 +117,39 @@ class AutoBackupService {
 
   Future<bool> get isConfigured async => (await setup()) != null;
 
+  /// The name an existing backup is moved to when a new one is set up over it.
+  ///
+  /// Deliberately not the dated-snapshot shape, so the five-day pruning never
+  /// touches it. A backup displaced by a new setup is not a routine daily copy;
+  /// it may be the only copy of a vault nothing on this phone can open.
+  static String displacedNameFor(DateTime when) {
+    final w = when.toUtc();
+    String two(int v) => v.toString().padLeft(2, '0');
+    return 'karde-backup-replaced-${w.year}-${two(w.month)}-${two(w.day)}'
+        '-${two(w.hour)}${two(w.minute)}.json';
+  }
+
   /// Creates the key pair, remembers the folder, and writes an empty backup.
   ///
   /// The empty file matters. It proves, while the user is still standing here
   /// and can do something about it, that the folder they picked can actually be
   /// written to — rather than finding out on their first saved card, or worse,
   /// never finding out.
+  ///
+  /// **Anything already in that folder is moved aside first, never overwritten.**
+  ///
+  /// This was the single worst bug in the feature, and it lived in the exact
+  /// place it could do most harm. Setting up wrote an empty backup over
+  /// karde-backup.json without looking, so the sequence a person follows on a
+  /// new phone — install Karde, walk onboarding, point it at the folder holding
+  /// their backup — destroyed that backup before they ever reached the screen
+  /// that would have restored it. The user found it by re-onboarding onto
+  /// yesterday's folder and noticing the file had been modified.
+  ///
+  /// Moving rather than merging, because the new setup has a new key pair: a
+  /// file holding records sealed by two different keys could be opened by
+  /// neither passphrase in full. Two intact files, one of which is restorable,
+  /// beats one file that is half unreadable.
   Future<AutoBackupSetup> configure({
     required String passphrase,
     required BackupFolderChoice folderChoice,
@@ -135,6 +162,8 @@ class AutoBackupService {
       sealedPrivateKey: pair.sealedPrivateKey,
     );
 
+    await _preserveExisting(created.folderUri);
+
     await folder.write(
       created.folderUri,
       currentFileName,
@@ -143,6 +172,42 @@ class AutoBackupService {
 
     await settings.setAutoBackup(created.toStorage());
     return created;
+  }
+
+  /// Whether the chosen folder already holds a Karde backup, and when it changed.
+  ///
+  /// So the setup screen can say so before anything is written. Answers null
+  /// when there is nothing there, when it cannot be read, or when the folder
+  /// cannot be reached — none of which should stop somebody setting up.
+  Future<DateTime?> existingBackupChangedAt(String folderUri) async {
+    try {
+      final contents = await folder.read(folderUri, currentFileName);
+      if (contents == null || contents.trim().isEmpty) return null;
+      return AutoBackupFile.decode(contents).updatedAt;
+    } catch (_) {
+      return null;
+    }
+  }
+
+  Future<void> _preserveExisting(String folderUri) async {
+    final String? existing;
+    try {
+      existing = await folder.read(folderUri, currentFileName);
+    } catch (_) {
+      // Cannot read the folder. The write that follows will fail too and setup
+      // will stop there, which is the right outcome: nothing has been destroyed.
+      return;
+    }
+    if (existing == null || existing.trim().isEmpty) return;
+
+    // Not wrapped in a try. If the old backup cannot be moved to safety, setting
+    // a new one up must not go ahead — that is precisely the case where carrying
+    // on destroys the only copy someone has.
+    await folder.write(
+      folderUri,
+      displacedNameFor(DateTime.now()),
+      existing,
+    );
   }
 
   /// Records one item, adding it or replacing it.
