@@ -137,4 +137,50 @@ void main() {
       expect(file.count, 0);
     });
   });
+
+  group('Changing the passphrase rewraps the key and nothing else', () {
+    const newSealedKey = '{"format":"karde.backup","data":"REWRAPPED"}';
+
+    test('every record is carried across untouched', () {
+      // The reason a passphrase change is cheap: the records are sealed with the
+      // public half of a key pair the passphrase never touches. If this ever
+      // started dropping or altering records, a passphrase change would quietly
+      // destroy the backup it was meant to protect.
+      final file = AutoBackupFile.empty('{"format":"karde.backup","data":"OLD"}');
+      file.put('card:1', '{"k":"K1","iv":"I1","d":"D1"}');
+      file.put('id:7', '{"k":"K2","iv":"I2","d":"D2"}');
+
+      final moved = AutoBackupFile.decode(
+        file.withSealedPrivateKey(newSealedKey).encode(),
+      );
+
+      expect(moved.sealedPrivateKey, newSealedKey);
+      expect(moved.count, 2);
+      expect(moved.ids, containsAll(['card:1', 'id:7']));
+      expect(moved.sealedRecords, containsAll(file.sealedRecords));
+    });
+
+    test('the original is left alone, so a failed write strands nothing', () {
+      const oldSealedKey = '{"format":"karde.backup","data":"OLD"}';
+      final file = AutoBackupFile.empty(oldSealedKey);
+      file.put('card:1', '{"k":"K1","iv":"I1","d":"D1"}');
+
+      final moved = file.withSealedPrivateKey(newSealedKey);
+      moved.remove('card:1');
+
+      expect(file.sealedPrivateKey, oldSealedKey);
+      expect(file.count, 1);
+    });
+
+    test('the backup keeps the date it was first made', () {
+      // Otherwise a passphrase change would look, to anyone checking, like the
+      // history had been thrown away and started again.
+      final file = AutoBackupFile.empty('{"format":"karde.backup","data":"OLD"}');
+      final createdAt = file.createdAt;
+
+      final moved = file.withSealedPrivateKey(newSealedKey);
+
+      expect(moved.createdAt, createdAt);
+    });
+  });
 }

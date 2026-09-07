@@ -639,7 +639,7 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get backupSetupPassphraseBody =>
-      'Vous en aurez besoin pour récupérer vos données. Karde ne peut ni la retrouver ni la réinitialiser : notez-la et gardez-la en lieu sûr.';
+      'Vous en aurez besoin pour récupérer vos données sur un nouveau téléphone. Karde en gardera une copie sur ce téléphone, consultable avec votre empreinte, mais il ne peut jamais réinitialiser la phrase secrète — et cette copie disparaît avec le téléphone. Notez-la et gardez-la en lieu sûr.';
 
   @override
   String get backupSetupPassphraseDone => 'Phrase secrète choisie';
@@ -699,6 +699,9 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get alertsTitle => 'À votre attention';
+
+  @override
+  String get alertsTitleCalm => 'Tout va bien';
 
   @override
   String get alertsNone => 'Rien ne requiert votre attention.';
@@ -1275,7 +1278,7 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get passphraseCreateExplainer =>
-      'Cette phrase secrète chiffre votre fichier de sauvegarde. Karde ne la conserve jamais et ne peut pas la retrouver — si vous l\'oubliez, la sauvegarde est perdue.';
+      'Cette phrase secrète chiffre votre fichier de sauvegarde. Karde ne peut ni la réinitialiser ni la deviner : si elle est oubliée et notée nulle part, la sauvegarde est perdue.';
 
   @override
   String get passphraseUnlockExplainer =>
@@ -1701,4 +1704,149 @@ class AppLocalizationsFr extends AppLocalizations {
   @override
   String get noBackupBody =>
       'Tout ce que vous avez enregistré se trouve uniquement sur ce téléphone. Une sauvegarde vous permet de tout retrouver sur un nouveau téléphone.';
+
+  @override
+  String get copyLabel => 'Copier';
+
+  @override
+  String get passphraseSectionTitle => 'Votre phrase secrète de sauvegarde';
+
+  @override
+  String get passphraseSectionBody =>
+      'C\'est la seule chose qui ouvre votre sauvegarde sur un nouveau téléphone. Karde ne peut pas la réinitialiser pour vous.';
+
+  @override
+  String get passphraseShowTitle => 'Afficher ma phrase secrète';
+
+  @override
+  String get passphraseShowBody =>
+      'Déverrouillez avec votre empreinte ou le verrouillage de l\'écran pour la voir.';
+
+  @override
+  String get passphraseSaveTitle =>
+      'Conserver ma phrase secrète sur ce téléphone';
+
+  @override
+  String get passphraseSaveBody =>
+      'Vous pourrez la consulter ici en cas de doute.';
+
+  @override
+  String get passphraseChangeTitle => 'Changer ma phrase secrète';
+
+  @override
+  String get passphraseChangeBody => 'Vous devrez d\'abord saisir l\'actuelle.';
+
+  @override
+  String get passphraseChangeWarning =>
+      'Votre sauvegarde passe immédiatement à la nouvelle phrase secrète. Les copies datées des jours précédents restent verrouillées avec l\'ancienne : conservez-la tant que vous en avez besoin.';
+
+  @override
+  String get passphraseChanged =>
+      'Votre phrase secrète de sauvegarde a été changée.';
+
+  @override
+  String get passphraseUnchanged =>
+      'C\'est déjà votre phrase secrète actuelle.';
+
+  @override
+  String get passphraseNotOnThisPhone =>
+      'Karde n\'a plus de copie de votre phrase secrète sur ce téléphone.';
+
+  @override
+  String get passphraseCouldNotSave =>
+      'Karde n\'a pas pu en conserver une copie sur ce téléphone. Votre sauvegarde elle-même n\'est pas affectée.';
+
+  @override
+  String get passphraseSavedOnPhone =>
+      'Enregistrée. Vous pouvez la consulter sur cet écran quand vous voulez.';
+
+  @override
+  String get passphraseRevealTitle => 'Votre phrase secrète de sauvegarde';
+
+  @override
+  String get passphraseRevealWarning =>
+      'Cette copie n\'existe que sur ce téléphone : elle disparaît avec lui, c\'est-à-dire précisément au moment où vous en auriez besoin. Notez-la ailleurs ou conservez-la dans un gestionnaire de mots de passe.';
+
+  @override
+  String get passphraseCopied =>
+      'Phrase secrète copiée. Le presse-papiers s\'efface dans 60 s.';
+
+  @override
+  String get passphraseReuseTitle =>
+      'Utiliser votre phrase secrète de sauvegarde ?';
+
+  @override
+  String get passphraseReuseMessage =>
+      'Karde peut verrouiller ce fichier avec la phrase secrète que votre sauvegarde automatique utilise déjà : vous n\'en aurez qu\'une seule à retenir.';
+
+  @override
+  String get passphraseReuseConfirm => 'L\'utiliser';
+
+  @override
+  String get passphraseReuseAlternative => 'En saisir une autre';
+
+  @override
+  String get backupIncompleteTitle =>
+      'Il manque des éléments à votre sauvegarde';
+
+  @override
+  String backupIncompleteBody(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other:
+          '$count éléments ont été enregistrés avant l\'activation de la sauvegarde : ils n\'ont donc jamais été copiés.',
+      one:
+          'Un élément a été enregistré avant l\'activation de la sauvegarde : il n\'a donc jamais été copié.',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get backupCopyExistingTitle => 'Copier ce que vous aviez déjà';
+
+  @override
+  String backupCopyExistingSubtitle(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other:
+          '$count éléments se trouvent dans votre coffre mais pas dans votre sauvegarde.',
+      one:
+          'Un élément se trouve dans votre coffre mais pas dans votre sauvegarde.',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get backupCopyExistingAction => 'Les copier maintenant';
+
+  @override
+  String backupCopyConfirmTitle(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'Copier $count éléments',
+      one: 'Copier 1 élément',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get backupCopyConfirmMessage =>
+      'Votre téléphone vous demandera de confirmer votre identité une fois par élément. Tout ce que vous enregistrerez ensuite sera copié sans rien demander.';
+
+  @override
+  String get backupCopying => 'Copie vers votre sauvegarde…';
+
+  @override
+  String backupCopyDone(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count éléments ajoutés à votre sauvegarde.',
+      one: '1 élément ajouté à votre sauvegarde.',
+    );
+    return '$_temp0';
+  }
 }

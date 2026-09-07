@@ -69,6 +69,24 @@ class AutoBackupFile {
   /// Forgets one record. Returns whether there was one to forget.
   bool remove(String id) => _records.remove(id) != null;
 
+  /// The same backup, with its key wrapped in a different passphrase.
+  ///
+  /// The records are untouched, and have to be: they are sealed with the public
+  /// half of the pair, which a passphrase change does not alter. Only the
+  /// wrapping around the private half moves.
+  ///
+  /// [createdAt] is carried over rather than reset. The file is the same backup
+  /// it was a moment ago; saying otherwise would make it look, to anyone
+  /// checking, as though their history had been thrown away.
+  AutoBackupFile withSealedPrivateKey(String sealedPrivateKey) {
+    return AutoBackupFile(
+      sealedPrivateKey: sealedPrivateKey,
+      createdAt: createdAt,
+      updatedAt: DateTime.now().toUtc(),
+      records: Map<String, Map<String, dynamic>>.from(_records),
+    );
+  }
+
   static AutoBackupFile empty(String sealedPrivateKey) {
     final now = DateTime.now().toUtc();
     return AutoBackupFile(

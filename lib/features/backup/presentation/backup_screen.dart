@@ -11,8 +11,10 @@ import '../../../core/widgets/karde_feedback.dart';
 import '../../../theme/theme.dart';
 import '../../cards/data/card_repository.dart';
 import '../../ids/data/id_repository.dart';
+import '../data/auto_backup_recorder.dart';
 import '../data/backup_service.dart';
 import '../domain/vault_backup.dart';
+import 'widgets/backup_passphrase_section.dart';
 import 'widgets/passphrase_dialog.dart';
 
 /// Encrypted export and restore of the whole vault.
@@ -80,7 +82,7 @@ class _BackupScreenState extends ConsumerState<BackupScreen> {
     );
     if (!proceed || !mounted) return;
 
-    final passphrase = await PassphraseDialog.show(context, isCreating: true);
+    final passphrase = await _passphraseForExport(loc);
     if (passphrase == null || !mounted) return;
 
     _report(loc.backupPreparing, 0, itemCount);
@@ -101,6 +103,92 @@ class _BackupScreenState extends ConsumerState<BackupScreen> {
         KardeFeedback.info(context, loc.backupVaultEmpty);
       }
     } catch (e) {
+      if (mounted) KardeFeedback.error(context, _describe(loc, e));
+    } finally {
+      _done();
+    }
+  }
+
+  /// Which passphrase locks the file this export is about to write.
+  ///
+  /// Offers the one the automatic backup already uses, when Karde is holding a
+  /// copy of it. Two passphrases for two kinds of backup was the honest design
+  /// and the wrong one: they protect the same vault, they are typed months
+  /// apart, and the second one exists only because this screen had no way to
+  /// reach the first. Somebody who has to remember two is more likely to end up
+  /// remembering neither.
+  ///
+  /// Still an offer rather than a rule. A file being handed to somebody else, or
+  /// put somewhere the automatic backup is not, is a fair reason to want a
+  /// different passphrase on it — so the other answer is one tap away, and
+  /// backing out of the question cancels rather than quietly choosing.
+  Future<String?> _passphraseForExport(AppLocalizations loc) async {
+    final auto = ref.read(autoBackupServiceProvider);
+    if (await auto.hasPassphraseReminder && mounted) {
+      // Reusing the saved passphrase is in the *alternative* slot rather than
+      // the confirm slot, which reads backwards in code and correctly on screen:
+      // that slot is the full-width emphasised button, and this is the answer
+      // being recommended. Typing a fresh one is the quieter choice beside
+      // Cancel.
+      final choice = await KardeConfirmDialog.showWithAlternative(
+        context,
+        title: loc.passphraseReuseTitle,
+        message: loc.passphraseReuseMessage,
+        confirmLabel: loc.passphraseReuseAlternative,
+        alternativeLabel: loc.passphraseReuseConfirm,
+        isDestructive: false,
+      );
+      if (choice == KardeConfirmChoice.cancelled) return null;
+      if (choice == KardeConfirmChoice.alternative) {
+        try {
+          final stored = await auto.revealPassphrase();
+          if (stored != null) return stored;
+        } on VaultAuthCancelled {
+          return null;
+        } catch (e) {
+          if (mounted) KardeFeedback.error(context, _describe(loc, e));
+          return null;
+        }
+      }
+    }
+
+    if (!mounted) return null;
+    return PassphraseDialog.show(context, isCreating: true);
+  }
+
+  /// Puts items saved before backup was switched on into the backup.
+  ///
+  /// Offered rather than done quietly, because it costs one authentication
+  /// prompt per item and nobody can answer a prompt they are not standing in
+  /// front of. The count is told first, the same way the manual export tells it,
+  /// so the number of times the sensor will ask is never a surprise.
+  Future<void> _copyExisting(int missing) async {
+    final loc = AppLocalizations.of(context)!;
+    final service = ref.read(backupServiceProvider);
+
+    final proceed = await KardeConfirmDialog.show(
+      context,
+      title: loc.backupCopyConfirmTitle(missing),
+      message: loc.backupCopyConfirmMessage,
+      confirmLabel: loc.continueBtn,
+      isDestructive: false,
+    );
+    if (!proceed || !mounted) return;
+
+    _report(loc.backupCopying, 0, missing);
+    try {
+      final copied = await service.copyExistingItemsIntoBackup(
+        onProgress: (completed, total) =>
+            _report(loc.backupCopying, completed, total),
+      );
+      ref.invalidate(autoBackupMissingCountProvider);
+      if (mounted) KardeFeedback.success(context, loc.backupCopyDone(copied));
+    } on VaultAuthCancelled {
+      // A dismissed prompt is a decision. Whatever was sealed before it is
+      // still queued, so a second attempt costs only what is left.
+      ref.invalidate(autoBackupMissingCountProvider);
+    } catch (e) {
+      ref.invalidate(autoBackupMissingCountProvider);
       if (mounted) KardeFeedback.error(context, _describe(loc, e));
     } finally {
       _done();
@@ -222,6 +310,7 @@ class _BackupScreenState extends ConsumerState<BackupScreen> {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final loc = AppLocalizations.of(context)!;
+    final missing = ref.watch(autoBackupMissingCountProvider).valueOrNull ?? 0;
 
     return Scaffold(
       appBar: AppBar(title: Text(loc.backupTitle)),
@@ -240,6 +329,20 @@ class _BackupScreenState extends ConsumerState<BackupScreen> {
               text: loc.backupExplainerOffline,
             ),
             const SizedBox(height: 28),
+            // Above the two ordinary actions, because an incomplete backup is
+            // the one thing on this screen that is actually wrong. Absent
+            // entirely when nothing is missing, which is the normal case.
+            if (missing > 0) ...[
+              _ActionCard(
+                icon: Icons.playlist_add_check_outlined,
+                title: loc.backupCopyExistingTitle,
+                subtitle: loc.backupCopyExistingSubtitle(missing),
+                actionLabel: loc.backupCopyExistingAction,
+                enabled: !_isBusy,
+                onPressed: () => _copyExisting(missing),
+              ),
+              const SizedBox(height: 16),
+            ],
             _ActionCard(
               icon: Icons.ios_share,
               title: loc.backupCreateTitle,
@@ -261,6 +364,10 @@ class _BackupScreenState extends ConsumerState<BackupScreen> {
               const SizedBox(height: 28),
               _ProgressPanel(progress: _progress!),
             ],
+            const SizedBox(height: 28),
+            // Only draws anything once automatic backup is set up, so this
+            // screen stays two cards and an explanation for everyone else.
+            const BackupPassphraseSection(),
             const SizedBox(height: 28),
             Text(
               loc.backupKeepFileSafe,

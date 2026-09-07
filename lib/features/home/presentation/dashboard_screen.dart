@@ -546,13 +546,14 @@ class DashboardScreen extends ConsumerWidget {
   /// thing needs looking at" call for different amounts of urgency from the
   /// person reading it, and a dot says neither.
   ///
-  /// Silent when there is nothing to say: no bell at all rather than a bell with
-  /// a zero on it. A control that is usually pointless teaches people not to
-  /// look at it on the day it is not.
+  /// Always on screen, badge or no badge. It used to disappear when all was
+  /// well, which cost more than it saved: a bell that comes and goes gives
+  /// nobody a way to ask "is everything all right?", so its absence reads as an
+  /// app that has stopped watching rather than one with nothing to report. Quiet
+  /// and unbadged, it answers that question every time it is looked at.
   Widget _buildAlertBell(BuildContext context, WidgetRef ref, ThemeData theme) {
     final alerts = ref.watch(kardeAlertsProvider);
-    if (alerts.isEmpty) return const SizedBox.shrink();
-
+    final hasAlerts = alerts.isNotEmpty;
     final urgent =
         alerts.any((a) => a.severity == KardeAlertSeverity.urgent);
     final accent = urgent ? KardeColors.ember : KardeColors.champagneGold;
@@ -566,30 +567,34 @@ class DashboardScreen extends ConsumerWidget {
           clipBehavior: Clip.none,
           children: [
             Icon(Icons.notifications_none_rounded,
-                size: 28, color: theme.colorScheme.onSurface.withValues(alpha: 0.75)),
-            PositionedDirectional(
-              top: -4,
-              end: -4,
-              child: Container(
-                padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 1),
-                constraints: const BoxConstraints(minWidth: 18),
-                decoration: BoxDecoration(
-                  color: accent,
-                  borderRadius: BorderRadius.circular(9),
-                  border: Border.all(color: theme.scaffoldBackgroundColor, width: 1.5),
-                ),
-                child: Text(
-                  '${alerts.length}',
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    fontFamily: 'Inter',
-                    fontSize: 11,
-                    fontWeight: FontWeight.bold,
-                    color: urgent ? Colors.white : KardeColors.obsidian,
+                size: 28,
+                color: theme.colorScheme.onSurface
+                    .withValues(alpha: hasAlerts ? 0.75 : 0.45)),
+            if (hasAlerts)
+              PositionedDirectional(
+                top: -4,
+                end: -4,
+                child: Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 1),
+                  constraints: const BoxConstraints(minWidth: 18),
+                  decoration: BoxDecoration(
+                    color: accent,
+                    borderRadius: BorderRadius.circular(9),
+                    border:
+                        Border.all(color: theme.scaffoldBackgroundColor, width: 1.5),
+                  ),
+                  child: Text(
+                    '${alerts.length}',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      fontFamily: 'Inter',
+                      fontSize: 11,
+                      fontWeight: FontWeight.bold,
+                      color: urgent ? Colors.white : KardeColors.obsidian,
+                    ),
                   ),
                 ),
               ),
-            ),
           ],
         ),
       ),

@@ -26,6 +26,21 @@ final autoBackupSetupProvider =
   return ref.watch(autoBackupServiceProvider).setup();
 });
 
+/// Whether Karde is holding a copy of the passphrase for this phone's owner to
+/// look up.
+///
+/// Drives one row on the Backup screen between two readings: "show me my
+/// passphrase" when there is a copy, and "keep a copy" when there is not. False
+/// is a real state rather than an error — the copy is sealed by the vault key,
+/// so removing the phone's screen lock destroys it while leaving the backup
+/// itself perfectly good.
+///
+/// autoDispose for the same reason as the others here: it changes during setup
+/// and during a passphrase change, sometimes with this screen not yet built.
+final backupPassphraseSavedProvider = FutureProvider.autoDispose<bool>((ref) {
+  return ref.watch(autoBackupServiceProvider).hasPassphraseReminder;
+});
+
 /// Whether the last attempt to write the backup failed.
 ///
 /// A plain flag rather than something derived, because the thing worth reporting

@@ -632,7 +632,7 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get backupSetupPassphraseBody =>
-      'ستحتاج إليها لاستعادة بياناتك. لا يستطيع Karde معرفتها أو إعادة تعيينها، لذا اكتبها واحفظها في مكان آمن.';
+      'ستحتاج إليها لاستعادة بياناتك على هاتف جديد. سيحتفظ Karde بنسخة منها على هذا الهاتف يمكنك مراجعتها ببصمتك، لكنه لا يستطيع إعادة تعيينها أبداً — وتلك النسخة تضيع بضياع الهاتف. اكتبها واحفظها في مكان آمن.';
 
   @override
   String get backupSetupPassphraseDone => 'تم اختيار عبارة المرور';
@@ -692,6 +692,9 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get alertsTitle => 'يحتاج انتباهك';
+
+  @override
+  String get alertsTitleCalm => 'كل شيء على ما يرام';
 
   @override
   String get alertsNone => 'لا شيء يحتاج انتباهك.';
@@ -1271,7 +1274,7 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get passphraseCreateExplainer =>
-      'تشفّر عبارة المرور هذه ملف نسختك الاحتياطية. لا يحفظها Karde أبداً ولا يستطيع استرجاعها — وإذا نسيتها، ضاعت النسخة الاحتياطية.';
+      'تشفّر عبارة المرور هذه ملف نسختك الاحتياطية. لا يستطيع Karde إعادة تعيينها ولا معرفتها؛ فإذا نُسيت ولم تُدوَّن في أي مكان، ضاعت النسخة الاحتياطية.';
 
   @override
   String get passphraseUnlockExplainer =>
@@ -1683,4 +1686,139 @@ class AppLocalizationsAr extends AppLocalizations {
   @override
   String get noBackupBody =>
       'كل ما حفظته موجود على هذا الهاتف فقط. تتيح لك النسخة الاحتياطية استعادة كل شيء على هاتف جديد.';
+
+  @override
+  String get copyLabel => 'نسخ';
+
+  @override
+  String get passphraseSectionTitle => 'عبارة المرور لنسختك الاحتياطية';
+
+  @override
+  String get passphraseSectionBody =>
+      'هي الشيء الوحيد الذي يفتح نسختك الاحتياطية على هاتف جديد. ولا يستطيع Karde إعادة تعيينها لك.';
+
+  @override
+  String get passphraseShowTitle => 'إظهار عبارة المرور';
+
+  @override
+  String get passphraseShowBody => 'افتح القفل ببصمتك أو بقفل الشاشة لرؤيتها.';
+
+  @override
+  String get passphraseSaveTitle => 'الاحتفاظ بعبارة المرور على هذا الهاتف';
+
+  @override
+  String get passphraseSaveBody =>
+      'عندها يمكنك مراجعتها هنا كلما لم تكن متأكدًا.';
+
+  @override
+  String get passphraseChangeTitle => 'تغيير عبارة المرور';
+
+  @override
+  String get passphraseChangeBody => 'ستحتاج إلى كتابة العبارة الحالية أولًا.';
+
+  @override
+  String get passphraseChangeWarning =>
+      'تنتقل نسختك الاحتياطية إلى عبارة المرور الجديدة على الفور. أما النسخ المؤرخة من الأيام السابقة فتبقى مقفلة بالعبارة القديمة، فاحتفظ بها ما دمت تحتاج إليها.';
+
+  @override
+  String get passphraseChanged => 'تم تغيير عبارة المرور لنسختك الاحتياطية.';
+
+  @override
+  String get passphraseUnchanged => 'هذه هي عبارة المرور التي لديك بالفعل.';
+
+  @override
+  String get passphraseNotOnThisPhone =>
+      'لم تعد لدى Karde نسخة من عبارة المرور على هذا الهاتف.';
+
+  @override
+  String get passphraseCouldNotSave =>
+      'تعذّر على Karde الاحتفاظ بنسخة على هذا الهاتف. أما نسختك الاحتياطية نفسها فبخير.';
+
+  @override
+  String get passphraseSavedOnPhone =>
+      'تم الحفظ. يمكنك مراجعتها من هذه الشاشة وقتما تشاء.';
+
+  @override
+  String get passphraseRevealTitle => 'عبارة المرور لنسختك الاحتياطية';
+
+  @override
+  String get passphraseRevealWarning =>
+      'هذه النسخة موجودة على هذا الهاتف فقط، فهي تضيع بضياعه — وهو تحديدًا الوقت الذي ستحتاجها فيه. دوّنها في مكان آخر أو احفظها في مدير كلمات مرور.';
+
+  @override
+  String get passphraseCopied =>
+      'تم نسخ عبارة المرور. ستُمسح الحافظة خلال 60 ثانية.';
+
+  @override
+  String get passphraseReuseTitle => 'هل تستخدم عبارة مرور نسختك الاحتياطية؟';
+
+  @override
+  String get passphraseReuseMessage =>
+      'يمكن لـ Karde قفل هذا الملف بعبارة المرور نفسها التي تستخدمها نسختك الاحتياطية التلقائية، فتكون لديك عبارة واحدة فقط لتتذكرها.';
+
+  @override
+  String get passphraseReuseConfirm => 'استخدامها';
+
+  @override
+  String get passphraseReuseAlternative => 'كتابة عبارة أخرى';
+
+  @override
+  String get backupIncompleteTitle => 'تنقص نسختك الاحتياطية بعض العناصر';
+
+  @override
+  String backupIncompleteBody(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'حُفظت $count عناصر قبل تشغيل النسخ الاحتياطي، فلم تُنسخ قط.',
+      one: 'حُفظ عنصر واحد قبل تشغيل النسخ الاحتياطي، فلم يُنسخ قط.',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get backupCopyExistingTitle => 'انسخ ما لديك بالفعل';
+
+  @override
+  String backupCopyExistingSubtitle(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'توجد $count عناصر في خزنتك وليست في نسختك الاحتياطية.',
+      one: 'يوجد عنصر واحد في خزنتك وليس في نسختك الاحتياطية.',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get backupCopyExistingAction => 'انسخها الآن';
+
+  @override
+  String backupCopyConfirmTitle(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'نسخ $count عناصر',
+      one: 'نسخ عنصر واحد',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get backupCopyConfirmMessage =>
+      'سيطلب منك هاتفك تأكيد هويتك مرة واحدة لكل عنصر. أما ما تحفظه بعد ذلك فيُنسخ دون أن يطلب منك شيئاً.';
+
+  @override
+  String get backupCopying => 'جارٍ النسخ إلى نسختك الاحتياطية…';
+
+  @override
+  String backupCopyDone(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'تمت إضافة $count عناصر إلى نسختك الاحتياطية.',
+      one: 'تمت إضافة عنصر واحد إلى نسختك الاحتياطية.',
+    );
+    return '$_temp0';
+  }
 }

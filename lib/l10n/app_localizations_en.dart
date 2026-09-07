@@ -634,7 +634,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get backupSetupPassphraseBody =>
-      'You will need it to get your things back. Karde cannot look it up or reset it for you, so write it down and keep it somewhere safe.';
+      'You will need it to get your things back on a new phone. Karde will keep a copy on this phone that you can look up with your fingerprint, but it can never reset the passphrase — and that copy goes when the phone does. Write it down and keep it somewhere safe.';
 
   @override
   String get backupSetupPassphraseDone => 'Passphrase chosen';
@@ -694,6 +694,9 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get alertsTitle => 'Needs your attention';
+
+  @override
+  String get alertsTitleCalm => 'All good';
 
   @override
   String get alertsNone => 'Nothing needs your attention.';
@@ -1259,7 +1262,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get passphraseCreateExplainer =>
-      'This passphrase encrypts your backup file. Karde never stores it and cannot recover it — if you forget it, the backup is gone.';
+      'This passphrase encrypts your backup file. Karde cannot reset it or work it out — if it is forgotten and written down nowhere, the backup is gone.';
 
   @override
   String get passphraseUnlockExplainer =>
@@ -1673,4 +1676,142 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get noBackupBody =>
       'Everything you have saved is only on this phone. A backup lets you get it all back on a new phone.';
+
+  @override
+  String get copyLabel => 'Copy';
+
+  @override
+  String get passphraseSectionTitle => 'Your backup passphrase';
+
+  @override
+  String get passphraseSectionBody =>
+      'This is the only thing that opens your backup on a new phone. Karde cannot reset it for you.';
+
+  @override
+  String get passphraseShowTitle => 'Show my passphrase';
+
+  @override
+  String get passphraseShowBody =>
+      'Unlock with your fingerprint or screen lock to see it.';
+
+  @override
+  String get passphraseSaveTitle => 'Keep my passphrase on this phone';
+
+  @override
+  String get passphraseSaveBody =>
+      'Then you can look it up here whenever you are unsure.';
+
+  @override
+  String get passphraseChangeTitle => 'Change my passphrase';
+
+  @override
+  String get passphraseChangeBody =>
+      'You will need to type the current one first.';
+
+  @override
+  String get passphraseChangeWarning =>
+      'Your backup moves to the new passphrase straight away. The dated copies from earlier days stay locked with the old one, so keep the old passphrase until you no longer need them.';
+
+  @override
+  String get passphraseChanged => 'Your backup passphrase has been changed.';
+
+  @override
+  String get passphraseUnchanged => 'That is the passphrase you already have.';
+
+  @override
+  String get passphraseNotOnThisPhone =>
+      'Karde no longer has a copy of your passphrase on this phone.';
+
+  @override
+  String get passphraseCouldNotSave =>
+      'Karde could not keep a copy on this phone. Your backup itself is fine.';
+
+  @override
+  String get passphraseSavedOnPhone =>
+      'Saved. You can look it up on this screen whenever you need it.';
+
+  @override
+  String get passphraseRevealTitle => 'Your backup passphrase';
+
+  @override
+  String get passphraseRevealWarning =>
+      'This copy only exists on this phone, so it goes when the phone does — which is exactly when you would need it. Write it down somewhere else, or keep it in a password manager.';
+
+  @override
+  String get passphraseCopied => 'Passphrase copied. Clipboard clears in 60s.';
+
+  @override
+  String get passphraseReuseTitle => 'Use your backup passphrase?';
+
+  @override
+  String get passphraseReuseMessage =>
+      'Karde can lock this file with the same passphrase your automatic backup already uses, so there is only one for you to remember.';
+
+  @override
+  String get passphraseReuseConfirm => 'Use it';
+
+  @override
+  String get passphraseReuseAlternative => 'Type a different one';
+
+  @override
+  String get backupIncompleteTitle => 'Your backup is missing things';
+
+  @override
+  String backupIncompleteBody(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other:
+          '$count items were saved before backup was switched on, so they were never copied.',
+      one:
+          'One item was saved before backup was switched on, so it was never copied.',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get backupCopyExistingTitle => 'Copy what you already had';
+
+  @override
+  String backupCopyExistingSubtitle(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count items are in your vault but not in your backup.',
+      one: 'One item is in your vault but not in your backup.',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get backupCopyExistingAction => 'Copy them now';
+
+  @override
+  String backupCopyConfirmTitle(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'Copy $count items',
+      one: 'Copy 1 item',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get backupCopyConfirmMessage =>
+      'Your phone will ask you to confirm your identity once per item. Anything you save from now on is copied without asking.';
+
+  @override
+  String get backupCopying => 'Copying to your backup…';
+
+  @override
+  String backupCopyDone(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count items added to your backup.',
+      one: '1 item added to your backup.',
+    );
+    return '$_temp0';
+  }
 }

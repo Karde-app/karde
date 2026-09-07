@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../core/platform/backup_folder_service.dart';
 import '../../../core/platform/file_transfer_service.dart';
 import '../../../core/security/bundle_crypto_service.dart';
 import '../../../core/security/encryption_service.dart';
@@ -25,6 +26,43 @@ final backupServiceProvider = Provider<BackupService>((ref) {
     files: FileTransferService(),
     auto: ref.watch(autoBackupServiceProvider),
   );
+});
+
+/// How many items are in the vault but not in the automatic backup.
+///
+/// Zero when everything is covered, when automatic backup is not set up, and
+/// when the folder cannot be reached — the last of those because "your backup is
+/// incomplete" is a serious thing to tell somebody and a folder that is offline
+/// for a moment is not evidence of it.
+///
+/// This is only ever above zero because of items that were in the vault before
+/// automatic backup was switched on. Everything saved afterwards is recorded as
+/// it is typed. See [BackupService.copyExistingItemsIntoBackup].
+///
+/// autoDispose so it is asked again on each visit: it changes when a card is
+/// saved, when the seeding runs, and when a folder comes back online.
+final autoBackupMissingCountProvider =
+    FutureProvider.autoDispose<int>((ref) async {
+  final inBackup = await ref.watch(autoBackupServiceProvider).backupRecordIds();
+  if (inBackup == null) return 0;
+
+  final storedCards = await ref.watch(cardRepositoryProvider).getAllCards();
+  final storedIds = await ref.watch(idRepositoryProvider).getAllIds();
+
+  var missing = 0;
+  for (final card in storedCards) {
+    final id = card.id;
+    if (id != null && !inBackup.contains(AutoBackupRecorder.cardId(id))) {
+      missing++;
+    }
+  }
+  for (final doc in storedIds) {
+    final id = doc.id;
+    if (id != null && !inBackup.contains(AutoBackupRecorder.idDocId(id))) {
+      missing++;
+    }
+  }
+  return missing;
 });
 
 /// There is nothing in the vault to export.
@@ -196,6 +234,103 @@ class BackupService {
   /// separately. The user has no reason to know or care which they are holding —
   /// both are "my Karde backup" — so the file says which it is and Karde reads it
   /// accordingly, rather than making them choose the right button and be wrong.
+  /// Puts what is already in the vault into the automatic backup.
+  ///
+  /// Switching automatic backup on used to start it empty. Every save from that
+  /// moment on was recorded, and everything saved *before* it was silently left
+  /// out — so somebody with a full vault who turned backup on had a backup of
+  /// nothing, was told "your backup is on", and would have found out on the day
+  /// they replaced their phone. Found on the device: one card in the vault, and
+  /// restoring the file it had just written reported "that backup does not
+  /// contain any items".
+  ///
+  /// It is not automatic because it cannot be. These records are sealed inside
+  /// the vault, and the vault key demands an authentication prompt for every
+  /// single use, so this costs one prompt per item and the user has to be asked
+  /// first. That is also why it is offered rather than retried in the
+  /// background: nobody can answer a fingerprint prompt they are not standing in
+  /// front of.
+  ///
+  /// Returns how many items were copied. Sealing is per item, but the write to
+  /// the folder happens once at the end.
+  Future<int> copyExistingItemsIntoBackup({
+    required BackupProgress onProgress,
+  }) async {
+    // Only what is actually missing. Reading the whole vault would be simpler
+    // and would charge the user an authentication prompt for every card they
+    // own, most of which are already in the backup — and the count they agreed
+    // to would not match the number of times the sensor asked.
+    final alreadyThere = await auto.backupRecordIds();
+    if (alreadyThere == null) throw const BackupFolderUnavailable('unreadable');
+
+    final storedCards = (await cards.getAllCards())
+        .where((c) =>
+            c.id != null &&
+            !alreadyThere.contains(AutoBackupRecorder.cardId(c.id!)))
+        .toList();
+    final storedIds = (await ids.getAllIds())
+        .where((i) =>
+            i.id != null &&
+            !alreadyThere.contains(AutoBackupRecorder.idDocId(i.id!)))
+        .toList();
+
+    final total = storedCards.length + storedIds.length;
+    if (total == 0) return 0;
+
+    var completed = 0;
+    onProgress(completed, total);
+
+    // The same identifiers and the same record shapes a normal save writes, so a
+    // seeded item and one recorded as it was typed are indistinguishable in the
+    // file — and re-running this replaces those records rather than duplicating
+    // them.
+    final records = <String, String>{};
+
+    for (final card in storedCards) {
+      final id = card.id;
+      if (id == null) continue;
+      final secrets = _asMap(await vault.decrypt(await cards.payloadFor(card)));
+      final image = secrets.remove('image');
+      records[AutoBackupRecorder.cardId(id)] = jsonEncode(
+        BackupCard(
+          nickname: card.nickname,
+          cardBrand: card.cardBrand,
+          lastFourDigits: card.lastFourDigits,
+          secrets: secrets,
+          image: image is String && image.isNotEmpty ? image : null,
+          createdAt: card.createdAt,
+          updatedAt: card.updatedAt,
+          isPinnedToTop: card.isPinnedToTop,
+          isPinnedToHomescreen: card.isPinnedToHomescreen,
+        ).toJson(),
+      );
+      onProgress(++completed, total);
+    }
+
+    for (final doc in storedIds) {
+      final id = doc.id;
+      if (id == null) continue;
+      final payload = _asMap(await vault.decrypt(await ids.payloadFor(doc)));
+      records[AutoBackupRecorder.idDocId(id)] = jsonEncode(
+        BackupId(
+          nickname: doc.nickname,
+          idType: doc.idType,
+          fields: IdPayload.fieldsOf(payload),
+          image: IdPayload.imageOf(payload),
+          createdAt: doc.createdAt,
+          updatedAt: doc.updatedAt,
+          isPinnedToTop: doc.isPinnedToTop,
+          isPinnedToHomescreen: doc.isPinnedToHomescreen,
+        ).toJson(),
+      );
+      onProgress(++completed, total);
+    }
+
+    await auto.recordManySaves(records);
+    records.clear();
+    return total;
+  }
+
   Future<ImportPlan> planImport({
     required String envelope,
     required String passphrase,

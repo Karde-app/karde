@@ -199,7 +199,7 @@
   "backupSetupTitle": "الاحتفاظ بنسخة",
   "backupSetupIntro": "يحفظ Karde نسخة من كل ما تحتفظ به هنا، حتى تتمكن من استعادة كل شيء إذا فُقد هذا الهاتف أو تعطّل أو استبدلته. تذهب النسخة إلى المكان الذي تختاره. لا يُرسَل أي شيء إلى Karde أو إلى أي جهة أخرى.",
   "backupSetupPassphraseTitle": "اختر عبارة مرور",
-  "backupSetupPassphraseBody": "ستحتاج إليها لاستعادة بياناتك. لا يستطيع Karde معرفتها أو إعادة تعيينها، لذا اكتبها واحفظها في مكان آمن.",
+  "backupSetupPassphraseBody": "ستحتاج إليها لاستعادة بياناتك على هاتف جديد. سيحتفظ Karde بنسخة منها على هذا الهاتف يمكنك مراجعتها ببصمتك، لكنه لا يستطيع إعادة تعيينها أبداً — وتلك النسخة تضيع بضياع الهاتف. اكتبها واحفظها في مكان آمن.",
   "backupSetupPassphraseDone": "تم اختيار عبارة المرور",
   "passphraseTooWeakForBackup": "اختر عبارة مرور أطول أو أكثر تنوعاً. تُحدَّث هذه النسخة باستمرار، لذا يستحق الأمر بعض الوقت.",
   "passphraseNeedsMixForBackup": "لا تستخدم الأرقام وحدها — أضف حروفاً أو بضع كلمات. الأرقام وحدها هي أول ما يجربه أي شخص يحاول التخمين.",
@@ -218,6 +218,7 @@
   "backupUpdated": "تم تحديث النسخة الاحتياطية.",
   "backupFailedTitle": "لا يتم حفظ نسختك الاحتياطية",
   "alertsTitle": "يحتاج انتباهك",
+  "alertsTitleCalm": "كل شيء على ما يرام",
   "alertsNone": "لا شيء يحتاج انتباهك.",
   "alertsNoneBody": "سيخبرك Karde هنا إذا كان هناك ما يستدعي المراجعة.",
   "alertsFix": "إصلاح",
@@ -374,7 +375,7 @@
   "passphraseWeakHint": "{label} — الأطول أفضل بكثير من الأكثر تعقيداً",
   "passphraseChooseTitle": "اختر عبارة مرور",
   "passphraseEnterTitle": "أدخل عبارة المرور",
-  "passphraseCreateExplainer": "تشفّر عبارة المرور هذه ملف نسختك الاحتياطية. لا يحفظها Karde أبداً ولا يستطيع استرجاعها — وإذا نسيتها، ضاعت النسخة الاحتياطية.",
+  "passphraseCreateExplainer": "تشفّر عبارة المرور هذه ملف نسختك الاحتياطية. لا يستطيع Karde إعادة تعيينها ولا معرفتها؛ فإذا نُسيت ولم تُدوَّن في أي مكان، ضاعت النسخة الاحتياطية.",
   "passphraseUnlockExplainer": "أدخل عبارة المرور التي اخترتها عند إنشاء هذه النسخة الاحتياطية.",
   "passphraseFieldLabel": "عبارة المرور",
   "passphraseShow": "إظهار عبارة المرور",
@@ -493,4 +494,49 @@
   "noBackupTitle": "لا توجد نسخة احتياطية",
   "noBackupShort": "لا توجد نسخة احتياطية — كل شيء موجود على هذا الهاتف فقط.",
   "noBackupBody": "كل ما حفظته موجود على هذا الهاتف فقط. تتيح لك النسخة الاحتياطية استعادة كل شيء على هاتف جديد."
+,
+  "copyLabel": "نسخ",
+  "passphraseSectionTitle": "عبارة المرور لنسختك الاحتياطية",
+  "passphraseSectionBody": "هي الشيء الوحيد الذي يفتح نسختك الاحتياطية على هاتف جديد. ولا يستطيع Karde إعادة تعيينها لك.",
+  "passphraseShowTitle": "إظهار عبارة المرور",
+  "passphraseShowBody": "افتح القفل ببصمتك أو بقفل الشاشة لرؤيتها.",
+  "passphraseSaveTitle": "الاحتفاظ بعبارة المرور على هذا الهاتف",
+  "passphraseSaveBody": "عندها يمكنك مراجعتها هنا كلما لم تكن متأكدًا.",
+  "passphraseChangeTitle": "تغيير عبارة المرور",
+  "passphraseChangeBody": "ستحتاج إلى كتابة العبارة الحالية أولًا.",
+  "passphraseChangeWarning": "تنتقل نسختك الاحتياطية إلى عبارة المرور الجديدة على الفور. أما النسخ المؤرخة من الأيام السابقة فتبقى مقفلة بالعبارة القديمة، فاحتفظ بها ما دمت تحتاج إليها.",
+  "passphraseChanged": "تم تغيير عبارة المرور لنسختك الاحتياطية.",
+  "passphraseUnchanged": "هذه هي عبارة المرور التي لديك بالفعل.",
+  "passphraseNotOnThisPhone": "لم تعد لدى Karde نسخة من عبارة المرور على هذا الهاتف.",
+  "passphraseCouldNotSave": "تعذّر على Karde الاحتفاظ بنسخة على هذا الهاتف. أما نسختك الاحتياطية نفسها فبخير.",
+  "passphraseSavedOnPhone": "تم الحفظ. يمكنك مراجعتها من هذه الشاشة وقتما تشاء.",
+  "passphraseRevealTitle": "عبارة المرور لنسختك الاحتياطية",
+  "passphraseRevealWarning": "هذه النسخة موجودة على هذا الهاتف فقط، فهي تضيع بضياعه — وهو تحديدًا الوقت الذي ستحتاجها فيه. دوّنها في مكان آخر أو احفظها في مدير كلمات مرور.",
+  "passphraseCopied": "تم نسخ عبارة المرور. ستُمسح الحافظة خلال 60 ثانية.",
+  "passphraseReuseTitle": "هل تستخدم عبارة مرور نسختك الاحتياطية؟",
+  "passphraseReuseMessage": "يمكن لـ Karde قفل هذا الملف بعبارة المرور نفسها التي تستخدمها نسختك الاحتياطية التلقائية، فتكون لديك عبارة واحدة فقط لتتذكرها.",
+  "passphraseReuseConfirm": "استخدامها",
+  "passphraseReuseAlternative": "كتابة عبارة أخرى"
+,
+  "backupIncompleteTitle": "تنقص نسختك الاحتياطية بعض العناصر",
+  "backupIncompleteBody": "{count, plural, =1{حُفظ عنصر واحد قبل تشغيل النسخ الاحتياطي، فلم يُنسخ قط.} other{حُفظت {count} عناصر قبل تشغيل النسخ الاحتياطي، فلم تُنسخ قط.}}",
+  "@backupIncompleteBody": {
+    "placeholders": { "count": { "type": "int" } }
+  },
+  "backupCopyExistingTitle": "انسخ ما لديك بالفعل",
+  "backupCopyExistingSubtitle": "{count, plural, =1{يوجد عنصر واحد في خزنتك وليس في نسختك الاحتياطية.} other{توجد {count} عناصر في خزنتك وليست في نسختك الاحتياطية.}}",
+  "@backupCopyExistingSubtitle": {
+    "placeholders": { "count": { "type": "int" } }
+  },
+  "backupCopyExistingAction": "انسخها الآن",
+  "backupCopyConfirmTitle": "{count, plural, =1{نسخ عنصر واحد} other{نسخ {count} عناصر}}",
+  "@backupCopyConfirmTitle": {
+    "placeholders": { "count": { "type": "int" } }
+  },
+  "backupCopyConfirmMessage": "سيطلب منك هاتفك تأكيد هويتك مرة واحدة لكل عنصر. أما ما تحفظه بعد ذلك فيُنسخ دون أن يطلب منك شيئاً.",
+  "backupCopying": "جارٍ النسخ إلى نسختك الاحتياطية…",
+  "backupCopyDone": "{count, plural, =1{تمت إضافة عنصر واحد إلى نسختك الاحتياطية.} other{تمت إضافة {count} عناصر إلى نسختك الاحتياطية.}}",
+  "@backupCopyDone": {
+    "placeholders": { "count": { "type": "int" } }
+  }
 }

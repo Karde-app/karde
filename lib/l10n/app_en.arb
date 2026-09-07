@@ -206,7 +206,7 @@
   "backupSetupTitle": "Keeping a copy",
   "backupSetupIntro": "Karde saves a copy of everything you keep here, so you can get it all back if this phone is lost, broken or replaced. The copy goes where you choose. Nothing is ever sent to Karde or to anyone else.",
   "backupSetupPassphraseTitle": "Choose a passphrase",
-  "backupSetupPassphraseBody": "You will need it to get your things back. Karde cannot look it up or reset it for you, so write it down and keep it somewhere safe.",
+  "backupSetupPassphraseBody": "You will need it to get your things back on a new phone. Karde will keep a copy on this phone that you can look up with your fingerprint, but it can never reset the passphrase — and that copy goes when the phone does. Write it down and keep it somewhere safe.",
   "backupSetupPassphraseDone": "Passphrase chosen",
   "passphraseTooWeakForBackup": "Please choose a longer passphrase, or add some variety. This copy is kept up to date all the time, so it is worth a moment.",
   "passphraseNeedsMixForBackup": "Please use more than just numbers — add some letters, or a few words. Numbers alone are the first thing anyone guessing would try.",
@@ -225,6 +225,7 @@
   "backupUpdated": "Backup updated.",
   "backupFailedTitle": "Your backup is not being saved",
   "alertsTitle": "Needs your attention",
+  "alertsTitleCalm": "All good",
   "alertsNone": "Nothing needs your attention.",
   "alertsNoneBody": "Karde will tell you here if something needs looking at.",
   "alertsFix": "Fix this",
@@ -482,7 +483,7 @@
   },
   "passphraseChooseTitle": "Choose a passphrase",
   "passphraseEnterTitle": "Enter the passphrase",
-  "passphraseCreateExplainer": "This passphrase encrypts your backup file. Karde never stores it and cannot recover it — if you forget it, the backup is gone.",
+  "passphraseCreateExplainer": "This passphrase encrypts your backup file. Karde cannot reset it or work it out — if it is forgotten and written down nowhere, the backup is gone.",
   "passphraseUnlockExplainer": "Enter the passphrase you chose when this backup was created.",
   "passphraseFieldLabel": "Passphrase",
   "passphraseShow": "Show passphrase",
@@ -643,4 +644,49 @@
   "noBackupTitle": "No backup yet",
   "noBackupShort": "No backup yet — everything is only on this phone.",
   "noBackupBody": "Everything you have saved is only on this phone. A backup lets you get it all back on a new phone."
+,
+  "copyLabel": "Copy",
+  "passphraseSectionTitle": "Your backup passphrase",
+  "passphraseSectionBody": "This is the only thing that opens your backup on a new phone. Karde cannot reset it for you.",
+  "passphraseShowTitle": "Show my passphrase",
+  "passphraseShowBody": "Unlock with your fingerprint or screen lock to see it.",
+  "passphraseSaveTitle": "Keep my passphrase on this phone",
+  "passphraseSaveBody": "Then you can look it up here whenever you are unsure.",
+  "passphraseChangeTitle": "Change my passphrase",
+  "passphraseChangeBody": "You will need to type the current one first.",
+  "passphraseChangeWarning": "Your backup moves to the new passphrase straight away. The dated copies from earlier days stay locked with the old one, so keep the old passphrase until you no longer need them.",
+  "passphraseChanged": "Your backup passphrase has been changed.",
+  "passphraseUnchanged": "That is the passphrase you already have.",
+  "passphraseNotOnThisPhone": "Karde no longer has a copy of your passphrase on this phone.",
+  "passphraseCouldNotSave": "Karde could not keep a copy on this phone. Your backup itself is fine.",
+  "passphraseSavedOnPhone": "Saved. You can look it up on this screen whenever you need it.",
+  "passphraseRevealTitle": "Your backup passphrase",
+  "passphraseRevealWarning": "This copy only exists on this phone, so it goes when the phone does — which is exactly when you would need it. Write it down somewhere else, or keep it in a password manager.",
+  "passphraseCopied": "Passphrase copied. Clipboard clears in 60s.",
+  "passphraseReuseTitle": "Use your backup passphrase?",
+  "passphraseReuseMessage": "Karde can lock this file with the same passphrase your automatic backup already uses, so there is only one for you to remember.",
+  "passphraseReuseConfirm": "Use it",
+  "passphraseReuseAlternative": "Type a different one"
+,
+  "backupIncompleteTitle": "Your backup is missing things",
+  "backupIncompleteBody": "{count, plural, =1{One item was saved before backup was switched on, so it was never copied.} other{{count} items were saved before backup was switched on, so they were never copied.}}",
+  "@backupIncompleteBody": {
+    "placeholders": { "count": { "type": "int" } }
+  },
+  "backupCopyExistingTitle": "Copy what you already had",
+  "backupCopyExistingSubtitle": "{count, plural, =1{One item is in your vault but not in your backup.} other{{count} items are in your vault but not in your backup.}}",
+  "@backupCopyExistingSubtitle": {
+    "placeholders": { "count": { "type": "int" } }
+  },
+  "backupCopyExistingAction": "Copy them now",
+  "backupCopyConfirmTitle": "{count, plural, =1{Copy 1 item} other{Copy {count} items}}",
+  "@backupCopyConfirmTitle": {
+    "placeholders": { "count": { "type": "int" } }
+  },
+  "backupCopyConfirmMessage": "Your phone will ask you to confirm your identity once per item. Anything you save from now on is copied without asking.",
+  "backupCopying": "Copying to your backup…",
+  "backupCopyDone": "{count, plural, =1{1 item added to your backup.} other{{count} items added to your backup.}}",
+  "@backupCopyDone": {
+    "placeholders": { "count": { "type": "int" } }
+  }
 }

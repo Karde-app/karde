@@ -199,7 +199,7 @@
   "backupSetupTitle": "Garder une copie",
   "backupSetupIntro": "Karde enregistre une copie de tout ce que vous conservez ici, afin que vous puissiez tout récupérer si ce téléphone est perdu, cassé ou remplacé. La copie va là où vous le choisissez. Rien n'est jamais envoyé à Karde ni à qui que ce soit.",
   "backupSetupPassphraseTitle": "Choisissez une phrase secrète",
-  "backupSetupPassphraseBody": "Vous en aurez besoin pour récupérer vos données. Karde ne peut ni la retrouver ni la réinitialiser : notez-la et gardez-la en lieu sûr.",
+  "backupSetupPassphraseBody": "Vous en aurez besoin pour récupérer vos données sur un nouveau téléphone. Karde en gardera une copie sur ce téléphone, consultable avec votre empreinte, mais il ne peut jamais réinitialiser la phrase secrète — et cette copie disparaît avec le téléphone. Notez-la et gardez-la en lieu sûr.",
   "backupSetupPassphraseDone": "Phrase secrète choisie",
   "passphraseTooWeakForBackup": "Choisissez une phrase secrète plus longue, ou plus variée. Cette copie est tenue à jour en permanence : cela vaut la peine d'y consacrer un instant.",
   "passphraseNeedsMixForBackup": "N'utilisez pas uniquement des chiffres : ajoutez des lettres ou quelques mots. Les chiffres seuls sont la première chose que testerait quiconque essaie de deviner.",
@@ -218,6 +218,7 @@
   "backupUpdated": "Sauvegarde mise à jour.",
   "backupFailedTitle": "Votre sauvegarde n'est plus enregistrée",
   "alertsTitle": "À votre attention",
+  "alertsTitleCalm": "Tout va bien",
   "alertsNone": "Rien ne requiert votre attention.",
   "alertsNoneBody": "Karde vous préviendra ici si quelque chose doit être vérifié.",
   "alertsFix": "Corriger",
@@ -374,7 +375,7 @@
   "passphraseWeakHint": "{label} — plus longue vaut bien mieux que plus compliquée",
   "passphraseChooseTitle": "Choisissez une phrase secrète",
   "passphraseEnterTitle": "Saisissez la phrase secrète",
-  "passphraseCreateExplainer": "Cette phrase secrète chiffre votre fichier de sauvegarde. Karde ne la conserve jamais et ne peut pas la retrouver — si vous l'oubliez, la sauvegarde est perdue.",
+  "passphraseCreateExplainer": "Cette phrase secrète chiffre votre fichier de sauvegarde. Karde ne peut ni la réinitialiser ni la deviner : si elle est oubliée et notée nulle part, la sauvegarde est perdue.",
   "passphraseUnlockExplainer": "Saisissez la phrase secrète que vous avez choisie lors de la création de cette sauvegarde.",
   "passphraseFieldLabel": "Phrase secrète",
   "passphraseShow": "Afficher la phrase secrète",
@@ -493,4 +494,49 @@
   "noBackupTitle": "Aucune sauvegarde",
   "noBackupShort": "Aucune sauvegarde — tout se trouve uniquement sur ce téléphone.",
   "noBackupBody": "Tout ce que vous avez enregistré se trouve uniquement sur ce téléphone. Une sauvegarde vous permet de tout retrouver sur un nouveau téléphone."
+,
+  "copyLabel": "Copier",
+  "passphraseSectionTitle": "Votre phrase secrète de sauvegarde",
+  "passphraseSectionBody": "C'est la seule chose qui ouvre votre sauvegarde sur un nouveau téléphone. Karde ne peut pas la réinitialiser pour vous.",
+  "passphraseShowTitle": "Afficher ma phrase secrète",
+  "passphraseShowBody": "Déverrouillez avec votre empreinte ou le verrouillage de l'écran pour la voir.",
+  "passphraseSaveTitle": "Conserver ma phrase secrète sur ce téléphone",
+  "passphraseSaveBody": "Vous pourrez la consulter ici en cas de doute.",
+  "passphraseChangeTitle": "Changer ma phrase secrète",
+  "passphraseChangeBody": "Vous devrez d'abord saisir l'actuelle.",
+  "passphraseChangeWarning": "Votre sauvegarde passe immédiatement à la nouvelle phrase secrète. Les copies datées des jours précédents restent verrouillées avec l'ancienne : conservez-la tant que vous en avez besoin.",
+  "passphraseChanged": "Votre phrase secrète de sauvegarde a été changée.",
+  "passphraseUnchanged": "C'est déjà votre phrase secrète actuelle.",
+  "passphraseNotOnThisPhone": "Karde n'a plus de copie de votre phrase secrète sur ce téléphone.",
+  "passphraseCouldNotSave": "Karde n'a pas pu en conserver une copie sur ce téléphone. Votre sauvegarde elle-même n'est pas affectée.",
+  "passphraseSavedOnPhone": "Enregistrée. Vous pouvez la consulter sur cet écran quand vous voulez.",
+  "passphraseRevealTitle": "Votre phrase secrète de sauvegarde",
+  "passphraseRevealWarning": "Cette copie n'existe que sur ce téléphone : elle disparaît avec lui, c'est-à-dire précisément au moment où vous en auriez besoin. Notez-la ailleurs ou conservez-la dans un gestionnaire de mots de passe.",
+  "passphraseCopied": "Phrase secrète copiée. Le presse-papiers s'efface dans 60 s.",
+  "passphraseReuseTitle": "Utiliser votre phrase secrète de sauvegarde ?",
+  "passphraseReuseMessage": "Karde peut verrouiller ce fichier avec la phrase secrète que votre sauvegarde automatique utilise déjà : vous n'en aurez qu'une seule à retenir.",
+  "passphraseReuseConfirm": "L'utiliser",
+  "passphraseReuseAlternative": "En saisir une autre"
+,
+  "backupIncompleteTitle": "Il manque des éléments à votre sauvegarde",
+  "backupIncompleteBody": "{count, plural, =1{Un élément a été enregistré avant l'activation de la sauvegarde : il n'a donc jamais été copié.} other{{count} éléments ont été enregistrés avant l'activation de la sauvegarde : ils n'ont donc jamais été copiés.}}",
+  "@backupIncompleteBody": {
+    "placeholders": { "count": { "type": "int" } }
+  },
+  "backupCopyExistingTitle": "Copier ce que vous aviez déjà",
+  "backupCopyExistingSubtitle": "{count, plural, =1{Un élément se trouve dans votre coffre mais pas dans votre sauvegarde.} other{{count} éléments se trouvent dans votre coffre mais pas dans votre sauvegarde.}}",
+  "@backupCopyExistingSubtitle": {
+    "placeholders": { "count": { "type": "int" } }
+  },
+  "backupCopyExistingAction": "Les copier maintenant",
+  "backupCopyConfirmTitle": "{count, plural, =1{Copier 1 élément} other{Copier {count} éléments}}",
+  "@backupCopyConfirmTitle": {
+    "placeholders": { "count": { "type": "int" } }
+  },
+  "backupCopyConfirmMessage": "Votre téléphone vous demandera de confirmer votre identité une fois par élément. Tout ce que vous enregistrerez ensuite sera copié sans rien demander.",
+  "backupCopying": "Copie vers votre sauvegarde…",
+  "backupCopyDone": "{count, plural, =1{1 élément ajouté à votre sauvegarde.} other{{count} éléments ajoutés à votre sauvegarde.}}",
+  "@backupCopyDone": {
+    "placeholders": { "count": { "type": "int" } }
+  }
 }

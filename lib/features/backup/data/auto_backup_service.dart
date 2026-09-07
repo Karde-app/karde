@@ -2,6 +2,8 @@ import 'dart:convert';
 
 import '../../../core/platform/backup_folder_service.dart';
 import '../../../core/security/backup_identity_service.dart';
+import '../../../core/security/bundle_crypto_service.dart';
+import '../../../core/security/encryption_service.dart';
 import '../../../core/storage/settings_repository.dart';
 import '../domain/vault_backup.dart';
 import 'auto_backup_file.dart';
@@ -79,14 +81,26 @@ class AutoBackupService {
     BackupFolderService? folder,
     BackupIdentityService? identity,
     PendingBackupStore? pending,
+    BundleCryptoService? bundle,
+    EncryptionService? vault,
   })  : folder = folder ?? BackupFolderService(),
         identity = identity ?? BackupIdentityService(),
-        pending = pending ?? PendingBackupStore();
+        pending = pending ?? PendingBackupStore(),
+        bundle = bundle ?? BundleCryptoService(),
+        vault = vault ?? EncryptionService();
 
   final SettingsRepository settings;
   final BackupFolderService folder;
   final BackupIdentityService identity;
   final PendingBackupStore pending;
+
+  /// Wraps and unwraps things under a passphrase. Used to move the sealed
+  /// private key from one passphrase to another, and for nothing else here.
+  final BundleCryptoService bundle;
+
+  /// The authenticated vault key. Only ever used on the passphrase reminder, so
+  /// that reading the reminder back costs the phone's own prompt.
+  final EncryptionService vault;
 
   /// The file Karde keeps up to date. Dated copies live beside it.
   static const String currentFileName = 'karde-backup.json';
@@ -171,7 +185,107 @@ class AutoBackupService {
     );
 
     await settings.setAutoBackup(created.toStorage());
+    await rememberPassphrase(passphrase);
     return created;
+  }
+
+  /// Keeps a copy of the passphrase on this phone, sealed by the vault key.
+  ///
+  /// Never allowed to fail setup. The reminder is a convenience; the backup is
+  /// the point, and a phone that cannot seal the reminder — the prompt was
+  /// dismissed, the screen lock was just removed — has still been given a
+  /// working backup. [hasPassphraseReminder] then reports false and the Backup
+  /// screen offers to save it again.
+  Future<void> rememberPassphrase(String passphrase) async {
+    try {
+      await settings.setSealedBackupPassphrase(await vault.encrypt(passphrase));
+    } catch (_) {
+      await settings.clearSealedBackupPassphrase();
+    }
+  }
+
+  Future<bool> get hasPassphraseReminder async =>
+      (await settings.getSealedBackupPassphrase()) != null;
+
+  /// Reads the reminder back. Raises the phone's own authentication prompt.
+  ///
+  /// Null when there is nothing stored. Anything else — a dismissed prompt, a
+  /// key the phone destroyed when its screen lock changed — comes out as the
+  /// exception the caller already knows how to describe.
+  Future<String?> revealPassphrase() async {
+    final sealed = await settings.getSealedBackupPassphrase();
+    if (sealed == null) return null;
+    return vault.decrypt(sealed);
+  }
+
+  /// Confirms that [passphrase] is the one this backup was set up with.
+  ///
+  /// Does it by actually unwrapping the sealed private key, which is the only
+  /// definition of "correct" that matters: a passphrase that opens that key is a
+  /// passphrase that opens the backup on a new phone, whatever else may be
+  /// stored on this one.
+  Future<bool> passphraseOpensBackup(String passphrase) async {
+    final current = await setup();
+    if (current == null) return false;
+    try {
+      await bundle.open(current.sealedPrivateKey, passphrase);
+      return true;
+    } on BackupPassphraseIncorrect {
+      return false;
+    }
+  }
+
+  /// Moves the backup from one passphrase to another.
+  ///
+  /// Cheap, because the passphrase never sealed the records themselves. Each
+  /// record is sealed with the public half of a key pair that does not change;
+  /// the passphrase only wraps the private half. So changing it is unwrap,
+  /// rewrap, and write — no reading the vault, and not one authentication prompt
+  /// per card.
+  ///
+  /// The folder's current file is rewritten with the newly wrapped key. Dated
+  /// copies from earlier days are deliberately left alone: they still hold the
+  /// old wrapping and still open with the old passphrase. That is a fact the
+  /// user has to be told rather than a thing to fix, because rewriting them
+  /// would mean touching backups that are currently intact.
+  ///
+  /// Throws [BackupPassphraseIncorrect] if [oldPassphrase] is not the current
+  /// one, and writes nothing in that case.
+  Future<void> changePassphrase({
+    required String oldPassphrase,
+    required String newPassphrase,
+  }) async {
+    final current = await setup();
+    if (current == null) {
+      throw const BackupCryptoFailure('automatic backup is not set up');
+    }
+
+    // Throws BackupPassphraseIncorrect if the old one is wrong, before anything
+    // has been written anywhere.
+    final privateKey = await bundle.open(current.sealedPrivateKey, oldPassphrase);
+    final resealed = await bundle.seal(privateKey, newPassphrase);
+
+    // The file first. If this fails, storage still names the old wrapping, which
+    // still matches what is in the folder — so the old passphrase keeps working
+    // and nothing is stranded. The other order could leave a phone whose stored
+    // key and whose file disagree.
+    final existing = await folder.read(current.folderUri, currentFileName);
+    if (existing != null && existing.trim().isNotEmpty) {
+      final file = AutoBackupFile.decode(existing);
+      await folder.write(
+        current.folderUri,
+        currentFileName,
+        file.withSealedPrivateKey(resealed).encode(),
+      );
+    }
+
+    await settings.setAutoBackup(AutoBackupSetup(
+      folderUri: current.folderUri,
+      folderLabel: current.folderLabel,
+      publicKey: current.publicKey,
+      sealedPrivateKey: resealed,
+    ).toStorage());
+    await rememberPassphrase(newPassphrase);
   }
 
   /// Whether the chosen folder already holds a Karde backup, and when it changed.
@@ -234,6 +348,65 @@ class AutoBackupService {
     await pending.write((await pending.read()).withSave(id, sealed));
 
     await flushPending(config);
+  }
+
+  /// Seals a whole batch of items and pushes them in one write.
+  ///
+  /// For the items that were already in the vault when automatic backup was
+  /// switched on. Every other path here records one item at the moment it is
+  /// saved, because that is the only moment Karde has it in plain form for free;
+  /// these have to be read back out of the vault instead, which is why they are
+  /// not recorded automatically and why this exists as a deliberate, one-off act
+  /// the user agrees to.
+  ///
+  /// One write rather than one per item. Each [recordSave] is a read of the
+  /// backup file, an edit and a write back — fine for a single card, and for a
+  /// vault of twenty it would be twenty round trips to a cloud folder, any of
+  /// which could fail half way and leave the seeding partly done.
+  Future<void> recordManySaves(Map<String, String> plaintextById) async {
+    if (plaintextById.isEmpty) return;
+    final config = await setup();
+    if (config == null) return;
+
+    var queue = await pending.read();
+    for (final entry in plaintextById.entries) {
+      queue = queue.withSave(
+        entry.key,
+        await identity.seal(
+          publicKey: config.publicKey,
+          plaintext: entry.value,
+        ),
+      );
+    }
+    await pending.write(queue);
+
+    await flushPending(config);
+  }
+
+  /// Which items the backup file currently holds, by their record ids.
+  ///
+  /// Ids rather than a count, so "is anything missing" can be answered exactly
+  /// instead of by comparing two numbers. A vault of two and a backup of two can
+  /// still be a backup missing something, if one item was seeded and a different
+  /// one deleted; comparing "card:3" against "card:3" cannot make that mistake.
+  /// Nothing is decrypted to do this — the ids are in the clear in the file, and
+  /// say nothing about what the records contain.
+  ///
+  /// Null means "cannot tell" — no backup set up, or the folder could not be
+  /// reached. Deliberately distinct from an empty set, because the difference
+  /// decides whether Karde may tell somebody their backup is incomplete, and a
+  /// cloud folder that is briefly unreachable must not be reported as an empty
+  /// backup.
+  Future<Set<String>?> backupRecordIds() async {
+    final config = await setup();
+    if (config == null) return null;
+    try {
+      final contents = await folder.read(config.folderUri, currentFileName);
+      if (contents == null || contents.trim().isEmpty) return <String>{};
+      return AutoBackupFile.decode(contents).ids.toSet();
+    } catch (_) {
+      return null;
+    }
   }
 
   /// Forgets one item, because the user deleted it.

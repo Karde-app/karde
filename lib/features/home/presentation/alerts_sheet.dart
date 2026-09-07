@@ -7,6 +7,8 @@ import '../../../core/security/vault_health_provider.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../../theme/theme.dart';
 import '../../backup/data/auto_backup_recorder.dart';
+import '../../backup/data/backup_service.dart';
+import '../../backup/presentation/backup_screen.dart';
 import '../../backup/presentation/backup_setup_screen.dart';
 import '../../cards/data/card_repository.dart';
 import '../../ids/data/id_repository.dart';
@@ -61,6 +63,20 @@ final kardeAlertsProvider = Provider<List<KardeAlert>>((ref) {
     alerts.add(const KardeAlert(
       id: 'backup-not-set-up',
       severity: KardeAlertSeverity.notice,
+      title: '',
+      body: '',
+      actionLabel: '',
+    ));
+  }
+
+  // Urgent for the same reason "backup-failing" is: part of the vault has no
+  // copy anywhere, and the owner has been told their backup is on. The provider
+  // answers zero whenever it cannot be sure, so an unreachable folder never
+  // raises this.
+  if ((ref.watch(autoBackupMissingCountProvider).valueOrNull ?? 0) > 0) {
+    alerts.add(const KardeAlert(
+      id: 'backup-incomplete',
+      severity: KardeAlertSeverity.urgent,
       title: '',
       body: '',
       actionLabel: '',
@@ -130,7 +146,11 @@ class AlertsSheet extends ConsumerWidget {
             ),
             const SizedBox(height: 20),
             Text(
-              loc.alertsTitle,
+              // The bell is on screen even when it has nothing to say, so this
+              // sheet is now opened most often by somebody checking that all is
+              // well. "Needs your attention" over a green tick would answer the
+              // wrong question.
+              alerts.isEmpty ? loc.alertsTitleCalm : loc.alertsTitle,
               style: TextStyle(
                 fontFamily: 'Outfit',
                 fontSize: 20,
@@ -296,6 +316,22 @@ class AlertsSheet extends ConsumerWidget {
           () => Navigator.push(
                 context,
                 MaterialPageRoute(builder: (_) => const BackupSetupScreen()),
+              ),
+        );
+      case 'backup-incomplete':
+        // Sends them to the Backup screen rather than acting from here. The
+        // copying costs one authentication prompt per item, so it needs a
+        // progress bar and somewhere to report a dismissed prompt — neither of
+        // which a sheet that closes on the first tap can offer.
+        final missing =
+            ref.watch(autoBackupMissingCountProvider).valueOrNull ?? 0;
+        return (
+          loc.backupIncompleteTitle,
+          loc.backupIncompleteBody(missing),
+          loc.alertsFix,
+          () => Navigator.push(
+                context,
+                MaterialPageRoute(builder: (_) => const BackupScreen()),
               ),
         );
       case 'biometrics-changed':

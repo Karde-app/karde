@@ -91,6 +91,7 @@ class SettingsRepository {
   static const _lastBackupKey = 'last_backup_at';
   static const _hashedPinKey = 'hashed_pin';
   static const _autoBackupKey = 'auto_backup_setup';
+  static const _backupPassphraseKey = 'backup_passphrase_reminder';
   static const _failedAttemptsKey = 'failed_attempts';
   static const _lockoutUntilKey = 'lockout_until';
   static const _isPermanentlyLockedKey = 'is_permanently_locked';
@@ -234,6 +235,32 @@ class SettingsRepository {
 
   Future<void> clearAutoBackup() async {
     await _secureStorage.delete(key: _autoBackupKey);
+    await _secureStorage.delete(key: _backupPassphraseKey);
+  }
+
+  /// The backup passphrase, kept only so its owner can be reminded of it.
+  ///
+  /// Stored already sealed by the vault key, so reading it back raises the
+  /// phone's own authentication prompt — the same bar as opening a card. What is
+  /// written here is therefore ciphertext even before secure storage sees it.
+  ///
+  /// This is a reminder and nothing more. It lives on the phone, so it is gone
+  /// the moment the phone is, which is exactly the moment the passphrase is
+  /// needed; it also dies if the screen lock is removed, because the vault key
+  /// dies with it. Every screen that shows it says so, and still asks the user to
+  /// write it down somewhere that is not this phone.
+  Future<String?> getSealedBackupPassphrase() async {
+    final raw = await _secureStorage.read(key: _backupPassphraseKey);
+    if (raw == null || raw.isEmpty) return null;
+    return raw;
+  }
+
+  Future<void> setSealedBackupPassphrase(String sealed) async {
+    await _secureStorage.write(key: _backupPassphraseKey, value: sealed);
+  }
+
+  Future<void> clearSealedBackupPassphrase() async {
+    await _secureStorage.delete(key: _backupPassphraseKey);
   }
 
   /// Forgets the Karde PIN entirely.

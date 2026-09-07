@@ -802,4 +802,67 @@ void main() {
       expect(file.ids, ['card:1']);
     });
   });
+
+  group('Copying in what was in the vault before backup was switched on', () {
+    setUp(() async {
+      await service.configure(passphrase: 'p', folderChoice: chosenFolder);
+      folder.writes = 0;
+    });
+
+    test('a fresh backup starts empty, which is the whole problem', () async {
+      // Recorded as a fact rather than a preference. Setup cannot read the vault
+      // — that costs one authentication prompt per item — so the file it writes
+      // holds nothing, and something has to put the existing items in later.
+      expect(await service.backupRecordIds(), isEmpty);
+    });
+
+    test('a batch is sealed per item and written once', () async {
+      // One write, not one per item: for a cloud folder each write is a round
+      // trip that can fail, and a seeding half done is worse than one not
+      // started.
+      await service.recordManySaves({
+        'card:1': '{"nickname":"Visa"}',
+        'card:2': '{"nickname":"Amex"}',
+        'id:3': '{"nickname":"Passport"}',
+      });
+
+      expect(identity.seals, 3);
+      expect(folder.writes, 1);
+      expect(
+        await service.backupRecordIds(),
+        {'card:1', 'card:2', 'id:3'},
+      );
+    });
+
+    test('it replaces rather than duplicates what is already recorded', () async {
+      await service.recordSave(id: 'card:1', plaintext: '{"nickname":"new"}');
+      folder.writes = 0;
+
+      await service.recordManySaves({
+        'card:1': '{"nickname":"from the vault"}',
+        'card:2': '{"nickname":"Amex"}',
+      });
+
+      final file = AutoBackupFile.decode(
+        folder.files[AutoBackupService.currentFileName]!,
+      );
+      expect(file.count, 2);
+      expect(file.ids, containsAll(['card:1', 'card:2']));
+    });
+
+    test('an empty batch touches nothing', () async {
+      await service.recordManySaves({});
+
+      expect(identity.seals, 0);
+      expect(folder.writes, 0);
+    });
+
+    test('nothing to copy into is answered as "cannot tell", not "empty"', () async {
+      // The difference decides whether Karde may tell somebody their backup is
+      // incomplete. An unreachable folder is not evidence that it is.
+      folder.reachable = false;
+
+      expect(await service.backupRecordIds(), isNull);
+    });
+  });
 }

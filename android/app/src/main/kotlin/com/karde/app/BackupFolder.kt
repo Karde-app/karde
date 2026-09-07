@@ -211,17 +211,54 @@ class BackupFolder(private val activity: Activity) {
     /**
      * A name for the folder that means something to the person who chose it.
      *
-     * The raw tree URI is unreadable, and Karde has to be able to say where the
-     * backups are going. The last segment of the document id is what the file
-     * manager shows, so "primary:Documents/Karde" becomes "Documents/Karde".
+     * Asks the provider what the folder is called, because only the provider
+     * knows. Guessing from the document id works for local storage, where the id
+     * is "primary:Documents/Karde" and the part after the colon is the path a
+     * file manager shows — and produces nonsense everywhere else. A Google Drive
+     * folder's id is "acc=6;doc=encoded=RBijUqp6atWbLphEQke-…", which has no
+     * colon and no path in it, so the guess fell through to printing the whole
+     * id. The user saw that on the setup screen, in the Settings note and in the
+     * "your backup is on" dialog, in place of "Test Karde".
+     *
+     * The query costs one lookup at the moment a folder is picked, and the
+     * answer is stored, so nothing reads it again on a later screen.
      */
     private fun describe(treeUri: Uri): String {
+        displayNameOf(treeUri)?.let { return it }
+
+        // No provider answer. Fall back to the old guess, which is still right
+        // for local storage and no worse than nothing anywhere else.
         return try {
             val id = DocumentsContract.getTreeDocumentId(treeUri)
             val path = id.substringAfter(':', id)
             if (path.isBlank()) id else path
         } catch (e: Exception) {
             treeUri.lastPathSegment ?: treeUri.toString()
+        }
+    }
+
+    /** What the provider calls this folder, or null if it will not say. */
+    private fun displayNameOf(treeUri: Uri): String? {
+        return try {
+            val documentUri = DocumentsContract.buildDocumentUriUsingTree(
+                treeUri,
+                DocumentsContract.getTreeDocumentId(treeUri),
+            )
+            activity.contentResolver.query(
+                documentUri,
+                arrayOf(DocumentsContract.Document.COLUMN_DISPLAY_NAME),
+                null,
+                null,
+                null,
+            )?.use { cursor ->
+                if (cursor.moveToFirst() && !cursor.isNull(0)) {
+                    cursor.getString(0).takeIf { it.isNotBlank() }
+                } else {
+                    null
+                }
+            }
+        } catch (e: Exception) {
+            null
         }
     }
 }

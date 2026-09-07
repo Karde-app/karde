@@ -1297,7 +1297,7 @@ abstract class AppLocalizations {
   /// No description provided for @backupSetupPassphraseBody.
   ///
   /// In en, this message translates to:
-  /// **'You will need it to get your things back. Karde cannot look it up or reset it for you, so write it down and keep it somewhere safe.'**
+  /// **'You will need it to get your things back on a new phone. Karde will keep a copy on this phone that you can look up with your fingerprint, but it can never reset the passphrase — and that copy goes when the phone does. Write it down and keep it somewhere safe.'**
   String get backupSetupPassphraseBody;
 
   /// No description provided for @backupSetupPassphraseDone.
@@ -1401,6 +1401,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Needs your attention'**
   String get alertsTitle;
+
+  /// No description provided for @alertsTitleCalm.
+  ///
+  /// In en, this message translates to:
+  /// **'All good'**
+  String get alertsTitleCalm;
 
   /// No description provided for @alertsNone.
   ///
@@ -2317,7 +2323,7 @@ abstract class AppLocalizations {
   /// No description provided for @passphraseCreateExplainer.
   ///
   /// In en, this message translates to:
-  /// **'This passphrase encrypts your backup file. Karde never stores it and cannot recover it — if you forget it, the backup is gone.'**
+  /// **'This passphrase encrypts your backup file. Karde cannot reset it or work it out — if it is forgotten and written down nowhere, the backup is gone.'**
   String get passphraseCreateExplainer;
 
   /// No description provided for @passphraseUnlockExplainer.
@@ -3027,6 +3033,192 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Everything you have saved is only on this phone. A backup lets you get it all back on a new phone.'**
   String get noBackupBody;
+
+  /// No description provided for @copyLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Copy'**
+  String get copyLabel;
+
+  /// No description provided for @passphraseSectionTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Your backup passphrase'**
+  String get passphraseSectionTitle;
+
+  /// No description provided for @passphraseSectionBody.
+  ///
+  /// In en, this message translates to:
+  /// **'This is the only thing that opens your backup on a new phone. Karde cannot reset it for you.'**
+  String get passphraseSectionBody;
+
+  /// No description provided for @passphraseShowTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Show my passphrase'**
+  String get passphraseShowTitle;
+
+  /// No description provided for @passphraseShowBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Unlock with your fingerprint or screen lock to see it.'**
+  String get passphraseShowBody;
+
+  /// No description provided for @passphraseSaveTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Keep my passphrase on this phone'**
+  String get passphraseSaveTitle;
+
+  /// No description provided for @passphraseSaveBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Then you can look it up here whenever you are unsure.'**
+  String get passphraseSaveBody;
+
+  /// No description provided for @passphraseChangeTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Change my passphrase'**
+  String get passphraseChangeTitle;
+
+  /// No description provided for @passphraseChangeBody.
+  ///
+  /// In en, this message translates to:
+  /// **'You will need to type the current one first.'**
+  String get passphraseChangeBody;
+
+  /// No description provided for @passphraseChangeWarning.
+  ///
+  /// In en, this message translates to:
+  /// **'Your backup moves to the new passphrase straight away. The dated copies from earlier days stay locked with the old one, so keep the old passphrase until you no longer need them.'**
+  String get passphraseChangeWarning;
+
+  /// No description provided for @passphraseChanged.
+  ///
+  /// In en, this message translates to:
+  /// **'Your backup passphrase has been changed.'**
+  String get passphraseChanged;
+
+  /// No description provided for @passphraseUnchanged.
+  ///
+  /// In en, this message translates to:
+  /// **'That is the passphrase you already have.'**
+  String get passphraseUnchanged;
+
+  /// No description provided for @passphraseNotOnThisPhone.
+  ///
+  /// In en, this message translates to:
+  /// **'Karde no longer has a copy of your passphrase on this phone.'**
+  String get passphraseNotOnThisPhone;
+
+  /// No description provided for @passphraseCouldNotSave.
+  ///
+  /// In en, this message translates to:
+  /// **'Karde could not keep a copy on this phone. Your backup itself is fine.'**
+  String get passphraseCouldNotSave;
+
+  /// No description provided for @passphraseSavedOnPhone.
+  ///
+  /// In en, this message translates to:
+  /// **'Saved. You can look it up on this screen whenever you need it.'**
+  String get passphraseSavedOnPhone;
+
+  /// No description provided for @passphraseRevealTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Your backup passphrase'**
+  String get passphraseRevealTitle;
+
+  /// No description provided for @passphraseRevealWarning.
+  ///
+  /// In en, this message translates to:
+  /// **'This copy only exists on this phone, so it goes when the phone does — which is exactly when you would need it. Write it down somewhere else, or keep it in a password manager.'**
+  String get passphraseRevealWarning;
+
+  /// No description provided for @passphraseCopied.
+  ///
+  /// In en, this message translates to:
+  /// **'Passphrase copied. Clipboard clears in 60s.'**
+  String get passphraseCopied;
+
+  /// No description provided for @passphraseReuseTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Use your backup passphrase?'**
+  String get passphraseReuseTitle;
+
+  /// No description provided for @passphraseReuseMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Karde can lock this file with the same passphrase your automatic backup already uses, so there is only one for you to remember.'**
+  String get passphraseReuseMessage;
+
+  /// No description provided for @passphraseReuseConfirm.
+  ///
+  /// In en, this message translates to:
+  /// **'Use it'**
+  String get passphraseReuseConfirm;
+
+  /// No description provided for @passphraseReuseAlternative.
+  ///
+  /// In en, this message translates to:
+  /// **'Type a different one'**
+  String get passphraseReuseAlternative;
+
+  /// No description provided for @backupIncompleteTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Your backup is missing things'**
+  String get backupIncompleteTitle;
+
+  /// No description provided for @backupIncompleteBody.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{One item was saved before backup was switched on, so it was never copied.} other{{count} items were saved before backup was switched on, so they were never copied.}}'**
+  String backupIncompleteBody(int count);
+
+  /// No description provided for @backupCopyExistingTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Copy what you already had'**
+  String get backupCopyExistingTitle;
+
+  /// No description provided for @backupCopyExistingSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{One item is in your vault but not in your backup.} other{{count} items are in your vault but not in your backup.}}'**
+  String backupCopyExistingSubtitle(int count);
+
+  /// No description provided for @backupCopyExistingAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Copy them now'**
+  String get backupCopyExistingAction;
+
+  /// No description provided for @backupCopyConfirmTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{Copy 1 item} other{Copy {count} items}}'**
+  String backupCopyConfirmTitle(int count);
+
+  /// No description provided for @backupCopyConfirmMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Your phone will ask you to confirm your identity once per item. Anything you save from now on is copied without asking.'**
+  String get backupCopyConfirmMessage;
+
+  /// No description provided for @backupCopying.
+  ///
+  /// In en, this message translates to:
+  /// **'Copying to your backup…'**
+  String get backupCopying;
+
+  /// No description provided for @backupCopyDone.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{1 item added to your backup.} other{{count} items added to your backup.}}'**
+  String backupCopyDone(int count);
 }
 
 class _AppLocalizationsDelegate
