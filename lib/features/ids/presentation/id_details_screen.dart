@@ -13,6 +13,7 @@ import '../../../core/storage/settings_repository.dart';
 import '../../../theme/theme.dart';
 import '../domain/virtual_id.dart';
 import '../data/id_repository.dart';
+import '../../../core/utils/expiry_capture.dart';
 import 'add_id_screen.dart'; // For IdFieldType definition
 import 'widgets/decryptable_id_card.dart';
 
@@ -76,6 +77,16 @@ class _IdDetailsScreenState extends ConsumerState<IdDetailsScreen> {
           _isUnlocked = true;
           _isLoading = false;
         });
+
+        // Free while the payload is open. See ExpiryCapture: an expiry date is
+        // not a secret, so the only reason Karde might not have it is that this
+        // document was saved before it started keeping it.
+        ExpiryCapture.rememberDocument(
+          ref,
+          documentId: widget.idDoc.id,
+          knownExpiry: widget.idDoc.expiresOn,
+          rawExpiry: IdPayload.fieldsOf(rawMap)[ExpiryCapture.documentExpiryField],
+        );
       }
     } on VaultAuthCancelled {
       // Dismissing the prompt is a deliberate user action, not a failure. Leave

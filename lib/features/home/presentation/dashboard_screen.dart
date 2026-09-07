@@ -553,13 +553,23 @@ class DashboardScreen extends ConsumerWidget {
   /// and unbadged, it answers that question every time it is looked at.
   Widget _buildAlertBell(BuildContext context, WidgetRef ref, ThemeData theme) {
     final alerts = ref.watch(kardeAlertsProvider);
-    final hasAlerts = alerts.isNotEmpty;
+    // The badge counts what has not been read, not what is true. Everything that
+    // is true is still in the sheet; the number is a request for attention, and
+    // a request that has been answered should stop being made.
+    final unread = ref.watch(unseenAlertsProvider);
+    final hasAlerts = unread.isNotEmpty;
     final urgent =
-        alerts.any((a) => a.severity == KardeAlertSeverity.urgent);
+        unread.any((a) => a.severity == KardeAlertSeverity.urgent);
     final accent = urgent ? KardeColors.ember : KardeColors.champagneGold;
 
     return GestureDetector(
-      onTap: () => AlertsSheet.show(context),
+      onTap: () {
+        // Marked at the tap rather than when the sheet closes, so the badge
+        // clears as it opens. Storing exactly what is live right now is also
+        // what lets a problem that comes back badge again — see SeenAlerts.
+        ref.read(seenAlertsProvider.notifier).markSeen(alerts.map((a) => a.id));
+        AlertsSheet.show(context);
+      },
       behavior: HitTestBehavior.opaque,
       child: Padding(
         padding: const EdgeInsets.only(left: 12, top: 4),
@@ -584,7 +594,7 @@ class DashboardScreen extends ConsumerWidget {
                         Border.all(color: theme.scaffoldBackgroundColor, width: 1.5),
                   ),
                   child: Text(
-                    '${alerts.length}',
+                    '${unread.length}',
                     textAlign: TextAlign.center,
                     style: TextStyle(
                       fontFamily: 'Inter',

@@ -9,6 +9,7 @@ import '../../../../core/security/encryption_service.dart';
 import '../../../../core/security/system_interaction_guard.dart';
 import '../../../../core/security/window_security_service.dart';
 import '../../../../core/storage/settings_repository.dart';
+import '../../../../core/utils/expiry_capture.dart';
 import '../../data/card_repository.dart';
 import '../../domain/virtual_card.dart';
 import '../card_details_screen.dart';
@@ -151,6 +152,17 @@ class _DecryptableCardState extends ConsumerState<DecryptableCard> with WidgetsB
         _windowSecurity.enableSecureMode();
         _startHideTimer();
         widget.onRevealed?.call(secrets);
+
+        // The payload is open and the expiry is in hand, so if Karde did not
+        // already know when this card runs out, this is the free moment to
+        // learn it. Costs no prompt of its own — the one just answered paid for
+        // everything in the record.
+        ExpiryCapture.rememberCard(
+          ref,
+          cardId: widget.card.id,
+          knownExpiry: widget.card.expiresOn,
+          rawExpiry: secrets.expiry,
+        );
       }
     } on VaultAuthCancelled {
       // FIX 4-2: user dismissed the prompt. Stay masked, say nothing.

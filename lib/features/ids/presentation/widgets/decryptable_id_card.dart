@@ -12,6 +12,7 @@ import '../../../../core/security/system_interaction_guard.dart';
 import '../../../../core/security/window_security_service.dart';
 import '../../../../core/storage/settings_repository.dart';
 import '../../data/id_repository.dart';
+import '../../../../core/utils/expiry_capture.dart';
 import '../../domain/virtual_id.dart';
 import '../id_details_screen.dart';
 import 'realistic_id_card.dart';
@@ -159,6 +160,15 @@ class _DecryptableIdCardState extends ConsumerState<DecryptableIdCard> with Widg
         _windowSecurity.enableSecureMode();
         _startHideTimer();
         widget.onRevealed?.call(data);
+
+        // See ExpiryCapture. The payload is open, so learning when this document
+        // runs out costs nothing on top of the prompt just answered.
+        ExpiryCapture.rememberDocument(
+          ref,
+          documentId: widget.idDoc.id,
+          knownExpiry: widget.idDoc.expiresOn,
+          rawExpiry: data[ExpiryCapture.documentExpiryField],
+        );
       }
     } on VaultAuthCancelled {
       // FIX 4-2: user dismissed the prompt. Stay masked, say nothing.

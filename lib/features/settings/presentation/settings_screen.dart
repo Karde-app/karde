@@ -3,6 +3,7 @@ import '../../../core/widgets/karde_feedback.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:local_auth/local_auth.dart';
 import '../../../core/storage/settings_repository.dart';
+import '../../../core/notifications/expiry_notifications.dart';
 import '../../../core/storage/vault_reset.dart';
 import '../../../core/app_info.dart';
 import '../../../theme/theme.dart';
@@ -17,7 +18,7 @@ import '../../onboarding/presentation/security_questions_setup_screen.dart';
 import '../../backup/presentation/backup_screen.dart';
 import '../../backup/presentation/backup_setup_screen.dart';
 import '../../backup/data/auto_backup_recorder.dart';
-import '../data/expiry_backfill.dart';
+import '../../backup/data/backup_service.dart';
 import '../../cards/data/card_repository.dart';
 import '../../ids/data/id_repository.dart';
 import 'privacy_policy_screen.dart';
@@ -32,11 +33,6 @@ class SettingsScreen extends ConsumerStatefulWidget {
 class _SettingsScreenState extends ConsumerState<SettingsScreen> {
   final LocalAuthentication _auth = LocalAuthentication();
 
-  /// How far through reading the existing items Karde is, or null when it is not
-  /// running. The reading costs one authentication prompt per item, so a screen
-  /// that showed nothing between the first prompt and the last would look like
-  /// it had stopped responding.
-  double? _expiryProgress;
 
   @override
   Widget build(BuildContext context) {
@@ -104,46 +100,13 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                   trailing: _buildCustomSwitch(
                     context: context,
                     value: ref.watch(expiryRemindersProvider),
-                    // Turning it on is free and silent. Turning it off erases
-                    // every date Karde stored, which is the whole point of the
-                    // switch and also irreversible, so it is asked about first.
-                    onChanged: (value) => value
-                        ? ref
-                            .read(expiryRemindersProvider.notifier)
-                            .updateExpiryReminders(true)
-                        : _confirmExpiryOff(),
+                    onChanged: _setExpiryReminders,
                   ),
                 ),
               ],
             ),
           ),
-          // Under the switch rather than inside it, because it is the honest
-          // sentence about what the switch costs and it should be readable
-          // without turning anything on to find out.
           _buildExpiryNote(context),
-          _buildExpiryBackfill(context),
-          if (_expiryProgress != null) ...[
-            const SizedBox(height: 12),
-            ClipRRect(
-              borderRadius: BorderRadius.circular(3),
-              child: LinearProgressIndicator(
-                value: _expiryProgress,
-                minHeight: 5,
-                backgroundColor:
-                    Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.08),
-                valueColor:
-                    const AlwaysStoppedAnimation(KardeColors.champagneGold),
-              ),
-            ),
-            const SizedBox(height: 6),
-            Text(
-              loc.settingsExpiryReading,
-              style: Theme.of(context)
-                  .textTheme
-                  .bodyMedium
-                  ?.copyWith(fontSize: 12.5),
-            ),
-          ],
           const SizedBox(height: 24),
 
           _buildSectionHeader(loc.security, context),
@@ -260,35 +223,41 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
           const SizedBox(height: 24),
 
           _buildSectionHeader(loc.settingsBackupSection, context),
+          // One card, two rows. It used to be two cards, and the second only
+          // existed until backup was set up — so the section changed shape
+          // depending on state, and "where do I turn this off?" had no answer at
+          // all. A switch that is always in the same place answers both.
           _buildGlassContainer(
             context: context,
-            child: _buildNavigationRow(
-              context: context,
-              title: loc.backupTitle,
-              subtitle: loc.settingsBackupRestoreDesc,
-              leadingIcon: Icons.backup_outlined,
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (_) => const BackupScreen()),
-                );
-              },
+            child: Column(
+              children: [
+                _buildNavigationRow(
+                  context: context,
+                  title: loc.backupTitle,
+                  subtitle: loc.settingsBackupRestoreDesc,
+                  leadingIcon: Icons.backup_outlined,
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (_) => const BackupScreen()),
+                    );
+                  },
+                ),
+                _buildSettingRow(
+                  context: context,
+                  title: loc.settingsAutoBackupTitle,
+                  subtitle: loc.settingsAutoBackupDesc,
+                  leadingIcon: Icons.cloud_upload_outlined,
+                  trailing: _buildCustomSwitch(
+                    context: context,
+                    value:
+                        ref.watch(autoBackupSetupProvider).valueOrNull != null,
+                    onChanged: _setAutoBackup,
+                  ),
+                ),
+              ],
             ),
           ),
-          if (ref.watch(autoBackupSetupProvider).valueOrNull == null)
-            _buildGlassContainer(
-              context: context,
-              child: _buildNavigationRow(
-                context: context,
-                title: loc.backupSetupTitle,
-                subtitle: loc.setUpBackupBody,
-                leadingIcon: Icons.cloud_upload_outlined,
-                onTap: () => Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (_) => const BackupSetupScreen()),
-                ),
-              ),
-            ),
           _buildAutoBackupNote(context),
           const SizedBox(height: 24),
 
@@ -368,134 +337,124 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
 
   /// Lets the user change their security questions after onboarding.
   ///
-  /// Asks before erasing the dates, because the erase is the irreversible half.
+  /// Switches automatic backup on by setting it up, or off by forgetting it.
   ///
-  /// Turning the reminders back on afterwards starts from nothing: the dates are
-  /// gone, and getting them again means opening every item, one prompt each. So
-  /// this is not the reversible toggle it looks like, and saying so beforehand
-  /// costs one dialog.
-  Future<void> _confirmExpiryOff() async {
+  /// On is not a setting, it is a conversation — a passphrase and a folder — so
+  /// the switch opens the setup screen and only reports itself as on once that
+  /// finishes. Flipping the switch and leaving it on while setup was abandoned
+  /// would claim a backup that does not exist, which is the one lie this feature
+  /// must never tell.
+  ///
+  /// Off leaves the file alone. Karde stops keeping it up to date; it does not
+  /// go and delete a copy of somebody's vault because a switch moved. That copy
+  /// may be the only one they have.
+  Future<void> _setAutoBackup(bool value) async {
     final loc = AppLocalizations.of(context)!;
+
+    if (value) {
+      await Navigator.push(
+        context,
+        MaterialPageRoute(builder: (_) => const BackupSetupScreen()),
+      );
+      // The setup screen writes the arrangement itself; this only has to stop
+      // showing the answer it worked out before.
+      ref.invalidate(autoBackupSetupProvider);
+      ref.invalidate(autoBackupConfiguredProvider);
+      return;
+    }
+
     final confirmed = await KardeConfirmDialog.show(
       context,
-      title: loc.settingsExpiryOffTitle,
-      message: loc.settingsExpiryOffMessage,
-      confirmLabel: loc.settingsExpiryOffConfirm,
+      title: loc.settingsAutoBackupOffTitle,
+      message: loc.settingsAutoBackupOffMessage,
+      confirmLabel: loc.settingsAutoBackupOffConfirm,
     );
     if (!confirmed || !mounted) return;
 
-    await ref.read(expiryRemindersProvider.notifier).updateExpiryReminders(false);
-    // The lists hold the dates that were just erased, so without this the bell
-    // keeps warning about expiry from memory after being told to stop.
-    ref.invalidate(cardsProvider);
-    ref.invalidate(idsProvider);
-    ref.invalidate(expiryMissingCountProvider);
+    await ref.read(settingsRepositoryProvider).clearAutoBackup();
+    ref.invalidate(autoBackupSetupProvider);
+    ref.invalidate(autoBackupConfiguredProvider);
+    ref.invalidate(backupPassphraseSavedProvider);
+    ref.invalidate(autoBackupMissingCountProvider);
   }
 
-  /// The sentence that says what is given up, in the place it is given up.
+  /// Turns the reminders on or off, asking Android's permission on the way in.
   ///
-  /// Hidden when the switch is off, because then nothing is given up and a
-  /// standing paragraph about what Karde stores would be describing something
-  /// that is not happening.
+  /// The permission is asked here rather than at first launch, because here is
+  /// the only place it means anything: the user has just said they want to be
+  /// told before a card runs out, so "allow notifications?" is a question with
+  /// an obvious answer. Asked during onboarding it is noise, and on Android a
+  /// refusal is close to final — the system stops asking.
+  ///
+  /// Refusing does not undo the switch. The reminders in the bell still work;
+  /// only the ones that arrive when Karde is closed cannot. Saying so is more
+  /// use than silently flicking the switch back and leaving them to wonder.
+  Future<void> _setExpiryReminders(bool value) async {
+    final loc = AppLocalizations.of(context)!;
+    await ref.read(expiryRemindersProvider.notifier).updateExpiryReminders(value);
+    if (!value) return;
+
+    final allowed = await ExpiryNotifications.instance.requestPermission();
+    if (!allowed && mounted) {
+      KardeFeedback.info(context, loc.settingsExpiryNotifyBlocked);
+    }
+  }
+
+  /// One line, with the rest a tap away.
+  ///
+  /// This was a five-line paragraph about what the vault stores and what it does
+  /// not. All of it was true and almost none of it was wanted in a settings list
+  /// — the user's words were "the warning under the option is unnecessary, or
+  /// make it short and put a mark so the user can read more". Anyone who does
+  /// want the detail is one tap from all of it.
   Widget _buildExpiryNote(BuildContext context) {
     final loc = AppLocalizations.of(context)!;
     final theme = Theme.of(context);
-    if (!ref.watch(expiryRemindersProvider)) return const SizedBox.shrink();
 
     return Padding(
-      padding: const EdgeInsets.fromLTRB(4, 12, 4, 0),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Icon(Icons.info_outline,
-              size: 17,
-              color: theme.colorScheme.onSurface.withValues(alpha: 0.45)),
-          const SizedBox(width: 10),
-          Expanded(
-            child: Text(
-              loc.settingsExpiryRemindersNote,
-              style: theme.textTheme.bodyMedium?.copyWith(
-                fontSize: 12.5,
-                height: 1.45,
-                color: theme.colorScheme.onSurface.withValues(alpha: 0.55),
+      padding: const EdgeInsets.fromLTRB(4, 10, 4, 0),
+      child: InkWell(
+        onTap: _showExpiryDetail,
+        borderRadius: BorderRadius.circular(8),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(vertical: 4),
+          child: Row(
+            children: [
+              Expanded(
+                child: Text(
+                  loc.settingsExpiryRemindersShort,
+                  style: theme.textTheme.bodyMedium?.copyWith(
+                    fontSize: 12.5,
+                    height: 1.4,
+                    color: theme.colorScheme.onSurface.withValues(alpha: 0.55),
+                  ),
+                ),
               ),
-            ),
+              const SizedBox(width: 8),
+              Icon(Icons.info_outline,
+                  size: 17, color: KardeColors.champagneGold),
+            ],
           ),
-        ],
-      ),
-    );
-  }
-
-  /// Offers to read the items that were saved before the reminders existed.
-  ///
-  /// The same shape as the backup screen's "copy what you already had": a count,
-  /// a warning about the number of prompts, and then a progress bar — because it
-  /// is the same problem. Anything already in the vault is sealed, and Karde
-  /// cannot look inside it for free.
-  ///
-  /// Gone once there is nothing left to read, so a vault that is fully covered
-  /// shows a switch and a sentence and no chores.
-  Widget _buildExpiryBackfill(BuildContext context) {
-    final loc = AppLocalizations.of(context)!;
-    final theme = Theme.of(context);
-    final missing = ref.watch(expiryMissingCountProvider).valueOrNull ?? 0;
-    if (missing == 0) return const SizedBox.shrink();
-
-    return Padding(
-      padding: const EdgeInsets.only(top: 12),
-      child: _buildGlassContainer(
-        context: context,
-        child: _buildNavigationRow(
-          context: context,
-          title: loc.settingsExpiryReadTitle,
-          subtitle: loc.settingsExpiryReadSubtitle(missing),
-          leadingIcon: Icons.lock_open_outlined,
-          onTap: _readExistingExpiryDates,
         ),
       ),
     );
   }
 
-  Future<void> _readExistingExpiryDates() async {
+  void _showExpiryDetail() {
     final loc = AppLocalizations.of(context)!;
-    final missing = ref.read(expiryMissingCountProvider).valueOrNull ?? 0;
-    if (missing == 0) return;
-
-    final proceed = await KardeConfirmDialog.show(
-      context,
-      title: loc.settingsExpiryReadConfirmTitle(missing),
-      message: loc.settingsExpiryReadConfirmMessage,
-      confirmLabel: loc.continueBtn,
-      isDestructive: false,
+    showDialog<void>(
+      context: context,
+      builder: (_) => AlertDialog(
+        title: Text(loc.settingsExpiryReminders),
+        content: Text(loc.settingsExpiryRemindersNote),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: Text(loc.done),
+          ),
+        ],
+      ),
     );
-    if (!proceed || !mounted) return;
-
-    setState(() => _expiryProgress = 0);
-    try {
-      final written = await ref.read(expiryBackfillProvider).fillMissing(
-            onProgress: (completed, total) {
-              if (mounted) setState(() => _expiryProgress = completed / total);
-            },
-          );
-      // The lists carry the dates the alerts read, so they have to be asked
-      // again or the bell stays silent until the app is next started.
-      ref.invalidate(cardsProvider);
-      ref.invalidate(idsProvider);
-      ref.invalidate(expiryMissingCountProvider);
-      if (mounted) {
-        KardeFeedback.success(context, loc.settingsExpiryReadDone(written));
-      }
-    } on VaultAuthCancelled {
-      // A dismissed prompt is a decision. Whatever was read before it is kept,
-      // and a second run picks up the rest.
-      ref.invalidate(cardsProvider);
-      ref.invalidate(idsProvider);
-      ref.invalidate(expiryMissingCountProvider);
-    } catch (e) {
-      if (mounted) _showErrorSnackBar(loc.genericError, context);
-    } finally {
-      if (mounted) setState(() => _expiryProgress = null);
-    }
   }
 
   /// Says what Karde is already doing about backups, and where.

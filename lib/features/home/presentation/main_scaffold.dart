@@ -10,6 +10,7 @@ import '../../../core/security/authentication_service.dart';
 import '../../../core/security/system_interaction_guard.dart';
 import '../../../core/security/window_security_service.dart';
 import '../../../core/storage/settings_repository.dart';
+import '../../../core/notifications/expiry_schedule_keeper.dart';
 import '../../../core/security/vault_health_provider.dart';
 import '../../../core/security/encryption_service.dart';
 import '../../backup/data/auto_backup_recorder.dart';
@@ -349,7 +350,10 @@ class _MainScaffoldState extends ConsumerState<MainScaffold> with WidgetsBinding
       );
     }
 
-    return Scaffold(
+    // Wrapped around the whole shell so the scheduled reminders follow the vault
+    // wherever it is changed from — a save, a delete, a restore, an erase.
+    return ExpiryScheduleKeeper(
+      child: Scaffold(
       body: IndexedStack(
         index: _currentIndex,
         children: screens,
@@ -379,6 +383,7 @@ class _MainScaffoldState extends ConsumerState<MainScaffold> with WidgetsBinding
           ),
         ],
       ),
+    ),
     );
   }
 }

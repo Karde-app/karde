@@ -19,6 +19,9 @@ android {
     ndkVersion = flutter.ndkVersion
 
     compileOptions {
+        // flutter_local_notifications schedules with java.time, which does not
+        // exist below API 26. Desugaring back-fills it, and minSdk is 24.
+        isCoreLibraryDesugaringEnabled = true
         sourceCompatibility = JavaVersion.VERSION_17
         targetCompatibility = JavaVersion.VERSION_17
     }
@@ -72,4 +75,7 @@ dependencies {
     // The vault key is generated with per-use user authentication, so every
     // encrypt/decrypt must be released by an OS-level auth prompt.
     implementation("androidx.biometric:biometric:1.1.0")
+
+    // Required by flutter_local_notifications. See compileOptions above.
+    coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.1.4")
 }

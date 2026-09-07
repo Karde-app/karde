@@ -233,13 +233,12 @@ class _AddCardScreenState extends ConsumerState<AddCardScreen> {
         cardBrand: _cardBrandController.text,
         encryptedData: encryptedData,
         hasPhoto: _photo.hasPhoto,
-        // The one thing that leaves the sealed payload, and only while the user
-        // wants to be warned. Null when the switch is off, which is what makes
-        // turning it off mean something: the next save stops writing the date,
-        // as well as the dates already stored being erased.
-        expiresOn: ref.read(expiryRemindersProvider)
-            ? Expiry.fromCardExpiry(_expiryController.text)
-            : null,
+        // Always recorded, whatever the reminder setting says. An expiry date is
+        // printed on the front of the card; it is not a secret, and treating it
+        // as one bought a great deal of ceremony and nothing else. The setting
+        // decides whether Karde *says* anything about it, not whether it is
+        // allowed to know.
+        expiresOn: Expiry.fromCardExpiry(_expiryController.text),
         lastFourDigits: lastFourDigits,
         createdAt: widget.existingCard?.createdAt ?? DateTime.now(),
         updatedAt: DateTime.now(),

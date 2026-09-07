@@ -454,11 +454,9 @@ class _AddIdScreenState extends ConsumerState<AddIdScreen> {
         idType: finalIdType,
         encryptedData: encryptedData,
         hasPhoto: _photo.hasPhoto,
-        // See the card form: the only field that leaves the sealed payload, and
-        // only while the user wants the reminders.
-        expiresOn: ref.read(expiryRemindersProvider)
-            ? _dateIn(IdFieldType.expiryDate)
-            : null,
+        // See the card form: always recorded, because it is not a secret. The
+        // setting governs whether Karde speaks up, not what it may know.
+        expiresOn: _dateIn(IdFieldType.expiryDate),
         createdAt: widget.existingId?.createdAt ?? DateTime.now(),
         updatedAt: DateTime.now(),
         // Preserve pin state across an edit, as the card form does.

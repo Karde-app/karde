@@ -3259,68 +3259,74 @@ abstract class AppLocalizations {
   /// No description provided for @settingsExpiryRemindersNote.
   ///
   /// In en, this message translates to:
-  /// **'To warn you, Karde keeps the expiry date where it can read it, next to the nickname and last four digits already stored that way. The card number, security code, document number and photo stay encrypted. Turning this off erases every date Karde kept.'**
+  /// **'An expiry date is not a secret — it is printed on the front of your card — so Karde keeps it where it can read it, next to the nickname and last four digits already stored that way. The card number, security code, document number and photo stay encrypted. Turning reminders off just stops the warnings.'**
   String get settingsExpiryRemindersNote;
 
-  /// No description provided for @settingsExpiryOffTitle.
+  /// No description provided for @settingsExpiryRemindersShort.
   ///
   /// In en, this message translates to:
-  /// **'Turn off expiry reminders?'**
-  String get settingsExpiryOffTitle;
+  /// **'The expiry date is kept where Karde can read it, so it can warn you.'**
+  String get settingsExpiryRemindersShort;
 
-  /// No description provided for @settingsExpiryOffMessage.
+  /// No description provided for @notifyExpiringTitle.
   ///
   /// In en, this message translates to:
-  /// **'Karde will forget the expiry dates it stored and stop warning you. Nothing else about your cards or documents changes.'**
-  String get settingsExpiryOffMessage;
+  /// **'Something in Karde is running out'**
+  String get notifyExpiringTitle;
 
-  /// No description provided for @settingsExpiryOffConfirm.
+  /// No description provided for @notifyExpiringBody.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{1 card or document expires soon. Open Karde to see which.} other{{count} cards or documents expire soon. Open Karde to see which.}}'**
+  String notifyExpiringBody(int count);
+
+  /// No description provided for @notifyExpiredTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Something in Karde has expired'**
+  String get notifyExpiredTitle;
+
+  /// No description provided for @notifyExpiredBody.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{1 card or document has expired. Open Karde to see which.} other{{count} cards or documents have expired. Open Karde to see which.}}'**
+  String notifyExpiredBody(int count);
+
+  /// No description provided for @settingsExpiryNotifyBlocked.
+  ///
+  /// In en, this message translates to:
+  /// **'Karde cannot send reminders until notifications are allowed for it in your phone\'s settings.'**
+  String get settingsExpiryNotifyBlocked;
+
+  /// No description provided for @settingsAutoBackupTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Automatic backup'**
+  String get settingsAutoBackupTitle;
+
+  /// No description provided for @settingsAutoBackupDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Keep a copy up to date every time something changes'**
+  String get settingsAutoBackupDesc;
+
+  /// No description provided for @settingsAutoBackupOffTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Turn off automatic backup?'**
+  String get settingsAutoBackupOffTitle;
+
+  /// No description provided for @settingsAutoBackupOffMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Karde will stop keeping your backup up to date. The file already in your folder is left exactly as it is — nothing is deleted.'**
+  String get settingsAutoBackupOffMessage;
+
+  /// No description provided for @settingsAutoBackupOffConfirm.
   ///
   /// In en, this message translates to:
   /// **'Turn off'**
-  String get settingsExpiryOffConfirm;
-
-  /// No description provided for @settingsExpiryReadTitle.
-  ///
-  /// In en, this message translates to:
-  /// **'Check what you already saved'**
-  String get settingsExpiryReadTitle;
-
-  /// No description provided for @settingsExpiryReadSubtitle.
-  ///
-  /// In en, this message translates to:
-  /// **'{count, plural, =1{One item was saved before reminders existed, so Karde cannot see when it expires.} other{{count} items were saved before reminders existed, so Karde cannot see when they expire.}}'**
-  String settingsExpiryReadSubtitle(int count);
-
-  /// No description provided for @settingsExpiryReadAction.
-  ///
-  /// In en, this message translates to:
-  /// **'Read them now'**
-  String get settingsExpiryReadAction;
-
-  /// No description provided for @settingsExpiryReadConfirmTitle.
-  ///
-  /// In en, this message translates to:
-  /// **'{count, plural, =1{Read 1 item} other{Read {count} items}}'**
-  String settingsExpiryReadConfirmTitle(int count);
-
-  /// No description provided for @settingsExpiryReadConfirmMessage.
-  ///
-  /// In en, this message translates to:
-  /// **'Your phone will ask you to confirm your identity once per item. Karde takes the expiry date and nothing else.'**
-  String get settingsExpiryReadConfirmMessage;
-
-  /// No description provided for @settingsExpiryReading.
-  ///
-  /// In en, this message translates to:
-  /// **'Reading expiry dates…'**
-  String get settingsExpiryReading;
-
-  /// No description provided for @settingsExpiryReadDone.
-  ///
-  /// In en, this message translates to:
-  /// **'{count, plural, =1{1 expiry date saved.} other{{count} expiry dates saved.}}'**
-  String settingsExpiryReadDone(int count);
+  String get settingsAutoBackupOffConfirm;
 }
 
 class _AppLocalizationsDelegate

@@ -1844,63 +1844,58 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get settingsExpiryRemindersNote =>
-      'To warn you, Karde keeps the expiry date where it can read it, next to the nickname and last four digits already stored that way. The card number, security code, document number and photo stay encrypted. Turning this off erases every date Karde kept.';
+      'An expiry date is not a secret — it is printed on the front of your card — so Karde keeps it where it can read it, next to the nickname and last four digits already stored that way. The card number, security code, document number and photo stay encrypted. Turning reminders off just stops the warnings.';
 
   @override
-  String get settingsExpiryOffTitle => 'Turn off expiry reminders?';
+  String get settingsExpiryRemindersShort =>
+      'The expiry date is kept where Karde can read it, so it can warn you.';
 
   @override
-  String get settingsExpiryOffMessage =>
-      'Karde will forget the expiry dates it stored and stop warning you. Nothing else about your cards or documents changes.';
+  String get notifyExpiringTitle => 'Something in Karde is running out';
 
   @override
-  String get settingsExpiryOffConfirm => 'Turn off';
-
-  @override
-  String get settingsExpiryReadTitle => 'Check what you already saved';
-
-  @override
-  String settingsExpiryReadSubtitle(int count) {
+  String notifyExpiringBody(int count) {
     String _temp0 = intl.Intl.pluralLogic(
       count,
       locale: localeName,
-      other:
-          '$count items were saved before reminders existed, so Karde cannot see when they expire.',
-      one:
-          'One item was saved before reminders existed, so Karde cannot see when it expires.',
+      other: '$count cards or documents expire soon. Open Karde to see which.',
+      one: '1 card or document expires soon. Open Karde to see which.',
     );
     return '$_temp0';
   }
 
   @override
-  String get settingsExpiryReadAction => 'Read them now';
+  String get notifyExpiredTitle => 'Something in Karde has expired';
 
   @override
-  String settingsExpiryReadConfirmTitle(int count) {
+  String notifyExpiredBody(int count) {
     String _temp0 = intl.Intl.pluralLogic(
       count,
       locale: localeName,
-      other: 'Read $count items',
-      one: 'Read 1 item',
+      other: '$count cards or documents have expired. Open Karde to see which.',
+      one: '1 card or document has expired. Open Karde to see which.',
     );
     return '$_temp0';
   }
 
   @override
-  String get settingsExpiryReadConfirmMessage =>
-      'Your phone will ask you to confirm your identity once per item. Karde takes the expiry date and nothing else.';
+  String get settingsExpiryNotifyBlocked =>
+      'Karde cannot send reminders until notifications are allowed for it in your phone\'s settings.';
 
   @override
-  String get settingsExpiryReading => 'Reading expiry dates…';
+  String get settingsAutoBackupTitle => 'Automatic backup';
 
   @override
-  String settingsExpiryReadDone(int count) {
-    String _temp0 = intl.Intl.pluralLogic(
-      count,
-      locale: localeName,
-      other: '$count expiry dates saved.',
-      one: '1 expiry date saved.',
-    );
-    return '$_temp0';
-  }
+  String get settingsAutoBackupDesc =>
+      'Keep a copy up to date every time something changes';
+
+  @override
+  String get settingsAutoBackupOffTitle => 'Turn off automatic backup?';
+
+  @override
+  String get settingsAutoBackupOffMessage =>
+      'Karde will stop keeping your backup up to date. The file already in your folder is left exactly as it is — nothing is deleted.';
+
+  @override
+  String get settingsAutoBackupOffConfirm => 'Turn off';
 }

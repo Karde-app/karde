@@ -1879,64 +1879,62 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get settingsExpiryRemindersNote =>
-      'Pour vous prévenir, Karde conserve la date d\'expiration là où il peut la lire, à côté du surnom et des quatre derniers chiffres déjà enregistrés ainsi. Le numéro de carte, le code de sécurité, le numéro du document et la photo restent chiffrés. Désactiver cette option efface toutes les dates conservées.';
+      'Une date d\'expiration n\'est pas un secret — elle est imprimée au recto de votre carte — alors Karde la conserve là où il peut la lire, à côté du surnom et des quatre derniers chiffres déjà enregistrés ainsi. Le numéro de carte, le code de sécurité, le numéro du document et la photo restent chiffrés. Désactiver les rappels ne fait qu\'arrêter les avertissements.';
 
   @override
-  String get settingsExpiryOffTitle => 'Désactiver les rappels d\'expiration ?';
+  String get settingsExpiryRemindersShort =>
+      'La date d\'expiration est conservée là où Karde peut la lire, afin de vous prévenir.';
 
   @override
-  String get settingsExpiryOffMessage =>
-      'Karde oubliera les dates d\'expiration qu\'il a conservées et cessera de vous prévenir. Rien d\'autre ne change pour vos cartes ou vos documents.';
+  String get notifyExpiringTitle =>
+      'Quelque chose arrive à expiration dans Karde';
 
   @override
-  String get settingsExpiryOffConfirm => 'Désactiver';
-
-  @override
-  String get settingsExpiryReadTitle =>
-      'Vérifier ce que vous avez déjà enregistré';
-
-  @override
-  String settingsExpiryReadSubtitle(int count) {
+  String notifyExpiringBody(int count) {
     String _temp0 = intl.Intl.pluralLogic(
       count,
       locale: localeName,
       other:
-          '$count éléments ont été enregistrés avant l\'existence des rappels : Karde ne voit pas leurs dates d\'expiration.',
-      one:
-          'Un élément a été enregistré avant l\'existence des rappels : Karde ne voit pas sa date d\'expiration.',
+          '$count cartes ou documents expirent bientôt. Ouvrez Karde pour voir lesquels.',
+      one: '1 carte ou document expire bientôt. Ouvrez Karde pour voir lequel.',
     );
     return '$_temp0';
   }
 
   @override
-  String get settingsExpiryReadAction => 'Les lire maintenant';
+  String get notifyExpiredTitle => 'Quelque chose a expiré dans Karde';
 
   @override
-  String settingsExpiryReadConfirmTitle(int count) {
+  String notifyExpiredBody(int count) {
     String _temp0 = intl.Intl.pluralLogic(
       count,
       locale: localeName,
-      other: 'Lire $count éléments',
-      one: 'Lire 1 élément',
+      other:
+          '$count cartes ou documents ont expiré. Ouvrez Karde pour voir lesquels.',
+      one: '1 carte ou document a expiré. Ouvrez Karde pour voir lequel.',
     );
     return '$_temp0';
   }
 
   @override
-  String get settingsExpiryReadConfirmMessage =>
-      'Votre téléphone vous demandera de confirmer votre identité une fois par élément. Karde ne retient que la date d\'expiration.';
+  String get settingsExpiryNotifyBlocked =>
+      'Karde ne peut pas envoyer de rappels tant que les notifications ne lui sont pas autorisées dans les réglages de votre téléphone.';
 
   @override
-  String get settingsExpiryReading => 'Lecture des dates d\'expiration…';
+  String get settingsAutoBackupTitle => 'Sauvegarde automatique';
 
   @override
-  String settingsExpiryReadDone(int count) {
-    String _temp0 = intl.Intl.pluralLogic(
-      count,
-      locale: localeName,
-      other: '$count dates d\'expiration enregistrées.',
-      one: '1 date d\'expiration enregistrée.',
-    );
-    return '$_temp0';
-  }
+  String get settingsAutoBackupDesc =>
+      'Garder une copie à jour à chaque changement';
+
+  @override
+  String get settingsAutoBackupOffTitle =>
+      'Désactiver la sauvegarde automatique ?';
+
+  @override
+  String get settingsAutoBackupOffMessage =>
+      'Karde cessera de tenir votre sauvegarde à jour. Le fichier déjà présent dans votre dossier reste exactement tel quel : rien n\'est supprimé.';
+
+  @override
+  String get settingsAutoBackupOffConfirm => 'Désactiver';
 }

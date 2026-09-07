@@ -193,9 +193,55 @@ final kardeAlertsProvider = Provider<List<KardeAlert>>((ref) {
   ];
 });
 
+/// Which alerts the user has already looked at.
+///
+/// Persisted, so the badge does not come back every time Karde is opened.
+///
+/// What is stored is the set of ids that were on screen the last time the sheet
+/// was opened — not a growing history. That is what makes a problem that goes
+/// away and returns badge again: its id is dropped the moment it stops being an
+/// active alert, so its return is genuinely new.
+class SeenAlertsNotifier extends StateNotifier<Set<String>> {
+  SeenAlertsNotifier(this._repository)
+      : super(_repository.getSeenAlertIds().toSet());
+
+  final SettingsRepository _repository;
+
+  /// Records exactly what is on screen now as read.
+  Future<void> markSeen(Iterable<String> activeIds) async {
+    final ids = activeIds.toSet();
+    if (ids.length == state.length && ids.containsAll(state)) return;
+    state = ids;
+    await _repository.setSeenAlertIds(ids.toList());
+  }
+}
+
+final seenAlertsProvider =
+    StateNotifierProvider<SeenAlertsNotifier, Set<String>>((ref) {
+  return SeenAlertsNotifier(ref.watch(settingsRepositoryProvider));
+});
+
+/// The alerts the user has not looked at yet.
+///
+/// The bell badges on these rather than on everything. A count that never goes
+/// down after it has been read is not a count, it is a permanent decoration, and
+/// the user said so: "once I open and see that two notification the number 2 on
+/// the bell should disappear, but now it is there still."
+///
+/// The alerts themselves do not disappear — the sheet still lists everything
+/// that is true, because a screen lock that is still missing is still missing.
+/// Only the demand for attention is answered.
+final unseenAlertsProvider = Provider<List<KardeAlert>>((ref) {
+  final seen = ref.watch(seenAlertsProvider);
+  return ref
+      .watch(kardeAlertsProvider)
+      .where((alert) => !seen.contains(alert.id))
+      .toList();
+});
+
 /// The bell's badge count.
 final kardeAlertCountProvider = Provider<int>((ref) {
-  return ref.watch(kardeAlertsProvider).length;
+  return ref.watch(unseenAlertsProvider).length;
 });
 
 /// The list behind the bell.

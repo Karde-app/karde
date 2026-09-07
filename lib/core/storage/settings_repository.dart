@@ -104,6 +104,7 @@ class SettingsRepository {
   static const _requirePinLockKey = 'require_pin_lock';
   static const _biometricUnlockKey = 'biometric_unlock';
   static const _expiryRemindersKey = 'expiry_reminders';
+  static const _seenAlertsKey = 'seen_alert_ids';
   
   static const _recoveryPreferenceKey = 'recovery_preference'; // 'biometrics', 'questions', 'none'
 
@@ -146,20 +147,31 @@ class SettingsRepository {
     await _prefs.setBool(_requirePinLockKey, value);
   }
 
-  /// Whether Karde may keep expiry dates where it can read them.
+  /// Whether Karde warns about cards and documents running out.
   ///
-  /// On by default, because it is the point of the feature and the user asked
-  /// for it knowing what it costs. Off is a real option rather than a token one:
-  /// switching it off erases every date already stored, so somebody who changes
-  /// their mind is not stuck with a decision they made once.
-  ///
-  /// See the v7 migration in `database.dart` for exactly what is given up.
+  /// On by default. The date itself is kept regardless — it is printed on the
+  /// front of the card and is not a secret — so this governs only whether
+  /// anything is said about it. See the v7 migration in `database.dart`.
   bool getExpiryReminders() {
     return _prefs.getBool(_expiryRemindersKey) ?? true;
   }
 
   Future<void> setExpiryReminders(bool value) async {
     await _prefs.setBool(_expiryRemindersKey, value);
+  }
+
+  /// The alerts that were on screen the last time the bell was opened.
+  ///
+  /// Only ever the current set, never a history: see [SeenAlertsNotifier]. In
+  /// preferences rather than secure storage because an alert id says nothing
+  /// about the vault's contents beyond "one of your items expires", which the
+  /// row's own expiry date already says in the clear.
+  List<String> getSeenAlertIds() {
+    return _prefs.getStringList(_seenAlertsKey) ?? const [];
+  }
+
+  Future<void> setSeenAlertIds(List<String> ids) async {
+    await _prefs.setStringList(_seenAlertsKey, ids);
   }
 
   bool getBiometricUnlock() {
@@ -471,13 +483,13 @@ class RequirePinLockNotifier extends StateNotifier<bool> {
   }
 }
 
-/// The expiry-reminder switch, and the erasing that goes with turning it off.
+/// The expiry-reminder switch: whether Karde says anything, nothing more.
 ///
-/// The erase is the part that matters. Every other setting here is a preference
-/// that can be flipped back and forth for free; this one decides whether a piece
-/// of the vault sits outside the encryption, and a switch that left the dates
-/// behind would be telling the user something untrue. So off means gone, and
-/// turning it on again starts from nothing rather than resurrecting them.
+/// It used to erase every stored date when switched off, on the theory that an
+/// expiry date was a secret being let out of the vault. It is not — it is
+/// printed on the front of the card — and treating it as one produced a
+/// confirmation dialog, a one-way door and a screenful of explanation for a
+/// preference about notifications. Off now simply means quiet.
 class ExpiryRemindersNotifier extends StateNotifier<bool> {
   final SettingsRepository _repository;
 
@@ -487,7 +499,6 @@ class ExpiryRemindersNotifier extends StateNotifier<bool> {
   Future<void> updateExpiryReminders(bool value) async {
     state = value;
     await _repository.setExpiryReminders(value);
-    if (!value) await DatabaseHelper.instance.clearAllExpiryDates();
   }
 }
 
