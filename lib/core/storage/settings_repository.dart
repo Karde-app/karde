@@ -105,6 +105,7 @@ class SettingsRepository {
   static const _biometricUnlockKey = 'biometric_unlock';
   static const _expiryRemindersKey = 'expiry_reminders';
   static const _seenAlertsKey = 'seen_alert_ids';
+  static const _activityLogKey = 'activity_log';
   
   static const _recoveryPreferenceKey = 'recovery_preference'; // 'biometrics', 'questions', 'none'
 
@@ -172,6 +173,20 @@ class SettingsRepository {
 
   Future<void> setSeenAlertIds(List<String> ids) async {
     await _prefs.setStringList(_seenAlertsKey, ids);
+  }
+
+  /// The vault's recent history, as JSON. See `ActivityLogNotifier`.
+  ///
+  /// Kept beside the other preferences rather than in secure storage on purpose:
+  /// it holds nicknames, which are already in the clear on the rows it describes
+  /// and on the home screen, and a log that needs unlocking is a log nobody
+  /// reads.
+  String? getActivityLog() {
+    return _prefs.getString(_activityLogKey);
+  }
+
+  Future<void> setActivityLog(String json) async {
+    await _prefs.setString(_activityLogKey, json);
   }
 
   bool getBiometricUnlock() {

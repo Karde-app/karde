@@ -2,7 +2,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../security/vault_health_provider.dart';
 import '../../features/cards/data/card_repository.dart';
-import '../../features/home/presentation/alerts_sheet.dart';
+import '../../features/home/data/alerts_providers.dart';
 import '../../features/ids/data/id_repository.dart';
 import 'settings_repository.dart';
 

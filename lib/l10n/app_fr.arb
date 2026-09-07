@@ -566,4 +566,21 @@
   "settingsAutoBackupOffTitle": "Désactiver la sauvegarde automatique ?",
   "settingsAutoBackupOffMessage": "Karde cessera de tenir votre sauvegarde à jour. Le fichier déjà présent dans votre dossier reste exactement tel quel : rien n'est supprimé.",
   "settingsAutoBackupOffConfirm": "Désactiver"
+,
+  "notificationsTitle": "Notifications",
+  "activityTitle": "Activité récente",
+  "activityEmpty": "Rien pour l'instant. L'ajout, la modification ou la suppression d'une carte ou d'un document apparaîtra ici.",
+  "activityClear": "Effacer",
+  "activityCardAdded": "Vous avez ajouté la carte {name}",
+  "@activityCardAdded": { "placeholders": { "name": { "type": "String" } } },
+  "activityCardChanged": "Vous avez modifié la carte {name}",
+  "@activityCardChanged": { "placeholders": { "name": { "type": "String" } } },
+  "activityCardRemoved": "Vous avez supprimé la carte {name}",
+  "@activityCardRemoved": { "placeholders": { "name": { "type": "String" } } },
+  "activityDocumentAdded": "Vous avez ajouté le document {name}",
+  "@activityDocumentAdded": { "placeholders": { "name": { "type": "String" } } },
+  "activityDocumentChanged": "Vous avez modifié le document {name}",
+  "@activityDocumentChanged": { "placeholders": { "name": { "type": "String" } } },
+  "activityDocumentRemoved": "Vous avez supprimé le document {name}",
+  "@activityDocumentRemoved": { "placeholders": { "name": { "type": "String" } } }
 }

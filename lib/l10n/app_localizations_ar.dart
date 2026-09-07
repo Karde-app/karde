@@ -1905,4 +1905,47 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get settingsAutoBackupOffConfirm => 'إيقاف';
+
+  @override
+  String get notificationsTitle => 'الإشعارات';
+
+  @override
+  String get activityTitle => 'النشاط الأخير';
+
+  @override
+  String get activityEmpty =>
+      'لا شيء بعد. ستظهر هنا عمليات إضافة بطاقة أو مستند أو تغييرهما أو حذفهما.';
+
+  @override
+  String get activityClear => 'مسح';
+
+  @override
+  String activityCardAdded(String name) {
+    return 'أضفت البطاقة $name';
+  }
+
+  @override
+  String activityCardChanged(String name) {
+    return 'غيّرت البطاقة $name';
+  }
+
+  @override
+  String activityCardRemoved(String name) {
+    return 'حذفت البطاقة $name';
+  }
+
+  @override
+  String activityDocumentAdded(String name) {
+    return 'أضفت المستند $name';
+  }
+
+  @override
+  String activityDocumentChanged(String name) {
+    return 'غيّرت المستند $name';
+  }
+
+  @override
+  String activityDocumentRemoved(String name) {
+    return 'حذفت المستند $name';
+  }
 }

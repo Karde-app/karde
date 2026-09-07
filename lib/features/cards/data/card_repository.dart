@@ -2,6 +2,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/storage/database.dart';
 import '../domain/virtual_card.dart';
 import '../../backup/data/auto_backup_recorder.dart';
+import '../../home/data/activity_log.dart';
+import '../../home/domain/activity_entry.dart';
 
 final cardRepositoryProvider = Provider<CardRepository>((ref) {
   return CardRepository(DatabaseHelper.instance);
@@ -74,6 +76,9 @@ class CardsNotifier extends AsyncNotifier<List<VirtualCard>> {
     final repository = ref.read(cardRepositoryProvider);
     final id = await repository.insertCard(card);
     ref.invalidateSelf();
+    // Recorded here rather than at each screen that saves, because this is the
+    // one place every save passes through. See ActivityEntry.
+    _log(ActivityKind.cardAdded, card.nickname);
     if (secrets == null) return;
     await ref
         .read(autoBackupRecorderProvider)
@@ -84,15 +89,31 @@ class CardsNotifier extends AsyncNotifier<List<VirtualCard>> {
     final repository = ref.read(cardRepositoryProvider);
     await repository.updateCard(card);
     ref.invalidateSelf();
+    _log(ActivityKind.cardChanged, card.nickname);
     if (secrets == null) return;
     await ref.read(autoBackupRecorderProvider).cardSaved(card, secrets);
   }
 
   Future<void> deleteCard(int id) async {
     final repository = ref.read(cardRepositoryProvider);
+    // Read before the row goes. "Meridian CU was deleted" is the entry worth
+    // having; "an item was deleted" is the one nobody can act on.
+    final name = state.valueOrNull
+        ?.where((card) => card.id == id)
+        .firstOrNull
+        ?.nickname;
+
     await repository.deleteCard(id);
     ref.invalidateSelf();
+    _log(ActivityKind.cardRemoved, name ?? '');
     await ref.read(autoBackupRecorderProvider).cardDeleted(id);
+  }
+
+  /// Never allowed to fail a save. The log is a convenience; the card is not.
+  void _log(ActivityKind kind, String name) {
+    try {
+      ref.read(activityLogProvider.notifier).record(kind, name);
+    } catch (_) {}
   }
 }
 

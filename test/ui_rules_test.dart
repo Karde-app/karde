@@ -839,18 +839,21 @@ void main() {
 
     test("but the home screen offers one, through the bell", () {
       // The warnings that used to stack up above the cards are collected behind
-      // one bell now, so the offer is in the sheet rather than on the page. What
-      // must stay true is that it is one tap from the home screen.
+      // one bell now, so the offer lives on the notifications screen rather than
+      // on the page. What must stay true is that it is one tap from the home
+      // screen — the container has changed from a bottom sheet to a screen, and
+      // may change again; the reachability is the rule.
       final dashboard =
           File("lib/features/home/presentation/dashboard_screen.dart")
               .readAsStringSync();
-      final sheet = File("lib/features/home/presentation/alerts_sheet.dart")
-          .readAsStringSync();
+      final notifications =
+          File("lib/features/home/presentation/notifications_screen.dart")
+              .readAsStringSync();
 
-      expect(dashboard.contains("AlertsSheet.show"), isTrue,
-          reason: "the bell has to open the sheet");
-      expect(sheet.contains("BackupSetupScreen"), isTrue,
-          reason: "and the sheet has to offer setting a backup up");
+      expect(dashboard.contains("NotificationsScreen.open"), isTrue,
+          reason: "the bell has to open the notifications screen");
+      expect(notifications.contains("BackupSetupScreen"), isTrue,
+          reason: "and that screen has to offer setting a backup up");
     });
   });
 

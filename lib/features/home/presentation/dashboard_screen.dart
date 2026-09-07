@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../l10n/app_localizations.dart';
 import '../domain/karde_alert.dart';
-import 'alerts_sheet.dart';
+import '../data/alerts_providers.dart';
+import 'notifications_screen.dart';
 import '../../cards/data/card_repository.dart';
 import '../../cards/presentation/add_card_screen.dart';
 import '../../cards/presentation/vault_screen.dart';
@@ -568,7 +569,7 @@ class DashboardScreen extends ConsumerWidget {
         // clears as it opens. Storing exactly what is live right now is also
         // what lets a problem that comes back badge again — see SeenAlerts.
         ref.read(seenAlertsProvider.notifier).markSeen(alerts.map((a) => a.id));
-        AlertsSheet.show(context);
+        NotificationsScreen.open(context);
       },
       behavior: HitTestBehavior.opaque,
       child: Padding(

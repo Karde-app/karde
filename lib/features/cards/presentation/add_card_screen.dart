@@ -8,7 +8,6 @@ import 'package:flutter/services.dart';
 import '../../../core/security/encryption_service.dart';
 import '../../../core/widgets/vault_photo_field.dart';
 import '../../../core/utils/expiry.dart';
-import '../../../core/storage/settings_repository.dart';
 import '../../../core/utils/validators.dart';
 import '../data/card_repository.dart';
 import '../domain/virtual_card.dart';

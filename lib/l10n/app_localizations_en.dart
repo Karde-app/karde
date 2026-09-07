@@ -1898,4 +1898,47 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get settingsAutoBackupOffConfirm => 'Turn off';
+
+  @override
+  String get notificationsTitle => 'Notifications';
+
+  @override
+  String get activityTitle => 'Recent activity';
+
+  @override
+  String get activityEmpty =>
+      'Nothing yet. Adding, changing or removing a card or document will show up here.';
+
+  @override
+  String get activityClear => 'Clear';
+
+  @override
+  String activityCardAdded(String name) {
+    return 'You added the card $name';
+  }
+
+  @override
+  String activityCardChanged(String name) {
+    return 'You changed the card $name';
+  }
+
+  @override
+  String activityCardRemoved(String name) {
+    return 'You deleted the card $name';
+  }
+
+  @override
+  String activityDocumentAdded(String name) {
+    return 'You added the document $name';
+  }
+
+  @override
+  String activityDocumentChanged(String name) {
+    return 'You changed the document $name';
+  }
+
+  @override
+  String activityDocumentRemoved(String name) {
+    return 'You deleted the document $name';
+  }
 }

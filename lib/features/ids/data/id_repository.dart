@@ -2,6 +2,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/storage/database.dart';
 import '../domain/virtual_id.dart';
 import '../../backup/data/auto_backup_recorder.dart';
+import '../../home/data/activity_log.dart';
+import '../../home/domain/activity_entry.dart';
 
 final idRepositoryProvider = Provider<IdRepository>((ref) {
   return IdRepository(DatabaseHelper.instance);
@@ -61,6 +63,8 @@ class IdsNotifier extends AsyncNotifier<List<VirtualId>> {
     final repository = ref.read(idRepositoryProvider);
     final id = await repository.insertId(idDoc);
     ref.invalidateSelf();
+    // See CardsNotifier.addCard: one choke point, one log entry.
+    _log(ActivityKind.documentAdded, idDoc.nickname);
     if (payload == null) return;
     await ref
         .read(autoBackupRecorderProvider)
@@ -71,15 +75,27 @@ class IdsNotifier extends AsyncNotifier<List<VirtualId>> {
     final repository = ref.read(idRepositoryProvider);
     await repository.updateId(idDoc);
     ref.invalidateSelf();
+    _log(ActivityKind.documentChanged, idDoc.nickname);
     if (payload == null) return;
     await ref.read(autoBackupRecorderProvider).idSaved(idDoc, payload);
   }
 
   Future<void> deleteId(int id) async {
     final repository = ref.read(idRepositoryProvider);
+    final name =
+        state.valueOrNull?.where((doc) => doc.id == id).firstOrNull?.nickname;
+
     await repository.deleteId(id);
     ref.invalidateSelf();
+    _log(ActivityKind.documentRemoved, name ?? '');
     await ref.read(autoBackupRecorderProvider).idDeleted(id);
+  }
+
+  /// Never allowed to fail a save. See [CardsNotifier].
+  void _log(ActivityKind kind, String name) {
+    try {
+      ref.read(activityLogProvider.notifier).record(kind, name);
+    } catch (_) {}
   }
 }
 

@@ -566,4 +566,21 @@
   "settingsAutoBackupOffTitle": "إيقاف النسخ الاحتياطي التلقائي؟",
   "settingsAutoBackupOffMessage": "سيتوقف Karde عن تحديث نسختك الاحتياطية. أما الملف الموجود في مجلدك فيبقى كما هو تماماً — ولا يُحذف شيء.",
   "settingsAutoBackupOffConfirm": "إيقاف"
+,
+  "notificationsTitle": "الإشعارات",
+  "activityTitle": "النشاط الأخير",
+  "activityEmpty": "لا شيء بعد. ستظهر هنا عمليات إضافة بطاقة أو مستند أو تغييرهما أو حذفهما.",
+  "activityClear": "مسح",
+  "activityCardAdded": "أضفت البطاقة {name}",
+  "@activityCardAdded": { "placeholders": { "name": { "type": "String" } } },
+  "activityCardChanged": "غيّرت البطاقة {name}",
+  "@activityCardChanged": { "placeholders": { "name": { "type": "String" } } },
+  "activityCardRemoved": "حذفت البطاقة {name}",
+  "@activityCardRemoved": { "placeholders": { "name": { "type": "String" } } },
+  "activityDocumentAdded": "أضفت المستند {name}",
+  "@activityDocumentAdded": { "placeholders": { "name": { "type": "String" } } },
+  "activityDocumentChanged": "غيّرت المستند {name}",
+  "@activityDocumentChanged": { "placeholders": { "name": { "type": "String" } } },
+  "activityDocumentRemoved": "حذفت المستند {name}",
+  "@activityDocumentRemoved": { "placeholders": { "name": { "type": "String" } } }
 }

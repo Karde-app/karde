@@ -716,4 +716,21 @@
   "settingsAutoBackupOffTitle": "Turn off automatic backup?",
   "settingsAutoBackupOffMessage": "Karde will stop keeping your backup up to date. The file already in your folder is left exactly as it is — nothing is deleted.",
   "settingsAutoBackupOffConfirm": "Turn off"
+,
+  "notificationsTitle": "Notifications",
+  "activityTitle": "Recent activity",
+  "activityEmpty": "Nothing yet. Adding, changing or removing a card or document will show up here.",
+  "activityClear": "Clear",
+  "activityCardAdded": "You added the card {name}",
+  "@activityCardAdded": { "placeholders": { "name": { "type": "String" } } },
+  "activityCardChanged": "You changed the card {name}",
+  "@activityCardChanged": { "placeholders": { "name": { "type": "String" } } },
+  "activityCardRemoved": "You deleted the card {name}",
+  "@activityCardRemoved": { "placeholders": { "name": { "type": "String" } } },
+  "activityDocumentAdded": "You added the document {name}",
+  "@activityDocumentAdded": { "placeholders": { "name": { "type": "String" } } },
+  "activityDocumentChanged": "You changed the document {name}",
+  "@activityDocumentChanged": { "placeholders": { "name": { "type": "String" } } },
+  "activityDocumentRemoved": "You deleted the document {name}",
+  "@activityDocumentRemoved": { "placeholders": { "name": { "type": "String" } } }
 }

@@ -3327,6 +3327,66 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Turn off'**
   String get settingsAutoBackupOffConfirm;
+
+  /// No description provided for @notificationsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Notifications'**
+  String get notificationsTitle;
+
+  /// No description provided for @activityTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Recent activity'**
+  String get activityTitle;
+
+  /// No description provided for @activityEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'Nothing yet. Adding, changing or removing a card or document will show up here.'**
+  String get activityEmpty;
+
+  /// No description provided for @activityClear.
+  ///
+  /// In en, this message translates to:
+  /// **'Clear'**
+  String get activityClear;
+
+  /// No description provided for @activityCardAdded.
+  ///
+  /// In en, this message translates to:
+  /// **'You added the card {name}'**
+  String activityCardAdded(String name);
+
+  /// No description provided for @activityCardChanged.
+  ///
+  /// In en, this message translates to:
+  /// **'You changed the card {name}'**
+  String activityCardChanged(String name);
+
+  /// No description provided for @activityCardRemoved.
+  ///
+  /// In en, this message translates to:
+  /// **'You deleted the card {name}'**
+  String activityCardRemoved(String name);
+
+  /// No description provided for @activityDocumentAdded.
+  ///
+  /// In en, this message translates to:
+  /// **'You added the document {name}'**
+  String activityDocumentAdded(String name);
+
+  /// No description provided for @activityDocumentChanged.
+  ///
+  /// In en, this message translates to:
+  /// **'You changed the document {name}'**
+  String activityDocumentChanged(String name);
+
+  /// No description provided for @activityDocumentRemoved.
+  ///
+  /// In en, this message translates to:
+  /// **'You deleted the document {name}'**
+  String activityDocumentRemoved(String name);
 }
 
 class _AppLocalizationsDelegate
