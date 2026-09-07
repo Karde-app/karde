@@ -573,5 +573,9 @@
   "activityDocumentChanged": "غيّرت المستند {name}",
   "@activityDocumentChanged": { "placeholders": { "name": { "type": "String" } } },
   "activityDocumentRemoved": "حذفت المستند {name}",
-  "@activityDocumentRemoved": { "placeholders": { "name": { "type": "String" } } }
+  "@activityDocumentRemoved": { "placeholders": { "name": { "type": "String" } } },
+  "onboardingWelcomeBody": "خزنة تعمل دون اتصال للبطاقات والمستندات التي تفضّل عدم حملها معك. وكل ما تحفظه يبقى على هذا الهاتف.",
+  "onboardingReadPolicy": "اقرأ سياسة الخصوصية",
+  "onboardingAgreeNote": "بالمتابعة، أنت توافق على سياسة خصوصية Karde. وسيطلب منك Karde الإذن بشكل منفصل لأي شيء يحتاجه من هاتفك، في الوقت الذي يحتاجه فيه.",
+  "onboardingAgreeContinue": "أوافق وأتابع"
 }

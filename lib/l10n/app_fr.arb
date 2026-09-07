@@ -573,5 +573,9 @@
   "activityDocumentChanged": "Vous avez modifié le document {name}",
   "@activityDocumentChanged": { "placeholders": { "name": { "type": "String" } } },
   "activityDocumentRemoved": "Vous avez supprimé le document {name}",
-  "@activityDocumentRemoved": { "placeholders": { "name": { "type": "String" } } }
+  "@activityDocumentRemoved": { "placeholders": { "name": { "type": "String" } } },
+  "onboardingWelcomeBody": "Un coffre hors ligne pour les cartes et documents que vous préférez ne pas transporter. Tout ce que vous enregistrez reste sur ce téléphone.",
+  "onboardingReadPolicy": "Lire la politique de confidentialité",
+  "onboardingAgreeNote": "En continuant, vous acceptez la politique de confidentialité de Karde. Karde vous demandera séparément l'autorisation pour tout ce dont il a besoin sur votre téléphone, au moment où il en a besoin.",
+  "onboardingAgreeContinue": "Accepter et continuer"
 }

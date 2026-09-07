@@ -1934,4 +1934,18 @@ class AppLocalizationsAr extends AppLocalizations {
   String activityDocumentRemoved(String name) {
     return 'حذفت المستند $name';
   }
+
+  @override
+  String get onboardingWelcomeBody =>
+      'خزنة تعمل دون اتصال للبطاقات والمستندات التي تفضّل عدم حملها معك. وكل ما تحفظه يبقى على هذا الهاتف.';
+
+  @override
+  String get onboardingReadPolicy => 'اقرأ سياسة الخصوصية';
+
+  @override
+  String get onboardingAgreeNote =>
+      'بالمتابعة، أنت توافق على سياسة خصوصية Karde. وسيطلب منك Karde الإذن بشكل منفصل لأي شيء يحتاجه من هاتفك، في الوقت الذي يحتاجه فيه.';
+
+  @override
+  String get onboardingAgreeContinue => 'أوافق وأتابع';
 }

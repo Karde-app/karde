@@ -3369,6 +3369,30 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'You deleted the document {name}'**
   String activityDocumentRemoved(String name);
+
+  /// No description provided for @onboardingWelcomeBody.
+  ///
+  /// In en, this message translates to:
+  /// **'An offline vault for the cards and documents you would rather not carry. Everything you save stays on this phone.'**
+  String get onboardingWelcomeBody;
+
+  /// No description provided for @onboardingReadPolicy.
+  ///
+  /// In en, this message translates to:
+  /// **'Read the privacy policy'**
+  String get onboardingReadPolicy;
+
+  /// No description provided for @onboardingAgreeNote.
+  ///
+  /// In en, this message translates to:
+  /// **'By continuing, you agree to Karde\'s privacy policy. Karde will ask your permission separately for anything it needs from your phone, at the moment it needs it.'**
+  String get onboardingAgreeNote;
+
+  /// No description provided for @onboardingAgreeContinue.
+  ///
+  /// In en, this message translates to:
+  /// **'Agree and continue'**
+  String get onboardingAgreeContinue;
 }
 
 class _AppLocalizationsDelegate

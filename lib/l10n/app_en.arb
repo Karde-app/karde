@@ -717,5 +717,9 @@
   "activityDocumentChanged": "You changed the document {name}",
   "@activityDocumentChanged": { "placeholders": { "name": { "type": "String" } } },
   "activityDocumentRemoved": "You deleted the document {name}",
-  "@activityDocumentRemoved": { "placeholders": { "name": { "type": "String" } } }
+  "@activityDocumentRemoved": { "placeholders": { "name": { "type": "String" } } },
+  "onboardingWelcomeBody": "An offline vault for the cards and documents you would rather not carry. Everything you save stays on this phone.",
+  "onboardingReadPolicy": "Read the privacy policy",
+  "onboardingAgreeNote": "By continuing, you agree to Karde's privacy policy. Karde will ask your permission separately for anything it needs from your phone, at the moment it needs it.",
+  "onboardingAgreeContinue": "Agree and continue"
 }

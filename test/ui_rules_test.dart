@@ -999,4 +999,42 @@ void main() {
           reason: "nothing may set a permanent lock any more");
     });
   });
+
+  group("Onboarding puts the privacy policy in front of the user", () {
+    test("the welcome screen sits between language and lock setup", () {
+      // Reachable exactly once, at the start, and before anything is saved.
+      // Burying the policy in Settings under About meant nobody agreeing to it
+      // had read it, or knew it was there.
+      final language = File(
+        "lib/features/onboarding/presentation/language_screen.dart",
+      ).readAsStringSync();
+
+      expect(language.contains("WelcomeScreen"), isTrue,
+          reason: "choosing a language must lead to the welcome screen");
+      expect(language.contains("LockSetupScreen"), isFalse,
+          reason: "and not straight to the lock setup, which would skip it");
+
+      final welcome = File(
+        "lib/features/onboarding/presentation/welcome_screen.dart",
+      ).readAsStringSync();
+      expect(welcome.contains("PrivacyPolicyScreen"), isTrue,
+          reason: "the policy has to be readable from the screen that "
+              "asks the user to agree to it");
+      expect(welcome.contains("setAcceptedPolicyVersion"), isTrue,
+          reason: "and agreeing has to be recorded");
+    });
+
+    test("it does not pretend to grant Android permissions", () {
+      // An in-app agreement cannot grant a runtime permission — the system
+      // dialog is the only thing that can, and only when the app asks. Listing
+      // permissions here would imply otherwise and would arrive long before any
+      // of them make sense.
+      final arb = File("lib/l10n/app_en.arb").readAsStringSync();
+      final note = RegExp(r'"onboardingAgreeNote": "([^"]+)"').firstMatch(arb);
+
+      expect(note, isNotNull);
+      expect(note!.group(1)!.toLowerCase(), contains("separately"),
+          reason: "the wording must say permissions are asked for on their own");
+    });
+  });
 }

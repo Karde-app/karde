@@ -1932,4 +1932,18 @@ class AppLocalizationsEn extends AppLocalizations {
   String activityDocumentRemoved(String name) {
     return 'You deleted the document $name';
   }
+
+  @override
+  String get onboardingWelcomeBody =>
+      'An offline vault for the cards and documents you would rather not carry. Everything you save stays on this phone.';
+
+  @override
+  String get onboardingReadPolicy => 'Read the privacy policy';
+
+  @override
+  String get onboardingAgreeNote =>
+      'By continuing, you agree to Karde\'s privacy policy. Karde will ask your permission separately for anything it needs from your phone, at the moment it needs it.';
+
+  @override
+  String get onboardingAgreeContinue => 'Agree and continue';
 }

@@ -1971,4 +1971,18 @@ class AppLocalizationsFr extends AppLocalizations {
   String activityDocumentRemoved(String name) {
     return 'Vous avez supprimé le document $name';
   }
+
+  @override
+  String get onboardingWelcomeBody =>
+      'Un coffre hors ligne pour les cartes et documents que vous préférez ne pas transporter. Tout ce que vous enregistrez reste sur ce téléphone.';
+
+  @override
+  String get onboardingReadPolicy => 'Lire la politique de confidentialité';
+
+  @override
+  String get onboardingAgreeNote =>
+      'En continuant, vous acceptez la politique de confidentialité de Karde. Karde vous demandera séparément l\'autorisation pour tout ce dont il a besoin sur votre téléphone, au moment où il en a besoin.';
+
+  @override
+  String get onboardingAgreeContinue => 'Accepter et continuer';
 }

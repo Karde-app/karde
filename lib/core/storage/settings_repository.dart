@@ -107,6 +107,7 @@ class SettingsRepository {
   static const _seenAlertsKey = 'seen_alert_ids';
   static const _activityLogKey = 'activity_log';
   static const _askedNotificationsKey = 'asked_notification_permission';
+  static const _acceptedPolicyKey = 'accepted_policy_version';
   
   static const _recoveryPreferenceKey = 'recovery_preference'; // 'biometrics', 'questions', 'none'
 
@@ -202,6 +203,20 @@ class SettingsRepository {
 
   Future<void> setAskedNotificationPermission(bool asked) async {
     await _prefs.setBool(_askedNotificationsKey, asked);
+  }
+
+  /// Which version of Karde the user agreed to the privacy policy under.
+  ///
+  /// Null until they have agreed at all. Stored as a version rather than a
+  /// boolean so that a future release which materially changes what Karde does
+  /// can ask again, instead of relying on an answer given to a different
+  /// document.
+  String? getAcceptedPolicyVersion() {
+    return _prefs.getString(_acceptedPolicyKey);
+  }
+
+  Future<void> setAcceptedPolicyVersion(String version) async {
+    await _prefs.setString(_acceptedPolicyKey, version);
   }
 
   bool getBiometricUnlock() {
