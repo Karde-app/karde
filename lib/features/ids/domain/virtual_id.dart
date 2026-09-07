@@ -49,6 +49,14 @@ class VirtualId {
   /// Whether a photo is attached. See [VirtualCard.hasPhoto].
   final bool hasPhoto;
 
+  /// The last day this document is valid, kept outside the encrypted payload.
+  ///
+  /// The exact day, not the month: a passport that runs out on the third of
+  /// March is not valid for the rest of March, and Karde must not imply it is.
+  /// Null means Karde has not been told and will say nothing. See
+  /// [VirtualCard.expiresOn] and the v7 migration.
+  final DateTime? expiresOn;
+
   final DateTime createdAt;
   final DateTime updatedAt;
   final bool isPinnedToTop;
@@ -60,6 +68,7 @@ class VirtualId {
     required this.idType,
     required this.encryptedData,
     this.hasPhoto = false,
+    this.expiresOn,
     required this.createdAt,
     required this.updatedAt,
     this.isPinnedToTop = false,
@@ -73,6 +82,7 @@ class VirtualId {
       'idType': idType,
       'encryptedData': encryptedData,
       'hasPhoto': hasPhoto ? 1 : 0,
+      'expiresOn': expiresOn?.toIso8601String(),
       'createdAt': createdAt.toIso8601String(),
       'updatedAt': updatedAt.toIso8601String(),
       'isPinnedToTop': isPinnedToTop ? 1 : 0,
@@ -89,6 +99,9 @@ class VirtualId {
       // select the payload. See DatabaseHelper.queryIdSummaries.
       encryptedData: (map['encryptedData'] as String?) ?? '',
       hasPhoto: (map['hasPhoto'] as int?) == 1,
+      expiresOn: map['expiresOn'] == null
+          ? null
+          : DateTime.tryParse(map['expiresOn'] as String),
       createdAt: DateTime.parse(map['createdAt'] as String),
       updatedAt: DateTime.parse(map['updatedAt'] as String),
       isPinnedToTop: (map['isPinnedToTop'] as int?) == 1,
@@ -102,6 +115,7 @@ class VirtualId {
     String? idType,
     String? encryptedData,
     bool? hasPhoto,
+    DateTime? expiresOn,
     DateTime? createdAt,
     DateTime? updatedAt,
     bool? isPinnedToTop,
@@ -113,6 +127,8 @@ class VirtualId {
       idType: idType ?? this.idType,
       encryptedData: encryptedData ?? this.encryptedData,
       hasPhoto: hasPhoto ?? this.hasPhoto,
+      // See VirtualCard.copyWith: carried through, never dropped by omission.
+      expiresOn: expiresOn ?? this.expiresOn,
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
       isPinnedToTop: isPinnedToTop ?? this.isPinnedToTop,

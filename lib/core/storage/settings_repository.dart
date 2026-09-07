@@ -42,6 +42,11 @@ final requirePinLockProvider = StateNotifierProvider<RequirePinLockNotifier, boo
   return RequirePinLockNotifier(repository);
 });
 
+final expiryRemindersProvider =
+    StateNotifierProvider<ExpiryRemindersNotifier, bool>((ref) {
+  return ExpiryRemindersNotifier(ref.watch(settingsRepositoryProvider));
+});
+
 final biometricUnlockProvider = StateNotifierProvider<BiometricUnlockNotifier, bool>((ref) {
   final repository = ref.watch(settingsRepositoryProvider);
   return BiometricUnlockNotifier(repository);
@@ -98,6 +103,7 @@ class SettingsRepository {
   
   static const _requirePinLockKey = 'require_pin_lock';
   static const _biometricUnlockKey = 'biometric_unlock';
+  static const _expiryRemindersKey = 'expiry_reminders';
   
   static const _recoveryPreferenceKey = 'recovery_preference'; // 'biometrics', 'questions', 'none'
 
@@ -138,6 +144,22 @@ class SettingsRepository {
 
   Future<void> setRequirePinLock(bool value) async {
     await _prefs.setBool(_requirePinLockKey, value);
+  }
+
+  /// Whether Karde may keep expiry dates where it can read them.
+  ///
+  /// On by default, because it is the point of the feature and the user asked
+  /// for it knowing what it costs. Off is a real option rather than a token one:
+  /// switching it off erases every date already stored, so somebody who changes
+  /// their mind is not stuck with a decision they made once.
+  ///
+  /// See the v7 migration in `database.dart` for exactly what is given up.
+  bool getExpiryReminders() {
+    return _prefs.getBool(_expiryRemindersKey) ?? true;
+  }
+
+  Future<void> setExpiryReminders(bool value) async {
+    await _prefs.setBool(_expiryRemindersKey, value);
   }
 
   bool getBiometricUnlock() {
@@ -446,6 +468,26 @@ class RequirePinLockNotifier extends StateNotifier<bool> {
   Future<void> updateRequirePinLock(bool value) async {
     state = value;
     await _repository.setRequirePinLock(value);
+  }
+}
+
+/// The expiry-reminder switch, and the erasing that goes with turning it off.
+///
+/// The erase is the part that matters. Every other setting here is a preference
+/// that can be flipped back and forth for free; this one decides whether a piece
+/// of the vault sits outside the encryption, and a switch that left the dates
+/// behind would be telling the user something untrue. So off means gone, and
+/// turning it on again starts from nothing rather than resurrecting them.
+class ExpiryRemindersNotifier extends StateNotifier<bool> {
+  final SettingsRepository _repository;
+
+  ExpiryRemindersNotifier(this._repository)
+      : super(_repository.getExpiryReminders());
+
+  Future<void> updateExpiryReminders(bool value) async {
+    state = value;
+    await _repository.setExpiryReminders(value);
+    if (!value) await DatabaseHelper.instance.clearAllExpiryDates();
   }
 }
 

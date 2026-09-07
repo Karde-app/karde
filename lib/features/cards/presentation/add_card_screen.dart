@@ -7,6 +7,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter/services.dart';
 import '../../../core/security/encryption_service.dart';
 import '../../../core/widgets/vault_photo_field.dart';
+import '../../../core/utils/expiry.dart';
+import '../../../core/storage/settings_repository.dart';
 import '../../../core/utils/validators.dart';
 import '../data/card_repository.dart';
 import '../domain/virtual_card.dart';
@@ -231,6 +233,13 @@ class _AddCardScreenState extends ConsumerState<AddCardScreen> {
         cardBrand: _cardBrandController.text,
         encryptedData: encryptedData,
         hasPhoto: _photo.hasPhoto,
+        // The one thing that leaves the sealed payload, and only while the user
+        // wants to be warned. Null when the switch is off, which is what makes
+        // turning it off mean something: the next save stops writing the date,
+        // as well as the dates already stored being erased.
+        expiresOn: ref.read(expiryRemindersProvider)
+            ? Expiry.fromCardExpiry(_expiryController.text)
+            : null,
         lastFourDigits: lastFourDigits,
         createdAt: widget.existingCard?.createdAt ?? DateTime.now(),
         updatedAt: DateTime.now(),

@@ -1814,4 +1814,93 @@ class AppLocalizationsEn extends AppLocalizations {
     );
     return '$_temp0';
   }
+
+  @override
+  String expiryCardSoon(String when) {
+    return 'This card expires in $when.';
+  }
+
+  @override
+  String expiryCardPast(String when) {
+    return 'This card expired in $when.';
+  }
+
+  @override
+  String expiryDocumentSoon(String when) {
+    return 'This document expires on $when.';
+  }
+
+  @override
+  String expiryDocumentPast(String when) {
+    return 'This document expired on $when.';
+  }
+
+  @override
+  String get settingsExpiryReminders => 'Expiry reminders';
+
+  @override
+  String get settingsExpiryRemindersDesc =>
+      'Tell me before a card or document runs out';
+
+  @override
+  String get settingsExpiryRemindersNote =>
+      'To warn you, Karde keeps the expiry date where it can read it, next to the nickname and last four digits already stored that way. The card number, security code, document number and photo stay encrypted. Turning this off erases every date Karde kept.';
+
+  @override
+  String get settingsExpiryOffTitle => 'Turn off expiry reminders?';
+
+  @override
+  String get settingsExpiryOffMessage =>
+      'Karde will forget the expiry dates it stored and stop warning you. Nothing else about your cards or documents changes.';
+
+  @override
+  String get settingsExpiryOffConfirm => 'Turn off';
+
+  @override
+  String get settingsExpiryReadTitle => 'Check what you already saved';
+
+  @override
+  String settingsExpiryReadSubtitle(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other:
+          '$count items were saved before reminders existed, so Karde cannot see when they expire.',
+      one:
+          'One item was saved before reminders existed, so Karde cannot see when it expires.',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get settingsExpiryReadAction => 'Read them now';
+
+  @override
+  String settingsExpiryReadConfirmTitle(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'Read $count items',
+      one: 'Read 1 item',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get settingsExpiryReadConfirmMessage =>
+      'Your phone will ask you to confirm your identity once per item. Karde takes the expiry date and nothing else.';
+
+  @override
+  String get settingsExpiryReading => 'Reading expiry dates…';
+
+  @override
+  String settingsExpiryReadDone(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count expiry dates saved.',
+      one: '1 expiry date saved.',
+    );
+    return '$_temp0';
+  }
 }

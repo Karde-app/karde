@@ -17,6 +17,9 @@ import '../../onboarding/presentation/security_questions_setup_screen.dart';
 import '../../backup/presentation/backup_screen.dart';
 import '../../backup/presentation/backup_setup_screen.dart';
 import '../../backup/data/auto_backup_recorder.dart';
+import '../data/expiry_backfill.dart';
+import '../../cards/data/card_repository.dart';
+import '../../ids/data/id_repository.dart';
 import 'privacy_policy_screen.dart';
 
 class SettingsScreen extends ConsumerStatefulWidget {
@@ -28,6 +31,12 @@ class SettingsScreen extends ConsumerStatefulWidget {
 
 class _SettingsScreenState extends ConsumerState<SettingsScreen> {
   final LocalAuthentication _auth = LocalAuthentication();
+
+  /// How far through reading the existing items Karde is, or null when it is not
+  /// running. The reading costs one authentication prompt per item, so a screen
+  /// that showed nothing between the first prompt and the last would look like
+  /// it had stopped responding.
+  double? _expiryProgress;
 
   @override
   Widget build(BuildContext context) {
@@ -78,13 +87,63 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
           _buildSectionHeader(loc.privacy, context),
           _buildGlassContainer(
             context: context,
-            child: _buildSettingRow(
-              context: context,
-              title: loc.autoHide,
-              subtitle: loc.autoHideDesc,
-              trailing: _buildTimerSegmentedControl(context, ref, autoHideDuration),
+            child: Column(
+              children: [
+                _buildSettingRow(
+                  context: context,
+                  title: loc.autoHide,
+                  subtitle: loc.autoHideDesc,
+                  trailing:
+                      _buildTimerSegmentedControl(context, ref, autoHideDuration),
+                ),
+                _buildSettingRow(
+                  context: context,
+                  title: loc.settingsExpiryReminders,
+                  subtitle: loc.settingsExpiryRemindersDesc,
+                  leadingIcon: Icons.event_outlined,
+                  trailing: _buildCustomSwitch(
+                    context: context,
+                    value: ref.watch(expiryRemindersProvider),
+                    // Turning it on is free and silent. Turning it off erases
+                    // every date Karde stored, which is the whole point of the
+                    // switch and also irreversible, so it is asked about first.
+                    onChanged: (value) => value
+                        ? ref
+                            .read(expiryRemindersProvider.notifier)
+                            .updateExpiryReminders(true)
+                        : _confirmExpiryOff(),
+                  ),
+                ),
+              ],
             ),
           ),
+          // Under the switch rather than inside it, because it is the honest
+          // sentence about what the switch costs and it should be readable
+          // without turning anything on to find out.
+          _buildExpiryNote(context),
+          _buildExpiryBackfill(context),
+          if (_expiryProgress != null) ...[
+            const SizedBox(height: 12),
+            ClipRRect(
+              borderRadius: BorderRadius.circular(3),
+              child: LinearProgressIndicator(
+                value: _expiryProgress,
+                minHeight: 5,
+                backgroundColor:
+                    Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.08),
+                valueColor:
+                    const AlwaysStoppedAnimation(KardeColors.champagneGold),
+              ),
+            ),
+            const SizedBox(height: 6),
+            Text(
+              loc.settingsExpiryReading,
+              style: Theme.of(context)
+                  .textTheme
+                  .bodyMedium
+                  ?.copyWith(fontSize: 12.5),
+            ),
+          ],
           const SizedBox(height: 24),
 
           _buildSectionHeader(loc.security, context),
@@ -309,6 +368,136 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
 
   /// Lets the user change their security questions after onboarding.
   ///
+  /// Asks before erasing the dates, because the erase is the irreversible half.
+  ///
+  /// Turning the reminders back on afterwards starts from nothing: the dates are
+  /// gone, and getting them again means opening every item, one prompt each. So
+  /// this is not the reversible toggle it looks like, and saying so beforehand
+  /// costs one dialog.
+  Future<void> _confirmExpiryOff() async {
+    final loc = AppLocalizations.of(context)!;
+    final confirmed = await KardeConfirmDialog.show(
+      context,
+      title: loc.settingsExpiryOffTitle,
+      message: loc.settingsExpiryOffMessage,
+      confirmLabel: loc.settingsExpiryOffConfirm,
+    );
+    if (!confirmed || !mounted) return;
+
+    await ref.read(expiryRemindersProvider.notifier).updateExpiryReminders(false);
+    // The lists hold the dates that were just erased, so without this the bell
+    // keeps warning about expiry from memory after being told to stop.
+    ref.invalidate(cardsProvider);
+    ref.invalidate(idsProvider);
+    ref.invalidate(expiryMissingCountProvider);
+  }
+
+  /// The sentence that says what is given up, in the place it is given up.
+  ///
+  /// Hidden when the switch is off, because then nothing is given up and a
+  /// standing paragraph about what Karde stores would be describing something
+  /// that is not happening.
+  Widget _buildExpiryNote(BuildContext context) {
+    final loc = AppLocalizations.of(context)!;
+    final theme = Theme.of(context);
+    if (!ref.watch(expiryRemindersProvider)) return const SizedBox.shrink();
+
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(4, 12, 4, 0),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Icon(Icons.info_outline,
+              size: 17,
+              color: theme.colorScheme.onSurface.withValues(alpha: 0.45)),
+          const SizedBox(width: 10),
+          Expanded(
+            child: Text(
+              loc.settingsExpiryRemindersNote,
+              style: theme.textTheme.bodyMedium?.copyWith(
+                fontSize: 12.5,
+                height: 1.45,
+                color: theme.colorScheme.onSurface.withValues(alpha: 0.55),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  /// Offers to read the items that were saved before the reminders existed.
+  ///
+  /// The same shape as the backup screen's "copy what you already had": a count,
+  /// a warning about the number of prompts, and then a progress bar — because it
+  /// is the same problem. Anything already in the vault is sealed, and Karde
+  /// cannot look inside it for free.
+  ///
+  /// Gone once there is nothing left to read, so a vault that is fully covered
+  /// shows a switch and a sentence and no chores.
+  Widget _buildExpiryBackfill(BuildContext context) {
+    final loc = AppLocalizations.of(context)!;
+    final theme = Theme.of(context);
+    final missing = ref.watch(expiryMissingCountProvider).valueOrNull ?? 0;
+    if (missing == 0) return const SizedBox.shrink();
+
+    return Padding(
+      padding: const EdgeInsets.only(top: 12),
+      child: _buildGlassContainer(
+        context: context,
+        child: _buildNavigationRow(
+          context: context,
+          title: loc.settingsExpiryReadTitle,
+          subtitle: loc.settingsExpiryReadSubtitle(missing),
+          leadingIcon: Icons.lock_open_outlined,
+          onTap: _readExistingExpiryDates,
+        ),
+      ),
+    );
+  }
+
+  Future<void> _readExistingExpiryDates() async {
+    final loc = AppLocalizations.of(context)!;
+    final missing = ref.read(expiryMissingCountProvider).valueOrNull ?? 0;
+    if (missing == 0) return;
+
+    final proceed = await KardeConfirmDialog.show(
+      context,
+      title: loc.settingsExpiryReadConfirmTitle(missing),
+      message: loc.settingsExpiryReadConfirmMessage,
+      confirmLabel: loc.continueBtn,
+      isDestructive: false,
+    );
+    if (!proceed || !mounted) return;
+
+    setState(() => _expiryProgress = 0);
+    try {
+      final written = await ref.read(expiryBackfillProvider).fillMissing(
+            onProgress: (completed, total) {
+              if (mounted) setState(() => _expiryProgress = completed / total);
+            },
+          );
+      // The lists carry the dates the alerts read, so they have to be asked
+      // again or the bell stays silent until the app is next started.
+      ref.invalidate(cardsProvider);
+      ref.invalidate(idsProvider);
+      ref.invalidate(expiryMissingCountProvider);
+      if (mounted) {
+        KardeFeedback.success(context, loc.settingsExpiryReadDone(written));
+      }
+    } on VaultAuthCancelled {
+      // A dismissed prompt is a decision. Whatever was read before it is kept,
+      // and a second run picks up the rest.
+      ref.invalidate(cardsProvider);
+      ref.invalidate(idsProvider);
+      ref.invalidate(expiryMissingCountProvider);
+    } catch (e) {
+      if (mounted) _showErrorSnackBar(loc.genericError, context);
+    } finally {
+      if (mounted) setState(() => _expiryProgress = null);
+    }
+  }
+
   /// Says what Karde is already doing about backups, and where.
   ///
   /// The durable home for this. The home screen used to nag about taking a

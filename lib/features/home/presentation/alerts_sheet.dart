@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:intl/intl.dart';
 
 import '../../../core/security/device_security_service.dart';
 import '../../../core/security/encryption_service.dart';
 import '../../../core/security/vault_health_provider.dart';
+import '../../../core/storage/settings_repository.dart';
+import '../../../core/utils/expiry.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../../theme/theme.dart';
 import '../../backup/data/auto_backup_recorder.dart';
@@ -14,20 +17,92 @@ import '../../cards/data/card_repository.dart';
 import '../../ids/data/id_repository.dart';
 import '../domain/karde_alert.dart';
 
+/// One card or document that is running out, or has.
+///
+/// Assembled from the list summaries, which carry the expiry date in the clear
+/// and nothing else new — no payload is opened and no authentication prompt is
+/// spent, which is the entire reason the date is stored where it is.
+class ExpiringItem {
+  const ExpiringItem({
+    required this.alertId,
+    required this.nickname,
+    required this.expiresOn,
+    required this.isCard,
+    required this.status,
+  });
+
+  final String alertId;
+  final String nickname;
+  final DateTime expiresOn;
+
+  /// Decides both the wording and how the date is written: a card runs out at
+  /// the end of a month and is spoken of that way, a passport on a given day.
+  final bool isCard;
+
+  final ExpiryStatus status;
+}
+
+/// Everything expiring or expired, the most pressing first.
+///
+/// Empty whenever the reminders are switched off, without looking at anything —
+/// the dates are erased when the switch goes off, so there would be nothing to
+/// find, but not looking makes the intent explicit rather than incidental.
+final expiringItemsProvider = Provider<List<ExpiringItem>>((ref) {
+  if (!ref.watch(expiryRemindersProvider)) return const [];
+
+  final items = <ExpiringItem>[];
+
+  for (final card in ref.watch(cardsProvider).valueOrNull ?? const []) {
+    final status = Expiry.statusOf(
+      card.expiresOn,
+      noticeDays: Expiry.cardNoticeDays,
+    );
+    if (status == ExpiryStatus.fine) continue;
+    items.add(ExpiringItem(
+      alertId: 'expiry:card:${card.id}',
+      nickname: card.nickname,
+      expiresOn: card.expiresOn!,
+      isCard: true,
+      status: status,
+    ));
+  }
+
+  for (final doc in ref.watch(idsProvider).valueOrNull ?? const []) {
+    final status = Expiry.statusOf(
+      doc.expiresOn,
+      noticeDays: Expiry.documentNoticeDays,
+    );
+    if (status == ExpiryStatus.fine) continue;
+    items.add(ExpiringItem(
+      alertId: 'expiry:id:${doc.id}',
+      nickname: doc.nickname,
+      expiresOn: doc.expiresOn!,
+      isCard: false,
+      status: status,
+    ));
+  }
+
+  // Soonest first, so the passport that ran out last year sits above the card
+  // that has three weeks left.
+  items.sort((a, b) => a.expiresOn.compareTo(b.expiresOn));
+  return items;
+});
+
 /// Everything Karde currently wants to say, worst first.
 ///
-/// Assembled rather than stored. Every one of these is a fact about the phone or
-/// the backup that Karde can look up whenever it is asked, so there is nothing
-/// to keep in step and nothing to go stale — an alert about a missing screen
-/// lock disappears the moment a screen lock exists, without anyone having to
-/// remember to clear it.
+/// Assembled rather than stored. Every one of these is a fact about the phone,
+/// the backup or the vault's contents that Karde can look up whenever it is
+/// asked, so there is nothing to keep in step and nothing to go stale — an alert
+/// about a missing screen lock disappears the moment a screen lock exists,
+/// without anyone having to remember to clear it.
 ///
-/// Deliberately does not include card expiry dates, which the user asked for.
-/// Karde cannot read them: the expiry lives inside the encrypted payload, and
-/// getting at it costs one authentication prompt per card. Showing expiry here
-/// would mean storing those dates outside the encryption, next to the last four
-/// digits that are already in the clear — a real decision about the vault's
-/// design, and the user's to make rather than mine to slip in.
+/// Expiry alerts were the one thing this list could not do for a long time, and
+/// the reason was not laziness: expiry dates live inside the encrypted payload,
+/// which costs one authentication prompt per item to open, so checking them
+/// would have meant a fingerprint for every card every time the app started.
+/// They are here now because the user chose to have the date — and only the
+/// date — stored where Karde can read it. See the v7 migration in
+/// `database.dart`, and [expiryRemindersProvider], which undoes that choice.
 final kardeAlertsProvider = Provider<List<KardeAlert>>((ref) {
   final alerts = <KardeAlert>[];
 
@@ -83,6 +158,21 @@ final kardeAlertsProvider = Provider<List<KardeAlert>>((ref) {
     ));
   }
 
+  // One per item rather than "3 things are expiring". Which passport is the
+  // whole question, and the nickname is already in the clear and already on the
+  // home screen, so naming it here gives nothing away that the app does not
+  // already show.
+  for (final item in ref.watch(expiringItemsProvider)) {
+    alerts.add(KardeAlert(
+      id: item.alertId,
+      severity: item.status == ExpiryStatus.expired
+          ? KardeAlertSeverity.urgent
+          : KardeAlertSeverity.notice,
+      title: item.nickname,
+      body: '',
+    ));
+  }
+
   if (ref.watch(biometricChangeNoticeProvider).valueOrNull == true) {
     alerts.add(const KardeAlert(
       id: 'biometrics-changed',
@@ -93,7 +183,14 @@ final kardeAlertsProvider = Provider<List<KardeAlert>>((ref) {
     ));
   }
 
-  return alerts;
+  // Worst first, which the list only claimed to be until expiry alerts arrived
+  // and started slotting urgent items in behind notices. Partitioned rather than
+  // sorted because Dart's sort is not stable, and the order things were added in
+  // carries meaning of its own within each half.
+  return [
+    ...alerts.where((a) => a.severity == KardeAlertSeverity.urgent),
+    ...alerts.where((a) => a.severity == KardeAlertSeverity.notice),
+  ];
 });
 
 /// The bell's badge count.
@@ -342,7 +439,51 @@ class AlertsSheet extends ConsumerWidget {
           () => ref.read(biometricChangeNoticeProvider.notifier).acknowledge(),
         );
       default:
+        if (alert.id.startsWith('expiry:')) {
+          return _expiryContent(ref, loc, alert);
+        }
         return (alert.title, alert.body, '', null);
     }
+  }
+
+  /// What an expiry alert says.
+  ///
+  /// No button. Renewing a card or a passport happens with a bank or a
+  /// government, not in this app, so an action here could only ever open the
+  /// item the user is already being told about. Telling them is the whole job.
+  ///
+  /// The date is stated rather than counted down — "expires in March 2027", not
+  /// "expires in three weeks". A countdown has to be recomputed to stay true and
+  /// reads as pressure; the month is the thing a person actually needs in order
+  /// to go and do something about it.
+  (String, String, String, VoidCallback?) _expiryContent(
+    WidgetRef ref,
+    AppLocalizations loc,
+    KardeAlert alert,
+  ) {
+    final item = ref
+        .watch(expiringItemsProvider)
+        .where((candidate) => candidate.alertId == alert.id)
+        .firstOrNull;
+    // Gone between the list being built and this being drawn — deleted, or the
+    // reminders switched off in another tab. Nothing useful to say about it.
+    if (item == null) return (alert.title, '', '', null);
+
+    final expired = item.status == ExpiryStatus.expired;
+    final String when;
+    if (item.isCard) {
+      // A card is spoken of by its month, because that is what is printed on it
+      // and what the user typed. Saying "31 March" would be technically true and
+      // would not match anything they have ever seen.
+      when = DateFormat.yMMMM(loc.localeName).format(item.expiresOn);
+    } else {
+      when = DateFormat.yMMMd(loc.localeName).format(item.expiresOn);
+    }
+
+    final body = item.isCard
+        ? (expired ? loc.expiryCardPast(when) : loc.expiryCardSoon(when))
+        : (expired ? loc.expiryDocumentPast(when) : loc.expiryDocumentSoon(when));
+
+    return (item.nickname, body, '', null);
   }
 }

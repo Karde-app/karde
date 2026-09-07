@@ -9,6 +9,8 @@ import '../../../core/security/encryption_service.dart';
 import '../../../theme/theme.dart';
 import '../domain/virtual_id.dart';
 import '../data/id_repository.dart';
+import '../../../core/storage/settings_repository.dart';
+import '../../../core/utils/expiry.dart';
 
 enum IdFieldType {
   documentNumber,
@@ -114,25 +116,10 @@ String idTypeLabel(String type, AppLocalizations loc) {
 
 /// Parses one of the ID form's `dd/MM/yyyy` fields. Null when blank or invalid.
 ///
-/// Top-level and public so the date rules can be tested without building a
-/// widget. The rollover case below is exactly the kind of thing that is easy to
-/// get wrong and almost impossible to catch by hand.
-DateTime? parseIdDate(String? text) {
-  if (text == null || text.trim().isEmpty) return null;
-  final parts = text.trim().split('/');
-  if (parts.length != 3) return null;
-  final day = int.tryParse(parts[0]);
-  final month = int.tryParse(parts[1]);
-  final year = int.tryParse(parts[2]);
-  if (day == null || month == null || year == null) return null;
-  final parsed = DateTime(year, month, day);
-  // Rejects the likes of 31/02/2030, which DateTime would otherwise roll
-  // silently forward into March rather than refuse.
-  if (parsed.day != day || parsed.month != month || parsed.year != year) {
-    return null;
-  }
-  return parsed;
-}
+/// One implementation, in [Expiry], because the expiry reminders parse the same
+/// text and two copies of a date parser drift apart in exactly the cases —
+/// 31/02, year rollover — that neither copy is ever tested on.
+DateTime? parseIdDate(String? text) => Expiry.fromDocumentExpiry(text);
 
 String formatIdDate(DateTime date) =>
     '${date.day.toString().padLeft(2, '0')}/'
@@ -467,6 +454,11 @@ class _AddIdScreenState extends ConsumerState<AddIdScreen> {
         idType: finalIdType,
         encryptedData: encryptedData,
         hasPhoto: _photo.hasPhoto,
+        // See the card form: the only field that leaves the sealed payload, and
+        // only while the user wants the reminders.
+        expiresOn: ref.read(expiryRemindersProvider)
+            ? _dateIn(IdFieldType.expiryDate)
+            : null,
         createdAt: widget.existingId?.createdAt ?? DateTime.now(),
         updatedAt: DateTime.now(),
         // Preserve pin state across an edit, as the card form does.

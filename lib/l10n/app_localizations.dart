@@ -3219,6 +3219,108 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'{count, plural, =1{1 item added to your backup.} other{{count} items added to your backup.}}'**
   String backupCopyDone(int count);
+
+  /// No description provided for @expiryCardSoon.
+  ///
+  /// In en, this message translates to:
+  /// **'This card expires in {when}.'**
+  String expiryCardSoon(String when);
+
+  /// No description provided for @expiryCardPast.
+  ///
+  /// In en, this message translates to:
+  /// **'This card expired in {when}.'**
+  String expiryCardPast(String when);
+
+  /// No description provided for @expiryDocumentSoon.
+  ///
+  /// In en, this message translates to:
+  /// **'This document expires on {when}.'**
+  String expiryDocumentSoon(String when);
+
+  /// No description provided for @expiryDocumentPast.
+  ///
+  /// In en, this message translates to:
+  /// **'This document expired on {when}.'**
+  String expiryDocumentPast(String when);
+
+  /// No description provided for @settingsExpiryReminders.
+  ///
+  /// In en, this message translates to:
+  /// **'Expiry reminders'**
+  String get settingsExpiryReminders;
+
+  /// No description provided for @settingsExpiryRemindersDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Tell me before a card or document runs out'**
+  String get settingsExpiryRemindersDesc;
+
+  /// No description provided for @settingsExpiryRemindersNote.
+  ///
+  /// In en, this message translates to:
+  /// **'To warn you, Karde keeps the expiry date where it can read it, next to the nickname and last four digits already stored that way. The card number, security code, document number and photo stay encrypted. Turning this off erases every date Karde kept.'**
+  String get settingsExpiryRemindersNote;
+
+  /// No description provided for @settingsExpiryOffTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Turn off expiry reminders?'**
+  String get settingsExpiryOffTitle;
+
+  /// No description provided for @settingsExpiryOffMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Karde will forget the expiry dates it stored and stop warning you. Nothing else about your cards or documents changes.'**
+  String get settingsExpiryOffMessage;
+
+  /// No description provided for @settingsExpiryOffConfirm.
+  ///
+  /// In en, this message translates to:
+  /// **'Turn off'**
+  String get settingsExpiryOffConfirm;
+
+  /// No description provided for @settingsExpiryReadTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Check what you already saved'**
+  String get settingsExpiryReadTitle;
+
+  /// No description provided for @settingsExpiryReadSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{One item was saved before reminders existed, so Karde cannot see when it expires.} other{{count} items were saved before reminders existed, so Karde cannot see when they expire.}}'**
+  String settingsExpiryReadSubtitle(int count);
+
+  /// No description provided for @settingsExpiryReadAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Read them now'**
+  String get settingsExpiryReadAction;
+
+  /// No description provided for @settingsExpiryReadConfirmTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{Read 1 item} other{Read {count} items}}'**
+  String settingsExpiryReadConfirmTitle(int count);
+
+  /// No description provided for @settingsExpiryReadConfirmMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Your phone will ask you to confirm your identity once per item. Karde takes the expiry date and nothing else.'**
+  String get settingsExpiryReadConfirmMessage;
+
+  /// No description provided for @settingsExpiryReading.
+  ///
+  /// In en, this message translates to:
+  /// **'Reading expiry dates…'**
+  String get settingsExpiryReading;
+
+  /// No description provided for @settingsExpiryReadDone.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{1 expiry date saved.} other{{count} expiry dates saved.}}'**
+  String settingsExpiryReadDone(int count);
 }
 
 class _AppLocalizationsDelegate

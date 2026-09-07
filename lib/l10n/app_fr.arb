@@ -539,4 +539,29 @@
   "@backupCopyDone": {
     "placeholders": { "count": { "type": "int" } }
   }
+,
+  "expiryCardSoon": "Cette carte expire en {when}.",
+  "@expiryCardSoon": { "placeholders": { "when": { "type": "String" } } },
+  "expiryCardPast": "Cette carte a expiré en {when}.",
+  "@expiryCardPast": { "placeholders": { "when": { "type": "String" } } },
+  "expiryDocumentSoon": "Ce document expire le {when}.",
+  "@expiryDocumentSoon": { "placeholders": { "when": { "type": "String" } } },
+  "expiryDocumentPast": "Ce document a expiré le {when}.",
+  "@expiryDocumentPast": { "placeholders": { "when": { "type": "String" } } },
+  "settingsExpiryReminders": "Rappels d'expiration",
+  "settingsExpiryRemindersDesc": "Me prévenir avant qu'une carte ou un document n'expire",
+  "settingsExpiryRemindersNote": "Pour vous prévenir, Karde conserve la date d'expiration là où il peut la lire, à côté du surnom et des quatre derniers chiffres déjà enregistrés ainsi. Le numéro de carte, le code de sécurité, le numéro du document et la photo restent chiffrés. Désactiver cette option efface toutes les dates conservées.",
+  "settingsExpiryOffTitle": "Désactiver les rappels d'expiration ?",
+  "settingsExpiryOffMessage": "Karde oubliera les dates d'expiration qu'il a conservées et cessera de vous prévenir. Rien d'autre ne change pour vos cartes ou vos documents.",
+  "settingsExpiryOffConfirm": "Désactiver",
+  "settingsExpiryReadTitle": "Vérifier ce que vous avez déjà enregistré",
+  "settingsExpiryReadSubtitle": "{count, plural, =1{Un élément a été enregistré avant l'existence des rappels : Karde ne voit pas sa date d'expiration.} other{{count} éléments ont été enregistrés avant l'existence des rappels : Karde ne voit pas leurs dates d'expiration.}}",
+  "@settingsExpiryReadSubtitle": { "placeholders": { "count": { "type": "int" } } },
+  "settingsExpiryReadAction": "Les lire maintenant",
+  "settingsExpiryReadConfirmTitle": "{count, plural, =1{Lire 1 élément} other{Lire {count} éléments}}",
+  "@settingsExpiryReadConfirmTitle": { "placeholders": { "count": { "type": "int" } } },
+  "settingsExpiryReadConfirmMessage": "Votre téléphone vous demandera de confirmer votre identité une fois par élément. Karde ne retient que la date d'expiration.",
+  "settingsExpiryReading": "Lecture des dates d'expiration…",
+  "settingsExpiryReadDone": "{count, plural, =1{1 date d'expiration enregistrée.} other{{count} dates d'expiration enregistrées.}}",
+  "@settingsExpiryReadDone": { "placeholders": { "count": { "type": "int" } } }
 }

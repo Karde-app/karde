@@ -539,4 +539,29 @@
   "@backupCopyDone": {
     "placeholders": { "count": { "type": "int" } }
   }
+,
+  "expiryCardSoon": "تنتهي صلاحية هذه البطاقة في {when}.",
+  "@expiryCardSoon": { "placeholders": { "when": { "type": "String" } } },
+  "expiryCardPast": "انتهت صلاحية هذه البطاقة في {when}.",
+  "@expiryCardPast": { "placeholders": { "when": { "type": "String" } } },
+  "expiryDocumentSoon": "تنتهي صلاحية هذا المستند في {when}.",
+  "@expiryDocumentSoon": { "placeholders": { "when": { "type": "String" } } },
+  "expiryDocumentPast": "انتهت صلاحية هذا المستند في {when}.",
+  "@expiryDocumentPast": { "placeholders": { "when": { "type": "String" } } },
+  "settingsExpiryReminders": "تنبيهات انتهاء الصلاحية",
+  "settingsExpiryRemindersDesc": "نبّهني قبل انتهاء صلاحية بطاقة أو مستند",
+  "settingsExpiryRemindersNote": "لكي ينبّهك، يحتفظ Karde بتاريخ انتهاء الصلاحية في مكان يستطيع قراءته، إلى جانب الاسم المستعار وآخر أربعة أرقام المحفوظة بالفعل هكذا. أما رقم البطاقة ورمز الأمان ورقم المستند والصورة فتبقى مشفّرة. وإيقاف هذا الخيار يمحو كل التواريخ التي احتفظ بها.",
+  "settingsExpiryOffTitle": "إيقاف تنبيهات انتهاء الصلاحية؟",
+  "settingsExpiryOffMessage": "سينسى Karde تواريخ انتهاء الصلاحية التي حفظها ويتوقف عن تنبيهك. ولا يتغيّر أي شيء آخر في بطاقاتك أو مستنداتك.",
+  "settingsExpiryOffConfirm": "إيقاف",
+  "settingsExpiryReadTitle": "راجع ما حفظته سابقاً",
+  "settingsExpiryReadSubtitle": "{count, plural, =1{حُفظ عنصر واحد قبل وجود التنبيهات، فلا يرى Karde تاريخ انتهاء صلاحيته.} other{حُفظت {count} عناصر قبل وجود التنبيهات، فلا يرى Karde تواريخ انتهاء صلاحيتها.}}",
+  "@settingsExpiryReadSubtitle": { "placeholders": { "count": { "type": "int" } } },
+  "settingsExpiryReadAction": "اقرأها الآن",
+  "settingsExpiryReadConfirmTitle": "{count, plural, =1{قراءة عنصر واحد} other{قراءة {count} عناصر}}",
+  "@settingsExpiryReadConfirmTitle": { "placeholders": { "count": { "type": "int" } } },
+  "settingsExpiryReadConfirmMessage": "سيطلب منك هاتفك تأكيد هويتك مرة واحدة لكل عنصر. ولا يأخذ Karde سوى تاريخ انتهاء الصلاحية.",
+  "settingsExpiryReading": "جارٍ قراءة تواريخ انتهاء الصلاحية…",
+  "settingsExpiryReadDone": "{count, plural, =1{تم حفظ تاريخ انتهاء صلاحية واحد.} other{تم حفظ {count} تواريخ انتهاء صلاحية.}}",
+  "@settingsExpiryReadDone": { "placeholders": { "count": { "type": "int" } } }
 }

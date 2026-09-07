@@ -78,6 +78,18 @@ class VirtualCard {
   final bool isPinnedToTop;
   final bool isPinnedToHomescreen;
 
+  /// The last day this card is valid, kept outside the encrypted payload.
+  ///
+  /// Null when Karde has not been told — expiry reminders switched off, or a
+  /// card saved before the feature existed and not opened since. Null means no
+  /// reminder, never "it is fine": Karde does not know, and says nothing rather
+  /// than guessing.
+  ///
+  /// The expiry is inside [encryptedData] as well, and that copy stays the one a
+  /// person actually reads. This is the same month, written where the bell can
+  /// see it. See the v7 migration for what that gives away and what it does not.
+  final DateTime? expiresOn;
+
   VirtualCard({
     this.id,
     required this.nickname,
@@ -85,6 +97,7 @@ class VirtualCard {
     required this.lastFourDigits,
     required this.encryptedData,
     this.hasPhoto = false,
+    this.expiresOn,
     required this.createdAt,
     required this.updatedAt,
     this.isPinnedToTop = false,
@@ -99,6 +112,7 @@ class VirtualCard {
       'lastFourDigits': lastFourDigits,
       'encryptedData': encryptedData,
       'hasPhoto': hasPhoto ? 1 : 0,
+      'expiresOn': expiresOn?.toIso8601String(),
       'createdAt': createdAt.toIso8601String(),
       'updatedAt': updatedAt.toIso8601String(),
       'isPinnedToTop': isPinnedToTop ? 1 : 0,
@@ -116,6 +130,9 @@ class VirtualCard {
       // select the payload. See DatabaseHelper.queryCardSummaries.
       encryptedData: (map['encryptedData'] as String?) ?? '',
       hasPhoto: (map['hasPhoto'] as int?) == 1,
+      expiresOn: map['expiresOn'] == null
+          ? null
+          : DateTime.tryParse(map['expiresOn'] as String),
       createdAt: DateTime.parse(map['createdAt'] as String),
       updatedAt: DateTime.parse(map['updatedAt'] as String),
       isPinnedToTop: (map['isPinnedToTop'] as int?) == 1,
@@ -130,6 +147,7 @@ class VirtualCard {
     String? lastFourDigits,
     String? encryptedData,
     bool? hasPhoto,
+    DateTime? expiresOn,
     DateTime? createdAt,
     DateTime? updatedAt,
     bool? isPinnedToTop,
@@ -142,6 +160,10 @@ class VirtualCard {
       lastFourDigits: lastFourDigits ?? this.lastFourDigits,
       encryptedData: encryptedData ?? this.encryptedData,
       hasPhoto: hasPhoto ?? this.hasPhoto,
+      // Carried through rather than droppable. Every existing caller is toggling
+      // a pin, and an omitted argument there must not quietly erase the date and
+      // with it the reminder.
+      expiresOn: expiresOn ?? this.expiresOn,
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
       isPinnedToTop: isPinnedToTop ?? this.isPinnedToTop,

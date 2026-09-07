@@ -689,4 +689,29 @@
   "@backupCopyDone": {
     "placeholders": { "count": { "type": "int" } }
   }
+,
+  "expiryCardSoon": "This card expires in {when}.",
+  "@expiryCardSoon": { "placeholders": { "when": { "type": "String" } } },
+  "expiryCardPast": "This card expired in {when}.",
+  "@expiryCardPast": { "placeholders": { "when": { "type": "String" } } },
+  "expiryDocumentSoon": "This document expires on {when}.",
+  "@expiryDocumentSoon": { "placeholders": { "when": { "type": "String" } } },
+  "expiryDocumentPast": "This document expired on {when}.",
+  "@expiryDocumentPast": { "placeholders": { "when": { "type": "String" } } },
+  "settingsExpiryReminders": "Expiry reminders",
+  "settingsExpiryRemindersDesc": "Tell me before a card or document runs out",
+  "settingsExpiryRemindersNote": "To warn you, Karde keeps the expiry date where it can read it, next to the nickname and last four digits already stored that way. The card number, security code, document number and photo stay encrypted. Turning this off erases every date Karde kept.",
+  "settingsExpiryOffTitle": "Turn off expiry reminders?",
+  "settingsExpiryOffMessage": "Karde will forget the expiry dates it stored and stop warning you. Nothing else about your cards or documents changes.",
+  "settingsExpiryOffConfirm": "Turn off",
+  "settingsExpiryReadTitle": "Check what you already saved",
+  "settingsExpiryReadSubtitle": "{count, plural, =1{One item was saved before reminders existed, so Karde cannot see when it expires.} other{{count} items were saved before reminders existed, so Karde cannot see when they expire.}}",
+  "@settingsExpiryReadSubtitle": { "placeholders": { "count": { "type": "int" } } },
+  "settingsExpiryReadAction": "Read them now",
+  "settingsExpiryReadConfirmTitle": "{count, plural, =1{Read 1 item} other{Read {count} items}}",
+  "@settingsExpiryReadConfirmTitle": { "placeholders": { "count": { "type": "int" } } },
+  "settingsExpiryReadConfirmMessage": "Your phone will ask you to confirm your identity once per item. Karde takes the expiry date and nothing else.",
+  "settingsExpiryReading": "Reading expiry dates…",
+  "settingsExpiryReadDone": "{count, plural, =1{1 expiry date saved.} other{{count} expiry dates saved.}}",
+  "@settingsExpiryReadDone": { "placeholders": { "count": { "type": "int" } } }
 }

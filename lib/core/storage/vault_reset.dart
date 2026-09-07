@@ -43,6 +43,7 @@ void resetAllVaultState(WidgetRef ref) {
   ref.invalidate(autoHideDurationProvider);
   ref.invalidate(requirePinLockProvider);
   ref.invalidate(biometricUnlockProvider);
+  ref.invalidate(expiryRemindersProvider);
   // Holds the date of the last backup, so without this an erased vault claims a
   // copy was taken of items it no longer has — and the dashboard prompt that
   // would have told the user to make a real one stays hidden.

@@ -3,7 +3,7 @@ import 'package:path/path.dart';
 
 class DatabaseHelper {
   static const _databaseName = "iBankDatabase.db";
-  static const _databaseVersion = 6;
+  static const _databaseVersion = 7;
   static const tableCards = 'cards';
   static const tableIds = 'ids';
 
@@ -110,6 +110,77 @@ class DatabaseHelper {
           'ALTER TABLE $tableIds ADD COLUMN hasPhoto INTEGER DEFAULT 0',
         );
       }
+
+      if (oldVersion < 7) {
+        // The last day an item is valid, stored unencrypted, so that Karde can
+        // warn before a card or a passport runs out.
+        //
+        // This is the one place where the vault gives something up, and it was
+        // the user's decision rather than a convenience taken quietly. Karde
+        // cannot read an expiry date that is sealed: the vault key demands an
+        // authentication prompt for every use, so checking eight items would
+        // mean eight fingerprint touches every time the app opened. There is no
+        // version of this warning that works without the date being readable.
+        //
+        // What that costs, exactly. Somebody holding the database file but not
+        // the key learns when each card and document expires, alongside the
+        // nickname, the brand and the last four digits already sitting there.
+        // The card number, the security code, the document number, the holder's
+        // name and the photograph all stay sealed, so this does not assemble
+        // into a usable card. It is still a real reduction, which is why the
+        // feature has a switch that erases every one of these dates.
+        //
+        // Null until the item is next saved, or until the user asks Karde to
+        // read the ones already stored — which costs the prompts described
+        // above, once.
+        await txn.execute(
+          'ALTER TABLE $tableCards ADD COLUMN expiresOn TEXT',
+        );
+        await txn.execute(
+          'ALTER TABLE $tableIds ADD COLUMN expiresOn TEXT',
+        );
+      }
+    });
+  }
+
+  /// Writes one item's expiry date, touching nothing else in the row.
+  ///
+  /// Deliberately not `updateCard(card.toMap())`. The lists this is driven from
+  /// carry no encrypted payload — [queryCardSummaries] does not select it — so
+  /// writing a whole row built from a summary would replace the ciphertext with
+  /// an empty string and destroy the card. A targeted update cannot make that
+  /// mistake.
+  Future<void> setCardExpiry(int id, DateTime? expiresOn) async {
+    final db = await database;
+    await db.update(
+      tableCards,
+      {'expiresOn': expiresOn?.toIso8601String()},
+      where: 'id = ?',
+      whereArgs: [id],
+    );
+  }
+
+  /// As [setCardExpiry], for a document.
+  Future<void> setIdExpiry(int id, DateTime? expiresOn) async {
+    final db = await database;
+    await db.update(
+      tableIds,
+      {'expiresOn': expiresOn?.toIso8601String()},
+      where: 'id = ?',
+      whereArgs: [id],
+    );
+  }
+
+  /// Forgets every stored expiry date, in both tables.
+  ///
+  /// What "turn expiry reminders off" actually does. Leaving the dates behind
+  /// would make the switch a lie: the point of turning it off is that the dates
+  /// stop being readable without the key, and that only happens if they go.
+  Future<void> clearAllExpiryDates() async {
+    final db = await database;
+    await db.transaction((txn) async {
+      await txn.update(tableCards, {'expiresOn': null});
+      await txn.update(tableIds, {'expiresOn': null});
     });
   }
 
@@ -123,6 +194,7 @@ class DatabaseHelper {
             encryptedData TEXT NOT NULL,
             encryptedImagePath TEXT,
             hasPhoto INTEGER DEFAULT 0,
+            expiresOn TEXT,
             createdAt TEXT NOT NULL,
             updatedAt TEXT NOT NULL,
             isPinnedToTop INTEGER DEFAULT 0,
@@ -139,6 +211,7 @@ class DatabaseHelper {
             encryptedData TEXT NOT NULL,
             encryptedImagePath TEXT,
             hasPhoto INTEGER DEFAULT 0,
+            expiresOn TEXT,
             createdAt TEXT NOT NULL,
             updatedAt TEXT NOT NULL,
             isPinnedToTop INTEGER DEFAULT 0,
@@ -177,6 +250,7 @@ class DatabaseHelper {
         'cardBrand',
         'lastFourDigits',
         'hasPhoto',
+        'expiresOn',
         'createdAt',
         'updatedAt',
         'isPinnedToTop',
@@ -210,6 +284,7 @@ class DatabaseHelper {
         'nickname',
         'idType',
         'hasPhoto',
+        'expiresOn',
         'createdAt',
         'updatedAt',
         'isPinnedToTop',

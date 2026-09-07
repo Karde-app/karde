@@ -1821,4 +1821,93 @@ class AppLocalizationsAr extends AppLocalizations {
     );
     return '$_temp0';
   }
+
+  @override
+  String expiryCardSoon(String when) {
+    return 'تنتهي صلاحية هذه البطاقة في $when.';
+  }
+
+  @override
+  String expiryCardPast(String when) {
+    return 'انتهت صلاحية هذه البطاقة في $when.';
+  }
+
+  @override
+  String expiryDocumentSoon(String when) {
+    return 'تنتهي صلاحية هذا المستند في $when.';
+  }
+
+  @override
+  String expiryDocumentPast(String when) {
+    return 'انتهت صلاحية هذا المستند في $when.';
+  }
+
+  @override
+  String get settingsExpiryReminders => 'تنبيهات انتهاء الصلاحية';
+
+  @override
+  String get settingsExpiryRemindersDesc =>
+      'نبّهني قبل انتهاء صلاحية بطاقة أو مستند';
+
+  @override
+  String get settingsExpiryRemindersNote =>
+      'لكي ينبّهك، يحتفظ Karde بتاريخ انتهاء الصلاحية في مكان يستطيع قراءته، إلى جانب الاسم المستعار وآخر أربعة أرقام المحفوظة بالفعل هكذا. أما رقم البطاقة ورمز الأمان ورقم المستند والصورة فتبقى مشفّرة. وإيقاف هذا الخيار يمحو كل التواريخ التي احتفظ بها.';
+
+  @override
+  String get settingsExpiryOffTitle => 'إيقاف تنبيهات انتهاء الصلاحية؟';
+
+  @override
+  String get settingsExpiryOffMessage =>
+      'سينسى Karde تواريخ انتهاء الصلاحية التي حفظها ويتوقف عن تنبيهك. ولا يتغيّر أي شيء آخر في بطاقاتك أو مستنداتك.';
+
+  @override
+  String get settingsExpiryOffConfirm => 'إيقاف';
+
+  @override
+  String get settingsExpiryReadTitle => 'راجع ما حفظته سابقاً';
+
+  @override
+  String settingsExpiryReadSubtitle(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other:
+          'حُفظت $count عناصر قبل وجود التنبيهات، فلا يرى Karde تواريخ انتهاء صلاحيتها.',
+      one:
+          'حُفظ عنصر واحد قبل وجود التنبيهات، فلا يرى Karde تاريخ انتهاء صلاحيته.',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get settingsExpiryReadAction => 'اقرأها الآن';
+
+  @override
+  String settingsExpiryReadConfirmTitle(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'قراءة $count عناصر',
+      one: 'قراءة عنصر واحد',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get settingsExpiryReadConfirmMessage =>
+      'سيطلب منك هاتفك تأكيد هويتك مرة واحدة لكل عنصر. ولا يأخذ Karde سوى تاريخ انتهاء الصلاحية.';
+
+  @override
+  String get settingsExpiryReading => 'جارٍ قراءة تواريخ انتهاء الصلاحية…';
+
+  @override
+  String settingsExpiryReadDone(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'تم حفظ $count تواريخ انتهاء صلاحية.',
+      one: 'تم حفظ تاريخ انتهاء صلاحية واحد.',
+    );
+    return '$_temp0';
+  }
 }
