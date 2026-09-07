@@ -12,6 +12,14 @@
          user taps "Take a photo" and never before. Anyone who refuses can still
          use their phone's camera app, which needs no permission from Karde. -->
     <uses-permission android:name="android.permission.CAMERA"/>
+    <!-- Pulled in by the camera plugin and removed again. Karde records no
+         audio — the controller is built with enableAudio false — and reads no
+         media store: pictures come from the system picker as content URIs,
+         which needs no permission at all. Left in place, a vault app would be
+         declaring microphone access on the Play listing.
+         Verified with: adb shell dumpsys package com.karde.app. -->
+    <uses-permission android:name="android.permission.RECORD_AUDIO" tools:node="remove"/>
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" tools:node="remove"/>
     <application
         android:label="Karde"
         android:name="${applicationName}"

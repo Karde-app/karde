@@ -999,4 +999,36 @@ void main() {
           reason: "nothing may set a permanent lock any more");
     });
   });
+
+  group("Karde asks for nothing it does not use", () {
+    test("the manifest declares no microphone or media-store access", () {
+      // The camera plugin brings RECORD_AUDIO and READ_EXTERNAL_STORAGE with it
+      // through the manifest merge. Karde records no audio — the controller is
+      // built with enableAudio false — and reads no media store, because photos
+      // arrive from the system picker as content URIs. Left alone, a vault app
+      // would have been declaring microphone access on its Play listing.
+      //
+      // Caught on the device with `adb shell dumpsys package com.karde.app`
+      // after the camera went in, which is the only place a merged manifest is
+      // visible.
+      final manifest =
+          File("android/app/src/main/AndroidManifest.xml").readAsStringSync();
+
+      for (final permission in [
+        "android.permission.RECORD_AUDIO",
+        "android.permission.READ_EXTERNAL_STORAGE",
+        "android.permission.INTERNET",
+      ]) {
+        final line = RegExp(
+          'uses-permission android:name="$permission"[^/]*/>',
+        ).firstMatch(manifest);
+
+        expect(line, isNotNull,
+            reason: "$permission must be listed so it can be removed; a plugin "
+                "that adds it back would otherwise merge in unnoticed");
+        expect(line!.group(0), contains('tools:node="remove"'),
+            reason: "$permission must be stripped from the merged manifest");
+      }
+    });
+  });
 }
