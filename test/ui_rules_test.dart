@@ -837,11 +837,20 @@ void main() {
       expect(source.contains("BackupSetupScreen"), isFalse);
     });
 
-    test("but the home screen offers one once there is something to lose", () {
-      final source = File("lib/features/home/presentation/dashboard_screen.dart")
+    test("but the home screen offers one, through the bell", () {
+      // The warnings that used to stack up above the cards are collected behind
+      // one bell now, so the offer is in the sheet rather than on the page. What
+      // must stay true is that it is one tap from the home screen.
+      final dashboard =
+          File("lib/features/home/presentation/dashboard_screen.dart")
+              .readAsStringSync();
+      final sheet = File("lib/features/home/presentation/alerts_sheet.dart")
           .readAsStringSync();
 
-      expect(source.contains("BackupSetupScreen"), isTrue);
+      expect(dashboard.contains("AlertsSheet.show"), isTrue,
+          reason: "the bell has to open the sheet");
+      expect(sheet.contains("BackupSetupScreen"), isTrue,
+          reason: "and the sheet has to offer setting a backup up");
     });
   });
 

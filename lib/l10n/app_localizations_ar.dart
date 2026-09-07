@@ -687,6 +687,25 @@ class AppLocalizationsAr extends AppLocalizations {
   String get backupFailedTitle => 'لا يتم حفظ نسختك الاحتياطية';
 
   @override
+  String get alertsTitle => 'يحتاج انتباهك';
+
+  @override
+  String get alertsNone => 'لا شيء يحتاج انتباهك.';
+
+  @override
+  String get alertsNoneBody =>
+      'سيخبرك Karde هنا إذا كان هناك ما يستدعي المراجعة.';
+
+  @override
+  String get alertsFix => 'إصلاح';
+
+  @override
+  String get alertsSetUp => 'إعداد';
+
+  @override
+  String get alertsGotIt => 'حسناً';
+
+  @override
   String get backupNotSavingShort =>
       'لا يتم نسخ التغييرات الجديدة إلى مجلد النسخ الاحتياطي.';
 

@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../l10n/app_localizations.dart';
-import '../../../core/storage/settings_repository.dart';
-import '../../backup/presentation/backup_screen.dart';
-import '../../backup/presentation/backup_setup_screen.dart';
-import '../../backup/data/auto_backup_recorder.dart';
+import '../domain/karde_alert.dart';
+import 'alerts_sheet.dart';
 import '../../cards/data/card_repository.dart';
 import '../../cards/presentation/add_card_screen.dart';
 import '../../cards/presentation/vault_screen.dart';
@@ -58,14 +56,6 @@ class DashboardScreen extends ConsumerWidget {
     final int idsCount = idsAsync.valueOrNull?.length ?? 0;
     final int totalItems = cardsCount + idsCount;
 
-    // Failing first: someone whose backup has stopped needs to know that more
-    // than someone who never started one needs to be asked.
-    final Widget? backupNeedsAttention = ref.watch(autoBackupFailingProvider)
-        ? _buildBackupFailing(context, loc, theme)
-        : (totalItems > 0 &&
-                !(ref.watch(autoBackupConfiguredProvider).valueOrNull ?? true))
-            ? _buildSetUpBackup(context, loc, theme)
-            : null;
 
     return Scaffold(
       body: SafeArea(
@@ -83,19 +73,32 @@ class DashboardScreen extends ConsumerWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               // Header
-              Text(
-                loc.welcomeTitle,
-                style: theme.textTheme.headlineMedium?.copyWith(
-                  fontWeight: FontWeight.w700,
-                  color: theme.colorScheme.onSurface,
-                )
-              ),
-              const SizedBox(height: 4),
-              Text(
-                loc.welcomeSubtitle,
-                style: theme.textTheme.bodyMedium?.copyWith(
-                  color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
-                )
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          loc.welcomeTitle,
+                          style: theme.textTheme.headlineMedium?.copyWith(
+                            fontWeight: FontWeight.w700,
+                            color: theme.colorScheme.onSurface,
+                          )
+                        ),
+                        const SizedBox(height: 4),
+                        Text(
+                          loc.welcomeSubtitle,
+                          style: theme.textTheme.bodyMedium?.copyWith(
+                            color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
+                          )
+                        ),
+                      ],
+                    ),
+                  ),
+                  _buildAlertBell(context, ref, theme),
+                ],
               ),
               const SizedBox(height: 16),
               
@@ -337,21 +340,14 @@ class DashboardScreen extends ConsumerWidget {
                     orElse: () => const SizedBox.shrink(),
                   ),
 
-              // The state of the copy Karde keeps.
+              // Nothing here any more. Every warning that used to stack up above
+              // the cards — no screen lock, backup stopped, backup never set up,
+              // fingerprints changed — now lives behind the bell in the header.
               //
-              // Not a nag any more. Karde now takes the backup itself, so the old
-              // "you have not backed up" reminder was telling the user off for
-              // something the app had already done for them. What is left is the
-              // two things it cannot do on its own: it has not been set up yet,
-              // or it has stopped working.
-              //
-              // Neither is dismissible. The moment either one matters — a screen
-              // lock switched off, a lost phone — arrives without warning, and
-              // Android gives an app no chance to intervene at that point.
-              if (backupNeedsAttention != null) ...[
-                backupNeedsAttention,
-                const SizedBox(height: 12),
-              ],
+              // They were all true and all worth saying, and together they pushed
+              // the vault itself off the page. Collecting them means none has to
+              // be dropped to make room for another, and the home screen can go
+              // back to being a home screen.
 
               // Vault Health Banner
               vaultHealthAsync.when(
@@ -544,53 +540,54 @@ class DashboardScreen extends ConsumerWidget {
     );
   }
 
-  /// Shown when the copy has fallen behind the vault.
+  /// One place for everything Karde wants to say.
   ///
-  /// The loud one, and the reason the whole feature needs a voice at all. A
-  /// backup that quietly stopped working months ago is worse than no backup,
-  /// because its owner believes they are covered and has stopped thinking about
-  /// it. The commonest cause is dull rather than dramatic: a cloud folder and no
-  /// signal at the moment a card was saved.
-  Widget _buildBackupFailing(
-      BuildContext context, AppLocalizations loc, ThemeData theme) {
+  /// A count rather than a dot, because "three things need looking at" and "one
+  /// thing needs looking at" call for different amounts of urgency from the
+  /// person reading it, and a dot says neither.
+  ///
+  /// Silent when there is nothing to say: no bell at all rather than a bell with
+  /// a zero on it. A control that is usually pointless teaches people not to
+  /// look at it on the day it is not.
+  Widget _buildAlertBell(BuildContext context, WidgetRef ref, ThemeData theme) {
+    final alerts = ref.watch(kardeAlertsProvider);
+    if (alerts.isEmpty) return const SizedBox.shrink();
+
+    final urgent =
+        alerts.any((a) => a.severity == KardeAlertSeverity.urgent);
+    final accent = urgent ? KardeColors.ember : KardeColors.champagneGold;
+
     return GestureDetector(
-      onTap: () => Navigator.push(
-        context,
-        MaterialPageRoute(builder: (_) => const BackupScreen()),
-      ),
-      child: Container(
-        padding: const EdgeInsets.all(14),
-        decoration: BoxDecoration(
-          color: KardeColors.ember.withValues(alpha: 0.12),
-          borderRadius: BorderRadius.circular(14),
-          border: Border.all(color: KardeColors.ember.withValues(alpha: 0.5)),
-        ),
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
+      onTap: () => AlertsSheet.show(context),
+      behavior: HitTestBehavior.opaque,
+      child: Padding(
+        padding: const EdgeInsets.only(left: 12, top: 4),
+        child: Stack(
+          clipBehavior: Clip.none,
           children: [
-            const Icon(Icons.cloud_off_outlined,
-                color: KardeColors.ember, size: 20),
-            const SizedBox(width: 12),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    loc.backupFailedTitle,
-                    style: TextStyle(
-                      fontFamily: 'Outfit',
-                      fontSize: 15,
-                      fontWeight: FontWeight.w600,
-                      color: theme.colorScheme.onSurface,
-                    ),
+            Icon(Icons.notifications_none_rounded,
+                size: 28, color: theme.colorScheme.onSurface.withValues(alpha: 0.75)),
+            PositionedDirectional(
+              top: -4,
+              end: -4,
+              child: Container(
+                padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 1),
+                constraints: const BoxConstraints(minWidth: 18),
+                decoration: BoxDecoration(
+                  color: accent,
+                  borderRadius: BorderRadius.circular(9),
+                  border: Border.all(color: theme.scaffoldBackgroundColor, width: 1.5),
+                ),
+                child: Text(
+                  '${alerts.length}',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontFamily: 'Inter',
+                    fontSize: 11,
+                    fontWeight: FontWeight.bold,
+                    color: urgent ? Colors.white : KardeColors.obsidian,
                   ),
-                  const SizedBox(height: 4),
-                  Text(
-                    loc.backupNotSavingShort,
-                    style: theme.textTheme.bodyMedium
-                        ?.copyWith(fontSize: 12.5, height: 1.4),
-                  ),
-                ],
+                ),
               ),
             ),
           ],
@@ -599,6 +596,14 @@ class DashboardScreen extends ConsumerWidget {
     );
   }
 
+  /// Shown when the copy has fallen behind the vault.
+  ///
+  /// The loud one, and the reason the whole feature needs a voice at all. A
+  /// backup that quietly stopped working months ago is worse than no backup,
+  /// because its owner believes they are covered and has stopped thinking about
+  /// it. The commonest cause is dull rather than dramatic: a cloud folder and no
+  /// signal at the moment a card was saved.
+  
   /// Shown to somebody with items and no backup arranged.
   ///
   /// This is where backup is offered now. It was briefly the last step of
@@ -609,47 +614,5 @@ class DashboardScreen extends ConsumerWidget {
   ///
   /// Kept short and calm: it is an offer, not a telling off, and it is on screen
   /// every time they open the app until it is taken.
-  Widget _buildSetUpBackup(
-      BuildContext context, AppLocalizations loc, ThemeData theme) {
-    return GestureDetector(
-      onTap: () => Navigator.push(
-        context,
-        MaterialPageRoute(builder: (_) => const BackupSetupScreen()),
-      ),
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 11),
-        decoration: BoxDecoration(
-          color: KardeColors.champagneGold.withValues(alpha: 0.07),
-          borderRadius: BorderRadius.circular(12),
-          border:
-              Border.all(color: KardeColors.champagneGold.withValues(alpha: 0.28)),
-        ),
-        child: Row(
-          children: [
-            const Icon(Icons.cloud_off_outlined,
-                color: KardeColors.champagneGold, size: 18),
-            const SizedBox(width: 10),
-            Expanded(
-              child: Text(
-                loc.setUpBackupBody,
-                style: theme.textTheme.bodyMedium
-                    ?.copyWith(fontSize: 12.5, height: 1.3),
-              ),
-            ),
-            const SizedBox(width: 10),
-            Text(
-              loc.setUpBackupAction,
-              style: const TextStyle(
-                fontFamily: 'Inter',
-                fontSize: 13,
-                fontWeight: FontWeight.bold,
-                color: KardeColors.champagneGold,
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
+  
 }

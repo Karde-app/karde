@@ -694,6 +694,25 @@ class AppLocalizationsFr extends AppLocalizations {
   String get backupFailedTitle => 'Votre sauvegarde n\'est plus enregistrée';
 
   @override
+  String get alertsTitle => 'À votre attention';
+
+  @override
+  String get alertsNone => 'Rien ne requiert votre attention.';
+
+  @override
+  String get alertsNoneBody =>
+      'Karde vous préviendra ici si quelque chose doit être vérifié.';
+
+  @override
+  String get alertsFix => 'Corriger';
+
+  @override
+  String get alertsSetUp => 'Configurer';
+
+  @override
+  String get alertsGotIt => 'Compris';
+
+  @override
   String get backupNotSavingShort =>
       'Les nouvelles modifications ne sont pas copiées dans votre dossier de sauvegarde.';
 

@@ -1390,6 +1390,42 @@ abstract class AppLocalizations {
   /// **'Your backup is not being saved'**
   String get backupFailedTitle;
 
+  /// No description provided for @alertsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Needs your attention'**
+  String get alertsTitle;
+
+  /// No description provided for @alertsNone.
+  ///
+  /// In en, this message translates to:
+  /// **'Nothing needs your attention.'**
+  String get alertsNone;
+
+  /// No description provided for @alertsNoneBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Karde will tell you here if something needs looking at.'**
+  String get alertsNoneBody;
+
+  /// No description provided for @alertsFix.
+  ///
+  /// In en, this message translates to:
+  /// **'Fix this'**
+  String get alertsFix;
+
+  /// No description provided for @alertsSetUp.
+  ///
+  /// In en, this message translates to:
+  /// **'Set up'**
+  String get alertsSetUp;
+
+  /// No description provided for @alertsGotIt.
+  ///
+  /// In en, this message translates to:
+  /// **'Got it'**
+  String get alertsGotIt;
+
   /// No description provided for @backupNotSavingShort.
   ///
   /// In en, this message translates to:

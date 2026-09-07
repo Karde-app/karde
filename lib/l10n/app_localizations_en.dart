@@ -689,6 +689,25 @@ class AppLocalizationsEn extends AppLocalizations {
   String get backupFailedTitle => 'Your backup is not being saved';
 
   @override
+  String get alertsTitle => 'Needs your attention';
+
+  @override
+  String get alertsNone => 'Nothing needs your attention.';
+
+  @override
+  String get alertsNoneBody =>
+      'Karde will tell you here if something needs looking at.';
+
+  @override
+  String get alertsFix => 'Fix this';
+
+  @override
+  String get alertsSetUp => 'Set up';
+
+  @override
+  String get alertsGotIt => 'Got it';
+
+  @override
   String get backupNotSavingShort =>
       'New changes are not being copied to your backup folder.';
 
