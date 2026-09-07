@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 
 import '../../l10n/app_localizations.dart';
 import '../../theme/theme.dart';
+import '../security/system_interaction_guard.dart';
 import '../security/vault_image_service.dart';
 
 /// Karde's own camera, with a rectangle showing where to put the card.
@@ -113,7 +114,14 @@ class _GuidedCameraScreenState extends State<GuidedCameraScreen>
     // it open in the background is both rude and, on some phones, a crash on the
     // way back. A vault has a second reason: a live camera belonging to a
     // backgrounded app is exactly the thing people are right to be uneasy about.
-    if (state == AppLifecycleState.inactive) {
+    //
+    // `paused`, not `inactive`. `inactive` also fires for a dialog on top of the
+    // app — including Android's own camera permission dialog, which this screen
+    // raises itself. Tearing the controller down there disposed it in the middle
+    // of the very `initialize()` call that was asking for the permission, and the
+    // screen came back saying Karde had no camera access seconds after the user
+    // had granted it.
+    if (state == AppLifecycleState.paused) {
       _controller?.dispose();
       _controller = null;
     } else if (state == AppLifecycleState.resumed && _controller == null) {
@@ -122,6 +130,18 @@ class _GuidedCameraScreenState extends State<GuidedCameraScreen>
   }
 
   Future<void> _start() async {
+    // Cleared on every attempt. Latching it meant one failed start — a permission
+    // dialog interrupting the first one, say — left the "no camera access" screen
+    // up for good, even after a later attempt had succeeded.
+    if (_unavailable && mounted) setState(() => _unavailable = false);
+    // Starting the camera is what raises Android's permission dialog, and that
+    // dialog takes the foreground — which the auto-lock timer cannot tell apart
+    // from the user walking away. Without this, granting the permission dropped
+    // the user on the PIN screen with a half-filled card behind it.
+    await SystemInteractionGuard.run(_startCamera);
+  }
+
+  Future<void> _startCamera() async {
     try {
       final cameras = await availableCameras();
       final back = cameras.firstWhere(
