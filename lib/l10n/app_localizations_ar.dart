@@ -708,6 +708,9 @@ class AppLocalizationsAr extends AppLocalizations {
   String get alertsGotIt => 'حسناً';
 
   @override
+  String get alertsAllow => 'السماح';
+
+  @override
   String get backupNotSavingShort =>
       'لا يتم نسخ التغييرات الجديدة إلى مجلد النسخ الاحتياطي.';
 
@@ -1847,11 +1850,11 @@ class AppLocalizationsAr extends AppLocalizations {
       'نبّهني قبل انتهاء صلاحية بطاقة أو مستند';
 
   @override
-  String get settingsRemindersMayBeLate =>
-      'هاتفك يؤخّرها، لذا قد تصل متأخرة بساعات. اضغط للسماح لـ Karde بتنبيهك في وقتها.';
+  String get remindersBlockedTitle => 'استقبال التنبيهات';
 
   @override
-  String get remindersBlockedTitle => 'لن تصل التنبيهات في وقتها';
+  String get remindersBlockedBody =>
+      'هاتفك يمنع Karde من تنبيهك قبل انتهاء صلاحية بطاقة أو مستند.';
 
   @override
   String notifyExpiringBody(int count) {

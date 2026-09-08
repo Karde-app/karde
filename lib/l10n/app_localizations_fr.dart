@@ -718,6 +718,9 @@ class AppLocalizationsFr extends AppLocalizations {
   String get alertsGotIt => 'Compris';
 
   @override
+  String get alertsAllow => 'Autoriser';
+
+  @override
   String get backupNotSavingShort =>
       'Les nouvelles modifications ne sont pas copiées dans votre dossier de sauvegarde.';
 
@@ -1879,12 +1882,11 @@ class AppLocalizationsFr extends AppLocalizations {
       'Me prévenir avant qu\'une carte ou un document n\'expire';
 
   @override
-  String get settingsRemindersMayBeLate =>
-      'Votre téléphone les retient, elles peuvent donc arriver avec des heures de retard. Touchez pour laisser Karde vous prévenir à l\'heure.';
+  String get remindersBlockedTitle => 'Recevoir les rappels';
 
   @override
-  String get remindersBlockedTitle =>
-      'Les rappels n\'arriveront pas à l\'heure';
+  String get remindersBlockedBody =>
+      'Votre téléphone empêche Karde de vous prévenir avant qu\'une carte ou un document n\'expire.';
 
   @override
   String notifyExpiringBody(int count) {

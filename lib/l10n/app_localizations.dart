@@ -1438,6 +1438,12 @@ abstract class AppLocalizations {
   /// **'Got it'**
   String get alertsGotIt;
 
+  /// No description provided for @alertsAllow.
+  ///
+  /// In en, this message translates to:
+  /// **'Allow'**
+  String get alertsAllow;
+
   /// No description provided for @backupNotSavingShort.
   ///
   /// In en, this message translates to:
@@ -3256,17 +3262,17 @@ abstract class AppLocalizations {
   /// **'Tell me before a card or document runs out'**
   String get settingsExpiryRemindersDesc;
 
-  /// No description provided for @settingsRemindersMayBeLate.
-  ///
-  /// In en, this message translates to:
-  /// **'Your phone is holding these back, so they may arrive hours late. Tap to let Karde remind you on time.'**
-  String get settingsRemindersMayBeLate;
-
   /// No description provided for @remindersBlockedTitle.
   ///
   /// In en, this message translates to:
-  /// **'Reminders will not arrive on time'**
+  /// **'Receive reminders'**
   String get remindersBlockedTitle;
+
+  /// No description provided for @remindersBlockedBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Your phone is stopping Karde from telling you before a card or document runs out.'**
+  String get remindersBlockedBody;
 
   /// No description provided for @notifyExpiringBody.
   ///

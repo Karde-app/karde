@@ -104,14 +104,6 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                     onChanged: _setExpiryReminders,
                   ),
                 ),
-                // Shown only when there is something to say. Reminders that have
-                // been quietly downgraded to "some time in the next hour" are
-                // worse than none, because their owner is relying on nine
-                // o'clock. Silence here was how a reminder was missed on a real
-                // phone with no explanation.
-                if (ref.watch(expiryRemindersProvider) &&
-                    ref.watch(remindersCanArriveProvider).valueOrNull == false)
-                  _buildLateRemindersNotice(context, loc),
               ],
             ),
           ),
@@ -430,55 +422,6 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
       await WindowSecurityService.openBatterySettings();
     }
     ref.invalidate(remindersCanArriveProvider);
-  }
-
-  /// One line, and only when reminders are on but the phone will not let them be
-  /// punctual.
-  ///
-  /// Karde used to say nothing at all in this state. A reminder set for nine
-  /// o'clock then arrived at some unpredictable point in the following hour — or
-  /// on the phone this was found on, not at all — and there was nothing anywhere
-  /// to explain why. Somebody relying on it would simply have been let down.
-  Widget _buildLateRemindersNotice(BuildContext context, AppLocalizations loc) {
-    final theme = Theme.of(context);
-    return InkWell(
-      onTap: () async {
-        // Two different things can hold a reminder back, and they are fixed on
-        // two different system screens. Ask about the punctuality one first,
-        // because it is the one Karde can raise directly; the battery list has
-        // to be found by hand.
-        if (!await ExpiryNotifications.instance.canBeExact()) {
-          await ExpiryNotifications.instance.requestExactAlarms();
-        } else {
-          await WindowSecurityService.openBatterySettings();
-        }
-        ref.invalidate(remindersCanArriveProvider);
-      },
-      child: Padding(
-        padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const Icon(Icons.schedule_outlined,
-                size: 18, color: KardeColors.champagneGold),
-            const SizedBox(width: 10),
-            Expanded(
-              child: Text(
-                loc.settingsRemindersMayBeLate,
-                style: TextStyle(
-                  fontSize: 13,
-                  height: 1.45,
-                  color: theme.colorScheme.onSurface.withValues(alpha: 0.75),
-                ),
-              ),
-            ),
-            const SizedBox(width: 8),
-            const Icon(Icons.chevron_right,
-                size: 18, color: KardeColors.champagneGold),
-          ],
-        ),
-      ),
-    );
   }
 
   /// Says what Karde is already doing about backups, and where.

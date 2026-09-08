@@ -1652,42 +1652,42 @@ void main() {
               "reminder silently fails, and the one that actually bit");
     });
 
-    test("and says something when the answer is no", () {
-      final settings =
-          File("lib/features/settings/presentation/settings_screen.dart")
-              .readAsLinesSync()
-              .where((l) => !l.trimLeft().startsWith("//"))
-              .join("\n");
-
-      expect(settings.contains("remindersCanArriveProvider"), isTrue);
-      expect(settings.contains("settingsRemindersMayBeLate"), isTrue);
-      expect(settings.contains("requestExactAlarms()"), isTrue,
-          reason: "saying it is late is no use without a way to fix it");
+    test("the alert is an invitation, not a warning", () {
+      // The user asked for this. "Reminders will not arrive on time" told them
+      // off about a phone setting they had not chosen; "Receive reminders" says
+      // what tapping it gets you.
+      final en = jsonDecode(File("lib/l10n/app_en.arb").readAsStringSync())
+          as Map<String, dynamic>;
+      expect(en["remindersBlockedTitle"], "Receive reminders");
+      expect(en["alertsAllow"], isNotNull,
+          reason: "the button offers something rather than repairing something");
     });
 
-    test("the notice stays quiet when there is nothing to report", () {
-      // Karde does not warn about reminders somebody has switched off.
+    test("it is said once, in the bell, and not again in Settings", () {
+      // It was in both. Two places saying the same thing is one place too many,
+      // and Settings is the one nobody visits.
       final settings =
           File("lib/features/settings/presentation/settings_screen.dart")
               .readAsStringSync();
-      expect(
-        settings.contains("ref.watch(expiryRemindersProvider) &&"),
-        isTrue,
-        reason: "the warning is gated on reminders actually being on",
-      );
-    });
+      expect(settings.contains("ref.watch(remindersCanArriveProvider)"), isFalse,
+          reason: "Settings no longer displays it — the bell does. It may still "
+              "invalidate it after the toggle, so the bell refreshes.");
 
-    test("the wording explains the consequence, not the mechanism", () {
       for (final locale in ["en", "fr", "ar"]) {
         final arb = jsonDecode(File("lib/l10n/app_$locale.arb").readAsStringSync())
             as Map<String, dynamic>;
-        expect(arb.containsKey("settingsRemindersMayBeLate"), isTrue,
-            reason: "$locale is missing the notice");
+        expect(arb.containsKey("settingsRemindersMayBeLate"), isFalse,
+            reason: "$locale still carries the removed Settings line");
+        expect(arb.containsKey("remindersBlockedBody"), isTrue,
+            reason: "$locale is missing the body the bell now shows");
       }
+    });
+
+    test("the wording explains the consequence, not the mechanism", () {
       final en = jsonDecode(File("lib/l10n/app_en.arb").readAsStringSync())
           as Map<String, dynamic>;
-      final text = en["settingsRemindersMayBeLate"].toString().toLowerCase();
-      for (final jargon in ["alarm", "permission", "api", "schedule_exact"]) {
+      final text = en["remindersBlockedBody"].toString().toLowerCase();
+      for (final jargon in ["alarm", "permission", "api", "battery optimis"]) {
         expect(text, isNot(contains(jargon)),
             reason: "the user needs the consequence, not the mechanism");
       }

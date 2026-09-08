@@ -288,8 +288,8 @@ class _AlertCard extends ConsumerWidget {
       case 'reminders-blocked':
         return (
           loc.remindersBlockedTitle,
-          loc.settingsRemindersMayBeLate,
-          loc.alertsFix,
+          loc.remindersBlockedBody,
+          loc.alertsAllow,
           () async {
             // Whichever of the two is actually the problem. Asking for the
             // punctual-alarm permission first because Karde can raise that
