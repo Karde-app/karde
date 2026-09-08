@@ -6,6 +6,7 @@ import '../../../core/security/backup_identity_service.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../../theme/theme.dart';
 import '../data/auto_backup_recorder.dart';
+import '../data/backup_service.dart';
 import 'widgets/passphrase_dialog.dart';
 
 /// Setting up the copy Karde keeps for the user.
@@ -124,6 +125,16 @@ class _BackupSetupScreenState extends ConsumerState<BackupSetupScreen> {
       // which is exactly when the user is looking for confirmation it worked.
       ref.invalidate(autoBackupConfiguredProvider);
       ref.invalidate(autoBackupSetupProvider);
+      // And the missing count, for the same reason pointing the other way. A
+      // backup set up over a vault that already has things in it starts empty —
+      // seeding it costs one authentication per item, so it is offered rather
+      // than done — and the bell is what makes that offer. Left stale at the
+      // count from before, it said nothing at all: on the phone, turning
+      // automatic backup off and straight back on left a vault of two items
+      // with an empty backup file and a bell that was perfectly quiet about it.
+      // That is the failure this whole feature exists to prevent, since its
+      // owner puts the phone down believing they are covered.
+      ref.invalidate(autoBackupMissingCountProvider);
       await _confirmItIsOn(loc, folder.label);
       if (mounted) _leave();
     } on BackupSelfTestFailed {

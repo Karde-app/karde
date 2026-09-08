@@ -61,7 +61,13 @@ class ExpiryNotifications {
   /// today might not need a word said about it for nine years. Anything beyond
   /// this window is picked up on a later run — the schedule is rebuilt every time
   /// the app opens or the vault changes.
-  static const int _maxScheduled = 24;
+  ///
+  /// Raised from 24 when reminders became a ladder rather than a single warning:
+  /// each item can now want up to eight days of its own, so the old figure was
+  /// spent on the nearest three items and the rest waited for a later run. These
+  /// are counted in days, not items — everything falling due on the same day
+  /// shares one reminder — so this is a generous window, not a per-card budget.
+  static const int _maxScheduled = 48;
 
   Future<void> _ensureReady() async {
     if (_ready) return;
@@ -138,15 +144,29 @@ class ExpiryNotifications {
 
       for (final thing in [...cards, ...documents]) {
         final expiry = _dayOf(thing.expiresOn);
-        final notice = expiry.subtract(Duration(days: thing.noticeDays));
 
-        if (notice.isAfter(now)) {
-          soonByDay[notice] = (soonByDay[notice] ?? 0) + 1;
+        // A ladder rather than a single warning. One reminder a month out
+        // arrives when there is nothing to do about it and is gone by the time
+        // there is; these tighten as the date approaches. See
+        // [Expiry.reminderDaysBefore].
+        for (final daysBefore in Expiry.reminderOffsetsFor(thing.noticeDays)) {
+          final day = expiry.subtract(Duration(days: daysBefore));
+          // Compared against the moment it would actually be sent, not against
+          // midnight of that day. These are days, but they go out at [_hour],
+          // and testing the day meant the whole of it counted as past from
+          // midnight onwards. The schedule is rebuilt every time Karde opens, so
+          // opening the app at eight in the morning on a day a card was due to
+          // be mentioned cancelled that morning's reminder and did not put it
+          // back — and nine o'clock came and went in silence.
+          if (_sendTimeOf(day).isAfter(now)) {
+            soonByDay[day] = (soonByDay[day] ?? 0) + 1;
+          }
         }
+
         // The day after it stops being valid, because on the last valid day it
         // still works and saying otherwise would be wrong.
         final gone = expiry.add(const Duration(days: 1));
-        if (gone.isAfter(now)) {
+        if (_sendTimeOf(gone).isAfter(now)) {
           expiredByDay[gone] = (expiredByDay[gone] ?? 0) + 1;
         }
       }
@@ -211,4 +231,15 @@ class ExpiryNotifications {
 
   static DateTime _dayOf(DateTime value) =>
       DateTime(value.year, value.month, value.day);
+
+  /// The instant a reminder for [day] actually goes out.
+  ///
+  /// Kept next to [_schedule], which builds the same instant in the local zone,
+  /// so the test that decides whether a reminder is still in the future and the
+  /// code that sends it cannot drift apart again.
+  @visibleForTesting
+  static DateTime sendTimeOf(DateTime day) => _sendTimeOf(day);
+
+  static DateTime _sendTimeOf(DateTime day) =>
+      DateTime(day.year, day.month, day.day, _hour);
 }

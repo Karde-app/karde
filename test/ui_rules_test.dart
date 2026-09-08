@@ -3,6 +3,8 @@ import 'dart:io';
 
 import 'dart:ui' show Offset, Rect;
 
+import 'package:ibank/core/notifications/expiry_notifications.dart';
+import 'package:ibank/core/utils/expiry.dart';
 import 'package:local_auth/local_auth.dart';
 import 'package:ibank/core/security/authentication_service.dart';
 
@@ -1299,6 +1301,198 @@ void main() {
         reason: "copying the missing items through proves the folder is "
             "writable, so the alarm has to come down with it",
       );
+    });
+  });
+
+  group("Setting a backup up must refresh what the bell knows", () {
+    // Found on the phone. Turning automatic backup off and straight back on
+    // left a vault of two items with an empty backup file — seeding costs one
+    // authentication per item, so it is offered rather than done — and the bell
+    // said nothing at all, because the missing count was still the cached zero
+    // from before. Its owner puts the phone down believing they are covered,
+    // which is the exact failure this feature exists to prevent.
+    test("finishing setup invalidates every provider the bell reads", () {
+      final source =
+          File("lib/features/backup/presentation/backup_setup_screen.dart")
+              .readAsLinesSync()
+              .where((l) => !l.trimLeft().startsWith("//"))
+              .join("\n");
+
+      for (final provider in [
+        "autoBackupConfiguredProvider",
+        "autoBackupSetupProvider",
+        "autoBackupMissingCountProvider",
+      ]) {
+        expect(
+          source.contains("ref.invalidate($provider)"),
+          isTrue,
+          reason: "$provider is stale the moment a backup is configured, and "
+              "the bell reads it before the app is ever restarted",
+        );
+      }
+    });
+
+    test("turning it off invalidates the same count", () {
+      final source =
+          File("lib/features/settings/presentation/settings_screen.dart")
+              .readAsStringSync();
+      expect(
+        source.contains("ref.invalidate(autoBackupMissingCountProvider)"),
+        isTrue,
+      );
+    });
+  });
+
+  group("A reminder due later today is still due", () {
+    // Found on the phone. The schedule is rebuilt every time Karde opens, and
+    // the test for "is this reminder still in the future" compared the *day* at
+    // midnight while the reminder itself goes out at nine in the morning. So
+    // opening the app at any point on the notice day before nine cancelled that
+    // morning's reminder and did not put it back. Nine o'clock came and went in
+    // silence, which is the one thing this feature exists to prevent.
+    test("nine in the morning is still ahead of eight in the morning", () {
+      final day = DateTime(2026, 10, 1);
+      final send = ExpiryNotifications.sendTimeOf(day);
+
+      expect(send.hour, 9, reason: "reminders go out at nine");
+      expect(send.isAfter(DateTime(2026, 10, 1, 8, 59)), isTrue,
+          reason: "this is the case that was being dropped");
+      expect(send.isAfter(DateTime(2026, 10, 1, 0, 0)), isTrue);
+      expect(send.isAfter(DateTime(2026, 10, 1, 9, 1)), isFalse,
+          reason: "once it has gone out it is genuinely past");
+      expect(send.isAfter(DateTime(2026, 9, 30, 23, 59)), isTrue);
+    });
+
+    test("the guard compares the send time, not the bare day", () {
+      final source = File("lib/core/notifications/expiry_notifications.dart")
+          .readAsLinesSync()
+          .where((l) => !l.trimLeft().startsWith("//"))
+          .join("\n");
+
+      expect(source.contains("_sendTimeOf(day).isAfter(now)"), isTrue);
+      expect(source.contains("_sendTimeOf(gone).isAfter(now)"), isTrue);
+      expect(
+        RegExp(r"if \((notice|gone)\.isAfter\(now\)\)").hasMatch(source),
+        isFalse,
+        reason: "comparing the bare day treats the whole notice day as past",
+      );
+    });
+  });
+
+  group("Reminders need receivers the plugin no longer declares", () {
+    // The bug Section J was written to catch, and it caught it. From version 16
+    // the notifications plugin stopped declaring its receivers and ships only
+    // VIBRATE and POST_NOTIFICATIONS, so nothing merged them in and nothing
+    // warned they were missing. Every reminder was scheduled, accepted and
+    // thrown away: the alarm was visible in `dumpsys alarm`, it disappeared at
+    // nine o'clock on the right day, and Android delivered it to a component
+    // that did not exist in the package. Reminders had never once worked.
+    final manifest =
+        File("android/app/src/main/AndroidManifest.xml").readAsStringSync();
+
+    test("the scheduled-notification receiver is declared", () {
+      expect(
+        manifest.contains(
+          "com.dexterous.flutterlocalnotifications.ScheduledNotificationReceiver",
+        ),
+        isTrue,
+        reason: "without it a reminder fires into nothing",
+      );
+    });
+
+    test("and the one that survives a reboot", () {
+      expect(
+        manifest.contains(
+          "com.dexterous.flutterlocalnotifications.ScheduledNotificationBootReceiver",
+        ),
+        isTrue,
+        reason: "RECEIVE_BOOT_COMPLETED is declared for this receiver; without "
+            "it every reminder dies at the next restart",
+      );
+      expect(manifest.contains("android.intent.action.BOOT_COMPLETED"), isTrue);
+      expect(
+        manifest.contains("android.intent.action.MY_PACKAGE_REPLACED"),
+        isTrue,
+        reason: "an app update must not silently drop the schedule either",
+      );
+    });
+
+    test("neither receiver is exported", () {
+      // Anything on the phone could otherwise ask Karde to post a notification.
+      for (final match in RegExp(
+        r'<receiver[^>]*flutterlocalnotifications[^>]*',
+        dotAll: true,
+      ).allMatches(manifest)) {
+        expect(match.group(0), contains('android:exported="false"'));
+      }
+    });
+
+    test("the permission that makes the boot receiver work is declared", () {
+      expect(
+        manifest.contains("android.permission.RECEIVE_BOOT_COMPLETED"),
+        isTrue,
+      );
+    });
+  });
+
+  group("A month's warning is a ladder, not one notification", () {
+    // The user's own words: one reminder in a whole month "is unreal". A single
+    // warning thirty days out arrives when there is nothing to do about it, and
+    // by the time there is, it has long been swiped away.
+    test("the reminders get closer together as the date approaches", () {
+      final ladder = Expiry.reminderDaysBefore;
+
+      expect(ladder, isNotEmpty);
+      expect(ladder.first, greaterThan(ladder.last),
+          reason: "counted in days before the end, so it must descend");
+      expect(ladder.last, 0, reason: "the day itself must be one of them");
+
+      for (var i = 1; i < ladder.length; i++) {
+        expect(ladder[i], lessThan(ladder[i - 1]),
+            reason: "every step must be nearer the date than the last");
+      }
+
+      // Descending gaps are what "tightening" means.
+      final gaps = [
+        for (var i = 1; i < ladder.length; i++) ladder[i - 1] - ladder[i],
+      ];
+      for (var i = 1; i < gaps.length; i++) {
+        expect(gaps[i], lessThanOrEqualTo(gaps[i - 1]),
+            reason: "the gaps must never widen as the date gets closer");
+      }
+    });
+
+    test("a card gets several reminders inside its month", () {
+      final forCard = Expiry.reminderOffsetsFor(Expiry.cardNoticeDays);
+
+      expect(forCard.length, greaterThan(3),
+          reason: "one reminder a month out is what the user rejected");
+      expect(forCard, everyElement(lessThanOrEqualTo(Expiry.cardNoticeDays)),
+          reason: "nothing may fire before Karde is meant to speak up");
+      expect(forCard, contains(30), reason: "still says it a month out");
+      expect(forCard, contains(1), reason: "and the day before");
+      expect(forCard, contains(0), reason: "and on the day itself");
+      expect(forCard, isNot(contains(90)),
+          reason: "a card's window is thirty days, not ninety");
+    });
+
+    test("a document uses the whole ladder, because its window is longer", () {
+      final forDoc = Expiry.reminderOffsetsFor(Expiry.documentNoticeDays);
+
+      expect(forDoc, contains(90), reason: "three months out for a passport");
+      expect(forDoc.length, greaterThan(
+        Expiry.reminderOffsetsFor(Expiry.cardNoticeDays).length,
+      ));
+    });
+
+    test("the schedule is built from the ladder, not a single notice day", () {
+      final source = File("lib/core/notifications/expiry_notifications.dart")
+          .readAsLinesSync()
+          .where((l) => !l.trimLeft().startsWith("//"))
+          .join("\n");
+
+      expect(source.contains("Expiry.reminderOffsetsFor(thing.noticeDays)"),
+          isTrue);
     });
   });
 }

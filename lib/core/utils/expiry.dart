@@ -43,6 +43,22 @@ class Expiry {
   /// too late to be useful.
   static const int documentNoticeDays = 90;
 
+  /// How many days before the end each reminder goes out.
+  ///
+  /// One reminder a month out is not how anybody actually keeps track of a
+  /// deadline: it arrives when there is no reason to act, and by the time there
+  /// is, it has long been swiped away. These get closer together as the date
+  /// approaches, which is how a person thinks about it — a note in the diary,
+  /// then a nudge, then "this is the last week", then "this is today".
+  ///
+  /// Anything further out than the item's own notice window is skipped, so a
+  /// card quietly uses the tail of this list and a passport uses all of it.
+  static const List<int> reminderDaysBefore = [90, 60, 30, 14, 7, 3, 1, 0];
+
+  /// The reminders that apply to something with a [noticeDays] window.
+  static List<int> reminderOffsetsFor(int noticeDays) =>
+      reminderDaysBefore.where((days) => days <= noticeDays).toList();
+
   /// Reads a card's `MM/YY` into the last day it is valid.
   ///
   /// A card expiring "03/27" works to the end of March 2027, which is what the
