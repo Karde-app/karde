@@ -4,6 +4,7 @@ import 'package:flutter_timezone/flutter_timezone.dart';
 import 'package:timezone/data/latest_all.dart' as tz_data;
 import 'package:timezone/timezone.dart' as tz;
 
+import '../security/system_interaction_guard.dart';
 import '../utils/expiry.dart';
 
 /// One thing that runs out, reduced to the two facts a reminder needs.
@@ -89,12 +90,19 @@ class ExpiryNotifications {
   /// expiry reminders on, rather than at first launch: a permission request that
   /// arrives before the user knows what it is for is refused by reflex, and on
   /// Android there is no second chance to ask.
+  /// The request is wrapped in [SystemInteractionGuard] because Android's
+  /// permission dialog takes the foreground, and the auto-lock timer cannot tell
+  /// that apart from the user walking away. Without it, saying yes to
+  /// notifications locked the vault and dropped the user on the PIN screen —
+  /// which is exactly what happened on the phone, one card into a fresh vault.
   Future<bool> requestPermission() async {
     await _ensureReady();
     final android = _plugin.resolvePlatformSpecificImplementation<
         AndroidFlutterLocalNotificationsPlugin>();
     if (android == null) return false;
-    return await android.requestNotificationsPermission() ?? false;
+    return await SystemInteractionGuard.run(
+      () async => await android.requestNotificationsPermission() ?? false,
+    );
   }
 
   /// Throws away every pending reminder and works out the schedule again.

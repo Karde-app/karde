@@ -1248,4 +1248,34 @@ void main() {
       expect(vault, contains("Icons.credit_card"));
     });
   });
+
+  group("Anything that raises a system window must suspend auto-lock", () {
+    // Found three times on the phone in one session: granting the camera
+    // permission, granting notifications, and picking the backup folder each
+    // dropped the user on the PIN screen, once with a half-filled card behind
+    // it. Android's own dialogs take the foreground, and the auto-lock timer
+    // cannot tell that apart from the user walking away — so every call that
+    // deliberately raises one has to say so.
+    const raisers = {
+      "lib/core/platform/backup_folder_service.dart": "the folder picker",
+      "lib/core/platform/file_transfer_service.dart": "the file picker",
+      "lib/core/notifications/expiry_notifications.dart":
+          "the notification permission dialog",
+      "lib/core/widgets/guided_camera_screen.dart":
+          "the camera permission dialog",
+      "lib/core/security/authentication_service.dart": "the biometric prompt",
+    };
+
+    for (final entry in raisers.entries) {
+      test("${entry.value} suspends it", () {
+        final source = File(entry.key).readAsStringSync();
+        expect(
+          source.contains("SystemInteractionGuard.run"),
+          isTrue,
+          reason: "${entry.key} raises a system window on purpose, so it must "
+              "run inside the guard or the vault locks behind it",
+        );
+      });
+    }
+  });
 }

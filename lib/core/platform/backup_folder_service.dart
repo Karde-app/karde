@@ -2,6 +2,8 @@ import 'dart:convert';
 
 import 'package:flutter/services.dart';
 
+import '../security/system_interaction_guard.dart';
+
 /// The user closed the folder picker without choosing.
 class BackupFolderNotChosen implements Exception {
   const BackupFolderNotChosen();
@@ -53,7 +55,17 @@ class BackupFolderService {
       MethodChannel('com.ibank.security/backup');
 
   /// Asks the user to choose, and keeps the right to write there afterwards.
-  Future<BackupFolderChoice> choose() async {
+  ///
+  /// Guarded, like every other deliberate system window. The folder picker and
+  /// the "Allow Karde to access folder?" dialog on top of it can easily take
+  /// longer than the auto-lock grace period — browsing to a cloud folder is
+  /// slow — and this was the one such call that never marked itself, so setting
+  /// a backup up locked the vault at the last step.
+  Future<BackupFolderChoice> choose() {
+    return SystemInteractionGuard.run(_choose);
+  }
+
+  Future<BackupFolderChoice> _choose() async {
     try {
       final raw = await _channel.invokeMethod<String>('chooseBackupFolder');
       if (raw == null) throw const BackupFolderNotChosen();
