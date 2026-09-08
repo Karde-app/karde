@@ -135,6 +135,9 @@ class ExpiryNotifications {
       await _plugin.cancelAll();
       if (!enabled) return;
 
+      // Asked once here, then used for every reminder in this rebuild.
+      await _refreshExactAllowed();
+
       final now = DateTime.now();
       // Two tallies per day: things entering their warning window, and things
       // running out. Kept apart because "2 have expired" and "2 expire soon" are
@@ -197,6 +200,62 @@ class ExpiryNotifications {
     }
   }
 
+  /// Whether the phone will let Karde ask for a reminder at an exact minute.
+  ///
+  /// Worked out once per rebuild of the schedule rather than per reminder, so a
+  /// vault full of cards does not ask the same question thirty times.
+  bool _exactAllowed = false;
+
+  AndroidScheduleMode get _mode => _exactAllowed
+      ? AndroidScheduleMode.exactAllowWhileIdle
+      : AndroidScheduleMode.inexactAllowWhileIdle;
+
+  /// Asks the phone whether exact alarms are permitted, and remembers it.
+  ///
+  /// This started as inexact everywhere, on the reasoning that a reminder
+  /// arriving at ten past nine instead of nine is not worse in any way a user
+  /// could notice. That reasoning was sound and the behaviour was not: on a
+  /// Galaxy S23 an inexact reminder sat undelivered for its entire one-hour
+  /// window — device awake, charging, not dozing, app in Android's active
+  /// standby bucket — and then expired having never been shown. A reminder that
+  /// might simply not arrive is not a reminder.
+  ///
+  /// Falling back rather than failing: if the permission is refused the
+  /// reminders are still scheduled, just inexactly. The bell inside Karde says
+  /// everything these would have said, so a refusal costs punctuality and not
+  /// the feature.
+  Future<void> _refreshExactAllowed() async {
+    final android = _plugin.resolvePlatformSpecificImplementation<
+        AndroidFlutterLocalNotificationsPlugin>();
+    if (android == null) {
+      _exactAllowed = false;
+      return;
+    }
+    try {
+      _exactAllowed = await android.canScheduleExactNotifications() ?? false;
+    } catch (_) {
+      _exactAllowed = false;
+    }
+  }
+
+  /// Sends the user to Android's "Alarms & reminders" screen.
+  ///
+  /// Asked where it explains itself — the moment somebody turns expiry reminders
+  /// on — and never at launch.
+  Future<void> requestExactAlarms() async {
+    final android = _plugin.resolvePlatformSpecificImplementation<
+        AndroidFlutterLocalNotificationsPlugin>();
+    if (android == null) return;
+    try {
+      await SystemInteractionGuard.run(
+        () async => android.requestExactAlarmsPermission(),
+      );
+    } catch (_) {
+      // A phone that will not show the screen is not worth an error message;
+      // the reminders simply stay inexact.
+    }
+  }
+
   Future<void> _schedule(
     int id,
     DateTime day,
@@ -221,11 +280,7 @@ class ExpiryNotifications {
           visibility: NotificationVisibility.private,
         ),
       ),
-      // Inexact on purpose. An exact alarm needs a permission Google reviews
-      // separately and grants for alarm clocks and calendars, and a reminder
-      // that arrives at ten past nine instead of nine is not worse in any way a
-      // user could notice.
-      androidScheduleMode: AndroidScheduleMode.inexactAllowWhileIdle,
+      androidScheduleMode: _mode,
     );
   }
 

@@ -7,6 +7,21 @@
          received — the reminder is worked out here and shown here. -->
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS"/>
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
+    <!-- Reminders were inexact, on the reasoning that arriving at ten past nine
+         instead of nine is not worse in any way a user could notice. On this
+         phone that turned out to be wrong in a way they very much would: an
+         inexact reminder sat undelivered for its whole one-hour window while the
+         device was awake, charging, not dozing and the app was in Android's
+         active bucket, and then expired without ever being shown.
+
+         SCHEDULE_EXACT_ALARM and not USE_EXACT_ALARM. USE_EXACT_ALARM needs no
+         permission dialog but Google reserves it for apps whose *primary*
+         purpose is alarms, calendars or clocks; Karde is a vault that happens to
+         remind you, so claiming it would be a policy risk. This one is granted
+         by the user, in the system's "Alarms & reminders" screen, and Karde asks
+         only at the moment somebody turns expiry reminders on. Refusing costs
+         only punctuality — the reminders fall back to inexact. -->
+    <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM"/>
     <!-- Karde's own camera screen, which draws a guide so a card or document
          is framed square instead of at an angle. Asked for at the moment the
          user taps "Take a photo" and never before. Anyone who refuses can still

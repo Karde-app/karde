@@ -401,7 +401,15 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
     final allowed = await ExpiryNotifications.instance.requestPermission();
     if (!allowed && mounted) {
       KardeFeedback.info(context, loc.settingsExpiryNotifyBlocked);
+      return;
     }
+
+    // And, on Android 13 and later, the separate permission that decides whether
+    // a reminder may arrive at a particular minute rather than some time in the
+    // following hour. Asked here and only here, straight after the user has said
+    // they want these reminders, because that is the one moment the request
+    // explains itself. Refusing costs punctuality and nothing else.
+    await ExpiryNotifications.instance.requestExactAlarms();
   }
 
   /// Says what Karde is already doing about backups, and where.

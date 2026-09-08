@@ -1495,4 +1495,56 @@ void main() {
           isTrue);
     });
   });
+
+  group("A reminder that might not arrive is not a reminder", () {
+    // Reminders were inexact so Karde would not need a permission Google
+    // reviews. The reasoning was that ten past nine is as good as nine. On the
+    // S23 an inexact reminder sat undelivered for its entire one-hour window —
+    // awake, charging, not dozing, app in the active standby bucket — and then
+    // expired having never been shown.
+    final manifest =
+        File("android/app/src/main/AndroidManifest.xml").readAsStringSync();
+    final source = File("lib/core/notifications/expiry_notifications.dart")
+        .readAsLinesSync()
+        .where((l) => !l.trimLeft().startsWith("//"))
+        .where((l) => !l.trimLeft().startsWith("///"))
+        .join("\n");
+
+    test("Karde asks for exact alarms", () {
+      expect(
+        manifest.contains("android.permission.SCHEDULE_EXACT_ALARM"),
+        isTrue,
+      );
+    });
+
+    test("but never claims to be an alarm clock", () {
+      // USE_EXACT_ALARM needs no dialog, and Google reserves it for apps whose
+      // primary purpose is alarms, calendars or clocks. Karde is a vault that
+      // happens to remind you.
+      expect(
+        manifest.contains("android.permission.USE_EXACT_ALARM"),
+        isFalse,
+        reason: "claiming it would be a Play policy risk",
+      );
+    });
+
+    test("and falls back rather than failing when it is refused", () {
+      expect(source.contains("AndroidScheduleMode.exactAllowWhileIdle"), isTrue);
+      expect(
+        source.contains("AndroidScheduleMode.inexactAllowWhileIdle"),
+        isTrue,
+        reason: "a refusal must cost punctuality, not the reminders themselves",
+      );
+      expect(source.contains("canScheduleExactNotifications"), isTrue,
+          reason: "the mode has to follow what the phone actually permits");
+    });
+
+    test("the permission is asked where it explains itself", () {
+      // Never at launch. Straight after the user turns expiry reminders on.
+      final settings =
+          File("lib/features/settings/presentation/settings_screen.dart")
+              .readAsStringSync();
+      expect(settings.contains("requestExactAlarms()"), isTrue);
+    });
+  });
 }
