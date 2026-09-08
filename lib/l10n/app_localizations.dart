@@ -3388,6 +3388,12 @@ abstract class AppLocalizations {
   /// **'Line the card or document up inside the frame'**
   String get cameraGuideHint;
 
+  /// No description provided for @cameraCropHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Drag the corners to choose what to keep'**
+  String get cameraCropHint;
+
   /// No description provided for @cameraRetake.
   ///
   /// In en, this message translates to:

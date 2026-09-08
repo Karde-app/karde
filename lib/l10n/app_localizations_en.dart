@@ -1942,6 +1942,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get cameraGuideHint => 'Line the card or document up inside the frame';
 
   @override
+  String get cameraCropHint => 'Drag the corners to choose what to keep';
+
+  @override
   String get cameraRetake => 'Retake';
 
   @override

@@ -1981,6 +1981,10 @@ class AppLocalizationsFr extends AppLocalizations {
   String get cameraGuideHint => 'Alignez la carte ou le document dans le cadre';
 
   @override
+  String get cameraCropHint =>
+      'Faites glisser les coins pour choisir ce que vous gardez';
+
+  @override
   String get cameraRetake => 'Reprendre';
 
   @override

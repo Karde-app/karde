@@ -1945,6 +1945,9 @@ class AppLocalizationsAr extends AppLocalizations {
   String get cameraGuideHint => 'حاذِ البطاقة أو المستند داخل الإطار';
 
   @override
+  String get cameraCropHint => 'اسحب الزوايا لتختار ما تريد الاحتفاظ به';
+
+  @override
   String get cameraRetake => 'إعادة الالتقاط';
 
   @override

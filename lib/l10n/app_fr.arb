@@ -577,6 +577,7 @@
   "@activityDocumentRemoved": { "placeholders": { "name": { "type": "String" } } },
   "cameraTitle": "Prendre une photo",
   "cameraGuideHint": "Alignez la carte ou le document dans le cadre",
+  "cameraCropHint": "Faites glisser les coins pour choisir ce que vous gardez",
   "cameraRetake": "Reprendre",
   "cameraUsePhoto": "Utiliser cette photo",
   "cameraCaptureFailed": "Cette photo n'a pas pu être prise. Veuillez réessayer.",

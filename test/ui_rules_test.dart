@@ -1,6 +1,8 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'dart:ui' show Offset, Rect;
+
 import 'package:local_auth/local_auth.dart';
 import 'package:ibank/core/security/authentication_service.dart';
 
@@ -1071,23 +1073,58 @@ void main() {
       }
     });
 
-    test("the crop is told the preview's shape", () {
-      // The still photograph need not be the same shape as the preview, and on
-      // this phone it is not. Without this the crop lands somewhere other than
-      // where the brackets were.
+    test("the crop is never taken against the preview", () {
+      // The reason this screen now asks the user to place the rectangle. On the
+      // S23 Ultra the preview and the still are both 1280x720, but the sensor
+      // fetch window is 4000x3000 and the multi-lens pipeline gives the still a
+      // wider field of view — so a rectangle drawn on the preview named a
+      // different part of the photograph, and nothing reachable from Dart can
+      // measure the difference. The crop is now placed on the photo itself.
       final dart = File("lib/core/security/vault_image_service.dart")
           .readAsStringSync();
       final screen = File("lib/core/widgets/guided_camera_screen.dart")
           .readAsStringSync();
       final kotlin =
-          File("android/app/src/main/kotlin/com/karde/app/MainActivity.kt")
+          File("android/app/src/main/kotlin/com/karde/app/ImageCapture.kt")
               .readAsStringSync();
 
-      expect(dart.contains("'previewAspect': previewAspect"), isTrue);
-      expect(screen.contains("previewAspect: _previewAspect"), isTrue);
-      expect(kotlin.contains('call.argument<Double>("previewAspect")'), isTrue,
-          reason: "the native side reads it with !!, so a missing argument "
-              "would crash at the shutter rather than misplace the crop");
+      // The live preview still measures its aiming guide against the preview's
+      // own shape, which is right — it is drawn on the preview. What must never
+      // happen again is that number reaching the crop.
+      for (final source in [dart, kotlin]) {
+        expect(source.contains("previewAspect"), isFalse,
+            reason: "the preview cannot describe a region of the still");
+      }
+      expect(screen.contains("previewAspect: "), isFalse,
+          reason: "it must not be handed to cropCapture");
+
+      expect(screen.contains("prepareCapture"), isTrue,
+          reason: "the whole photo has to be shown before anything is cut");
+      expect(screen.contains("left: _crop.left"), isTrue,
+          reason: "the crop must come from the rectangle the user placed");
+    });
+
+    test("a rejected capture is deleted, not left in the cache", () {
+      // It is a full-resolution photograph of somebody's passport.
+      final screen = File("lib/core/widgets/guided_camera_screen.dart")
+          .readAsStringSync();
+      expect(screen.contains("discardCapture"), isTrue);
+    });
+
+    test("the crop rectangle cannot be turned inside out or lost", () {
+      const crop = Rect.fromLTWH(0.2, 0.2, 0.5, 0.5);
+
+      // Dragged far past the opposite edge, a corner stops at the minimum size
+      // rather than crossing over and inverting the rectangle.
+      final squashed = CropCorner.bottomRight.resize(crop, const Offset(-9, -9), 0.12);
+      expect(squashed.width, closeTo(0.12, 0.001));
+      expect(squashed.height, closeTo(0.12, 0.001));
+      expect(squashed.left, crop.left, reason: "the held corner stays put");
+
+      // And it can never be dragged outside the photograph.
+      final shoved = CropCorner.topLeft.resize(crop, const Offset(-9, -9), 0.12);
+      expect(shoved.left, 0.0);
+      expect(shoved.top, 0.0);
     });
 
     test("a bounds-only decode never null-checks through ?.use", () {

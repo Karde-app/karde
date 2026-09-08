@@ -5,7 +5,6 @@ import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.Matrix
-import android.graphics.Rect
 import android.media.ExifInterface
 import android.net.Uri
 import android.os.Handler
@@ -202,16 +201,55 @@ class ImageCapture(private val activity: Activity) {
     }
 
     /**
+     * Turns the file Karde's own camera just wrote into the picture the user
+     * will actually look at: upright, downscaled, and stripped of every EXIF
+     * tag including the GPS coordinates.
+     *
+     * The file is left on disk. What comes back is only for display — the user
+     * still has to place the crop rectangle and confirm, and [cropCapture] then
+     * works from the original so the kept part is as sharp as the sensor made it.
+     */
+    fun prepareCapture(path: String, result: MethodChannel.Result) {
+        val main = Handler(Looper.getMainLooper())
+        Thread {
+            try {
+                val jpeg = loadScaledJpeg(Uri.fromFile(File(path)))
+                main.post { result.success(jpeg) }
+            } catch (e: OutOfMemoryError) {
+                Log.w(TAG, "Capture too large to decode", e)
+                main.post {
+                    result.error("IMAGE_TOO_LARGE", "That photo is too large to add", null)
+                }
+            } catch (e: Exception) {
+                Log.w(TAG, "Could not prepare the capture", e)
+                main.post {
+                    result.error("IMAGE_UNREADABLE", "That photo could not be read", null)
+                }
+            }
+        }.start()
+    }
+
+    /** Removes a capture the user rejected without ever cropping it. */
+    fun discardCapture(path: String, result: MethodChannel.Result) {
+        runCatching { File(path).delete() }
+        result.success(null)
+    }
+
+    /**
      * Takes the photo Karde's own camera screen just captured and keeps the part
      * the user framed.
      *
-     * The rectangle arrives as fractions rather than pixels, because the screen
-     * that drew it knows where it put it and this does not. They are fractions of
-     * the **preview**, though, and a phone is under no obligation to photograph
-     * in the shape it previews — 16:9 on screen and a 4:3 still is ordinary. So
-     * [previewAspect] comes with them and the preview's own region of the photo
-     * is worked out first; the fractions are then applied inside that. When the
-     * two shapes agree, which is the common case, this reduces to the identity.
+     * The rectangle arrives as fractions of the finished, upright photograph —
+     * the same picture [prepareCapture] handed back and the user then dragged a
+     * rectangle over. That is the only mapping that can be trusted.
+     *
+     * An earlier version took fractions of the camera *preview* instead, on the
+     * assumption that a phone photographs what it previews. The S23 Ultra does
+     * not: preview and still are both 1280x720, but the sensor fetch window is
+     * 4000x3000 and its multi-lens pipeline gives the still a wider field of
+     * view, so a rectangle drawn on the preview named a different part of the
+     * photo. Nothing visible from Dart can measure that difference, which is why
+     * the framing is now confirmed against the photograph itself.
      *
      * Order matters and is not the same as [loadScaledJpeg]'s. The rotation is
      * baked in **first**, because the fractions describe the upright picture the
@@ -227,7 +265,6 @@ class ImageCapture(private val activity: Activity) {
         top: Double,
         width: Double,
         height: Double,
-        previewAspect: Double,
         result: MethodChannel.Result,
     ) {
         // Off the main thread, like readAsync and for the same reason: decoding
@@ -235,7 +272,7 @@ class ImageCapture(private val activity: Activity) {
         // between frames, and doing it here would freeze the shutter button for
         // as long as it took.
         val main = Handler(Looper.getMainLooper())
-        Thread { cropCaptureBlocking(path, left, top, width, height, previewAspect, main, result) }
+        Thread { cropCaptureBlocking(path, left, top, width, height, main, result) }
             .start()
     }
 
@@ -245,7 +282,6 @@ class ImageCapture(private val activity: Activity) {
         top: Double,
         width: Double,
         height: Double,
-        previewAspect: Double,
         main: Handler,
         result: MethodChannel.Result,
     ) {
@@ -281,18 +317,12 @@ class ImageCapture(private val activity: Activity) {
             try {
                 bitmap = applyExifRotation(uri, bitmap)
 
-                // What the preview showed, in this photo's pixels. The preview
-                // fills its box, so whichever edge is relatively longer here is
-                // the one that ran off the sides of the screen and was never
-                // visible; the crop must not reach into it.
-                val shown = visibleRegion(bitmap.width, bitmap.height, previewAspect)
-
-                val x = (shown.left + left * shown.width())
-                    .toInt().coerceIn(0, bitmap.width - 1)
-                val y = (shown.top + top * shown.height())
-                    .toInt().coerceIn(0, bitmap.height - 1)
-                val w = (width * shown.width()).toInt().coerceIn(1, bitmap.width - x)
-                val h = (height * shown.height()).toInt().coerceIn(1, bitmap.height - y)
+                // Fractions of the whole upright photograph. The user drew this
+                // rectangle on that very picture, so there is nothing to reconcile.
+                val x = (left * bitmap.width).toInt().coerceIn(0, bitmap.width - 1)
+                val y = (top * bitmap.height).toInt().coerceIn(0, bitmap.height - 1)
+                val w = (width * bitmap.width).toInt().coerceIn(1, bitmap.width - x)
+                val h = (height * bitmap.height).toInt().coerceIn(1, bitmap.height - y)
 
                 val cropped = Bitmap.createBitmap(bitmap, x, y, w, h)
                 if (cropped != bitmap) {
@@ -318,45 +348,6 @@ class ImageCapture(private val activity: Activity) {
             }
         } finally {
             runCatching { file.delete() }
-        }
-    }
-
-    /**
-     * The part of an upright photograph that the camera preview was showing.
-     *
-     * The preview fills its box on screen, so when the still is a different shape
-     * from the preview one pair of edges falls outside what the user could see.
-     * A guide drawn on the preview describes a fraction of the *visible* picture,
-     * not of the whole file, and applying it to the whole file would slide the
-     * crop away from whatever was lined up inside the brackets.
-     *
-     * [previewAspect] arrives the way the camera reports it — the sensor's long
-     * edge over its short one — while the picture here is upright, so it is
-     * inverted before use.
-     *
-     * Both dimensions are in pixels of the already-rotated bitmap.
-     */
-    internal fun visibleRegion(imageWidth: Int, imageHeight: Int, previewAspect: Double): Rect {
-        val whole = Rect(0, 0, imageWidth, imageHeight)
-        if (imageWidth <= 0 || imageHeight <= 0 || previewAspect <= 0) return whole
-
-        val wanted = 1.0 / previewAspect
-        val actual = imageWidth.toDouble() / imageHeight
-
-        // A hair either way is rounding, not a different shape, and trimming for
-        // it would only cost pixels.
-        if (kotlin.math.abs(actual - wanted) < 0.01) return whole
-
-        return if (actual > wanted) {
-            // The photo is wider than the preview: its sides were off-screen.
-            val w = (imageHeight * wanted).toInt().coerceIn(1, imageWidth)
-            val inset = (imageWidth - w) / 2
-            Rect(inset, 0, inset + w, imageHeight)
-        } else {
-            // Taller than the preview: top and bottom were off-screen.
-            val h = (imageWidth / wanted).toInt().coerceIn(1, imageHeight)
-            val inset = (imageHeight - h) / 2
-            Rect(0, inset, imageWidth, inset + h)
         }
     }
 

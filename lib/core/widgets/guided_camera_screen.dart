@@ -89,8 +89,37 @@ class _GuidedCameraScreenState extends State<GuidedCameraScreen>
 
   bool _busy = false;
 
-  /// The captured photo, cropped and ready, waiting to be accepted or rejected.
+  /// The captured photo, whole, waiting for the user to frame and accept it.
   Uint8List? _pending;
+
+  /// Where the camera plugin left the full-resolution original. The final crop
+  /// is taken from that rather than from [_pending], so the kept part stays as
+  /// sharp as the sensor made it.
+  String? _shotPath;
+
+  /// Width over height of [_pending], needed to lay the photo out at its own
+  /// shape so the crop rectangle's fractions mean what they say.
+  double _photoAspect = 3 / 4;
+
+  /// The crop, as fractions of the photo.
+  Rect _crop = const Rect.fromLTWH(0.07, 0.3, 0.86, 0.4);
+
+  /// Which corner is being dragged, if any. Null while the whole rectangle is
+  /// being moved instead.
+  CropCorner? _dragging;
+
+  /// A rectangle to start from: card-shaped, centred, most of the width. It is
+  /// only a starting point — the whole purpose of this screen is that the user
+  /// can move it.
+  static Rect _defaultCrop(double photoAspect) {
+    const width = GuidedCameraScreen.guideWidthFraction;
+    // Same reasoning as the preview guide: the two fractions are measured
+    // against different edges, so the height is divided by the photo's shape.
+    final height =
+        (width * photoAspect / GuidedCameraScreen.cardAspectRatio)
+            .clamp(0.05, 0.95);
+    return Rect.fromLTWH((1 - width) / 2, (1 - height) / 2, width, height);
+  }
 
   final _images = VaultImageService();
 
@@ -181,20 +210,20 @@ class _GuidedCameraScreenState extends State<GuidedCameraScreen>
     setState(() => _busy = true);
     try {
       final shot = await controller.takePicture();
-      final guide = _guide;
-      final bytes = await _images.cropCapture(
-        path: shot.path,
-        left: guide.left,
-        top: guide.top,
-        width: guide.width,
-        height: guide.height,
-        // The fractions above are of the *preview*, and the still photograph is
-        // not obliged to be the same shape as it — many sensors preview 16:9 and
-        // photograph 4:3. Sent along so the crop can find the part of the photo
-        // the preview was actually showing instead of assuming they match.
-        previewAspect: _previewAspect,
-      );
-      if (mounted) setState(() => _pending = bytes);
+      // Shown whole, and cropped only once the user has placed the rectangle on
+      // the photograph itself. The guide on the preview cannot be trusted to
+      // name a part of the still: on the S23 Ultra the two have different fields
+      // of view, and nothing visible from here can measure the difference.
+      final bytes = await _images.prepareCapture(shot.path);
+      final size = await decodeImageFromList(bytes);
+      if (!mounted) return;
+      setState(() {
+        _shotPath = shot.path;
+        _pending = bytes;
+        _photoAspect = size.width / size.height;
+        _crop = _defaultCrop(_photoAspect);
+      });
+      size.dispose();
     } catch (_) {
       if (mounted) {
         final loc = AppLocalizations.of(context)!;
@@ -334,25 +363,123 @@ class _GuidedCameraScreenState extends State<GuidedCameraScreen>
     );
   }
 
+  /// Smallest the crop may be shrunk to, as a fraction of each edge. Small
+  /// enough to pull one field off a document, large enough that the rectangle
+  /// cannot be collapsed to nothing and lost.
+  static const double _minCrop = 0.12;
+
+  /// How close to a corner a finger has to land to be dragging that corner
+  /// rather than moving the whole rectangle. In fractions of the photo's
+  /// shorter behaviour on screen this is roughly a fingertip.
+  static const double _grab = 0.12;
+
+  void _onPanStart(Offset local, Size box) {
+    final point = Offset(local.dx / box.width, local.dy / box.height);
+    _dragging = CropCorner.nearest(_crop, point, _grab);
+  }
+
+  void _onPanUpdate(Offset delta, Size box) {
+    final move = Offset(delta.dx / box.width, delta.dy / box.height);
+    setState(() {
+      _crop = _dragging == null
+          ? _shift(_crop, move)
+          : _dragging!.resize(_crop, move, _minCrop);
+    });
+  }
+
+  /// Moves the whole rectangle, kept inside the photo. Clamped rather than
+  /// stopped, so dragging past an edge slides along it instead of sticking.
+  static Rect _shift(Rect crop, Offset by) {
+    final left = (crop.left + by.dx).clamp(0.0, 1 - crop.width);
+    final top = (crop.top + by.dy).clamp(0.0, 1 - crop.height);
+    return Rect.fromLTWH(left, top, crop.width, crop.height);
+  }
+
+  Future<void> _useCrop() async {
+    final path = _shotPath;
+    if (path == null || _busy) return;
+
+    setState(() => _busy = true);
+    try {
+      final bytes = await _images.cropCapture(
+        path: path,
+        left: _crop.left,
+        top: _crop.top,
+        width: _crop.width,
+        height: _crop.height,
+      );
+      if (mounted) Navigator.pop(context, bytes);
+    } catch (_) {
+      if (mounted) {
+        setState(() => _busy = false);
+        final loc = AppLocalizations.of(context)!;
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(loc.cameraCaptureFailed)),
+        );
+      }
+    }
+  }
+
+  Future<void> _retake() async {
+    final path = _shotPath;
+    setState(() {
+      _pending = null;
+      _shotPath = null;
+    });
+    if (path != null) await _images.discardCapture(path);
+  }
+
   Widget _buildConfirm(AppLocalizations loc) {
     return Column(
       children: [
         Expanded(
           child: Padding(
-            padding: const EdgeInsets.all(20),
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(14),
-              child: Image.memory(_pending!, fit: BoxFit.contain),
+            padding: const EdgeInsets.all(16),
+            child: Center(
+              child: AspectRatio(
+                // The photo is laid out at its own shape, which is what makes
+                // the rectangle's fractions exact: what is inside it on screen
+                // is the same fraction of the file.
+                aspectRatio: _photoAspect,
+                child: LayoutBuilder(
+                  builder: (context, constraints) {
+                    final box = constraints.biggest;
+                    return GestureDetector(
+                      onPanStart: (d) => _onPanStart(d.localPosition, box),
+                      onPanUpdate: (d) => _onPanUpdate(d.delta, box),
+                      onPanEnd: (_) => _dragging = null,
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(10),
+                        child: Stack(
+                          fit: StackFit.expand,
+                          children: [
+                            Image.memory(_pending!, fit: BoxFit.fill),
+                            CustomPaint(painter: _CropPainter(_crop)),
+                          ],
+                        ),
+                      ),
+                    );
+                  },
+                ),
+              ),
             ),
           ),
         ),
         Padding(
-          padding: const EdgeInsets.fromLTRB(24, 0, 24, 28),
+          padding: const EdgeInsets.symmetric(horizontal: 24),
+          child: Text(
+            loc.cameraCropHint,
+            textAlign: TextAlign.center,
+            style: const TextStyle(color: Colors.white70, fontSize: 13),
+          ),
+        ),
+        Padding(
+          padding: const EdgeInsets.fromLTRB(24, 16, 24, 28),
           child: Row(
             children: [
               Expanded(
                 child: OutlinedButton(
-                  onPressed: () => setState(() => _pending = null),
+                  onPressed: _busy ? null : _retake,
                   style: OutlinedButton.styleFrom(
                     foregroundColor: Colors.white,
                     side: const BorderSide(color: Colors.white38),
@@ -364,7 +491,7 @@ class _GuidedCameraScreenState extends State<GuidedCameraScreen>
               const SizedBox(width: 14),
               Expanded(
                 child: ElevatedButton(
-                  onPressed: () => Navigator.pop(context, _pending),
+                  onPressed: _busy ? null : _useCrop,
                   style: ElevatedButton.styleFrom(
                     backgroundColor: KardeColors.champagneGold,
                     foregroundColor: KardeColors.obsidian,
@@ -379,6 +506,120 @@ class _GuidedCameraScreenState extends State<GuidedCameraScreen>
       ],
     );
   }
+}
+
+/// Which corner of the crop rectangle a drag has hold of.
+///
+/// Public only so the clamping can be tested: a corner dragged past its
+/// opposite must stop at the minimum size rather than invert the rectangle.
+enum CropCorner {
+  topLeft,
+  topRight,
+  bottomLeft,
+  bottomRight;
+
+  /// The corner within [reach] of [point], or null if the finger landed in the
+  /// middle — which means the whole rectangle is being moved.
+  static CropCorner? nearest(Rect crop, Offset point, double reach) {
+    CropCorner? best;
+    var closest = reach;
+    for (final corner in CropCorner.values) {
+      final distance = (corner._at(crop) - point).distance;
+      if (distance < closest) {
+        closest = distance;
+        best = corner;
+      }
+    }
+    return best;
+  }
+
+  Offset _at(Rect crop) => switch (this) {
+        CropCorner.topLeft => crop.topLeft,
+        CropCorner.topRight => crop.topRight,
+        CropCorner.bottomLeft => crop.bottomLeft,
+        CropCorner.bottomRight => crop.bottomRight,
+      };
+
+  /// Moves this corner by [by], holding the opposite corner still and refusing
+  /// to let the rectangle turn inside out or shrink below [min].
+  Rect resize(Rect crop, Offset by, double min) {
+    var left = crop.left;
+    var top = crop.top;
+    var right = crop.right;
+    var bottom = crop.bottom;
+
+    switch (this) {
+      case CropCorner.topLeft:
+        left = (crop.left + by.dx).clamp(0.0, right - min);
+        top = (crop.top + by.dy).clamp(0.0, bottom - min);
+      case CropCorner.topRight:
+        right = (crop.right + by.dx).clamp(left + min, 1.0);
+        top = (crop.top + by.dy).clamp(0.0, bottom - min);
+      case CropCorner.bottomLeft:
+        left = (crop.left + by.dx).clamp(0.0, right - min);
+        bottom = (crop.bottom + by.dy).clamp(top + min, 1.0);
+      case CropCorner.bottomRight:
+        right = (crop.right + by.dx).clamp(left + min, 1.0);
+        bottom = (crop.bottom + by.dy).clamp(top + min, 1.0);
+    }
+    return Rect.fromLTRB(left, top, right, bottom);
+  }
+}
+
+/// Dims what the crop will throw away and marks the corners that can be pulled.
+class _CropPainter extends CustomPainter {
+  const _CropPainter(this.crop);
+
+  final Rect crop;
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final rect = Rect.fromLTRB(
+      crop.left * size.width,
+      crop.top * size.height,
+      crop.right * size.width,
+      crop.bottom * size.height,
+    );
+
+    canvas.drawPath(
+      Path.combine(
+        PathOperation.difference,
+        Path()..addRect(Offset.zero & size),
+        Path()..addRect(rect),
+      ),
+      Paint()..color = Colors.black.withValues(alpha: 0.62),
+    );
+
+    canvas.drawRect(
+      rect,
+      Paint()
+        ..color = KardeColors.champagneGold.withValues(alpha: 0.9)
+        ..strokeWidth = 1.5
+        ..style = PaintingStyle.stroke,
+    );
+
+    // Solid discs, not brackets. On the preview the brackets were a guide to
+    // aim at; here they are something to put a finger on, and they have to look
+    // like it.
+    final handle = Paint()..color = KardeColors.champagneGold;
+    final ring = Paint()
+      ..color = KardeColors.obsidian
+      ..strokeWidth = 2
+      ..style = PaintingStyle.stroke;
+
+    for (final at in [
+      rect.topLeft,
+      rect.topRight,
+      rect.bottomLeft,
+      rect.bottomRight,
+    ]) {
+      canvas.drawCircle(at, 11, handle);
+      canvas.drawCircle(at, 11, ring);
+    }
+  }
+
+  @override
+  bool shouldRepaint(_CropPainter oldDelegate) => oldDelegate.crop != crop;
 }
 
 /// Dims everything outside the guide and draws its corners.

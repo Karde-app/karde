@@ -58,19 +58,48 @@ class VaultImageService {
   /// costs the guide rectangle and nothing else.
   Future<Uint8List?> captureWithCamera() => _source('captureImage');
 
-  /// Keeps the framed part of a photo Karde's own camera screen just took.
+  /// Turns the file Karde's own camera just wrote into the picture to show the
+  /// user: upright, downscaled and stripped of EXIF, including the GPS
+  /// coordinates a phone writes into a photo, which on an ID document would
+  /// record where its owner lives.
   ///
-  /// The rectangle is given as fractions of the picture, not pixels. Comes back
-  /// downscaled, re-compressed and stripped of EXIF like everything else here —
-  /// including the GPS coordinates a phone writes into a photo, which on a
-  /// picture of an ID document would record where its owner lives.
+  /// The file stays on disk until [cropCapture] or [discardCapture] deals with
+  /// it, so the final crop can be taken from the full-resolution original.
+  Future<Uint8List> prepareCapture(String path) async {
+    try {
+      final bytes = await _pickerChannel
+          .invokeMethod<Uint8List>('prepareCapture', {'path': path});
+      if (bytes == null) {
+        throw const VaultImageUnreadable(VaultImageProblem.unreadable);
+      }
+      return bytes;
+    } on PlatformException {
+      throw const VaultImageUnreadable(VaultImageProblem.unreadable);
+    }
+  }
+
+  /// Deletes a capture the user rejected. A full-resolution photograph of
+  /// somebody's passport must not be left sitting in the cache.
+  Future<void> discardCapture(String path) async {
+    try {
+      await _pickerChannel.invokeMethod<void>('discardCapture', {'path': path});
+    } on PlatformException {
+      // Nothing useful to say: the file is either gone or was never there.
+    }
+  }
+
+  /// Keeps the part of the photo the user drew a rectangle around.
+  ///
+  /// The rectangle is given as fractions of the **finished, upright photograph**
+  /// — the one [prepareCapture] returned and the user then framed by hand — not
+  /// of the camera preview. Comes back downscaled, re-compressed and stripped of
+  /// EXIF like everything else here.
   Future<Uint8List> cropCapture({
     required String path,
     required double left,
     required double top,
     required double width,
     required double height,
-    required double previewAspect,
   }) async {
     try {
       final bytes = await _pickerChannel.invokeMethod<Uint8List>('cropCapture', {
@@ -79,7 +108,6 @@ class VaultImageService {
         'top': top,
         'width': width,
         'height': height,
-        'previewAspect': previewAspect,
       });
       if (bytes == null) {
         throw const VaultImageUnreadable(VaultImageProblem.unreadable);

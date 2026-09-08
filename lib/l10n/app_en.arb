@@ -721,6 +721,7 @@
   "@activityDocumentRemoved": { "placeholders": { "name": { "type": "String" } } },
   "cameraTitle": "Take a photo",
   "cameraGuideHint": "Line the card or document up inside the frame",
+  "cameraCropHint": "Drag the corners to choose what to keep",
   "cameraRetake": "Retake",
   "cameraUsePhoto": "Use this photo",
   "cameraCaptureFailed": "That photo could not be taken. Please try again.",
