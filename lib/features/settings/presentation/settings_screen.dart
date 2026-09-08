@@ -10,6 +10,7 @@ import '../../../theme/theme.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../../core/security/authentication_service.dart';
 import '../../../core/security/encryption_service.dart';
+import '../../../core/security/window_security_service.dart';
 import '../../../core/widgets/karde_confirm_dialog.dart';
 import '../../onboarding/presentation/pin_setup_screen.dart';
 import '../../onboarding/presentation/language_screen.dart';
@@ -109,7 +110,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                 // o'clock. Silence here was how a reminder was missed on a real
                 // phone with no explanation.
                 if (ref.watch(expiryRemindersProvider) &&
-                    ref.watch(exactAlarmsAllowedProvider).valueOrNull == false)
+                    ref.watch(remindersCanArriveProvider).valueOrNull == false)
                   _buildLateRemindersNotice(context, loc),
               ],
             ),
@@ -418,7 +419,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
     // reminders, because that is the one moment the request explains itself.
     // Refusing costs punctuality and nothing else.
     await ExpiryNotifications.instance.requestExactAlarms();
-    ref.invalidate(exactAlarmsAllowedProvider);
+    ref.invalidate(remindersCanArriveProvider);
   }
 
   /// One line, and only when reminders are on but the phone will not let them be
@@ -432,8 +433,16 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
     final theme = Theme.of(context);
     return InkWell(
       onTap: () async {
-        await ExpiryNotifications.instance.requestExactAlarms();
-        ref.invalidate(exactAlarmsAllowedProvider);
+        // Two different things can hold a reminder back, and they are fixed on
+        // two different system screens. Ask about the punctuality one first,
+        // because it is the one Karde can raise directly; the battery list has
+        // to be found by hand.
+        if (!await ExpiryNotifications.instance.canBeExact()) {
+          await ExpiryNotifications.instance.requestExactAlarms();
+        } else {
+          await WindowSecurityService.openBatterySettings();
+        }
+        ref.invalidate(remindersCanArriveProvider);
       },
       child: Padding(
         padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),

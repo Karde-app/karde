@@ -6,15 +6,31 @@ import 'package:timezone/data/latest_all.dart' as tz_data;
 import 'package:timezone/timezone.dart' as tz;
 
 import '../security/system_interaction_guard.dart';
+import '../security/window_security_service.dart';
 import '../utils/expiry.dart';
 
-/// Whether the phone will let Karde put a reminder at a particular minute.
+/// Whether this phone will actually deliver Karde's reminders.
 ///
-/// Watched by Settings so it can say something when the answer is no. It is
-/// autoDispose and therefore asked again on each visit, because the user may
+/// Two separate things have to be true, and either one failing means a reminder
+/// set for nine o'clock does not arrive at nine o'clock:
+///
+/// * the phone must allow an alarm at a particular minute, and
+/// * it must be willing to wake Karde when that alarm fires.
+///
+/// The second is the one that cost this feature a fortnight. On a Galaxy S23 the
+/// alarm fired exactly on time, the phone woke for it, and Samsung's power
+/// manager never started the app to handle it. Nothing in Karde was wrong and
+/// nothing anywhere said so. The reminder appeared within seconds of the app
+/// being exempted from battery optimisation.
+///
+/// autoDispose, so it is asked again on each visit to Settings — the user may
 /// have gone to the system screen and changed it since.
-final exactAlarmsAllowedProvider = FutureProvider.autoDispose<bool>(
-  (ref) => ExpiryNotifications.instance.canBeExact(),
+final remindersCanArriveProvider = FutureProvider.autoDispose<bool>(
+  (ref) async {
+    final punctual = await ExpiryNotifications.instance.canBeExact();
+    if (!punctual) return false;
+    return WindowSecurityService.isBatteryUnrestricted();
+  },
 );
 
 /// One thing that runs out, reduced to the two facts a reminder needs.

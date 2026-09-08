@@ -1,6 +1,8 @@
 package com.karde.app
 
 import android.content.Intent
+import android.os.PowerManager
+import android.provider.Settings
 import android.os.Build
 import android.os.Handler
 import android.os.Looper
@@ -137,6 +139,37 @@ class MainActivity : FlutterFragmentActivity() {
                     "unsecure" -> {
                         window.clearFlags(WindowManager.LayoutParams.FLAG_SECURE)
                         result.success(null)
+                    }
+                    // Whether this phone will let Karde run when it is not on
+                    // screen. On a Galaxy S23 the answer was no, and it cost the
+                    // whole reminder feature: the alarm fired exactly on time,
+                    // the phone woke for it, and Samsung's power manager simply
+                    // never started the app to handle the broadcast. The
+                    // notification appeared the instant the app was exempted —
+                    // three minutes late, and only because of the exemption.
+                    //
+                    // Karde cannot fix this for the user. It can stop pretending
+                    // reminders work when they do not.
+                    "batteryUnrestricted" -> {
+                        val power = getSystemService(POWER_SERVICE) as PowerManager
+                        result.success(power.isIgnoringBatteryOptimizations(packageName))
+                    }
+                    // Opens the system's own battery-optimisation list.
+                    //
+                    // Deliberately the list, not the one-tap "allow this app"
+                    // dialog. That dialog needs REQUEST_IGNORE_BATTERY_OPTIMIZATIONS,
+                    // which Google restricts to a short list of app categories and
+                    // which a vault is not on; asking for it would risk the
+                    // listing. This screen needs no permission at all.
+                    "openBatterySettings" -> {
+                        result.success(
+                            runCatching {
+                                startActivity(
+                                    Intent(Settings.ACTION_IGNORE_BATTERY_OPTIMIZATION_SETTINGS)
+                                )
+                                true
+                            }.getOrDefault(false)
+                        )
                     }
                     else -> result.notImplemented()
                 }

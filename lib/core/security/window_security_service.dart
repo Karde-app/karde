@@ -1,6 +1,8 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 
+import 'system_interaction_guard.dart';
+
 class WindowSecurityService {
   static const MethodChannel _channel = MethodChannel('com.ibank.security/window');
 
@@ -81,4 +83,40 @@ class WindowSecurityService {
   /// Surfaced so the UI can warn the user that the vault is not protected.
   static bool get lastSecureModeFailed => _lastSecureModeFailed;
   static bool _lastSecureModeFailed = false;
+
+  /// Whether this phone will let Karde run when it is not on the screen.
+  ///
+  /// Nothing to do with windows, and it lives here only because this is the
+  /// channel that already reaches the activity. It answers the question that
+  /// broke expiry reminders: the alarm fired exactly on time, the phone woke for
+  /// it, and Samsung's power manager never started the app to handle it. The
+  /// reminder appeared within seconds of the app being exempted.
+  ///
+  /// Assumed unrestricted when the answer cannot be had, so a phone that does
+  /// not understand the question is never accused of holding reminders back.
+  static Future<bool> isBatteryUnrestricted() async {
+    try {
+      return await _channel.invokeMethod<bool>('batteryUnrestricted') ?? true;
+    } on PlatformException {
+      return true;
+    } on MissingPluginException {
+      return true;
+    }
+  }
+
+  /// Opens the system's own battery-optimisation list.
+  ///
+  /// The list, not the one-tap "allow this app" dialog: that dialog needs
+  /// `REQUEST_IGNORE_BATTERY_OPTIMIZATIONS`, which Google restricts to a short
+  /// list of app categories a vault is not on, and asking for it would put the
+  /// listing at risk. This screen needs no permission at all.
+  static Future<void> openBatterySettings() async {
+    try {
+      await SystemInteractionGuard.run(
+        () async => _channel.invokeMethod<bool>('openBatterySettings'),
+      );
+    } catch (_) {
+      // A phone that will not open the screen is not worth an error message.
+    }
+  }
 }

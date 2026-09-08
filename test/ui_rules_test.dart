@@ -1645,8 +1645,11 @@ void main() {
       final notifications =
           File("lib/core/notifications/expiry_notifications.dart")
               .readAsStringSync();
-      expect(notifications.contains("exactAlarmsAllowedProvider"), isTrue);
+      expect(notifications.contains("remindersCanArriveProvider"), isTrue);
       expect(notifications.contains("Future<bool> canBeExact()"), isTrue);
+      expect(notifications.contains("isBatteryUnrestricted()"), isTrue,
+          reason: "a phone that will not wake the app is the other way a "
+              "reminder silently fails, and the one that actually bit");
     });
 
     test("and says something when the answer is no", () {
@@ -1656,7 +1659,7 @@ void main() {
               .where((l) => !l.trimLeft().startsWith("//"))
               .join("\n");
 
-      expect(settings.contains("exactAlarmsAllowedProvider"), isTrue);
+      expect(settings.contains("remindersCanArriveProvider"), isTrue);
       expect(settings.contains("settingsRemindersMayBeLate"), isTrue);
       expect(settings.contains("requestExactAlarms()"), isTrue,
           reason: "saying it is late is no use without a way to fix it");
@@ -1688,6 +1691,69 @@ void main() {
         expect(text, isNot(contains(jargon)),
             reason: "the user needs the consequence, not the mechanism");
       }
+    });
+  });
+
+  group("A phone that will not wake Karde must be named", () {
+    // The bug that cost this feature weeks. On a Galaxy S23 the alarm fired
+    // exactly on time, the phone woke for it, and Samsung's power manager never
+    // started the app to handle the broadcast. Nothing in Karde was wrong.
+    // Nothing anywhere said so. The reminder appeared within seconds of the app
+    // being exempted from battery optimisation.
+    test("Karde can ask whether the phone will let it run in the background", () {
+      final service = File("lib/core/security/window_security_service.dart")
+          .readAsStringSync();
+      expect(service.contains("isBatteryUnrestricted"), isTrue);
+      expect(service.contains("openBatterySettings"), isTrue,
+          reason: "naming the problem without a way to it is only half of it");
+    });
+
+    test("an unanswerable question never accuses the phone", () {
+      // A device that does not understand the question must not be reported as
+      // holding reminders back.
+      final service = File("lib/core/security/window_security_service.dart")
+          .readAsLinesSync()
+          .where((l) => !l.trimLeft().startsWith("//"))
+          .where((l) => !l.trimLeft().startsWith("///"))
+          .join("\n");
+      expect(
+        RegExp(r"invokeMethod<bool>\('batteryUnrestricted'\) \?\? true")
+            .hasMatch(service),
+        isTrue,
+        reason: "the safe default is to assume nothing is wrong",
+      );
+    });
+
+    test("Karde does not ask for the restricted battery permission", () {
+      // REQUEST_IGNORE_BATTERY_OPTIMIZATIONS opens a one-tap dialog, but Google
+      // reserves it for a short list of app categories a vault is not on.
+      // Sending the user to the system list needs no permission at all.
+      final manifest =
+          File("android/app/src/main/AndroidManifest.xml").readAsStringSync();
+      expect(
+        manifest.contains("REQUEST_IGNORE_BATTERY_OPTIMIZATIONS"),
+        isFalse,
+        reason: "asking for it would put the Play listing at risk",
+      );
+
+      final activity =
+          File("android/app/src/main/kotlin/com/karde/app/MainActivity.kt")
+              .readAsStringSync();
+      expect(
+        activity.contains("ACTION_IGNORE_BATTERY_OPTIMIZATION_SETTINGS"),
+        isTrue,
+        reason: "the unrestricted list screen is the one that needs nothing",
+      );
+    });
+
+    test("both causes are checked before Settings stays quiet", () {
+      final notifications =
+          File("lib/core/notifications/expiry_notifications.dart")
+              .readAsLinesSync()
+              .where((l) => !l.trimLeft().startsWith("///"))
+              .join("\n");
+      expect(notifications.contains("canBeExact()"), isTrue);
+      expect(notifications.contains("isBatteryUnrestricted()"), isTrue);
     });
   });
 }
