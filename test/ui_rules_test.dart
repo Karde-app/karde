@@ -1547,4 +1547,52 @@ void main() {
       expect(settings.contains("requestExactAlarms()"), isTrue);
     });
   });
+
+  group("A reminder is one line, not three", () {
+    // There used to be a title above the sentence — "Something in Karde is
+    // running out". The user cut it: the notification header already reads
+    // "Karde", so a glance at the lock screen cost three lines to learn one
+    // thing the sentence said on its own.
+    test("reminders are scheduled without a title", () {
+      final source = File("lib/core/notifications/expiry_notifications.dart")
+          .readAsLinesSync()
+          .where((l) => !l.trimLeft().startsWith("//"))
+          .where((l) => !l.trimLeft().startsWith("///"))
+          .join("\n");
+
+      expect(
+        RegExp(r"zonedSchedule\(\s*id,\s*null,").hasMatch(source),
+        isTrue,
+        reason: "the title slot must stay empty",
+      );
+      expect(source.contains("expiringTitle"), isFalse);
+      expect(source.contains("expiredTitle"), isFalse);
+    });
+
+    test("and the strings behind it are gone from every language", () {
+      for (final locale in ["en", "fr", "ar"]) {
+        final arb = jsonDecode(File("lib/l10n/app_$locale.arb").readAsStringSync())
+            as Map<String, dynamic>;
+        expect(arb.containsKey("notifyExpiringTitle"), isFalse,
+            reason: "$locale still carries the removed title");
+        expect(arb.containsKey("notifyExpiredTitle"), isFalse,
+            reason: "$locale still carries the removed title");
+
+        // The sentence itself is the whole notification, so it has to survive.
+        expect(arb.containsKey("notifyExpiringBody"), isTrue);
+        expect(arb.containsKey("notifyExpiredBody"), isTrue);
+      }
+    });
+
+    test("the sentence still names nothing", () {
+      // The reason the count exists at all: this lands on a lock screen.
+      final en = jsonDecode(File("lib/l10n/app_en.arb").readAsStringSync())
+          as Map<String, dynamic>;
+      for (final key in ["notifyExpiringBody", "notifyExpiredBody"]) {
+        final text = en[key].toString();
+        expect(text, contains("{count}"));
+        expect(text, contains("Open Karde to see which."));
+      }
+    });
+  });
 }

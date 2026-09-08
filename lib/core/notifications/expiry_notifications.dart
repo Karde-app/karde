@@ -125,9 +125,7 @@ class ExpiryNotifications {
     required bool enabled,
     required List<ExpiringThing> cards,
     required List<ExpiringThing> documents,
-    required String expiringTitle,
     required String Function(int count) expiringBody,
-    required String expiredTitle,
     required String Function(int count) expiredBody,
   }) async {
     try {
@@ -185,11 +183,11 @@ class ExpiryNotifications {
         final soon = soonByDay[day] ?? 0;
 
         if (expired > 0) {
-          await _schedule(id++, day, expiredTitle, expiredBody(expired));
+          await _schedule(id++, day, expiredBody(expired));
           scheduled++;
         }
         if (soon > 0 && scheduled < _maxScheduled) {
-          await _schedule(id++, day, expiringTitle, expiringBody(soon));
+          await _schedule(id++, day, expiringBody(soon));
           scheduled++;
         }
       }
@@ -256,15 +254,21 @@ class ExpiryNotifications {
     }
   }
 
+  /// One line and no title.
+  ///
+  /// There used to be a title — "Something in Karde is running out" — above the
+  /// sentence. It said nothing the sentence did not, on top of a header that
+  /// already reads "Karde", so a glance at the lock screen cost three lines to
+  /// learn one thing. Android is happy with a null title and simply shows the
+  /// text under the app's own name.
   Future<void> _schedule(
     int id,
     DateTime day,
-    String title,
     String body,
   ) {
     return _plugin.zonedSchedule(
       id,
-      title,
+      null,
       body,
       tz.TZDateTime(tz.local, day.year, day.month, day.day, _hour),
       const NotificationDetails(

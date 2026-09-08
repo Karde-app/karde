@@ -82,9 +82,7 @@ class _ExpiryScheduleKeeperState extends ConsumerState<ExpiryScheduleKeeper> {
           enabled: enabled,
           cards: things,
           documents: documents,
-          expiringTitle: loc.notifyExpiringTitle,
           expiringBody: loc.notifyExpiringBody,
-          expiredTitle: loc.notifyExpiredTitle,
           expiredBody: loc.notifyExpiredBody,
         );
       }

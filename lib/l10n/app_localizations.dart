@@ -3256,23 +3256,11 @@ abstract class AppLocalizations {
   /// **'Tell me before a card or document runs out'**
   String get settingsExpiryRemindersDesc;
 
-  /// No description provided for @notifyExpiringTitle.
-  ///
-  /// In en, this message translates to:
-  /// **'Something in Karde is running out'**
-  String get notifyExpiringTitle;
-
   /// No description provided for @notifyExpiringBody.
   ///
   /// In en, this message translates to:
   /// **'{count, plural, =1{1 card or document expires soon. Open Karde to see which.} other{{count} cards or documents expire soon. Open Karde to see which.}}'**
   String notifyExpiringBody(int count);
-
-  /// No description provided for @notifyExpiredTitle.
-  ///
-  /// In en, this message translates to:
-  /// **'Something in Karde has expired'**
-  String get notifyExpiredTitle;
 
   /// No description provided for @notifyExpiredBody.
   ///

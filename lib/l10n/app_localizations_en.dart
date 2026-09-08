@@ -1844,9 +1844,6 @@ class AppLocalizationsEn extends AppLocalizations {
       'Tell me before a card or document runs out';
 
   @override
-  String get notifyExpiringTitle => 'Something in Karde is running out';
-
-  @override
   String notifyExpiringBody(int count) {
     String _temp0 = intl.Intl.pluralLogic(
       count,
@@ -1856,9 +1853,6 @@ class AppLocalizationsEn extends AppLocalizations {
     );
     return '$_temp0';
   }
-
-  @override
-  String get notifyExpiredTitle => 'Something in Karde has expired';
 
   @override
   String notifyExpiredBody(int count) {

@@ -1847,9 +1847,6 @@ class AppLocalizationsAr extends AppLocalizations {
       'نبّهني قبل انتهاء صلاحية بطاقة أو مستند';
 
   @override
-  String get notifyExpiringTitle => 'شيء في Karde أوشك على الانتهاء';
-
-  @override
   String notifyExpiringBody(int count) {
     String _temp0 = intl.Intl.pluralLogic(
       count,
@@ -1860,9 +1857,6 @@ class AppLocalizationsAr extends AppLocalizations {
     );
     return '$_temp0';
   }
-
-  @override
-  String get notifyExpiredTitle => 'شيء في Karde انتهت صلاحيته';
 
   @override
   String notifyExpiredBody(int count) {
