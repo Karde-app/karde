@@ -87,6 +87,15 @@ class _GuidedCameraScreenState extends State<GuidedCameraScreen>
   /// needs a way out offered and the other needs a moment's patience.
   bool _unavailable = false;
 
+  /// True while a start attempt is in flight, so a lifecycle event cannot begin
+  /// a second one on top of it.
+  bool _starting = false;
+
+  /// True once the app has genuinely been to the background, as opposed to
+  /// having a dialog put in front of it. Only a real return from the background
+  /// is worth retrying the camera for.
+  bool _wasBackgrounded = false;
+
   bool _busy = false;
 
   /// The captured photo, whole, waiting for the user to frame and accept it.
@@ -153,21 +162,37 @@ class _GuidedCameraScreenState extends State<GuidedCameraScreen>
     if (state == AppLifecycleState.paused) {
       _controller?.dispose();
       _controller = null;
-    } else if (state == AppLifecycleState.resumed && _controller == null) {
-      _start();
+      _wasBackgrounded = true;
+    } else if (state == AppLifecycleState.resumed && _wasBackgrounded) {
+      // Only after a real trip to the background, which is the one case where
+      // the answer might have changed — somebody going to Settings to grant the
+      // permission and coming back.
+      //
+      // Retrying on every `resumed` made this screen strobe. A permanently
+      // refused permission still flashes Android's dialog up and away, and that
+      // is an inactive/resumed pair; each one started another attempt, each
+      // attempt failed, and the screen alternated between the spinner and "no
+      // camera access" several times a second — "like an old bulb", as it was
+      // reported. A dialog never reaches `paused`, so keying off that stops it.
+      _wasBackgrounded = false;
+      if (_controller == null) _start();
     }
   }
 
   Future<void> _start() async {
-    // Cleared on every attempt. Latching it meant one failed start — a permission
-    // dialog interrupting the first one, say — left the "no camera access" screen
-    // up for good, even after a later attempt had succeeded.
-    if (_unavailable && mounted) setState(() => _unavailable = false);
-    // Starting the camera is what raises Android's permission dialog, and that
-    // dialog takes the foreground — which the auto-lock timer cannot tell apart
-    // from the user walking away. Without this, granting the permission dropped
-    // the user on the PIN screen with a half-filled card behind it.
-    await SystemInteractionGuard.run(_startCamera);
+    // One attempt at a time. A lifecycle event arriving mid-attempt would
+    // otherwise start a second against the same camera.
+    if (_starting) return;
+    _starting = true;
+    try {
+      // Starting the camera is what raises Android's permission dialog, and that
+      // dialog takes the foreground — which the auto-lock timer cannot tell apart
+      // from the user walking away. Without this, granting the permission dropped
+      // the user on the PIN screen with a half-filled card behind it.
+      await SystemInteractionGuard.run(_startCamera);
+    } finally {
+      _starting = false;
+    }
   }
 
   Future<void> _startCamera() async {
@@ -191,7 +216,14 @@ class _GuidedCameraScreenState extends State<GuidedCameraScreen>
         controller.dispose();
         return;
       }
-      setState(() => _controller = controller);
+      // Cleared here, on success, rather than at the top of the attempt. Clearing
+      // it first meant every retry blinked back to the spinner before failing
+      // again, which is the other half of the strobing. Set once, at the end,
+      // when the answer is actually known.
+      setState(() {
+        _controller = controller;
+        _unavailable = false;
+      });
     } catch (_) {
       // Refused, or no camera. Either way this screen cannot do its job, and
       // saying so with a way out beats a black rectangle.

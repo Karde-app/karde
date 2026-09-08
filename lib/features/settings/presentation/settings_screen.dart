@@ -103,6 +103,14 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                     onChanged: _setExpiryReminders,
                   ),
                 ),
+                // Shown only when there is something to say. Reminders that have
+                // been quietly downgraded to "some time in the next hour" are
+                // worse than none, because their owner is relying on nine
+                // o'clock. Silence here was how a reminder was missed on a real
+                // phone with no explanation.
+                if (ref.watch(expiryRemindersProvider) &&
+                    ref.watch(exactAlarmsAllowedProvider).valueOrNull == false)
+                  _buildLateRemindersNotice(context, loc),
               ],
             ),
           ),
@@ -406,10 +414,52 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
 
     // And, on Android 13 and later, the separate permission that decides whether
     // a reminder may arrive at a particular minute rather than some time in the
-    // following hour. Asked here and only here, straight after the user has said
-    // they want these reminders, because that is the one moment the request
-    // explains itself. Refusing costs punctuality and nothing else.
+    // following hour. Asked straight after the user has said they want these
+    // reminders, because that is the one moment the request explains itself.
+    // Refusing costs punctuality and nothing else.
     await ExpiryNotifications.instance.requestExactAlarms();
+    ref.invalidate(exactAlarmsAllowedProvider);
+  }
+
+  /// One line, and only when reminders are on but the phone will not let them be
+  /// punctual.
+  ///
+  /// Karde used to say nothing at all in this state. A reminder set for nine
+  /// o'clock then arrived at some unpredictable point in the following hour — or
+  /// on the phone this was found on, not at all — and there was nothing anywhere
+  /// to explain why. Somebody relying on it would simply have been let down.
+  Widget _buildLateRemindersNotice(BuildContext context, AppLocalizations loc) {
+    final theme = Theme.of(context);
+    return InkWell(
+      onTap: () async {
+        await ExpiryNotifications.instance.requestExactAlarms();
+        ref.invalidate(exactAlarmsAllowedProvider);
+      },
+      child: Padding(
+        padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Icon(Icons.schedule_outlined,
+                size: 18, color: KardeColors.champagneGold),
+            const SizedBox(width: 10),
+            Expanded(
+              child: Text(
+                loc.settingsRemindersMayBeLate,
+                style: TextStyle(
+                  fontSize: 13,
+                  height: 1.45,
+                  color: theme.colorScheme.onSurface.withValues(alpha: 0.75),
+                ),
+              ),
+            ),
+            const SizedBox(width: 8),
+            const Icon(Icons.chevron_right,
+                size: 18, color: KardeColors.champagneGold),
+          ],
+        ),
+      ),
+    );
   }
 
   /// Says what Karde is already doing about backups, and where.

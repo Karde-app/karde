@@ -1,4 +1,5 @@
 import 'package:flutter/foundation.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_timezone/flutter_timezone.dart';
 import 'package:timezone/data/latest_all.dart' as tz_data;
@@ -6,6 +7,15 @@ import 'package:timezone/timezone.dart' as tz;
 
 import '../security/system_interaction_guard.dart';
 import '../utils/expiry.dart';
+
+/// Whether the phone will let Karde put a reminder at a particular minute.
+///
+/// Watched by Settings so it can say something when the answer is no. It is
+/// autoDispose and therefore asked again on each visit, because the user may
+/// have gone to the system screen and changed it since.
+final exactAlarmsAllowedProvider = FutureProvider.autoDispose<bool>(
+  (ref) => ExpiryNotifications.instance.canBeExact(),
+);
 
 /// One thing that runs out, reduced to the two facts a reminder needs.
 class ExpiringThing {
@@ -223,16 +233,24 @@ class ExpiryNotifications {
   /// everything these would have said, so a refusal costs punctuality and not
   /// the feature.
   Future<void> _refreshExactAllowed() async {
+    _exactAllowed = await canBeExact();
+  }
+
+  /// Whether the phone will currently let Karde put a reminder at a particular
+  /// minute rather than somewhere in the following hour.
+  ///
+  /// Public because Settings needs to say something when the answer is no. It
+  /// used to say nothing: reminders were silently downgraded and a nine o'clock
+  /// reminder simply did not turn up, with nowhere in the app to find out why.
+  Future<bool> canBeExact() async {
+    await _ensureReady();
     final android = _plugin.resolvePlatformSpecificImplementation<
         AndroidFlutterLocalNotificationsPlugin>();
-    if (android == null) {
-      _exactAllowed = false;
-      return;
-    }
+    if (android == null) return false;
     try {
-      _exactAllowed = await android.canScheduleExactNotifications() ?? false;
+      return await android.canScheduleExactNotifications() ?? false;
     } catch (_) {
-      _exactAllowed = false;
+      return false;
     }
   }
 

@@ -3256,6 +3256,12 @@ abstract class AppLocalizations {
   /// **'Tell me before a card or document runs out'**
   String get settingsExpiryRemindersDesc;
 
+  /// No description provided for @settingsRemindersMayBeLate.
+  ///
+  /// In en, this message translates to:
+  /// **'Your phone is holding these back, so they may arrive hours late. Tap to let Karde remind you on time.'**
+  String get settingsRemindersMayBeLate;
+
   /// No description provided for @notifyExpiringBody.
   ///
   /// In en, this message translates to:

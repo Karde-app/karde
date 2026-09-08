@@ -1879,6 +1879,10 @@ class AppLocalizationsFr extends AppLocalizations {
       'Me prévenir avant qu\'une carte ou un document n\'expire';
 
   @override
+  String get settingsRemindersMayBeLate =>
+      'Votre téléphone les retient, elles peuvent donc arriver avec des heures de retard. Touchez pour laisser Karde vous prévenir à l\'heure.';
+
+  @override
   String notifyExpiringBody(int count) {
     String _temp0 = intl.Intl.pluralLogic(
       count,

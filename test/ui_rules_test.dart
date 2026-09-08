@@ -1595,4 +1595,99 @@ void main() {
       }
     });
   });
+
+  group("The camera screen must not strobe", () {
+    // Reported from the phone: refusing the camera permission left the "no
+    // camera access" screen flashing "like an old bulb". A permanently refused
+    // permission still flashes Android's dialog up and away, which is an
+    // inactive/resumed pair; retrying on every resume started another attempt,
+    // each failed, and the screen alternated between spinner and message several
+    // times a second.
+    final source = File("lib/core/widgets/guided_camera_screen.dart")
+        .readAsLinesSync()
+        .where((l) => !l.trimLeft().startsWith("//"))
+        .where((l) => !l.trimLeft().startsWith("///"))
+        .join("\n");
+
+    test("a retry needs a real trip to the background, not any resume", () {
+      expect(source.contains("_wasBackgrounded = true"), isTrue,
+          reason: "only `paused` may arm a retry");
+      expect(
+        RegExp(r"resumed\s*&&\s*_controller == null\s*\)").hasMatch(source),
+        isFalse,
+        reason: "retrying on every resume is what made it strobe",
+      );
+    });
+
+    test("only one start attempt runs at a time", () {
+      expect(source.contains("if (_starting) return;"), isTrue);
+    });
+
+    test("the unavailable state is set once an attempt knows the answer", () {
+      // Clearing it at the top of every attempt blinked the screen back to the
+      // spinner before failing again — the other half of the strobing.
+      expect(
+        source.contains("if (_unavailable && mounted) setState"),
+        isFalse,
+        reason: "it must not be cleared before the attempt has run",
+      );
+      expect(source.contains("_unavailable = false;"), isTrue,
+          reason: "but success must still clear it, or one failure latches");
+    });
+  });
+
+  group("Reminders must never be quietly late", () {
+    // A reminder set for nine o'clock arrived somewhere in the following hour —
+    // or on the phone it was found on, not at all — and there was nothing
+    // anywhere in the app to explain why. Someone relying on it is simply let
+    // down. Karde now says so, and offers the way to fix it.
+    test("Settings can tell whether the phone allows punctual reminders", () {
+      final notifications =
+          File("lib/core/notifications/expiry_notifications.dart")
+              .readAsStringSync();
+      expect(notifications.contains("exactAlarmsAllowedProvider"), isTrue);
+      expect(notifications.contains("Future<bool> canBeExact()"), isTrue);
+    });
+
+    test("and says something when the answer is no", () {
+      final settings =
+          File("lib/features/settings/presentation/settings_screen.dart")
+              .readAsLinesSync()
+              .where((l) => !l.trimLeft().startsWith("//"))
+              .join("\n");
+
+      expect(settings.contains("exactAlarmsAllowedProvider"), isTrue);
+      expect(settings.contains("settingsRemindersMayBeLate"), isTrue);
+      expect(settings.contains("requestExactAlarms()"), isTrue,
+          reason: "saying it is late is no use without a way to fix it");
+    });
+
+    test("the notice stays quiet when there is nothing to report", () {
+      // Karde does not warn about reminders somebody has switched off.
+      final settings =
+          File("lib/features/settings/presentation/settings_screen.dart")
+              .readAsStringSync();
+      expect(
+        settings.contains("ref.watch(expiryRemindersProvider) &&"),
+        isTrue,
+        reason: "the warning is gated on reminders actually being on",
+      );
+    });
+
+    test("the wording explains the consequence, not the mechanism", () {
+      for (final locale in ["en", "fr", "ar"]) {
+        final arb = jsonDecode(File("lib/l10n/app_$locale.arb").readAsStringSync())
+            as Map<String, dynamic>;
+        expect(arb.containsKey("settingsRemindersMayBeLate"), isTrue,
+            reason: "$locale is missing the notice");
+      }
+      final en = jsonDecode(File("lib/l10n/app_en.arb").readAsStringSync())
+          as Map<String, dynamic>;
+      final text = en["settingsRemindersMayBeLate"].toString().toLowerCase();
+      for (final jargon in ["alarm", "permission", "api", "schedule_exact"]) {
+        expect(text, isNot(contains(jargon)),
+            reason: "the user needs the consequence, not the mechanism");
+      }
+    });
+  });
 }

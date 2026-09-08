@@ -1847,6 +1847,10 @@ class AppLocalizationsAr extends AppLocalizations {
       'نبّهني قبل انتهاء صلاحية بطاقة أو مستند';
 
   @override
+  String get settingsRemindersMayBeLate =>
+      'هاتفك يؤخّرها، لذا قد تصل متأخرة بساعات. اضغط للسماح لـ Karde بتنبيهك في وقتها.';
+
+  @override
   String notifyExpiringBody(int count) {
     String _temp0 = intl.Intl.pluralLogic(
       count,

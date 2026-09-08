@@ -1844,6 +1844,10 @@ class AppLocalizationsEn extends AppLocalizations {
       'Tell me before a card or document runs out';
 
   @override
+  String get settingsRemindersMayBeLate =>
+      'Your phone is holding these back, so they may arrive hours late. Tap to let Karde remind you on time.';
+
+  @override
   String notifyExpiringBody(int count) {
     String _temp0 = intl.Intl.pluralLogic(
       count,
