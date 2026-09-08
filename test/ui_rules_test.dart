@@ -1756,4 +1756,61 @@ void main() {
       expect(notifications.contains("isBatteryUnrestricted()"), isTrue);
     });
   });
+
+  group("A blocked reminder is raised where people look", () {
+    // The Settings notice was the right words in the wrong room. Settings is the
+    // one place a user has no reason to visit — and the phones that cause this
+    // are the ones that freeze apps people rarely open, which is exactly the
+    // profile of somebody who set their cards up once and never came back. The
+    // notice would have sat unread.
+    test("the bell raises it, not only Settings", () {
+      final alerts = File("lib/features/home/data/alerts_providers.dart")
+          .readAsLinesSync()
+          .where((l) => !l.trimLeft().startsWith("//"))
+          .join("\n");
+
+      expect(alerts.contains("remindersCanArriveProvider"), isTrue);
+      expect(alerts.contains("'reminders-blocked'"), isTrue);
+    });
+
+    test("and it is gated on reminders actually being on", () {
+      final alerts = File("lib/features/home/data/alerts_providers.dart")
+          .readAsStringSync();
+      expect(
+        alerts.contains("ref.watch(expiryRemindersProvider) &&"),
+        isTrue,
+        reason: "Karde must not complain about reminders somebody turned off",
+      );
+    });
+
+    test("the alert carries a way to fix it", () {
+      final screen =
+          File("lib/features/home/presentation/notifications_screen.dart")
+              .readAsStringSync();
+      expect(screen.contains("case 'reminders-blocked':"), isTrue);
+      expect(screen.contains("openBatterySettings()"), isTrue);
+      expect(screen.contains("requestExactAlarms()"), isTrue,
+          reason: "either of the two can be the actual problem");
+    });
+
+    test("it is a notice, not an emergency", () {
+      // Nothing is at risk. The date is still printed on the card; it is the
+      // reminder about it that will not come.
+      final alerts = File("lib/features/home/data/alerts_providers.dart")
+          .readAsStringSync();
+      final block = alerts.substring(alerts.indexOf("'reminders-blocked'"));
+      expect(block.substring(0, 200), contains("KardeAlertSeverity.notice"));
+    });
+
+    test("turning reminders on also checks the phone will wake Karde", () {
+      final settings =
+          File("lib/features/settings/presentation/settings_screen.dart")
+              .readAsLinesSync()
+              .where((l) => !l.trimLeft().startsWith("//"))
+              .join("\n");
+      expect(settings.contains("isBatteryUnrestricted()"), isTrue,
+          reason: "the toggle catches somebody deliberately turning them on; "
+              "the bell catches the phone deciding months later");
+    });
+  });
 }

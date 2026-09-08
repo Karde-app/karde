@@ -419,6 +419,16 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
     // reminders, because that is the one moment the request explains itself.
     // Refusing costs punctuality and nothing else.
     await ExpiryNotifications.instance.requestExactAlarms();
+
+    // Then the other thing that can silence a reminder: whether the phone will
+    // wake Karde at all when the alarm fires. Asked here as well as watched
+    // live, because the two catch different people — this catches somebody
+    // deliberately turning reminders on, and the live check in the bell catches
+    // the far commoner case of a phone that decides months later to put a
+    // rarely-opened app to sleep.
+    if (!await WindowSecurityService.isBatteryUnrestricted()) {
+      await WindowSecurityService.openBatterySettings();
+    }
     ref.invalidate(remindersCanArriveProvider);
   }
 

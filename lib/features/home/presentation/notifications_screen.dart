@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 
+import '../../../core/notifications/expiry_notifications.dart';
 import '../../../core/security/encryption_service.dart';
+import '../../../core/security/window_security_service.dart';
 import '../../../core/utils/expiry.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../../theme/theme.dart';
@@ -282,6 +284,23 @@ class _AlertCard extends ConsumerWidget {
                 context,
                 MaterialPageRoute(builder: (_) => const BackupScreen()),
               ),
+        );
+      case 'reminders-blocked':
+        return (
+          loc.remindersBlockedTitle,
+          loc.settingsRemindersMayBeLate,
+          loc.alertsFix,
+          () async {
+            // Whichever of the two is actually the problem. Asking for the
+            // punctual-alarm permission first because Karde can raise that
+            // itself; the battery list has to be found by hand.
+            if (!await ExpiryNotifications.instance.canBeExact()) {
+              await ExpiryNotifications.instance.requestExactAlarms();
+            } else {
+              await WindowSecurityService.openBatterySettings();
+            }
+            ref.invalidate(remindersCanArriveProvider);
+          },
         );
       case 'biometrics-changed':
         return (

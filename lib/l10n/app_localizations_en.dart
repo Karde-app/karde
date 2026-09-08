@@ -1848,6 +1848,9 @@ class AppLocalizationsEn extends AppLocalizations {
       'Your phone is holding these back, so they may arrive hours late. Tap to let Karde remind you on time.';
 
   @override
+  String get remindersBlockedTitle => 'Reminders will not arrive on time';
+
+  @override
   String notifyExpiringBody(int count) {
     String _temp0 = intl.Intl.pluralLogic(
       count,

@@ -692,6 +692,7 @@
   "settingsExpiryReminders": "Expiry reminders",
   "settingsExpiryRemindersDesc": "Tell me before a card or document runs out",
   "settingsRemindersMayBeLate": "Your phone is holding these back, so they may arrive hours late. Tap to let Karde remind you on time.",
+  "remindersBlockedTitle": "Reminders will not arrive on time",
   "notifyExpiringBody": "{count, plural, =1{1 card or document expires soon. Open Karde to see which.} other{{count} cards or documents expire soon. Open Karde to see which.}}",
   "@notifyExpiringBody": { "placeholders": { "count": { "type": "int" } } },
   "notifyExpiredBody": "{count, plural, =1{1 card or document has expired. Open Karde to see which.} other{{count} cards or documents have expired. Open Karde to see which.}}",

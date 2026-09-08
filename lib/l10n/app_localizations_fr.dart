@@ -1883,6 +1883,10 @@ class AppLocalizationsFr extends AppLocalizations {
       'Votre téléphone les retient, elles peuvent donc arriver avec des heures de retard. Touchez pour laisser Karde vous prévenir à l\'heure.';
 
   @override
+  String get remindersBlockedTitle =>
+      'Les rappels n\'arriveront pas à l\'heure';
+
+  @override
   String notifyExpiringBody(int count) {
     String _temp0 = intl.Intl.pluralLogic(
       count,

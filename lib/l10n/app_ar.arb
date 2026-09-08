@@ -548,6 +548,7 @@
   "settingsExpiryReminders": "تنبيهات انتهاء الصلاحية",
   "settingsExpiryRemindersDesc": "نبّهني قبل انتهاء صلاحية بطاقة أو مستند",
   "settingsRemindersMayBeLate": "هاتفك يؤخّرها، لذا قد تصل متأخرة بساعات. اضغط للسماح لـ Karde بتنبيهك في وقتها.",
+  "remindersBlockedTitle": "لن تصل التنبيهات في وقتها",
   "notifyExpiringBody": "{count, plural, =1{تنتهي صلاحية بطاقة أو مستند واحد قريباً. افتح Karde لمعرفة أيها.} other{تنتهي صلاحية {count} بطاقات أو مستندات قريباً. افتح Karde لمعرفة أيها.}}",
   "@notifyExpiringBody": { "placeholders": { "count": { "type": "int" } } },
   "notifyExpiredBody": "{count, plural, =1{انتهت صلاحية بطاقة أو مستند واحد. افتح Karde لمعرفة أيها.} other{انتهت صلاحية {count} بطاقات أو مستندات. افتح Karde لمعرفة أيها.}}",

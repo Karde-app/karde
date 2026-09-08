@@ -1,5 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../core/notifications/expiry_notifications.dart';
 import '../../../core/security/device_security_service.dart';
 import '../../../core/security/vault_health_provider.dart';
 import '../../../core/storage/settings_repository.dart';
@@ -114,6 +115,28 @@ final kardeAlertsProvider = Provider<List<KardeAlert>>((ref) {
     alerts.add(const KardeAlert(
       id: 'backup-failing',
       severity: KardeAlertSeverity.urgent,
+      title: '',
+      body: '',
+      actionLabel: '',
+    ));
+  }
+
+  // A reminder that cannot arrive is worse than no reminder, because its owner
+  // has stopped watching the date themselves.
+  //
+  // Raised here, in the bell, and not only in Settings. Settings is the one
+  // place a user has no reason to visit — and the phones that cause this are
+  // the ones that freeze apps people rarely open, which is exactly the profile
+  // of somebody who set their cards up once and has not been back since. The
+  // notice would have sat unread in the only room nobody enters.
+  //
+  // A notice rather than urgent: nothing is at risk, and a date is still on the
+  // card. It is the reminder about it that will not come.
+  if (ref.watch(expiryRemindersProvider) &&
+      ref.watch(remindersCanArriveProvider).valueOrNull == false) {
+    alerts.add(const KardeAlert(
+      id: 'reminders-blocked',
+      severity: KardeAlertSeverity.notice,
       title: '',
       body: '',
       actionLabel: '',

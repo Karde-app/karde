@@ -3262,6 +3262,12 @@ abstract class AppLocalizations {
   /// **'Your phone is holding these back, so they may arrive hours late. Tap to let Karde remind you on time.'**
   String get settingsRemindersMayBeLate;
 
+  /// No description provided for @remindersBlockedTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Reminders will not arrive on time'**
+  String get remindersBlockedTitle;
+
   /// No description provided for @notifyExpiringBody.
   ///
   /// In en, this message translates to:
