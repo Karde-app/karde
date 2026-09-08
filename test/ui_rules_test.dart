@@ -1813,4 +1813,70 @@ void main() {
               "the bell catches the phone deciding months later");
     });
   });
+
+  group("Refusing the camera must not be a dead end", () {
+    // It was, silently. The screen offered "Use my phone's camera" on the
+    // reasoning that the phone's own camera app needs no permission from Karde.
+    // Declaring CAMERA ended that: Android refuses to start
+    // ACTION_IMAGE_CAPTURE for an app that declares the permission while it is
+    // revoked — which is exactly and only when the button was shown.
+    //
+    //   Permission Denial: starting Intent { act=android.media.action.IMAGE_CAPTURE }
+    //   from com.karde.app with revoked permission android.permission.CAMERA
+    final source = File("lib/core/widgets/guided_camera_screen.dart")
+        .readAsLinesSync()
+        .where((l) => !l.trimLeft().startsWith("//"))
+        .where((l) => !l.trimLeft().startsWith("///"))
+        .join("\n");
+
+    test("the dead button is gone", () {
+      expect(source.contains("captureWithCamera()"), isFalse,
+          reason: "it cannot start while the permission is revoked, and that "
+              "is the only state this screen is ever in");
+      for (final locale in ["en", "fr", "ar"]) {
+        final arb = jsonDecode(File("lib/l10n/app_$locale.arb").readAsStringSync())
+            as Map<String, dynamic>;
+        expect(arb.containsKey("cameraUsePhoneCamera"), isFalse,
+            reason: "$locale still promises the phone's camera app");
+      }
+    });
+
+    test("it offers the way back to the permission", () {
+      // Not another request. A permission refused twice is fixed by Android and
+      // the dialog never appears again, so an app that offers to ask is
+      // promising something that will not happen.
+      expect(source.contains("WindowSecurityService.openAppSettings()"), isTrue);
+      final service = File("lib/core/security/window_security_service.dart")
+          .readAsStringSync();
+      expect(service.contains("openAppSettings"), isTrue);
+
+      final activity =
+          File("android/app/src/main/kotlin/com/karde/app/MainActivity.kt")
+              .readAsStringSync();
+      expect(activity.contains("ACTION_APPLICATION_DETAILS_SETTINGS"), isTrue);
+    });
+
+    test("and only that, because without the camera there is no photo", () {
+      // The user rejected a second "choose a photo instead" button: the point
+      // of this screen is to take a picture, and offering a way around it
+      // reads as Karde bargaining with its own permission request.
+      expect(source.contains("_images.pickFromGallery()"), isFalse);
+      for (final locale in ["en", "fr", "ar"]) {
+        final arb = jsonDecode(File("lib/l10n/app_$locale.arb").readAsStringSync())
+            as Map<String, dynamic>;
+        expect(arb.containsKey("cameraAllow"), isTrue,
+            reason: "$locale is missing the allow button");
+        expect(arb.containsKey("cameraChooseInstead"), isFalse,
+            reason: "$locale still carries the removed second button");
+      }
+    });
+
+    test("the message no longer promises the phone's camera app", () {
+      final en = jsonDecode(File("lib/l10n/app_en.arb").readAsStringSync())
+          as Map<String, dynamic>;
+      final text = en["cameraUnavailable"].toString().toLowerCase();
+      expect(text, isNot(contains("camera app")),
+          reason: "that promise is what was false");
+    });
+  });
 }

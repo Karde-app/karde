@@ -1999,8 +1999,8 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get cameraUnavailable =>
-      'Karde n\'a pas l\'autorisation d\'utiliser l\'appareil photo. Vous pouvez prendre la photo avec l\'application appareil photo de votre téléphone.';
+      'Karde a besoin de l’autorisation d’utiliser l’appareil photo pour pouvoir prendre une photo.';
 
   @override
-  String get cameraUsePhoneCamera => 'Utiliser l\'appareil photo du téléphone';
+  String get cameraAllow => 'Autoriser l\'appareil photo';
 }

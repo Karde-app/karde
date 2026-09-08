@@ -726,6 +726,6 @@
   "cameraRetake": "Retake",
   "cameraUsePhoto": "Use this photo",
   "cameraCaptureFailed": "That photo could not be taken. Please try again.",
-  "cameraUnavailable": "Karde does not have permission to use the camera. You can take the photo with your phone's camera app instead.",
-  "cameraUsePhoneCamera": "Use my phone's camera"
+  "cameraUnavailable": "Karde needs permission to use the camera before it can take a photo.",
+  "cameraAllow": "Allow the camera"
 }

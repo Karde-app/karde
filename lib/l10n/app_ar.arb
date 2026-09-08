@@ -212,7 +212,13 @@
   "backupSetupWorking": "يجري إعداد نسختك الاحتياطية…",
   "backupSetupDoneTitle": "نسختك الاحتياطية تعمل",
   "backupSetupDoneBody": "يحفظ Karde نسخة في كل مرة تضيف فيها شيئاً أو تغيّره أو تحذفه. وتذهب إلى {folder}.",
-  "@backupSetupDoneBody": { "placeholders": { "folder": { "type": "String" } } },
+  "@backupSetupDoneBody": {
+    "placeholders": {
+      "folder": {
+        "type": "String"
+      }
+    }
+  },
   "backupSetupFolderFailed": "لم يتمكن Karde من الحفظ في ذلك المجلد. اختر مجلداً آخر من فضلك.",
   "backupSelfTestFailed": "لم يتمكن هذا الهاتف من قراءة النسخة التي حفظها للتو، لذلك لم يفعّل Karde النسخ الاحتياطي. حاول مرة أخرى من فضلك.",
   "backupUpdated": "تم تحديث النسخة الاحتياطية.",
@@ -227,10 +233,22 @@
   "alertsAllow": "السماح",
   "backupNotSavingShort": "لا يتم نسخ التغييرات الجديدة إلى مجلد النسخ الاحتياطي.",
   "backupFailedBody": "لم يتمكن Karde من الحفظ في {folder}. ربما نُقل المجلد أو أُعيدت تسميته أو حُذف. وإلى أن يُحل هذا، لا تُنسخ التغييرات الجديدة في أي مكان.",
-  "@backupFailedBody": { "placeholders": { "folder": { "type": "String" } } },
+  "@backupFailedBody": {
+    "placeholders": {
+      "folder": {
+        "type": "String"
+      }
+    }
+  },
   "backupFailedAction": "اختيار مجلد",
   "settingsAutoBackupNote": "يحفظ Karde نسخة في كل مرة تضيف فيها شيئاً أو تغيّره أو تحذفه. وتذهب إلى {folder}. ويمكنك أيضاً حفظ نسخة بنفسك في أي وقت.",
-  "@settingsAutoBackupNote": { "placeholders": { "folder": { "type": "String" } } },
+  "@settingsAutoBackupNote": {
+    "placeholders": {
+      "folder": {
+        "type": "String"
+      }
+    }
+  },
   "backupCouldNotReadVault": "تعذّرت قراءة خزنتك. يرجى المحاولة مرة أخرى.",
   "backupVaultEmpty": "لا يوجد شيء في خزنتك لنسخه احتياطياً بعد.",
   "backupConfirmTitle": "{count, plural, zero{نسخ {count} عنصر احتياطياً} one{نسخ عنصر واحد احتياطياً} two{نسخ عنصرين احتياطياً} few{نسخ {count} عناصر احتياطياً} many{نسخ {count} عنصراً احتياطياً} other{نسخ {count} عنصر احتياطياً}}",
@@ -314,9 +332,21 @@
   "cardRemoved": "تم حذف البطاقة.",
   "idRemoved": "تم حذف وثيقة الهوية.",
   "andBackedUp": "{message} تم تحديث النسخة الاحتياطية.",
-  "@andBackedUp": { "placeholders": { "message": { "type": "String" } } },
+  "@andBackedUp": {
+    "placeholders": {
+      "message": {
+        "type": "String"
+      }
+    }
+  },
   "savedButNotBackedUp": "{message} لم يتم نسخها بعد إلى مجلد النسخ الاحتياطي.",
-  "@savedButNotBackedUp": { "placeholders": { "message": { "type": "String" } } },
+  "@savedButNotBackedUp": {
+    "placeholders": {
+      "message": {
+        "type": "String"
+      }
+    }
+  },
   "setUpBackupTitle": "لا توجد نسخة احتياطية",
   "setUpBackupBody": "يمكن لـ Karde الاحتفاظ بنسخة من كل شيء، حتى لا يضيع شيء مع هذا الهاتف.",
   "setUpBackupAction": "إعداد",
@@ -520,40 +550,92 @@
   "backupIncompleteTitle": "تنقص نسختك الاحتياطية بعض العناصر",
   "backupIncompleteBody": "{count, plural, =1{هناك عنصر واحد ليس في نسختك الاحتياطية بعد.} other{هناك {count} عناصر ليست في نسختك الاحتياطية بعد.}}",
   "@backupIncompleteBody": {
-    "placeholders": { "count": { "type": "int" } }
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
   },
   "backupCopyExistingTitle": "انسخ ما لديك بالفعل",
   "backupCopyExistingSubtitle": "{count, plural, =1{يوجد عنصر واحد في خزنتك وليس في نسختك الاحتياطية.} other{توجد {count} عناصر في خزنتك وليست في نسختك الاحتياطية.}}",
   "@backupCopyExistingSubtitle": {
-    "placeholders": { "count": { "type": "int" } }
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
   },
   "backupCopyExistingAction": "انسخها الآن",
   "backupCopyConfirmTitle": "{count, plural, =1{نسخ عنصر واحد} other{نسخ {count} عناصر}}",
   "@backupCopyConfirmTitle": {
-    "placeholders": { "count": { "type": "int" } }
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
   },
   "backupCopyConfirmMessage": "سيطلب منك هاتفك تأكيد هويتك مرة واحدة لكل عنصر. أما ما تحفظه بعد ذلك فيُنسخ دون أن يطلب منك شيئاً.",
   "backupCopying": "جارٍ النسخ إلى نسختك الاحتياطية…",
   "backupCopyDone": "{count, plural, =1{تمت إضافة عنصر واحد إلى نسختك الاحتياطية.} other{تمت إضافة {count} عناصر إلى نسختك الاحتياطية.}}",
   "@backupCopyDone": {
-    "placeholders": { "count": { "type": "int" } }
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
   },
   "expiryCardSoon": "تنتهي صلاحية هذه البطاقة في {when}.",
-  "@expiryCardSoon": { "placeholders": { "when": { "type": "String" } } },
+  "@expiryCardSoon": {
+    "placeholders": {
+      "when": {
+        "type": "String"
+      }
+    }
+  },
   "expiryCardPast": "انتهت صلاحية هذه البطاقة في {when}.",
-  "@expiryCardPast": { "placeholders": { "when": { "type": "String" } } },
+  "@expiryCardPast": {
+    "placeholders": {
+      "when": {
+        "type": "String"
+      }
+    }
+  },
   "expiryDocumentSoon": "تنتهي صلاحية هذا المستند في {when}.",
-  "@expiryDocumentSoon": { "placeholders": { "when": { "type": "String" } } },
+  "@expiryDocumentSoon": {
+    "placeholders": {
+      "when": {
+        "type": "String"
+      }
+    }
+  },
   "expiryDocumentPast": "انتهت صلاحية هذا المستند في {when}.",
-  "@expiryDocumentPast": { "placeholders": { "when": { "type": "String" } } },
+  "@expiryDocumentPast": {
+    "placeholders": {
+      "when": {
+        "type": "String"
+      }
+    }
+  },
   "settingsExpiryReminders": "تنبيهات انتهاء الصلاحية",
   "settingsExpiryRemindersDesc": "نبّهني قبل انتهاء صلاحية بطاقة أو مستند",
   "remindersBlockedTitle": "استقبال التنبيهات",
   "remindersBlockedBody": "هاتفك يمنع Karde من تنبيهك قبل انتهاء صلاحية بطاقة أو مستند.",
   "notifyExpiringBody": "{count, plural, =1{تنتهي صلاحية بطاقة أو مستند واحد قريباً. افتح Karde لمعرفة أيها.} other{تنتهي صلاحية {count} بطاقات أو مستندات قريباً. افتح Karde لمعرفة أيها.}}",
-  "@notifyExpiringBody": { "placeholders": { "count": { "type": "int" } } },
+  "@notifyExpiringBody": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
   "notifyExpiredBody": "{count, plural, =1{انتهت صلاحية بطاقة أو مستند واحد. افتح Karde لمعرفة أيها.} other{انتهت صلاحية {count} بطاقات أو مستندات. افتح Karde لمعرفة أيها.}}",
-  "@notifyExpiredBody": { "placeholders": { "count": { "type": "int" } } },
+  "@notifyExpiredBody": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
   "settingsExpiryNotifyBlocked": "لا يستطيع Karde إرسال التنبيهات ما لم تسمح له بالإشعارات في إعدادات هاتفك.",
   "settingsAutoBackupTitle": "النسخ الاحتياطي التلقائي",
   "settingsAutoBackupDesc": "الاحتفاظ بنسخة محدَّثة عند كل تغيير",
@@ -565,23 +647,59 @@
   "activityEmpty": "لا شيء بعد. ستظهر هنا عمليات إضافة بطاقة أو مستند أو تغييرهما أو حذفهما.",
   "activityClear": "مسح",
   "activityCardAdded": "أضفت البطاقة {name}",
-  "@activityCardAdded": { "placeholders": { "name": { "type": "String" } } },
+  "@activityCardAdded": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
   "activityCardChanged": "غيّرت البطاقة {name}",
-  "@activityCardChanged": { "placeholders": { "name": { "type": "String" } } },
+  "@activityCardChanged": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
   "activityCardRemoved": "حذفت البطاقة {name}",
-  "@activityCardRemoved": { "placeholders": { "name": { "type": "String" } } },
+  "@activityCardRemoved": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
   "activityDocumentAdded": "أضفت المستند {name}",
-  "@activityDocumentAdded": { "placeholders": { "name": { "type": "String" } } },
+  "@activityDocumentAdded": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
   "activityDocumentChanged": "غيّرت المستند {name}",
-  "@activityDocumentChanged": { "placeholders": { "name": { "type": "String" } } },
+  "@activityDocumentChanged": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
   "activityDocumentRemoved": "حذفت المستند {name}",
-  "@activityDocumentRemoved": { "placeholders": { "name": { "type": "String" } } },
+  "@activityDocumentRemoved": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
   "cameraTitle": "التقاط صورة",
   "cameraGuideHint": "حاذِ البطاقة أو المستند داخل الإطار",
   "cameraCropHint": "اسحب الزوايا لتختار ما تريد الاحتفاظ به",
   "cameraRetake": "إعادة الالتقاط",
   "cameraUsePhoto": "استخدام هذه الصورة",
   "cameraCaptureFailed": "تعذّر التقاط هذه الصورة. يرجى المحاولة مرة أخرى.",
-  "cameraUnavailable": "ليس لدى Karde إذن باستخدام الكاميرا. يمكنك التقاط الصورة بتطبيق الكاميرا في هاتفك بدلاً من ذلك.",
-  "cameraUsePhoneCamera": "استخدام كاميرا الهاتف"
+  "cameraUnavailable": "يحتاج Karde إلى إذن استخدام الكاميرا قبل أن يتمكن من التقاط صورة.",
+  "cameraAllow": "السماح بالكاميرا"
 }

@@ -3421,14 +3421,14 @@ abstract class AppLocalizations {
   /// No description provided for @cameraUnavailable.
   ///
   /// In en, this message translates to:
-  /// **'Karde does not have permission to use the camera. You can take the photo with your phone\'s camera app instead.'**
+  /// **'Karde needs permission to use the camera before it can take a photo.'**
   String get cameraUnavailable;
 
-  /// No description provided for @cameraUsePhoneCamera.
+  /// No description provided for @cameraAllow.
   ///
   /// In en, this message translates to:
-  /// **'Use my phone\'s camera'**
-  String get cameraUsePhoneCamera;
+  /// **'Allow the camera'**
+  String get cameraAllow;
 }
 
 class _AppLocalizationsDelegate

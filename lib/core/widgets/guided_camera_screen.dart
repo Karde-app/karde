@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import '../../l10n/app_localizations.dart';
 import '../../theme/theme.dart';
 import '../security/system_interaction_guard.dart';
+import '../security/window_security_service.dart';
 import '../security/vault_image_service.dart';
 
 /// Karde's own camera, with a rectangle showing where to put the card.
@@ -18,9 +19,15 @@ import '../security/vault_image_service.dart';
 ///
 /// **The permission is asked for here and nowhere else.** Karde declares CAMERA,
 /// but never touches it until somebody taps "Take a photo", which is the one
-/// moment the request explains itself. Refusing costs nothing: the phone's own
-/// camera app still works and needs no permission from Karde at all, so this
-/// screen offers that instead of a dead end.
+/// moment the request explains itself.
+///
+/// **Refusing used to cost nothing, and that is no longer true.** This screen
+/// offered "Use my phone's camera", on the reasoning that the phone's own camera
+/// app needs no permission from Karde. Declaring `CAMERA` ended that: Android
+/// refuses to start `ACTION_IMAGE_CAPTURE` for an app that declares the
+/// permission while it is revoked, which is exactly and only when the button was
+/// shown. It did nothing, silently. What is offered now is the way back to the
+/// permission itself: without the camera there is no photo to take.
 ///
 /// **The photo is shown before it is kept.** An earlier version of the photo
 /// feature cropped a preview and the result read as Karde having damaged the
@@ -271,13 +278,26 @@ class _GuidedCameraScreenState extends State<GuidedCameraScreen>
   /// Falls back to the phone's own camera app, which Karde needs no permission
   /// to use. Offered rather than described, because a person who has just
   /// refused a permission wants the photograph, not an explanation.
-  Future<void> _useSystemCamera() async {
-    try {
-      final bytes = await _images.captureWithCamera();
-      if (mounted) Navigator.pop(context, bytes);
-    } catch (_) {
-      if (mounted) Navigator.pop(context);
-    }
+  /// Sends the user to Karde's page in Android's settings.
+  ///
+  /// This screen used to offer "Use my phone's camera", on the reasoning that
+  /// the phone's own camera app needs no permission from Karde. That was true
+  /// right up until Karde declared `CAMERA` for its own camera screen, and it
+  /// has been false ever since: once an app declares the permission, Android
+  /// refuses to start `ACTION_IMAGE_CAPTURE` for it while the permission is
+  /// revoked —
+  ///
+  ///   Permission Denial: starting Intent { act=android.media.action.IMAGE_CAPTURE }
+  ///   from com.karde.app with revoked permission android.permission.CAMERA
+  ///
+  /// — which is precisely and only the situation this button existed for. It
+  /// did nothing at all, silently, and the screen closed itself.
+  ///
+  /// Asking for the permission again is not the answer either: a permission
+  /// refused twice is fixed by Android and the dialog never appears again.
+  /// Settings is the only place it can actually be given back.
+  Future<void> _openAppSettings() async {
+    await WindowSecurityService.openAppSettings();
   }
 
   @override
@@ -319,13 +339,13 @@ class _GuidedCameraScreenState extends State<GuidedCameraScreen>
           SizedBox(
             width: double.infinity,
             child: ElevatedButton(
-              onPressed: _useSystemCamera,
+              onPressed: _openAppSettings,
               style: ElevatedButton.styleFrom(
                 backgroundColor: KardeColors.champagneGold,
                 foregroundColor: KardeColors.obsidian,
                 padding: const EdgeInsets.symmetric(vertical: 16),
               ),
-              child: Text(loc.cameraUsePhoneCamera),
+              child: Text(loc.cameraAllow),
             ),
           ),
         ],

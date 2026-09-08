@@ -161,6 +161,25 @@ class MainActivity : FlutterFragmentActivity() {
                     // which Google restricts to a short list of app categories and
                     // which a vault is not on; asking for it would risk the
                     // listing. This screen needs no permission at all.
+                    // Karde's own page in Android's settings, where a refused
+                    // permission can be given back.
+                    //
+                    // Needed because a permission the user has refused twice is
+                    // "fixed": the system dialog never appears again, and an app
+                    // that keeps offering to ask is lying about what will happen.
+                    "openAppSettings" -> {
+                        result.success(
+                            runCatching {
+                                startActivity(
+                                    Intent(
+                                        Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
+                                        android.net.Uri.fromParts("package", packageName, null),
+                                    )
+                                )
+                                true
+                            }.getOrDefault(false)
+                        )
+                    }
                     "openBatterySettings" -> {
                         result.success(
                             runCatching {

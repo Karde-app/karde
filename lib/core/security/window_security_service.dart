@@ -104,6 +104,22 @@ class WindowSecurityService {
     }
   }
 
+  /// Opens Karde's own page in Android's settings.
+  ///
+  /// Where a refused permission is given back. Karde cannot simply ask again: a
+  /// permission refused twice is "fixed" by Android and the system dialog never
+  /// appears a third time, so an app that offers to ask is promising something
+  /// that will not happen.
+  static Future<void> openAppSettings() async {
+    try {
+      await SystemInteractionGuard.run(
+        () async => _channel.invokeMethod<bool>('openAppSettings'),
+      );
+    } catch (_) {
+      // A phone that will not open its own settings is not worth a message.
+    }
+  }
+
   /// Opens the system's own battery-optimisation list.
   ///
   /// The list, not the one-tap "allow this app" dialog: that dialog needs

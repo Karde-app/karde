@@ -1963,8 +1963,8 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get cameraUnavailable =>
-      'ليس لدى Karde إذن باستخدام الكاميرا. يمكنك التقاط الصورة بتطبيق الكاميرا في هاتفك بدلاً من ذلك.';
+      'يحتاج Karde إلى إذن استخدام الكاميرا قبل أن يتمكن من التقاط صورة.';
 
   @override
-  String get cameraUsePhoneCamera => 'استخدام كاميرا الهاتف';
+  String get cameraAllow => 'السماح بالكاميرا';
 }
