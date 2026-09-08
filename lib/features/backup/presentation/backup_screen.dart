@@ -182,6 +182,13 @@ class _BackupScreenState extends ConsumerState<BackupScreen> {
             _report(loc.backupCopying, completed, total),
       );
       ref.invalidate(autoBackupMissingCountProvider);
+      // A catch-up that got everything through is proof the folder is writable
+      // again, so the "not being saved" alarm has to come down with it. It did
+      // not: the flag is otherwise only cleared by an ordinary save, so the bell
+      // went on saying new changes were not being copied while Settings said
+      // automatic backup was on and named the folder — the app contradicting
+      // itself about the one thing this alarm exists to be trusted on.
+      ref.read(autoBackupFailingProvider.notifier).state = false;
       if (mounted) KardeFeedback.success(context, loc.backupCopyDone(copied));
     } on VaultAuthCancelled {
       // A dismissed prompt is a decision. Whatever was sealed before it is

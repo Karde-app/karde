@@ -1278,4 +1278,27 @@ void main() {
       });
     }
   });
+
+  group("The backup alarm must not outlive the problem", () {
+    test("a successful catch-up clears the failing flag", () {
+      // Found on the phone. A write failed during backup setup (the vault locked
+      // behind the folder picker), which raised "Your backup is not being
+      // saved". "Copy them now" then wrote everything successfully — but the
+      // flag is otherwise only cleared by an ordinary save, so the bell went on
+      // saying new changes were not being copied while Settings said automatic
+      // backup was on and named the folder. An app contradicting itself about
+      // the one thing this alarm exists to be trusted on.
+      final source = File("lib/features/backup/presentation/backup_screen.dart")
+          .readAsLinesSync()
+          .where((l) => !l.trimLeft().startsWith("//"))
+          .join("\n");
+
+      expect(
+        source.contains("autoBackupFailingProvider.notifier).state = false"),
+        isTrue,
+        reason: "copying the missing items through proves the folder is "
+            "writable, so the alarm has to come down with it",
+      );
+    });
+  });
 }
