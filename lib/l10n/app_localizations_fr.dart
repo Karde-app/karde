@@ -1523,7 +1523,7 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get privacySection1Body =>
-      'Toutes vos données, y compris les numéros de carte, les CVV et les notes, sont chiffrées et stockées localement sur votre appareil. Nous ne transmettons, ne sauvegardons et ne stockons vos données sur aucun serveur externe ni service cloud. Vous gardez le contrôle total de vos données.';
+      'Tout ce que vous enregistrez — numéros de carte, codes de sécurité, notes et photos — est chiffré et conservé sur cet appareil. Karde n’a aucun accès à Internet, il ne peut donc rien envoyer où que ce soit, et nous ne voyons jamais vos données. Si vous activez la sauvegarde, Karde écrit un seul fichier chiffré dans un dossier que vous choisissez ; si ce dossier appartient à un service cloud, ce service synchronise le fichier, et seule votre phrase secrète permet de l’ouvrir.';
 
   @override
   String get privacySection2Title => '2. Chiffrement';
@@ -1544,14 +1544,14 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get privacySection4Body =>
-      'Vous pouvez supprimer définitivement toutes vos données à tout moment via la fonction « Effacer le coffre » dans les Réglages, ou en désinstallant l\'application. Aucune donnée n\'étant stockée dans le cloud, la désinstallation entraîne la suppression définitive de votre coffre.';
+      'Vous pouvez supprimer définitivement toutes vos données à tout moment via « Effacer le coffre » dans les Réglages, ou en désinstallant l’application. Rien de ce qui vous appartient n’est conservé ailleurs, l’une ou l’autre action est donc définitive. Les fichiers de sauvegarde que vous avez enregistrés vous-même ne sont pas touchés — supprimez-les là où vous les avez placés.';
 
   @override
   String get privacySection5Title => '5. Autorisations';
 
   @override
   String get privacySection5Body =>
-      'L\'application ne demande que les autorisations nécessaires à son fonctionnement, comme l\'authentification biométrique. Elle ne demande aucun accès à Internet, ce qui garantit que vos données ne peuvent pas être transmises.';
+      'Karde ne demande une autorisation qu’au moment où il en a besoin, jamais à l’ouverture de l’application. Votre empreinte ou le verrouillage de votre écran est ce qui déverrouille vos éléments. L’appareil photo est demandé lorsque vous touchez « Prendre une photo », et l’image reste sur cet appareil. Les notifications sont demandées la première fois que Karde a un rappel d’expiration à programmer, et chaque rappel est créé et affiché sur cet appareil. Karde ne demande pas l’accès à Internet, vos informations ne peuvent donc être envoyées nulle part.';
 
   @override
   String get privacySection6Title => '6. Modifications de cette politique';

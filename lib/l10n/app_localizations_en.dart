@@ -1498,7 +1498,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get privacySection1Body =>
-      'All your data, including card numbers, CVVs, and notes, is encrypted and stored locally on your device. We do not transmit, back up, or store your data on any external servers or cloud services. You have complete control over your data.';
+      'Everything you save — card numbers, security codes, notes and photos — is encrypted and kept on this device. Karde has no internet access at all, so it cannot send any of it anywhere, and we never see it. If you turn on backup, Karde writes one encrypted file into a folder you choose; if that folder belongs to a cloud service, that service syncs the file, and only your passphrase can open it.';
 
   @override
   String get privacySection2Title => '2. Encryption';
@@ -1519,14 +1519,14 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get privacySection4Body =>
-      'You can permanently delete all your data at any time using the \"Erase vault\" feature in Settings, or by uninstalling the application. Since no data is stored in the cloud, uninstallation results in permanent deletion of your vault.';
+      'You can permanently delete everything at any time with “Erase vault” in Settings, or by uninstalling the app. Nothing of yours is kept anywhere else, so either one is final. Backup files you saved yourself are not touched — delete those from wherever you put them.';
 
   @override
   String get privacySection5Title => '5. Permissions';
 
   @override
   String get privacySection5Body =>
-      'The app only requests permissions necessary for its core functionality, such as Biometric authentication. It does not request internet access, ensuring your data cannot be transmitted.';
+      'Karde asks for a permission only at the moment it needs one, never when the app first opens. Your fingerprint or screen lock is what unlocks your items. The camera is asked for when you tap “Take a photo”, and the picture stays on this device. Notifications are asked for the first time Karde has an expiry reminder to set, and every reminder is created and shown on this device. Karde does not ask for internet access, so your information cannot be sent anywhere.';
 
   @override
   String get privacySection6Title => '6. Changes to this Policy';
