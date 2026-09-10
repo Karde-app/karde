@@ -1967,4 +1967,32 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get cameraAllow => 'السماح بالكاميرا';
+
+  @override
+  String get startupFailedTitle => 'تعذّر تشغيل Karde';
+
+  @override
+  String get startupFailedBody =>
+      'حدث خطأ أثناء فتح Karde. عناصرك المحفوظة سليمة — لم يُغيَّر شيء ولم يُفقد شيء. أعد المحاولة، وإن تكرر ذلك فإن إعادة تشغيل هاتفك تحلّ المشكلة عادةً.';
+
+  @override
+  String get startupFailedRetry => 'أعد المحاولة';
+
+  @override
+  String get closeLabel => 'إغلاق';
+
+  @override
+  String get searchLabel => 'بحث';
+
+  @override
+  String get searchStopLabel => 'إيقاف البحث';
+
+  @override
+  String get sortLabel => 'ترتيب';
+
+  @override
+  String get cvvShowLabel => 'إظهار CVV';
+
+  @override
+  String get cvvHideLabel => 'إخفاء CVV';
 }

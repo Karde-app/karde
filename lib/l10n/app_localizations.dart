@@ -3429,6 +3429,60 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Allow the camera'**
   String get cameraAllow;
+
+  /// No description provided for @startupFailedTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Karde could not start'**
+  String get startupFailedTitle;
+
+  /// No description provided for @startupFailedBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Something went wrong while opening Karde. Your saved items are safe — nothing has been changed or lost. Try again, and if it keeps happening, restarting your phone usually clears it.'**
+  String get startupFailedBody;
+
+  /// No description provided for @startupFailedRetry.
+  ///
+  /// In en, this message translates to:
+  /// **'Try again'**
+  String get startupFailedRetry;
+
+  /// No description provided for @closeLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Close'**
+  String get closeLabel;
+
+  /// No description provided for @searchLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Search'**
+  String get searchLabel;
+
+  /// No description provided for @searchStopLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Stop searching'**
+  String get searchStopLabel;
+
+  /// No description provided for @sortLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Sort'**
+  String get sortLabel;
+
+  /// No description provided for @cvvShowLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Show CVV'**
+  String get cvvShowLabel;
+
+  /// No description provided for @cvvHideLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Hide CVV'**
+  String get cvvHideLabel;
 }
 
 class _AppLocalizationsDelegate

@@ -727,5 +727,14 @@
   "cameraUsePhoto": "Use this photo",
   "cameraCaptureFailed": "That photo could not be taken. Please try again.",
   "cameraUnavailable": "Karde needs permission to use the camera before it can take a photo.",
-  "cameraAllow": "Allow the camera"
+  "cameraAllow": "Allow the camera",
+  "startupFailedTitle": "Karde could not start",
+  "startupFailedBody": "Something went wrong while opening Karde. Your saved items are safe — nothing has been changed or lost. Try again, and if it keeps happening, restarting your phone usually clears it.",
+  "startupFailedRetry": "Try again",
+  "closeLabel": "Close",
+  "searchLabel": "Search",
+  "searchStopLabel": "Stop searching",
+  "sortLabel": "Sort",
+  "cvvShowLabel": "Show CVV",
+  "cvvHideLabel": "Hide CVV"
 }

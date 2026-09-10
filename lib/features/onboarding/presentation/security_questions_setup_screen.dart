@@ -181,6 +181,7 @@ class _SecurityQuestionsSetupScreenState extends ConsumerState<SecurityQuestions
         elevation: 0,
         leading: IconButton(
           icon: Icon(Icons.arrow_back, color: _foreground),
+          tooltip: loc.goBack,
           onPressed: () => Navigator.pop(context),
         ),
       ),

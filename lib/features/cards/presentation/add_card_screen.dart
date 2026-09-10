@@ -540,6 +540,7 @@ class _AddCardScreenState extends ConsumerState<AddCardScreen> {
                           icon: Icon(
                             _obscureCvv ? Icons.visibility_off : Icons.visibility,
                           ),
+                          tooltip: _obscureCvv ? loc.cvvShowLabel : loc.cvvHideLabel,
                           onPressed: () {
                             setState(() {
                               _obscureCvv = !_obscureCvv;

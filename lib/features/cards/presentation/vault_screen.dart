@@ -115,6 +115,7 @@ class _VaultScreenState extends ConsumerState<VaultScreen> {
         actions: [
           IconButton(
             icon: Icon(_isSearching ? Icons.close : Icons.search, color: const Color(0xFFC9A961)),
+            tooltip: _isSearching ? loc.searchStopLabel : loc.searchLabel,
             onPressed: () {
               setState(() {
                 _isSearching = !_isSearching;
@@ -124,6 +125,7 @@ class _VaultScreenState extends ConsumerState<VaultScreen> {
           ),
           IconButton(
             icon: const Icon(Icons.sort, color: Color(0xFFC9A961)),
+            tooltip: loc.sortLabel,
             onPressed: _showSortBottomSheet,
           ),
         ],

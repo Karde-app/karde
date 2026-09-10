@@ -701,5 +701,14 @@
   "cameraUsePhoto": "استخدام هذه الصورة",
   "cameraCaptureFailed": "تعذّر التقاط هذه الصورة. يرجى المحاولة مرة أخرى.",
   "cameraUnavailable": "يحتاج Karde إلى إذن استخدام الكاميرا قبل أن يتمكن من التقاط صورة.",
-  "cameraAllow": "السماح بالكاميرا"
+  "cameraAllow": "السماح بالكاميرا",
+  "startupFailedTitle": "تعذّر تشغيل Karde",
+  "startupFailedBody": "حدث خطأ أثناء فتح Karde. عناصرك المحفوظة سليمة — لم يُغيَّر شيء ولم يُفقد شيء. أعد المحاولة، وإن تكرر ذلك فإن إعادة تشغيل هاتفك تحلّ المشكلة عادةً.",
+  "startupFailedRetry": "أعد المحاولة",
+  "closeLabel": "إغلاق",
+  "searchLabel": "بحث",
+  "searchStopLabel": "إيقاف البحث",
+  "sortLabel": "ترتيب",
+  "cvvShowLabel": "إظهار CVV",
+  "cvvHideLabel": "إخفاء CVV"
 }

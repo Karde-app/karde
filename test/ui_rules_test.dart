@@ -1879,4 +1879,99 @@ void main() {
           reason: "that promise is what was false");
     });
   });
+
+  group("A failure to start must be visible", () {
+    // Karde carries no crash reporting, deliberately — it would need a network
+    // permission, and having none is the whole promise. That makes a silent
+    // startup failure permanently invisible: the user gets a black rectangle
+    // and we never hear about it. SharedPreferences.getInstance() runs before
+    // runApp and can throw on some phones, so the wrapping is what stands
+    // between that and a screen nobody can interpret or report.
+    final main = File("lib/main.dart").readAsStringSync();
+
+    test("startup is wrapped so a throw cannot reach the user as a blank screen", () {
+      expect(main, contains("runZonedGuarded"),
+          reason: "an async throw during startup must be caught somewhere");
+      expect(main, contains("StartupFailureApp"),
+          reason: "catching it is pointless if nothing is shown");
+    });
+
+    test("a later async error does not masquerade as a startup failure", () {
+      // Without this guard, a stray future failing an hour into a session
+      // would replace whatever the user was doing with "Karde could not
+      // start" — which by then is a lie, and loses their place for nothing.
+      expect(main, contains("_appStarted"),
+          reason: "the failure screen must only appear if the app never started");
+    });
+
+    test("framework errors are not escalated into tearing the app down", () {
+      // One overflowing row must not take the whole app with it.
+      expect(main, contains("FlutterError.onError = FlutterError.presentError"),
+          reason: "forwarding framework errors to the zone handler would make "
+              "every layout warning fatal");
+    });
+
+    test("the failure screen says it in every language", () {
+      for (final locale in ["en", "fr", "ar"]) {
+        final arb = jsonDecode(
+          File("lib/l10n/app_$locale.arb").readAsStringSync(),
+        ) as Map<String, dynamic>;
+        for (final key in [
+          "startupFailedTitle",
+          "startupFailedBody",
+          "startupFailedRetry",
+        ]) {
+          expect(arb.containsKey(key), isTrue,
+              reason: "$key is missing from app_$locale.arb");
+        }
+      }
+    });
+
+    test("it reassures rather than alarms", () {
+      // Somebody whose vault refuses to open will assume the worst. The
+      // reassurance is also true: the throw happens before anything is read
+      // or written, so nothing they saved can have been touched.
+      final en = jsonDecode(File("lib/l10n/app_en.arb").readAsStringSync())
+          as Map<String, dynamic>;
+      final body = en["startupFailedBody"].toString().toLowerCase();
+      expect(body, contains("safe"),
+          reason: "say the saved items are unharmed, because they are");
+      for (final scary in ["error", "exception", "failed to initialise"]) {
+        expect(body, isNot(contains(scary)),
+            reason: "'$scary' tells the user nothing they can act on");
+      }
+    });
+  });
+
+  group("Every icon button says what it is", () {
+    // An IconButton with no tooltip is announced by TalkBack as "button" and
+    // nothing else — including the back arrows and the reveal eye, which is
+    // the difference between a usable app and a guessing game. The tooltip is
+    // also what a sighted user gets on long-press.
+    test("no IconButton in lib/ is left unlabelled", () {
+      final offenders = <String>[];
+
+      for (final entity in Directory("lib").listSync(recursive: true)) {
+        if (entity is! File || !entity.path.endsWith(".dart")) continue;
+        if (entity.path.contains("app_localizations")) continue;
+
+        final lines = entity.readAsLinesSync();
+        for (var i = 0; i < lines.length; i++) {
+          if (!lines[i].contains("IconButton(")) continue;
+          // The tooltip belongs to this button if it appears before the
+          // constructor's arguments run out; a dozen lines covers every
+          // shape used in this codebase, including a multi-line icon:.
+          final end = (i + 13 < lines.length) ? i + 13 : lines.length;
+          final block = lines.sublist(i, end).join("\n");
+          if (!block.contains("tooltip:")) {
+            offenders.add("${entity.path}:${i + 1}");
+          }
+        }
+      }
+
+      expect(offenders, isEmpty,
+          reason: "TalkBack announces these as just \"button\":"
+              "\n${offenders.join('\n')}");
+    });
+  });
 }

@@ -613,6 +613,7 @@ class _AddIdScreenState extends ConsumerState<AddIdScreen> {
         title: Text(widget.existingId != null ? loc.editDocument : loc.addAnId),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
+          tooltip: loc.goBack,
           onPressed: () => Navigator.pop(context),
         ),
       ),

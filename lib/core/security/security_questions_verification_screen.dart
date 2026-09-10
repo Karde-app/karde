@@ -115,6 +115,7 @@ class _SecurityQuestionsVerificationScreenState extends ConsumerState<SecurityQu
         elevation: 0,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back, color: Colors.white),
+          tooltip: loc.goBack,
           onPressed: () => Navigator.pop(context),
         ),
       ),

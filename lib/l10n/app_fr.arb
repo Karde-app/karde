@@ -701,5 +701,14 @@
   "cameraUsePhoto": "Utiliser cette photo",
   "cameraCaptureFailed": "Cette photo n'a pas pu être prise. Veuillez réessayer.",
   "cameraUnavailable": "Karde a besoin de l’autorisation d’utiliser l’appareil photo pour pouvoir prendre une photo.",
-  "cameraAllow": "Autoriser l'appareil photo"
+  "cameraAllow": "Autoriser l'appareil photo",
+  "startupFailedTitle": "Karde n’a pas pu démarrer",
+  "startupFailedBody": "Un problème est survenu à l’ouverture de Karde. Vos éléments enregistrés sont intacts — rien n’a été modifié ni perdu. Réessayez, et si cela se reproduit, redémarrer votre téléphone suffit généralement.",
+  "startupFailedRetry": "Réessayer",
+  "closeLabel": "Fermer",
+  "searchLabel": "Rechercher",
+  "searchStopLabel": "Arrêter la recherche",
+  "sortLabel": "Trier",
+  "cvvShowLabel": "Afficher le CVV",
+  "cvvHideLabel": "Masquer le CVV"
 }

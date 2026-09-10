@@ -27,9 +27,8 @@ android {
     }
 
     defaultConfig {
-        // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
         applicationId = "com.karde.app"
-        // You can update the following values to match your application needs.
+        // Registered with Play under this id; it cannot be changed after the first upload.
         // For more information, see: https://flutter.dev/to/review-gradle-config.
         // FIX 10: minSdk >= 23 is required for local_auth and Android Keystore AES-256-GCM.
         // Pinned to 24 (not 23): the Flutter tool's MinSdkVersionMigration rewrites any

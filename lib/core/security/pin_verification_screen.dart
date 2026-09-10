@@ -211,6 +211,7 @@ class _PinVerificationScreenState extends ConsumerState<PinVerificationScreen> {
         elevation: 0,
         leading: IconButton(
           icon: Icon(Icons.close, color: Theme.of(context).colorScheme.onSurface),
+          tooltip: loc.closeLabel,
           onPressed: () => Navigator.pop(context, false),
         ),
       ),

@@ -1964,4 +1964,32 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get cameraAllow => 'Allow the camera';
+
+  @override
+  String get startupFailedTitle => 'Karde could not start';
+
+  @override
+  String get startupFailedBody =>
+      'Something went wrong while opening Karde. Your saved items are safe — nothing has been changed or lost. Try again, and if it keeps happening, restarting your phone usually clears it.';
+
+  @override
+  String get startupFailedRetry => 'Try again';
+
+  @override
+  String get closeLabel => 'Close';
+
+  @override
+  String get searchLabel => 'Search';
+
+  @override
+  String get searchStopLabel => 'Stop searching';
+
+  @override
+  String get sortLabel => 'Sort';
+
+  @override
+  String get cvvShowLabel => 'Show CVV';
+
+  @override
+  String get cvvHideLabel => 'Hide CVV';
 }
