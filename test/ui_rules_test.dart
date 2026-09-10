@@ -1974,4 +1974,44 @@ void main() {
               "\n${offenders.join('\n')}");
     });
   });
+
+  group("Nobody else's trademarks", () {
+    // Two separate mistakes, both found while taking store screenshots and both
+    // one screenshot away from being on the Play listing.
+    test("no Apple trademark appears in any language", () {
+      // Karde is an Android app. "Face ID" and "Touch ID" are Apple's marks and
+      // describe hardware this app never runs on, so they were wrong twice over
+      // — legally and factually. Arabic had it right all along: "your device's
+      // face or fingerprint or code".
+      final offenders = <String>[];
+      for (final locale in ["en", "fr", "ar"]) {
+        final arb = jsonDecode(
+          File("lib/l10n/app_$locale.arb").readAsStringSync(),
+        ) as Map<String, dynamic>;
+        arb.forEach((key, value) {
+          if (key.startsWith("@") || value is! String) return;
+          if (RegExp("Face ID|Touch ID", caseSensitive: false).hasMatch(value)) {
+            offenders.add("app_$locale.arb → $key");
+          }
+        });
+      }
+      expect(offenders, isEmpty,
+          reason: "Apple's trademarks, in an Android app:\n${offenders.join('\n')}");
+    });
+
+    test("the decorative placeholder cards carry no card brand", () {
+      // The empty dashboard used to stack a fake Visa and a fake Mastercard,
+      // complete with both logos, and that was the first thing in every store
+      // screenshot. Showing a brand's mark on a card nobody owns is decorative
+      // use of somebody else's trademark; showing it on a card the user entered
+      // and labelled themselves is ordinary nominative use and stays.
+      final source =
+          File("lib/features/home/presentation/dashboard_screen.dart")
+              .readAsStringSync();
+      for (final brand in ["VISA", "MASTERCARD", "AMEX", "Discover"]) {
+        expect(source, isNot(contains("cardBrand: '$brand'")),
+            reason: "a placeholder nobody owns must not wear $brand's logo");
+      }
+    });
+  });
 }

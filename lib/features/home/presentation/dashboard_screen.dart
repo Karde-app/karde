@@ -17,25 +17,32 @@ import '../../../theme/theme.dart';
 import '../../../core/security/device_security_service.dart';
 import '../../../core/security/vault_health_provider.dart';
 
-/// FIX 7-2: decorative placeholders for the empty / single-item dashboard stack.
+/// Decorative placeholders for the empty / single-item dashboard stack.
+///
+/// They carry no card brand on purpose. Painting Visa's or Mastercard's mark on
+/// a card nobody owns is decorative use of somebody else's trademark, and it was
+/// the first thing visible in every store screenshot. A real card the user has
+/// entered and labelled themselves still shows its logo, which is the ordinary
+/// nominative use every wallet-style app makes.
+///
 /// These were rebuilt on every frame; they hold no data, so one instance each is
 /// enough. `encryptedData` is empty by design — nothing ever decrypts them.
 final _placeholderEpoch = DateTime.fromMillisecondsSinceEpoch(0);
 
-final _placeholderVisa = VirtualCard(
+final _placeholderFront = VirtualCard(
   id: -1,
   nickname: 'ISSUER',
-  cardBrand: 'VISA',
+  cardBrand: '',
   encryptedData: '',
   lastFourDigits: '1234',
   createdAt: _placeholderEpoch,
   updatedAt: _placeholderEpoch,
 );
 
-final _placeholderMastercard = VirtualCard(
+final _placeholderBack = VirtualCard(
   id: -2,
   nickname: 'ISSUER',
-  cardBrand: 'MASTERCARD',
+  cardBrand: '',
   encryptedData: '',
   lastFourDigits: '4471',
   createdAt: _placeholderEpoch,
@@ -201,9 +208,9 @@ class DashboardScreen extends ConsumerWidget {
                   
                   if (displayItems.isEmpty) {
                     isEmptyState = true;
-                    displayItems = [_placeholderVisa, _placeholderMastercard];
+                    displayItems = [_placeholderFront, _placeholderBack];
                   } else if (displayItems.length == 1) {
-                    displayItems.add(_placeholderMastercard);
+                    displayItems.add(_placeholderBack);
                   }
                   
                   Widget buildItem(dynamic item, bool isFront) {

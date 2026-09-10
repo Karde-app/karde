@@ -385,7 +385,7 @@ abstract class AppLocalizations {
   /// No description provided for @phoneLockDesc.
   ///
   /// In en, this message translates to:
-  /// **'Your device\'s Face ID, Touch ID or passcode.'**
+  /// **'Your fingerprint, face unlock or screen lock.'**
   String get phoneLockDesc;
 
   /// No description provided for @lockChoiceChangeableLater.
@@ -463,7 +463,7 @@ abstract class AppLocalizations {
   /// No description provided for @unlockToReveal.
   ///
   /// In en, this message translates to:
-  /// **'Unlock to reveal secrets'**
+  /// **'Unlock to see your details'**
   String get unlockToReveal;
 
   /// No description provided for @recoverySetupTitle.
@@ -487,7 +487,7 @@ abstract class AppLocalizations {
   /// No description provided for @biometricRecoveryDesc.
   ///
   /// In en, this message translates to:
-  /// **'Your device\'s Face ID, Touch ID or passcode.'**
+  /// **'Your fingerprint, face unlock or screen lock.'**
   String get biometricRecoveryDesc;
 
   /// No description provided for @securityQuestions.
@@ -511,7 +511,7 @@ abstract class AppLocalizations {
   /// No description provided for @noRecoveryDesc.
   ///
   /// In en, this message translates to:
-  /// **'Maximum security. Forgetting your PIN means permanent data loss.'**
+  /// **'If you forget your PIN, nobody can reset it — not even us. A backup would be your only way back to your items.'**
   String get noRecoveryDesc;
 
   /// No description provided for @setupQuestionsTitle.
@@ -2665,7 +2665,7 @@ abstract class AppLocalizations {
   /// No description provided for @authReasonRevealCard.
   ///
   /// In en, this message translates to:
-  /// **'Please authenticate to reveal sensitive card information.'**
+  /// **'Confirm your identity to see your card details.'**
   String get authReasonRevealCard;
 
   /// No description provided for @authReasonOpenKarde.
@@ -2773,7 +2773,7 @@ abstract class AppLocalizations {
   /// No description provided for @privacySection3Body.
   ///
   /// In en, this message translates to:
-  /// **'To access your sensitive data, Karde requires local authentication via your device\'s Biometrics (Face ID/Fingerprint) or your custom Karde PIN. We do not have access to your PIN or biometric data.'**
+  /// **'To open a saved item, Karde asks you to confirm your identity with your fingerprint, face unlock or screen lock, or with your Karde PIN. The check happens inside Android; we never receive your fingerprint or face data, and we cannot see your PIN.'**
   String get privacySection3Body;
 
   /// No description provided for @privacySection4Title.

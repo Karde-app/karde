@@ -158,7 +158,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get phoneLock => 'Phone Lock';
 
   @override
-  String get phoneLockDesc => 'Your device\'s Face ID, Touch ID or passcode.';
+  String get phoneLockDesc => 'Your fingerprint, face unlock or screen lock.';
 
   @override
   String get lockChoiceChangeableLater =>
@@ -199,7 +199,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get enterKardePin => 'Enter Karde PIN';
 
   @override
-  String get unlockToReveal => 'Unlock to reveal secrets';
+  String get unlockToReveal => 'Unlock to see your details';
 
   @override
   String get recoverySetupTitle => 'If you forget your Karde PIN';
@@ -213,7 +213,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get biometricRecoveryDesc =>
-      'Your device\'s Face ID, Touch ID or passcode.';
+      'Your fingerprint, face unlock or screen lock.';
 
   @override
   String get securityQuestions => 'Security Questions';
@@ -227,7 +227,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get noRecoveryDesc =>
-      'Maximum security. Forgetting your PIN means permanent data loss.';
+      'If you forget your PIN, nobody can reset it — not even us. A backup would be your only way back to your items.';
 
   @override
   String get setupQuestionsTitle => 'Set Security Questions';
@@ -1448,7 +1448,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get authReasonRevealCard =>
-      'Please authenticate to reveal sensitive card information.';
+      'Confirm your identity to see your card details.';
 
   @override
   String get authReasonOpenKarde => 'Please authenticate to open Karde.';
@@ -1512,7 +1512,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get privacySection3Body =>
-      'To access your sensitive data, Karde requires local authentication via your device\'s Biometrics (Face ID/Fingerprint) or your custom Karde PIN. We do not have access to your PIN or biometric data.';
+      'To open a saved item, Karde asks you to confirm your identity with your fingerprint, face unlock or screen lock, or with your Karde PIN. The check happens inside Android; we never receive your fingerprint or face data, and we cannot see your PIN.';
 
   @override
   String get privacySection4Title => '4. Data Deletion';

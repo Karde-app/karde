@@ -158,7 +158,8 @@ class AppLocalizationsFr extends AppLocalizations {
   String get phoneLock => 'Verrouillage du téléphone';
 
   @override
-  String get phoneLockDesc => 'Face ID, Touch ID ou le code de votre appareil.';
+  String get phoneLockDesc =>
+      'Votre empreinte, la reconnaissance faciale ou le verrouillage de votre écran.';
 
   @override
   String get lockChoiceChangeableLater =>
@@ -199,7 +200,7 @@ class AppLocalizationsFr extends AppLocalizations {
   String get enterKardePin => 'Entrez le code Karde';
 
   @override
-  String get unlockToReveal => 'Déverrouillez pour révéler';
+  String get unlockToReveal => 'Déverrouillez pour voir vos informations';
 
   @override
   String get recoverySetupTitle => 'Si vous oubliez votre code PIN Karde';
@@ -213,7 +214,7 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get biometricRecoveryDesc =>
-      'Face ID, Touch ID ou le code de votre appareil.';
+      'Votre empreinte, la reconnaissance faciale ou le verrouillage de votre écran.';
 
   @override
   String get securityQuestions => 'Questions de sécurité';
@@ -227,7 +228,7 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get noRecoveryDesc =>
-      'Sécurité maximale. Oublier votre code PIN entraîne une perte de données permanente.';
+      'Si vous oubliez votre code, personne ne peut le réinitialiser — pas même nous. Une sauvegarde serait votre seul moyen de retrouver vos éléments.';
 
   @override
   String get setupQuestionsTitle => 'Définir les questions de sécurité';
@@ -1471,7 +1472,7 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get authReasonRevealCard =>
-      'Veuillez vous authentifier pour afficher les informations sensibles de la carte.';
+      'Confirmez votre identité pour voir les informations de la carte.';
 
   @override
   String get authReasonOpenKarde =>
@@ -1537,7 +1538,7 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get privacySection3Body =>
-      'Pour accéder à vos données sensibles, Karde exige une authentification locale par la biométrie de votre appareil (Face ID ou empreinte digitale) ou par votre code Karde. Nous n\'avons accès ni à votre code ni à vos données biométriques.';
+      'Pour ouvrir un élément enregistré, Karde vous demande de confirmer votre identité avec votre empreinte, la reconnaissance faciale ou le verrouillage de votre écran, ou avec votre code Karde. La vérification a lieu dans Android ; nous ne recevons jamais vos données d’empreinte ou de visage, et nous ne pouvons pas voir votre code.';
 
   @override
   String get privacySection4Title => '4. Suppression des données';

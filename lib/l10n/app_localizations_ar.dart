@@ -199,7 +199,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get enterKardePin => 'أدخل رمز Karde السري';
 
   @override
-  String get unlockToReveal => 'افتح القفل للكشف عن الأسرار';
+  String get unlockToReveal => 'افتح القفل لعرض بياناتك';
 
   @override
   String get recoverySetupTitle => 'إذا نسيت رمز Karde السري';
@@ -226,7 +226,7 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get noRecoveryDesc =>
-      'حماية قصوى. نسيان رقم التعريف يعني فقدان البيانات نهائياً.';
+      'إذا نسيت رقمك السري فلا يمكن لأحد إعادة تعيينه — ولا نحن. والنسخة الاحتياطية هي السبيل الوحيد لاستعادة عناصرك.';
 
   @override
   String get setupQuestionsTitle => 'إعداد أسئلة الأمان';
@@ -1454,8 +1454,7 @@ class AppLocalizationsAr extends AppLocalizations {
   }
 
   @override
-  String get authReasonRevealCard =>
-      'يرجى التحقق من هويتك لعرض بيانات البطاقة الحساسة.';
+  String get authReasonRevealCard => 'أكِّد هويتك لعرض بيانات بطاقتك.';
 
   @override
   String get authReasonOpenKarde => 'يرجى التحقق من هويتك لفتح Karde.';
