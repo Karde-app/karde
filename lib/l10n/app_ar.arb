@@ -440,6 +440,7 @@
   "deletePermanently": "حذف نهائي",
   "privateNotesAndPhoto": "ملاحظات خاصة وصورة",
   "cardMetadata": "السجل",
+  "vaultHealthUnavailable": "لم يتمكن Karde من التحقق من حالة الخزنة",
   "notesAndPhoto": "الملاحظات والصورة",
   "privateNotesTitle": "ملاحظات خاصة",
   "tapToUnlock": "اضغط لفتح القفل",

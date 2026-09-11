@@ -440,6 +440,7 @@
   "deletePermanently": "Supprimer définitivement",
   "privateNotesAndPhoto": "NOTES PRIVÉES ET PHOTO",
   "cardMetadata": "HISTORIQUE",
+  "vaultHealthUnavailable": "L’état du coffre n’a pas pu être vérifié",
   "notesAndPhoto": "Notes et photo",
   "privateNotesTitle": "Notes privées",
   "tapToUnlock": "Touchez pour déverrouiller",

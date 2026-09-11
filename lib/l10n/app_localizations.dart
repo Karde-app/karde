@@ -2530,6 +2530,12 @@ abstract class AppLocalizations {
   /// **'HISTORY'**
   String get cardMetadata;
 
+  /// No description provided for @vaultHealthUnavailable.
+  ///
+  /// In en, this message translates to:
+  /// **'Vault health could not be checked'**
+  String get vaultHealthUnavailable;
+
   /// No description provided for @notesAndPhoto.
   ///
   /// In en, this message translates to:

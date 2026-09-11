@@ -1382,6 +1382,10 @@ class AppLocalizationsAr extends AppLocalizations {
   String get cardMetadata => 'السجل';
 
   @override
+  String get vaultHealthUnavailable =>
+      'لم يتمكن Karde من التحقق من حالة الخزنة';
+
+  @override
   String get notesAndPhoto => 'الملاحظات والصورة';
 
   @override

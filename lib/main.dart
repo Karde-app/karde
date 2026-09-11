@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'app/app.dart';
 import 'app/startup_failure_app.dart';
+import 'app/quiet_error_panel.dart';
 
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -41,6 +42,12 @@ Future<void> _bootstrap() async {
   // Framework errors are printed but deliberately *not* escalated to the zone
   // handler. A single overflowing row must not take the whole app down.
   FlutterError.onError = FlutterError.presentError;
+
+  // Flutter's own error widget is a red screen covered in stack traces during
+  // development and a bare grey box in release. Neither should ever reach
+  // somebody who keeps their passport in this app, so both are replaced with
+  // something plain that says nothing saved has been touched.
+  ErrorWidget.builder = (details) => const QuietErrorPanel();
 
   try {
     final sharedPreferences = await SharedPreferences.getInstance();

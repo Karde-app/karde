@@ -439,7 +439,30 @@ class DashboardScreen extends ConsumerWidget {
                   );
                 },
                 loading: () => const CircularProgressIndicator(),
-                error: (_, __) => const SizedBox(),
+                // Never a silent empty box. A health card that simply vanishes is the
+                // kind of invisible failure this app has been bitten by three times
+                // already; say the check did not run instead.
+                error: (_, __) => Container(
+                  padding: const EdgeInsets.all(16),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(16),
+                    border: Border.all(color: Colors.white24),
+                  ),
+                  child: Row(
+                    children: [
+                      const Icon(Icons.info_outline, color: Color(0xFFC9A961)),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: Text(
+                          loc.vaultHealthUnavailable,
+                          style: TextStyle(
+                            color: Theme.of(context).colorScheme.onSurface,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
               ),
               
               const SizedBox(height: 16),

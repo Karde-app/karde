@@ -218,6 +218,16 @@ class _PinVerificationScreenState extends ConsumerState<PinVerificationScreen> {
       body: SafeArea(
         child: LayoutBuilder(
           builder: (context, constraints) {
+            // The dial pad used a fixed 72 for every key. That fitted the phone it
+            // was designed on and overflowed a 360x640 one: the 0 key and the
+            // "Forgot PIN?" link both fell below the fold, so somebody on a small
+            // phone had to discover they could scroll a lock screen to find the way
+            // back in. Sizing the keys from what is actually available makes the pad
+            // fit, and the clamp leaves a large screen looking exactly as before.
+            final double keySize =
+                ((constraints.maxHeight - 234) / 5).clamp(44.0, 72.0);
+            final double keyGap = (keySize / 3).clamp(10.0, 24.0);
+
             return SingleChildScrollView(
               child: ConstrainedBox(
                 constraints: BoxConstraints(minHeight: constraints.maxHeight),
@@ -275,7 +285,7 @@ class _PinVerificationScreenState extends ConsumerState<PinVerificationScreen> {
               ),
             ],
             const Spacer(),
-            _buildDialPad(),
+            _buildDialPad(keySize, keyGap),
             const SizedBox(height: 16),
             _buildForgotPinBtn(loc),
             const SizedBox(height: 20),
@@ -290,32 +300,32 @@ class _PinVerificationScreenState extends ConsumerState<PinVerificationScreen> {
     );
   }
 
-  Widget _buildDialPad() {
+  Widget _buildDialPad(double keySize, double keyGap) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 32.0),
       child: Column(
         children: [
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: ['1', '2', '3'].map((d) => _buildDialButton(d)).toList(),
+            children: ['1', '2', '3'].map((d) => _buildDialButton(d, keySize)).toList(),
           ),
-          const SizedBox(height: 24),
+          SizedBox(height: keyGap),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: ['4', '5', '6'].map((d) => _buildDialButton(d)).toList(),
+            children: ['4', '5', '6'].map((d) => _buildDialButton(d, keySize)).toList(),
           ),
-          const SizedBox(height: 24),
+          SizedBox(height: keyGap),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: ['7', '8', '9'].map((d) => _buildDialButton(d)).toList(),
+            children: ['7', '8', '9'].map((d) => _buildDialButton(d, keySize)).toList(),
           ),
-          const SizedBox(height: 24),
+          SizedBox(height: keyGap),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
-              const SizedBox(width: 72, height: 72),
-              _buildDialButton('0'),
-              _buildDeleteButton(),
+              SizedBox(width: keySize, height: keySize),
+              _buildDialButton('0', keySize),
+              _buildDeleteButton(keySize),
             ],
           ),
         ],
@@ -340,7 +350,7 @@ class _PinVerificationScreenState extends ConsumerState<PinVerificationScreen> {
     );
   }
 
-  Widget _buildDialButton(String digit) {
+  Widget _buildDialButton(String digit, double keySize) {
     final isDisabled = _lockoutUntil != null;
     // FIX 6-1: the dial pad was an InkWell wrapping bare Text, so TalkBack read
     // out a floating digit with no indication it was a button or what it did.
@@ -351,12 +361,12 @@ class _PinVerificationScreenState extends ConsumerState<PinVerificationScreen> {
       excludeSemantics: true,
       child: InkWell(
         onTap: isDisabled ? null : () => _onDigitPressed(digit),
-        borderRadius: BorderRadius.circular(36),
+        borderRadius: BorderRadius.circular(keySize / 2),
         child: Opacity(
           opacity: isDisabled ? 0.3 : 1.0,
           child: Container(
-            width: 72,
-            height: 72,
+            width: keySize,
+            height: keySize,
             decoration: BoxDecoration(
               shape: BoxShape.circle,
               color: Theme.of(context).brightness == Brightness.dark ? Colors.white.withOpacity(0.05) : Colors.black.withOpacity(0.05),
@@ -367,7 +377,7 @@ class _PinVerificationScreenState extends ConsumerState<PinVerificationScreen> {
               style: TextStyle(
                 fontFamily: 'Inter',
                 color: Theme.of(context).colorScheme.onSurface,
-                fontSize: 28,
+                fontSize: keySize * 0.39,
                 fontWeight: FontWeight.w500,
               ),
             ),
@@ -377,7 +387,7 @@ class _PinVerificationScreenState extends ConsumerState<PinVerificationScreen> {
     );
   }
 
-  Widget _buildDeleteButton() {
+  Widget _buildDeleteButton(double keySize) {
     final isDisabled = _lockoutUntil != null;
     // FIX 6-1: the delete key had no semantic label at all — screen readers
     // announced nothing.
@@ -388,17 +398,17 @@ class _PinVerificationScreenState extends ConsumerState<PinVerificationScreen> {
       excludeSemantics: true,
       child: InkWell(
         onTap: isDisabled ? null : _onDeletePressed,
-        borderRadius: BorderRadius.circular(36),
+        borderRadius: BorderRadius.circular(keySize / 2),
         child: Opacity(
           opacity: isDisabled ? 0.3 : 1.0,
           child: Container(
-            width: 72,
-            height: 72,
+            width: keySize,
+            height: keySize,
             alignment: Alignment.center,
             child: Icon(
               Icons.backspace_outlined,
               color: Theme.of(context).colorScheme.onSurface.withOpacity(0.7),
-              size: 28,
+              size: keySize * 0.39,
             ),
           ),
         ),

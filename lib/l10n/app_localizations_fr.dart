@@ -1397,6 +1397,10 @@ class AppLocalizationsFr extends AppLocalizations {
   String get cardMetadata => 'HISTORIQUE';
 
   @override
+  String get vaultHealthUnavailable =>
+      'L’état du coffre n’a pas pu être vérifié';
+
+  @override
   String get notesAndPhoto => 'Notes et photo';
 
   @override

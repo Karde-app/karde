@@ -1375,6 +1375,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get cardMetadata => 'HISTORY';
 
   @override
+  String get vaultHealthUnavailable => 'Vault health could not be checked';
+
+  @override
   String get notesAndPhoto => 'Notes and photo';
 
   @override

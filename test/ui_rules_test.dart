@@ -2014,4 +2014,76 @@ void main() {
       }
     });
   });
+
+  group("Nothing breaks in front of the user", () {
+    final main = File("lib/main.dart").readAsStringSync();
+
+    test("Flutter's own error screen is never shown", () {
+      // Flutter's default is a red screen covered in stack traces in debug and
+      // a bare grey box in release. On an app somebody keeps their passport in,
+      // the red one looks like a break-in and the grey one says nothing.
+      expect(main, contains("ErrorWidget.builder"),
+          reason: "the framework's error widget must be replaced");
+      expect(main, contains("QuietErrorPanel"),
+          reason: "...and replaced with something that explains itself");
+    });
+
+    test("the replacement cannot itself throw while reporting a throw", () {
+      // It renders inside a tree that has already failed, so it must not
+      // depend on the theme, a provider, or a non-null localisation.
+      final panel = File("lib/app/quiet_error_panel.dart").readAsStringSync();
+      expect(panel, isNot(contains("Theme.of(context).colorScheme")),
+          reason: "the theme may be the thing that failed");
+      expect(panel, isNot(contains("AppLocalizations.of(context)!")),
+          reason: "localisations may be missing entirely; it must tolerate null");
+      expect(panel, contains("if (loc != null)"),
+          reason: "text is only shown when localisations are actually there");
+    });
+
+    test("no async screen fails silently into an empty box", () {
+      // Three separate invisible failures have been found in this project —
+      // reminders that could never fire, a backup alarm that outlived its
+      // cause, and a camera fallback that did nothing. An error branch that
+      // renders SizedBox() makes a feature vanish with no explanation, which
+      // is the same mistake in a different place.
+      final offenders = <String>[];
+      for (final entity in Directory("lib").listSync(recursive: true)) {
+        if (entity is! File || !entity.path.endsWith(".dart")) continue;
+        final lines = entity.readAsLinesSync();
+        for (var i = 0; i < lines.length; i++) {
+          if (!lines[i].contains("error:")) continue;
+          if (RegExp(r"error:.*SizedBox\(\s*\)").hasMatch(lines[i])) {
+            offenders.add("${entity.path}:${i + 1}");
+          }
+        }
+      }
+      expect(offenders, isEmpty,
+          reason: "these make a feature disappear without saying why:"
+              "\n${offenders.join('\n')}");
+    });
+  });
+
+  group("The PIN pad fits the screen it is on", () {
+    // A fixed 72 per key fitted the phone the screen was designed on and
+    // overflowed a 360x640 one: the 0 key and the "Forgot PIN?" link both fell
+    // below the fold, so somebody who had forgotten their PIN on a small phone
+    // had to discover they could scroll a lock screen to find the way back in.
+    final pin =
+        File("lib/core/security/pin_verification_screen.dart").readAsStringSync();
+
+    test("key size is derived from the available height, not hardcoded", () {
+      expect(pin, contains("constraints.maxHeight"),
+          reason: "the pad has to know how much room it actually has");
+      expect(pin, contains("keySize"),
+          reason: "every key, gap and glyph sizes off one derived value");
+      expect(pin, isNot(contains("width: 72,")),
+          reason: "a fixed key width is what overflowed the small screen");
+    });
+
+    test("it is clamped, so a large screen is unchanged", () {
+      expect(pin, contains(".clamp("),
+          reason: "without an upper bound the keys would grow absurdly on a "
+              "tablet, and without a lower bound they would become untappable");
+    });
+  });
 }

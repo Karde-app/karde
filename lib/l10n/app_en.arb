@@ -525,6 +525,7 @@
   "deletePermanently": "Delete Permanently",
   "privateNotesAndPhoto": "PRIVATE NOTES & PHOTO",
   "cardMetadata": "HISTORY",
+  "vaultHealthUnavailable": "Vault health could not be checked",
   "notesAndPhoto": "Notes and photo",
   "privateNotesTitle": "Private notes",
   "tapToUnlock": "Tap to unlock",
