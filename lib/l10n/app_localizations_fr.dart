@@ -1394,7 +1394,7 @@ class AppLocalizationsFr extends AppLocalizations {
   String get privateNotesAndPhoto => 'NOTES PRIVÉES ET PHOTO';
 
   @override
-  String get cardMetadata => 'INFORMATIONS DE LA CARTE';
+  String get cardMetadata => 'HISTORIQUE';
 
   @override
   String get notesAndPhoto => 'Notes et photo';

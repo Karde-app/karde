@@ -2527,7 +2527,7 @@ abstract class AppLocalizations {
   /// No description provided for @cardMetadata.
   ///
   /// In en, this message translates to:
-  /// **'CARD METADATA'**
+  /// **'HISTORY'**
   String get cardMetadata;
 
   /// No description provided for @notesAndPhoto.

@@ -4,6 +4,16 @@ import '../../../../l10n/app_localizations.dart';
 import '../../domain/virtual_card.dart';
 import 'card_backgrounds.dart';
 
+/// What a covered field shows on a card preview.
+///
+/// These fields used to print the words "CARDHOLDER" and "NAME SURNAME",
+/// which read as real-but-wrong data rather than as something withheld. Both
+/// were the first thing in frame on the store screenshots, and the mask cannot
+/// be lifted here — the full details only open on the card detail page. Dots
+/// match how the card number is already covered, so the card now reads as
+/// deliberately hidden rather than broken.
+const String _hiddenValue = '••••••••';
+
 class RealisticCard extends StatelessWidget {
   final VirtualCard card;
   final bool isDecrypted;
@@ -35,6 +45,10 @@ class RealisticCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final String brand = card.cardBrand.toLowerCase();
+
+    // The reveal button floats above the top row at top-right, so anything
+    // right-aligned in that row has to leave space for it.
+    final bool hasRevealButton = onTapReveal != null || onTapHide != null;
     final bool isVisa = brand == 'visa';
     final bool isMastercard = brand == 'mastercard';
     
@@ -159,13 +173,22 @@ class RealisticCard extends StatelessWidget {
                             fontSize: 14,
                           ),
                         ),
-                        Text(
-                          card.nickname, // Issuer
-                          style: const TextStyle(
-                            fontFamily: 'Inter',
-                            color: Colors.white,
-                            fontSize: 14,
-                            fontWeight: FontWeight.bold,
+                        Flexible(
+                          child: Padding(
+                            // Without this inset the issuer ran underneath the eye on any card
+                            // whose name reached it, which was every one in the store shots.
+                            padding: EdgeInsets.only(right: hasRevealButton ? 34 : 0),
+                            child: Text(
+                              card.nickname, // Issuer
+                              textAlign: TextAlign.right,
+                              overflow: TextOverflow.ellipsis,
+                              style: const TextStyle(
+                                fontFamily: 'Inter',
+                                color: Colors.white,
+                                fontSize: 14,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
                           ),
                         ),
                       ],
@@ -272,7 +295,7 @@ class RealisticCard extends StatelessWidget {
                                     child: Text(
                                       decryptedCardholderName?.isNotEmpty == true
                                           ? decryptedCardholderName!.toUpperCase()
-                                          : AppLocalizations.of(context)!.cardholderPlaceholder,
+                                          : _hiddenValue,
                                       style: const TextStyle(
                                         fontFamily: 'Inter',
                                         color: Color(0xFFF4F1EA),

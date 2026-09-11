@@ -5,6 +5,16 @@ import '../../../cards/domain/virtual_card.dart';
 import '../../../cards/presentation/widgets/card_backgrounds.dart';
 import '../../../../core/security/encryption_service.dart';
 
+/// What a covered field shows on a card preview.
+///
+/// These fields used to print the words "CARDHOLDER" and "NAME SURNAME",
+/// which read as real-but-wrong data rather than as something withheld. Both
+/// were the first thing in frame on the store screenshots, and the mask cannot
+/// be lifted here — the full details only open on the card detail page. Dots
+/// match how the card number is already covered, so the card now reads as
+/// deliberately hidden rather than broken.
+const String _hiddenValue = '••••••••';
+
 class DashboardPreviewCard extends StatefulWidget {
   final VirtualCard card;
   final bool isFront;
@@ -234,7 +244,7 @@ class _DashboardPreviewCardState extends State<DashboardPreviewCard> {
                               child: Text(
                                 _cardholderName?.isNotEmpty == true 
                                     ? _cardholderName!.toUpperCase() 
-                                    : 'CARDHOLDER',
+                                    : _hiddenValue,
                                 style: TextStyle(
                                   fontSize: 14,
                                   fontWeight: FontWeight.w600,

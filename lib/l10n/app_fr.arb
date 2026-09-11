@@ -439,7 +439,7 @@
   "deleteCardMessage": "Cette action est irréversible. La carte sera définitivement supprimée.",
   "deletePermanently": "Supprimer définitivement",
   "privateNotesAndPhoto": "NOTES PRIVÉES ET PHOTO",
-  "cardMetadata": "INFORMATIONS DE LA CARTE",
+  "cardMetadata": "HISTORIQUE",
   "notesAndPhoto": "Notes et photo",
   "privateNotesTitle": "Notes privées",
   "tapToUnlock": "Touchez pour déverrouiller",

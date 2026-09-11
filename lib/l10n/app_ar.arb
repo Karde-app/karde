@@ -439,7 +439,7 @@
   "deleteCardMessage": "لا يمكن التراجع عن هذا. ستُحذف البطاقة نهائياً.",
   "deletePermanently": "حذف نهائي",
   "privateNotesAndPhoto": "ملاحظات خاصة وصورة",
-  "cardMetadata": "بيانات البطاقة",
+  "cardMetadata": "السجل",
   "notesAndPhoto": "الملاحظات والصورة",
   "privateNotesTitle": "ملاحظات خاصة",
   "tapToUnlock": "اضغط لفتح القفل",

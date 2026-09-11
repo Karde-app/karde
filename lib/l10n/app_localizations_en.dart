@@ -1372,7 +1372,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get privateNotesAndPhoto => 'PRIVATE NOTES & PHOTO';
 
   @override
-  String get cardMetadata => 'CARD METADATA';
+  String get cardMetadata => 'HISTORY';
 
   @override
   String get notesAndPhoto => 'Notes and photo';

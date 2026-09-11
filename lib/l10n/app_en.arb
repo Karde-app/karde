@@ -524,7 +524,7 @@
   "deleteCardMessage": "This cannot be undone. The card will be permanently deleted.",
   "deletePermanently": "Delete Permanently",
   "privateNotesAndPhoto": "PRIVATE NOTES & PHOTO",
-  "cardMetadata": "CARD METADATA",
+  "cardMetadata": "HISTORY",
   "notesAndPhoto": "Notes and photo",
   "privateNotesTitle": "Private notes",
   "tapToUnlock": "Tap to unlock",

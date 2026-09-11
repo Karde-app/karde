@@ -1379,7 +1379,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get privateNotesAndPhoto => 'ملاحظات خاصة وصورة';
 
   @override
-  String get cardMetadata => 'بيانات البطاقة';
+  String get cardMetadata => 'السجل';
 
   @override
   String get notesAndPhoto => 'الملاحظات والصورة';
