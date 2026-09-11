@@ -2086,4 +2086,51 @@ void main() {
               "tablet, and without a lower bound they would become untappable");
     });
   });
+
+  group("No screen can trap the user below the fold", () {
+    // A screen whose content does not fit and cannot scroll is a dead end. It
+    // matters most on the two screens that exist to get somebody back in:
+    // entering a PIN, and recovering a forgotten one. Both had fixed spacing
+    // designed against one phone.
+    //
+    // Deliberately exempt: the camera and the photo viewer fill the screen by
+    // nature and have nothing to scroll.
+    const fillsScreenByDesign = [
+      "guided_camera_screen",
+      "secure_photo_view",
+    ];
+
+    test("every screen with a Scaffold body can scroll if it has to", () {
+      final offenders = <String>[];
+
+      for (final entity in Directory("lib").listSync(recursive: true)) {
+        if (entity is! File || !entity.path.endsWith(".dart")) continue;
+        if (fillsScreenByDesign.any((n) => entity.path.contains(n))) continue;
+
+        final source = entity.readAsStringSync();
+        // A real screen, not a provider that happens to build a notification
+        // body string.
+        if (!source.contains("Scaffold(") || !source.contains("body:")) continue;
+
+        final scrolls = source.contains("SingleChildScrollView") ||
+            source.contains("ListView") ||
+            source.contains("CustomScrollView") ||
+            source.contains("GridView");
+        if (!scrolls) offenders.add(entity.path);
+      }
+
+      expect(offenders, isEmpty,
+          reason: "content that overflows here has no way to be reached:"
+              "\n${offenders.join('\n')}");
+    });
+
+    test("the forgotten-PIN route specifically is scrollable", () {
+      // Called out on its own because it is the last way back into a vault.
+      final forgot =
+          File("lib/core/security/forgot_pin_screen.dart").readAsStringSync();
+      expect(forgot, contains("SingleChildScrollView"));
+      expect(forgot, contains("constraints.maxHeight"),
+          reason: "the Spacer must still work where there is room to spare");
+    });
+  });
 }

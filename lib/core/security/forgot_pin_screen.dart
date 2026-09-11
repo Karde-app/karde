@@ -132,10 +132,21 @@ class _ForgotPinScreenState extends ConsumerState<ForgotPinScreen> {
           onPressed: () => Navigator.pop(context),
         ),
       ),
+      // This is the way back in for somebody who has forgotten their PIN, and
+      // it had fixed spacers and no scroll view: on a short screen the options
+      // would have fallen below the fold with no way to reach them. The
+      // ConstrainedBox keeps the Spacer working where there is room, and it
+      // scrolls where there is not.
       body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 24.0),
-          child: Column(
+        child: LayoutBuilder(
+          builder: (context, constraints) {
+            return SingleChildScrollView(
+              child: ConstrainedBox(
+                constraints: BoxConstraints(minHeight: constraints.maxHeight),
+                child: IntrinsicHeight(
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 24.0),
+                    child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               const SizedBox(height: 20),
@@ -265,7 +276,12 @@ class _ForgotPinScreenState extends ConsumerState<ForgotPinScreen> {
               ),
               const SizedBox(height: 40),
             ],
-          ),
+                    ),
+                  ),
+                ),
+              ),
+            );
+          },
         ),
       ),
     );
