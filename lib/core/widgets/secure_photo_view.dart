@@ -1,9 +1,12 @@
 import 'dart:async';
+import 'dart:io';
 import '../../l10n/app_localizations.dart';
 import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:share_plus/share_plus.dart';
 
 import '../security/system_interaction_guard.dart';
 import '../security/window_security_service.dart';
@@ -53,10 +56,81 @@ class _SecurePhotoViewState extends ConsumerState<SecurePhotoView>
     super.initState();
     WidgetsBinding.instance.addObserver(this);
     _windowSecurity.enableSecureMode();
+    _startHideTimer();
+  }
+
+  void _startHideTimer() {
+    _hideTimer?.cancel();
     _hideTimer = Timer(
       Duration(seconds: ref.read(autoHideDurationProvider)),
       _closeIfOpen,
     );
+  }
+
+  /// Hands a copy of the photo to an app the user picks.
+  ///
+  /// Testers needed this: a hotel or an employer asks for a passport photo and
+  /// the only copy is in Karde, which blocks screenshots. Share is the right
+  /// shape for that and "Save to gallery" is not — the gallery syncs to cloud
+  /// photo services on most phones, which would quietly put an unencrypted
+  /// passport in exactly the place Karde exists to keep it out of. The share
+  /// sheet still offers "save to files" for anyone who genuinely wants that, but
+  /// as their explicit choice of destination rather than a button here.
+  ///
+  /// The share sheet is another app's window, so the call runs inside
+  /// [SystemInteractionGuard] — otherwise the vault would lock behind it and
+  /// this viewer would close under the user. The auto-hide timer is paused for
+  /// the same reason and restarted afterwards.
+  ///
+  /// share_plus keeps its own copy of the file in a cache folder and only
+  /// clears it on the *next* share. A passport photo must not sit there, so
+  /// the folder is wiped the moment the sheet closes, whatever the outcome.
+  Future<void> _share() async {
+    final loc = AppLocalizations.of(context)!;
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text(loc.sharePhotoConfirmTitle),
+        content: Text(loc.sharePhotoConfirmBody),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(false),
+            child: Text(loc.cancel),
+          ),
+          FilledButton(
+            onPressed: () => Navigator.of(context).pop(true),
+            child: Text(loc.sharePhotoConfirmAction),
+          ),
+        ],
+      ),
+    );
+    if (confirmed != true || !mounted) return;
+
+    _hideTimer?.cancel();
+    try {
+      await SystemInteractionGuard.run(() async {
+        await Share.shareXFiles([
+          XFile.fromData(
+            widget.bytes,
+            mimeType: 'image/jpeg',
+            name: 'document.jpg',
+          ),
+        ]);
+      });
+    } finally {
+      await _wipeShareCache();
+      if (mounted) _startHideTimer();
+    }
+  }
+
+  static Future<void> _wipeShareCache() async {
+    try {
+      final cache = await getTemporaryDirectory();
+      final dir = Directory('${cache.path}${Platform.pathSeparator}share_plus');
+      if (await dir.exists()) await dir.delete(recursive: true);
+    } catch (_) {
+      // Nothing useful to say: the folder is either gone or was never written.
+    }
   }
 
   @override
@@ -97,6 +171,13 @@ class _SecurePhotoViewState extends ConsumerState<SecurePhotoView>
           widget.title,
           style: const TextStyle(fontFamily: 'Outfit', fontSize: 18),
         ),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.share_outlined),
+            tooltip: AppLocalizations.of(context)!.sharePhoto,
+            onPressed: _share,
+          ),
+        ],
       ),
       body: Center(
         child: InteractiveViewer(

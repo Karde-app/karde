@@ -27,6 +27,10 @@
          user taps "Take a photo" and never before. Anyone who refuses can still
          use their phone's camera app, which needs no permission from Karde. -->
     <uses-permission android:name="android.permission.CAMERA"/>
+    <!-- Declaring CAMERA makes Play assume a camera is *required* and hide the
+         app from tablets and Chromebooks without one. Karde works fine without:
+         the gallery picker still attaches photos, and everything else is untouched. -->
+    <uses-feature android:name="android.hardware.camera" android:required="false"/>
     <!-- Pulled in by the camera plugin and removed again. Karde records no
          audio — the controller is built with enableAudio false — and reads no
          media store: pictures come from the system picker as content URIs,

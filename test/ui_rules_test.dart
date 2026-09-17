@@ -2133,4 +2133,90 @@ void main() {
           reason: "the Spacer must still work where there is room to spare");
     });
   });
+
+  group("Sharing a document photo", () {
+    // A passport photo is the most sensitive thing the app can put on screen.
+    // Share exists because testers genuinely needed it, but the shape of it is
+    // what keeps it safe, and each of these is a shape that must not drift.
+    final viewer = File("lib/core/widgets/secure_photo_view.dart").readAsStringSync();
+
+    test("only the authenticated full-screen viewer can share", () {
+      // The viewer only ever receives bytes that have already been decrypted
+      // behind the user's fingerprint or screen lock. A Share anywhere else —
+      // a list row, a detail card — would be a way to get a photo out without
+      // that step.
+      final offenders = <String>[];
+      for (final entity in Directory("lib").listSync(recursive: true)) {
+        if (entity is! File || !entity.path.endsWith(".dart")) continue;
+        if (entity.path.endsWith("secure_photo_view.dart")) continue;
+        if (entity.readAsStringSync().contains("share_plus")) {
+          offenders.add(entity.path);
+        }
+      }
+      expect(offenders, isEmpty,
+          reason: "share_plus may only be used from secure_photo_view.dart:"
+              "\n${offenders.join('\n')}");
+    });
+
+    test("the user is told what sharing means before it happens", () {
+      expect(viewer, contains("sharePhotoConfirmBody"),
+          reason: "one plain sentence, at the moment it matters");
+    });
+
+    test("the share sheet runs inside the system-interaction guard", () {
+      // Another app's window pauses Karde's activity; without the guard the
+      // vault locks and this viewer closes underneath the share sheet.
+      final shareCall = viewer.indexOf("Share.shareXFiles");
+      final guardCall = viewer.lastIndexOf("SystemInteractionGuard.run", shareCall);
+      expect(shareCall, greaterThan(-1));
+      expect(guardCall, greaterThan(-1),
+          reason: "Share.shareXFiles must be called inside SystemInteractionGuard.run");
+    });
+
+    test("the library's cached copy is wiped whatever happens", () {
+      // share_plus keeps its own copy and clears it only on the next share. A
+      // passport must not sit in a cache folder until then.
+      expect(viewer, contains("_wipeShareCache"));
+      final finallyBlock = viewer.indexOf("finally {");
+      expect(finallyBlock, greaterThan(-1),
+          reason: "the wipe has to run even if the share throws or is cancelled");
+      expect(viewer.indexOf("_wipeShareCache()", finallyBlock), greaterThan(finallyBlock));
+    });
+
+    test("there is no 'save to gallery'", () {
+      // The gallery syncs to cloud photo services on most phones. Offering it
+      // as a button would put an unencrypted passport in exactly the place
+      // Karde exists to keep it out of. The share sheet still offers 'save to
+      // files' for anyone who genuinely wants that — as their explicit choice.
+      final en = jsonDecode(File("lib/l10n/app_en.arb").readAsStringSync())
+          as Map<String, dynamic>;
+      for (final entry in en.entries) {
+        if (entry.key.startsWith("@")) continue;
+        final v = entry.value.toString().toLowerCase();
+        expect(v, isNot(contains("save to gallery")),
+            reason: "${entry.key} offers the gallery");
+      }
+      // The doc comment explains why there is no gallery button, so look at the
+      // code alone: strip comment lines before checking.
+      final code = viewer
+          .split("\n")
+          .where((l) => !l.trimLeft().startsWith("//"))
+          .join("\n");
+      expect(code.toLowerCase(), isNot(contains("gallery")));
+    });
+  });
+
+  group("The camera is optional", () {
+    test("the manifest says so, or tablets without one cannot install", () {
+      final manifest =
+          File("android/app/src/main/AndroidManifest.xml").readAsStringSync();
+      expect(
+        manifest,
+        contains(
+          '<uses-feature android:name="android.hardware.camera" android:required="false"/>',
+        ),
+        reason: "declaring CAMERA without this makes Play treat a camera as required",
+      );
+    });
+  });
 }

@@ -1401,6 +1401,26 @@ class AppLocalizationsFr extends AppLocalizations {
       'L’état du coffre n’a pas pu être vérifié';
 
   @override
+  String get sharePhoto => 'Partager';
+
+  @override
+  String get sharePhotoConfirmTitle => 'Partager cette photo ?';
+
+  @override
+  String get sharePhotoConfirmBody =>
+      'Une copie sera envoyée à l’application que vous choisissez. Karde ne pourra plus la protéger ensuite.';
+
+  @override
+  String get sharePhotoConfirmAction => 'Partager';
+
+  @override
+  String get checkForUpdates => 'Vérifier les mises à jour sur Google Play';
+
+  @override
+  String get storeNotAvailable =>
+      'Google Play n’est pas disponible sur ce téléphone.';
+
+  @override
   String get notesAndPhoto => 'Notes et photo';
 
   @override
@@ -1528,7 +1548,7 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get privacySection1Body =>
-      'Tout ce que vous enregistrez — numéros de carte, codes de sécurité, notes et photos — est chiffré et conservé sur cet appareil. Karde n’a aucun accès à Internet, il ne peut donc rien envoyer où que ce soit, et nous ne voyons jamais vos données. Si vous activez la sauvegarde, Karde écrit un seul fichier chiffré dans un dossier que vous choisissez ; si ce dossier appartient à un service cloud, ce service synchronise le fichier, et seule votre phrase secrète permet de l’ouvrir.';
+      'Tout ce que vous enregistrez — numéros de carte, codes de sécurité, notes et photos — est chiffré et conservé sur cet appareil. Karde n’a aucun accès à Internet, il ne peut donc rien envoyer où que ce soit, et nous ne voyons jamais vos données. Si vous activez la sauvegarde, Karde écrit un seul fichier chiffré dans un dossier que vous choisissez ; si ce dossier appartient à un service cloud, ce service synchronise le fichier, et seule votre phrase secrète permet de l’ouvrir. Vous pouvez aussi partager la photo d’un document avec une autre application ; une fois partagée, Karde ne contrôle plus cette copie.';
 
   @override
   String get privacySection2Title => '2. Chiffrement';

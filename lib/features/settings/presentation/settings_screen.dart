@@ -6,6 +6,7 @@ import '../../../core/storage/settings_repository.dart';
 import '../../../core/notifications/expiry_notifications.dart';
 import '../../../core/storage/vault_reset.dart';
 import '../../../core/app_info.dart';
+import '../../../core/platform/store_listing_service.dart';
 import '../../../theme/theme.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../../core/security/authentication_service.dart';
@@ -295,6 +296,25 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                         content: Text(
                           loc.aboutDialogBody(AppInfo.name, AppInfo.version),
                         ),
+                        actions: [
+                          // Karde cannot check for updates itself — it has no
+                          // internet permission — so it sends the user to the
+                          // one place that can, which is the honest answer to
+                          // "how would I know there is a new version?"
+                          TextButton(
+                            onPressed: () async {
+                              final navigator = Navigator.of(context);
+                              final opened = await StoreListingService().open();
+                              if (!context.mounted) return;
+                              if (opened) {
+                                navigator.pop();
+                              } else {
+                                KardeFeedback.info(context, loc.storeNotAvailable);
+                              }
+                            },
+                            child: Text(loc.checkForUpdates),
+                          ),
+                        ],
                       ),
                     );
                   },

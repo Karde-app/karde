@@ -1386,6 +1386,25 @@ class AppLocalizationsAr extends AppLocalizations {
       'لم يتمكن Karde من التحقق من حالة الخزنة';
 
   @override
+  String get sharePhoto => 'مشاركة';
+
+  @override
+  String get sharePhotoConfirmTitle => 'مشاركة هذه الصورة؟';
+
+  @override
+  String get sharePhotoConfirmBody =>
+      'سيتم إرسال نسخة إلى التطبيق الذي تختاره. لن يتمكن Karde من حمايتها بعد ذلك.';
+
+  @override
+  String get sharePhotoConfirmAction => 'مشاركة';
+
+  @override
+  String get checkForUpdates => 'التحقق من التحديثات على Google Play';
+
+  @override
+  String get storeNotAvailable => 'Google Play غير متاح على هذا الهاتف.';
+
+  @override
   String get notesAndPhoto => 'الملاحظات والصورة';
 
   @override
@@ -1508,7 +1527,7 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get privacySection1Body =>
-      'كل ما تحفظه — أرقام البطاقات ورموز الأمان والملاحظات والصور — مشفَّر ومحفوظ على هذا الجهاز. لا يمتلك Karde أي وصول إلى الإنترنت، لذا لا يستطيع إرسال أي شيء إلى أي مكان، ولا نرى بياناتك أبداً. وإذا شغّلت النسخ الاحتياطي، يكتب Karde ملفاً مشفَّراً واحداً في مجلد تختاره؛ وإن كان ذلك المجلد يتبع خدمة سحابية، فإن تلك الخدمة تُزامن الملف، ولا يُفتح إلا بعبارة المرور الخاصة بك.';
+      'كل ما تحفظه — أرقام البطاقات ورموز الأمان والملاحظات والصور — مشفَّر ومحفوظ على هذا الجهاز. لا يمتلك Karde أي وصول إلى الإنترنت، لذا لا يستطيع إرسال أي شيء إلى أي مكان، ولا نرى بياناتك أبداً. وإذا شغّلت النسخ الاحتياطي، يكتب Karde ملفاً مشفَّراً واحداً في مجلد تختاره؛ وإن كان ذلك المجلد يتبع خدمة سحابية، فإن تلك الخدمة تُزامن الملف، ولا يُفتح إلا بعبارة المرور الخاصة بك. يمكنك أيضاً مشاركة صورة مستند مع تطبيق آخر؛ وبعد المشاركة لا يعود Karde يتحكم في تلك النسخة.';
 
   @override
   String get privacySection2Title => '2. التشفير';

@@ -1,6 +1,8 @@
 package com.karde.app
 
 import android.content.Intent
+import android.content.ActivityNotFoundException
+import android.net.Uri
 import android.os.PowerManager
 import android.provider.Settings
 import android.os.Build
@@ -30,6 +32,7 @@ class MainActivity : FlutterFragmentActivity() {
     private val BACKUP_CHANNEL = "com.ibank.security/backup"
     private val FILES_CHANNEL = "com.ibank.security/files"
     private val IMAGES_CHANNEL = "com.ibank.security/images"
+    private val STORE_CHANNEL = "com.ibank.security/store"
 
     private val fileTransfer by lazy { FileTransfer(this) }
     private val backupFolder by lazy { BackupFolder(this) }
@@ -100,6 +103,14 @@ class MainActivity : FlutterFragmentActivity() {
                     }
                     "willPromptEveryUse" -> result.success(willPromptEveryUse())
                     "biometricsChanged" -> result.success(biometricsChanged())
+                    else -> result.notImplemented()
+                }
+            }
+
+        MethodChannel(flutterEngine.dartExecutor.binaryMessenger, STORE_CHANNEL)
+            .setMethodCallHandler { call, result ->
+                when (call.method) {
+                    "openListing" -> result.success(openPlayListing())
                     else -> result.notImplemented()
                 }
             }
@@ -733,5 +744,25 @@ class MainActivity : FlutterFragmentActivity() {
             // Nothing useful to do; the error below is what matters to the caller.
         }
         result.error("KEY_INVALIDATED", "Vault key is no longer valid", null)
+    }
+
+    /**
+     * Opens Karde's own page in the Play Store, so the user can see whether an
+     * update is waiting. Karde has no internet permission and never will, which
+     * rules out checking for updates itself; sending the user to the store is the
+     * honest alternative, and the store app does the network work.
+     *
+     * A plain startActivity with an implicit intent needs no <queries> entry —
+     * that is only required for resolveActivity — so this stays dependency-free.
+     */
+    private fun openPlayListing(): Boolean {
+        val market = Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=$packageName"))
+        val web = Intent(Intent.ACTION_VIEW,
+            Uri.parse("https://play.google.com/store/apps/details?id=$packageName"))
+        return try {
+            startActivity(market); true
+        } catch (e: ActivityNotFoundException) {
+            try { startActivity(web); true } catch (e2: ActivityNotFoundException) { false }
+        }
     }
 }

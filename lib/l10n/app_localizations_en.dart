@@ -1378,6 +1378,25 @@ class AppLocalizationsEn extends AppLocalizations {
   String get vaultHealthUnavailable => 'Vault health could not be checked';
 
   @override
+  String get sharePhoto => 'Share';
+
+  @override
+  String get sharePhotoConfirmTitle => 'Share this photo?';
+
+  @override
+  String get sharePhotoConfirmBody =>
+      'This sends a copy to the app you choose. Karde can’t protect it after that.';
+
+  @override
+  String get sharePhotoConfirmAction => 'Share';
+
+  @override
+  String get checkForUpdates => 'Check for updates on Google Play';
+
+  @override
+  String get storeNotAvailable => 'Google Play isn’t available on this phone.';
+
+  @override
   String get notesAndPhoto => 'Notes and photo';
 
   @override
@@ -1501,7 +1520,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get privacySection1Body =>
-      'Everything you save — card numbers, security codes, notes and photos — is encrypted and kept on this device. Karde has no internet access at all, so it cannot send any of it anywhere, and we never see it. If you turn on backup, Karde writes one encrypted file into a folder you choose; if that folder belongs to a cloud service, that service syncs the file, and only your passphrase can open it.';
+      'Everything you save — card numbers, security codes, notes and photos — is encrypted and kept on this device. Karde has no internet access at all, so it cannot send any of it anywhere, and we never see it. If you turn on backup, Karde writes one encrypted file into a folder you choose; if that folder belongs to a cloud service, that service syncs the file, and only your passphrase can open it. You can also share a photo of a document to another app; once shared, Karde no longer controls that copy.';
 
   @override
   String get privacySection2Title => '2. Encryption';

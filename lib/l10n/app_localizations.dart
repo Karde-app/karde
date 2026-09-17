@@ -2536,6 +2536,42 @@ abstract class AppLocalizations {
   /// **'Vault health could not be checked'**
   String get vaultHealthUnavailable;
 
+  /// No description provided for @sharePhoto.
+  ///
+  /// In en, this message translates to:
+  /// **'Share'**
+  String get sharePhoto;
+
+  /// No description provided for @sharePhotoConfirmTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Share this photo?'**
+  String get sharePhotoConfirmTitle;
+
+  /// No description provided for @sharePhotoConfirmBody.
+  ///
+  /// In en, this message translates to:
+  /// **'This sends a copy to the app you choose. Karde can’t protect it after that.'**
+  String get sharePhotoConfirmBody;
+
+  /// No description provided for @sharePhotoConfirmAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Share'**
+  String get sharePhotoConfirmAction;
+
+  /// No description provided for @checkForUpdates.
+  ///
+  /// In en, this message translates to:
+  /// **'Check for updates on Google Play'**
+  String get checkForUpdates;
+
+  /// No description provided for @storeNotAvailable.
+  ///
+  /// In en, this message translates to:
+  /// **'Google Play isn’t available on this phone.'**
+  String get storeNotAvailable;
+
   /// No description provided for @notesAndPhoto.
   ///
   /// In en, this message translates to:
@@ -2755,7 +2791,7 @@ abstract class AppLocalizations {
   /// No description provided for @privacySection1Body.
   ///
   /// In en, this message translates to:
-  /// **'Everything you save — card numbers, security codes, notes and photos — is encrypted and kept on this device. Karde has no internet access at all, so it cannot send any of it anywhere, and we never see it. If you turn on backup, Karde writes one encrypted file into a folder you choose; if that folder belongs to a cloud service, that service syncs the file, and only your passphrase can open it.'**
+  /// **'Everything you save — card numbers, security codes, notes and photos — is encrypted and kept on this device. Karde has no internet access at all, so it cannot send any of it anywhere, and we never see it. If you turn on backup, Karde writes one encrypted file into a folder you choose; if that folder belongs to a cloud service, that service syncs the file, and only your passphrase can open it. You can also share a photo of a document to another app; once shared, Karde no longer controls that copy.'**
   String get privacySection1Body;
 
   /// No description provided for @privacySection2Title.
