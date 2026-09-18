@@ -67,13 +67,13 @@ flutter_launcher_icons:
   ios: true
   image_path: "assets/icons/app_icon.png"
   min_sdk_android: 21
-  # The icon carries its own teal ground, so the foreground is the whole image.
-  # The launcher shows the central two-thirds of the canvas; at inset 0 the K
-  # filled 81% of that and looked oversized and clipped next to other icons.
-  # 14% scales the image to 72% of the canvas, which puts the K at about 58% of
-  # the visible icon — level with its neighbours — while still covering the
-  # visible area, so the background colour never shows through.
-  adaptive_icon_background: "#19262E"
+  # The icon is a flat teal ground with the K anchored to the bottom, its stem
+  # and leg running off the edge on purpose — the same idea as the Facebook f.
+  # The launcher shows the central two-thirds of the canvas; 14% inset keeps the
+  # top of the K, with its rounded ends, fully inside with room to spare, and
+  # lets the bottom bleed as designed. The image still covers the visible area,
+  # and the background colour matches its ground for launchers that show a sliver.
+  adaptive_icon_background: "#163E3E"
   adaptive_icon_foreground: "assets/icons/app_icon.png"
   adaptive_icon_foreground_inset: 14
 # For information on the generic Dart part of this file, see the
