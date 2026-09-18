@@ -67,13 +67,15 @@ flutter_launcher_icons:
   ios: true
   image_path: "assets/icons/app_icon.png"
   min_sdk_android: 21
-  # The icon carries its own teal ground, so the foreground is the whole image with
-  # no inset: the launcher shows its central two-thirds, and the K was measured to
-  # sit inside exactly that zone. The background colour matches the image edge so
-  # nothing shows through on launchers that reveal a sliver of it.
+  # The icon carries its own teal ground, so the foreground is the whole image.
+  # The launcher shows the central two-thirds of the canvas; at inset 0 the K
+  # filled 81% of that and looked oversized and clipped next to other icons.
+  # 14% scales the image to 72% of the canvas, which puts the K at about 58% of
+  # the visible icon — level with its neighbours — while still covering the
+  # visible area, so the background colour never shows through.
   adaptive_icon_background: "#19262E"
   adaptive_icon_foreground: "assets/icons/app_icon.png"
-  adaptive_icon_foreground_inset: 0
+  adaptive_icon_foreground_inset: 14
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
 
