@@ -1,0 +1,32 @@
+Copyright (c) 2026 Temesgen. All rights reserved.
+
+This source code is made publicly readable so that it can be reviewed and
+studied. It is not open-source software, and no licence to use it is granted.
+
+You may:
+
+  - read, browse and study this source code;
+  - quote short excerpts for the purpose of review, teaching or discussion,
+    with attribution.
+
+You may not, without prior written permission from the copyright holder:
+
+  - copy, reproduce or redistribute this source code or any substantial part
+    of it;
+  - modify it or create derivative works from it;
+  - compile, publish or distribute any application built from it, in whole or
+    in part, including on any application store;
+  - use it for any commercial purpose.
+
+Karde is a published application. This repository exists so that its
+engineering can be examined, not so that the application can be reproduced.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+COPYRIGHT HOLDER BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER
+IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
+CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+For permission to use this code, or any other enquiry, contact the copyright
+holder through the repository.

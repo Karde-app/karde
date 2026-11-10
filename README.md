@@ -125,6 +125,11 @@ The Dart package is still `ibank`, the name the project was started under. Renam
 rewrite every import for no user-visible gain — the application id, the launcher label and
 every string the user sees are all Karde.
 
+## Licence
+
+Source-available, all rights reserved — see [LICENSE](LICENSE). The code is public so
+that it can be read and reviewed; it is not licensed for reuse or redistribution.
+
 ---
 
 Built by Temesgen. Published under the developer name Axumora.
