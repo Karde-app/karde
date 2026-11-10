@@ -11,7 +11,7 @@ const zlib = require('zlib');
 const { execFileSync } = require('child_process');
 
 const CHROME = 'C:/Program Files/Google/Chrome/Application/chrome.exe';
-const DIR = 'C:/Users/TEMESG~1.TIL/AppData/Local/Temp/claude/c--development-projects-ibank/c83ac81e-8b27-4184-8be8-3af3c31d370f/scratchpad/shots';
+const DIR = process.argv[2] || './shots';
 const OUT = 'C:/development/projects/ibank/Karde_Design_Package/store/screenshots';
 
 const SRC_W = 1080, SRC_H = 2316;

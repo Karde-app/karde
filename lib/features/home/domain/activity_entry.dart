@@ -15,8 +15,7 @@ enum ActivityKind {
 
 /// One line of the vault's history.
 ///
-/// The user asked for this: "the notification should also show when cards are
-/// deleted, added or modified, maybe it can also help as a log."
+/// A log of what was added, changed or deleted.
 ///
 /// It answers a question nothing else in Karde could — *did I do that?* A vault
 /// whose contents can change silently is a vault you have to take on trust, and

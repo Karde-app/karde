@@ -101,3 +101,11 @@ android/upload-keystore.jks
 # Obfuscation symbol files. Archived per release out-of-band; without them a
 # release's crash reports cannot be decoded, but they do not belong in the repo.
 /build/debug-info/
+
+# Internal working notes and one-off audit output — kept locally, not published.
+CONTEXT_INFO.md
+PUBLISH_CHECKLIST.md
+PLAY_STORE_GUIDE.md
+TEST_PLAN.md
+TEST_PLAN_i18n.md
+I18N_AUDIT.txt

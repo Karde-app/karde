@@ -240,9 +240,8 @@ final seenAlertsProvider =
 /// The alerts the user has not looked at yet.
 ///
 /// The bell badges on these rather than on everything. A count that never goes
-/// down after it has been read is not a count, it is a permanent decoration, and
-/// the user said so: "once I open and see that two notification the number 2 on
-/// the bell should disappear, but now it is there still."
+/// down after it has been read is not a count, it is a permanent decoration.
+/// Opening the bell clears it.
 ///
 /// The alerts themselves do not disappear — the sheet still lists everything
 /// that is true, because a screen lock that is still missing is still missing.

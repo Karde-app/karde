@@ -15,7 +15,7 @@ import 'expiry.dart';
 /// at a time.
 ///
 /// They are not secrets. An expiry date is printed on the front of the card, and
-/// on the back of a passport, and the user said so. So it is simply kept in the
+/// on the back of a passport. So it is simply kept in the
 /// clear from now on, and for anything saved before that was decided, this fills
 /// the gap for free: every time a card is revealed or opened for editing, the
 /// payload is already decrypted and the date is already in memory. Writing it to

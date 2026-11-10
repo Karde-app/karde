@@ -31,8 +31,7 @@ import '../domain/karde_alert.dart';
 /// it is what clears when this page is opened, and everything in it is a fact
 /// about right now that Karde can re-check at any moment.
 ///
-/// **Recent activity** is history, and never badges anything. The user asked for
-/// the log and asked what I thought; this is the answer. A vault's history
+/// **Recent activity** is history, and never badges anything. A vault's history
 /// genuinely earns its place — the one entry that matters is the one its owner
 /// does not recognise — but folding "you added a card" into a count that means
 /// "something needs looking at" would empty that count of meaning, and the day

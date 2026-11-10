@@ -959,8 +959,7 @@ void main() {
     // where describing the app is the whole point, and the offline badge is a
     // two-word reassurance rather than an explanation.
     // The privacy policy is exempt for the same reason About is: describing how
-    // the app protects things is the entire purpose of that document, and it is
-    // where the user said this material belongs.
+    // the app protects things is the entire purpose of that document.
     const exempt = {"aboutDialogBody", "offlineBadge"};
     bool isPolicy(String key) => key.startsWith("privacy");
 
@@ -1653,9 +1652,9 @@ void main() {
     });
 
     test("the alert is an invitation, not a warning", () {
-      // The user asked for this. "Reminders will not arrive on time" told them
-      // off about a phone setting they had not chosen; "Receive reminders" says
-      // what tapping it gets you.
+      // "Reminders will not arrive on time" told the user off about a phone
+      // setting they had not chosen; "Receive reminders" says what tapping it
+      // gets you.
       final en = jsonDecode(File("lib/l10n/app_en.arb").readAsStringSync())
           as Map<String, dynamic>;
       expect(en["remindersBlockedTitle"], "Receive reminders");
